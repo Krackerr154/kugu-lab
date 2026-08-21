@@ -1,26 +1,330 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+/* === Academic Precision Design System (Stitch: ITB LabPrep Dashboard) === */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary — Dark Navy Blue */
+  --primary: #000613;
+  --primary-container: #001f3f;
+  --on-primary: #ffffff;
+  --on-primary-container: #6f88ad;
+  --primary-fixed: #d4e3ff;
+  --primary-fixed-dim: #afc8f0;
+  --on-primary-fixed: #001c3a;
+  --on-primary-fixed-variant: #2f486a;
+
+  /* Secondary — Gold/Yellow */
+  --secondary: #705d00;
+  --secondary-container: #fcd400;
+  --on-secondary: #ffffff;
+  --on-secondary-container: #6e5c00;
+  --secondary-fixed: #ffe16d;
+  --secondary-fixed-dim: #e9c400;
+
+  /* Tertiary */
+  --tertiary: #110200;
+  --tertiary-container: #391303;
+  --on-tertiary-container: #b5785f;
+
+  /* Surface — Soft Gray scale */
+  --background: #f8f9fa;
+  --surface: #f8f9fa;
+  --surface-dim: #d9dadb;
+  --surface-bright: #f8f9fa;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f3f4f5;
+  --surface-container: #edeeef;
+  --surface-container-high: #e7e8e9;
+  --surface-container-highest: #e1e3e4;
+  --surface-variant: #e1e3e4;
+  --surface-tint: #476083;
+
+  /* On-surface text */
+  --on-surface: #191c1d;
+  --on-surface-variant: #43474e;
+  --on-background: #191c1d;
+
+  /* Outline */
+  --outline: #74777f;
+  --outline-variant: #c4c6cf;
+
+  /* Error */
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error: #ffffff;
+  --on-error-container: #93000a;
+
+  /* Inverse */
+  --inverse-surface: #2e3132;
+  --inverse-on-surface: #f0f1f2;
+  --inverse-primary: #afc8f0;
+
+  /* Legacy compat (used by existing components) */
+  --foreground: #191c1d;
+  --card: #ffffff;
+  --border: #c4c6cf;
+  --primary-dark: #001f3f;
+  --primary-light: #d4e3ff;
+  --accent: #705d00;
+  --accent-light: #ffe16d;
+  --warning: #705d00;
+  --warning-light: #ffe16d;
+  --danger: #ba1a1a;
+  --danger-light: #ffdad6;
+  --success: #16a34a;
+  --success-light: #dcfce7;
+  --muted: #43474e;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-foreground: var(--on-surface);
+  --color-card: var(--surface-container-lowest);
+  --color-border: var(--outline-variant);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-container);
+  --color-primary-light: var(--primary-fixed);
+  --color-accent: var(--secondary);
+  --color-accent-light: var(--secondary-fixed);
+  --color-warning: var(--secondary);
+  --color-warning-light: var(--secondary-fixed);
+  --color-danger: var(--error);
+  --color-danger-light: var(--error-container);
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-muted: var(--on-surface-variant);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Academic Precision surface scale */
+  --color-surface: var(--surface);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-lowest: var(--surface-container-lowest);
+  --color-surface-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-high: var(--surface-container-high);
+  --color-surface-highest: var(--surface-container-highest);
+  --color-surface-variant: var(--surface-variant);
+  --color-surface-tint: var(--surface-tint);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary: var(--on-secondary);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-error: var(--error);
+  --color-error-container: var(--error-container);
+  --color-on-error: var(--on-error);
+  --color-on-error-container: var(--on-error-container);
+  --color-inverse-surface: var(--inverse-surface);
+  --color-inverse-on-surface: var(--inverse-on-surface);
+  --color-inverse-primary: var(--inverse-primary);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+
+  /* Fonts — Montserrat headlines, Inter body/labels */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --font-headline: "Montserrat", system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--on-surface);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+}
+
+/* Headings use Montserrat */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline), system-ui, sans-serif;
+}
+
+/* Ambient shadow — tinted with primary navy, not pure black */
+.shadow-ambient {
+  box-shadow: 0 8px 32px rgba(0, 31, 63, 0.08);
+}
+
+/* Keep the compact rail usable on short laptop viewports. */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.24) transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(252, 212, 0, 0.7);
+}
+
+.print-title {
+  font-family: var(--font-headline), system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Short, one-shot motion for the M1 lab rehearsal.
+   Geometry is measured against the bench markup: the pipette tip sits flush
+   above the drop's static origin and the tube rim is 28px (1.75rem) below it,
+   so a drop that ends at translateY(1.75rem) splashes exactly on the rim. */
+@keyframes rehearsal-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.35rem) scale(0.5, 0.65);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(-0.1rem) scale(0.9, 1.2);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(1.3rem) scale(0.8, 1.35);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(1.75rem) scale(1.4, 0.5);
+  }
+}
+
+.rehearsal-drop {
+  /* ease-in reads as gravity: slow release at the tip, fastest at the rim. */
+  animation: rehearsal-drop 0.8s cubic-bezier(0.4, 0, 0.9, 0.6) 1 both;
+}
+
+.rehearsal-drop-delay {
+  animation-delay: 0.2s;
+}
+
+.rehearsal-drop-delay-2 {
+  animation-delay: 0.4s;
+}
+
+/* Surface ripple. Delayed so it fires as the first drop hits the rim, not
+   before it has left the pipette. */
+/* No translateX here: Tailwind v4 centers with the `translate` property,
+   which composes independently of `transform`. Repeating -50% double-shifts. */
+@keyframes rehearsal-ripple {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.3);
+  }
+  40% {
+    opacity: 0.85;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1.8);
+  }
+}
+
+.rehearsal-ripple {
+  animation: rehearsal-ripple 0.9s ease-out 0.75s 1 both;
+}
+
+/* Steam curls up off the tube mouth while the water bath runs. */
+@keyframes rehearsal-steam {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0.25rem) scale(0.45);
+  }
+  30% {
+    opacity: 0.5;
+    transform: translate(0.15rem, -0.7rem) scale(0.8);
+  }
+  65% {
+    opacity: 0.32;
+    transform: translate(-0.15rem, -1.6rem) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0.2rem, -2.6rem) scale(1.35);
+  }
+}
+
+.rehearsal-steam {
+  animation: rehearsal-steam 1.6s ease-out 1 both;
+}
+
+.rehearsal-steam-delay {
+  animation-delay: 0.28s;
+}
+
+.rehearsal-steam-delay-2 {
+  animation-delay: 0.56s;
+}
+
+/* Glass card for overlays */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* KaTeX sizing */
+.katex { font-size: 1.1em; }
+.katex-display { margin: 0.5em 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--surface-container); }
+::-webkit-scrollbar-thumb { background: var(--outline-variant); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--outline); }
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+/* Print-friendly */
+@media print {
+  .no-print { display: none !important; }
+  .app-shell { margin-left: 0 !important; }
+  .print-title {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 0 1rem !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  /* These are pure motion affordances: hide them rather than flashing a
+     0.01ms frame. The persistent status cue carries the meaning instead. */
+  .rehearsal-drop,
+  .rehearsal-ripple,
+  .rehearsal-steam {
+    display: none !important;
+  }
 }
