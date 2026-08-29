@@ -298,33 +298,33 @@ export function ReactionTubeAnimation({
             {/* === PRECIPITATE PARTICLES / CLOUD === */}
             {showPrecipitate && currentPptColor && (
               <g className="transition-opacity duration-1000 ease-in-out">
-                {/* Cloud Dispersion in Liquid */}
+                {/* Cloud Dispersion in Liquid - HIGH CONTRAST */}
                 <ellipse
                   cx="100"
                   cy="195"
                   rx="34"
                   ry="45"
                   fill={currentPptColor}
-                  opacity={animState === "reacting" ? 0.75 : 0.45}
+                  opacity={animState === "reacting" ? 0.85 : 0.75}
                   filter="url(#pptTurbulence)"
                   className="animate-ppt-cloud"
                 />
 
-                {/* Settled Precipitate at Bottom of Tube */}
+                {/* Settled Precipitate at Bottom of Tube - EVEN HIGHER CONTRAST */}
                 <path
                   d="M 64 250 A 36 36 0 0 0 136 250 Q 100 242 64 250 Z"
                   fill={currentPptColor}
-                  opacity={animState === "reacted" ? 0.95 : 0.6}
+                  opacity={animState === "reacted" ? 0.95 : 0.9}
                   className="transition-opacity duration-1000"
                 />
 
-                {/* Granular / Flake Particles */}
-                <circle cx="85" cy="220" r="2.5" fill={currentPptColor} opacity="0.9" />
-                <circle cx="112" cy="235" r="3.2" fill={currentPptColor} opacity="0.85" />
-                <circle cx="96" cy="255" r="2.8" fill={currentPptColor} opacity="0.9" />
-                <circle cx="78" cy="245" r="2.0" fill={currentPptColor} opacity="0.8" />
-                <circle cx="120" cy="248" r="2.2" fill={currentPptColor} opacity="0.85" />
-                <circle cx="104" cy="210" r="1.8" fill={currentPptColor} opacity="0.75" />
+                {/* Granular / Flake Particles - VERY VISIBLE */}
+                <circle cx="85" cy="220" r="2.5" fill={currentPptColor} opacity="1.0" />
+                <circle cx="112" cy="235" r="3.2" fill={currentPptColor} opacity="1.0" />
+                <circle cx="96" cy="255" r="2.8" fill={currentPptColor} opacity="1.0" />
+                <circle cx="78" cy="245" r="2.0" fill={currentPptColor} opacity="1.0" />
+                <circle cx="120" cy="248" r="2.2" fill={currentPptColor} opacity="1.0" />
+                <circle cx="104" cy="210" r="1.8" fill={currentPptColor} opacity="1.0" />
               </g>
             )}
 

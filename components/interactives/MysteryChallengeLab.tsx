@@ -137,20 +137,20 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
     return cationsWithPrecipitates[cation]?.includes(reagent) ?? false;
   };
 
-  const getPrecipitateHex = (color: "white" | "black" | "blue" | "brown" | "no_color"): string => {
+  const determinePrecipitateHex = (color: "white" | "black" | "blue" | "brown" | "no_color"): string => {
     switch (color) {
       case "white":
-        return "#ffffff";
+        return "#F0F9FF"; // Much darker blue-gray for better contrast
       case "black":
-        return "#000000";
+        return "#0D1B1E"; // Very dark navy-blue for strong contrast
       case "blue":
-        return "#3b82f6";
+        return "#1D4ED8"; // Deep blue with good visibility
       case "brown":
-        return "#78350f";
+        return "#7C2D12"; // Dark brown-red
       case "no_color":
-        return "#ffffff";
+        return "#FFFFFF";
       default:
-        return "#ffffff";
+        return "#FFFFFF";
     }
   };
 
@@ -349,7 +349,7 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
                       visualSpec={{
                         initialLiquidColor: "rgba(235, 245, 255, 0.4)",
                         finalLiquidColor: determineFinalColor(selectedMystery.actualCation, observations[observations.length - 1].reagent),
-                        precipitateColor: getPrecipitateHex(determinePrecipitateColor(selectedMystery.actualCation, observations[observations.length - 1].reagent)),
+                        precipitateColor: determinePrecipitateHex(determinePrecipitateColor(selectedMystery.actualCation, observations[observations.length - 1].reagent)),
                         precipitateType: observePrecipitateType(observations[observations.length - 1].text),
                         hasGas: hasGasFormation(observations[observations.length - 1].reagent),
                       }}
