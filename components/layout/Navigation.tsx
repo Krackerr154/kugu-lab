@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { TransitionLink } from "@/components/layout/TransitionLink";
 
 const navItems = [
   { href: "/", label: "Beranda", icon: "dashboard", short: "Home" },
@@ -93,7 +94,7 @@ export function Navigation() {
   return (
     <>
       {/* === Desktop Sidebar — collapsible (w-20 → w-64 on hover) === */}
-      <aside className="no-print sidebar-scroll hidden lg:flex flex-col h-screen w-20 hover:w-64 transition-[width] duration-300 ease-out fixed left-0 top-0 z-20 bg-[var(--primary)] text-[var(--on-primary)] shadow-ambient overflow-x-hidden overflow-y-auto group">
+      <aside style={{ viewTransitionName: "app-rail" }} className="no-print sidebar-scroll hidden lg:flex flex-col h-screen w-20 hover:w-64 transition-[width] duration-300 ease-out sticky top-0 left-0 z-20 bg-[var(--primary)] text-[var(--on-primary)] shadow-ambient overflow-x-hidden overflow-y-auto group shrink-0">
         <div className="flex flex-col h-full py-8 w-64">
           {/* Header */}
           <div className="px-4 mb-8 flex items-center gap-4 whitespace-nowrap">
@@ -113,7 +114,7 @@ export function Navigation() {
             {navItems.map((item) => {
               const active = isActive(item.href);
               return (
-                <Link
+                <TransitionLink
                   key={item.href}
                   href={item.href}
                   aria-current={active ? "page" : undefined}
@@ -140,7 +141,7 @@ export function Navigation() {
                   >
                     {item.label}
                   </span>
-                </Link>
+                </TransitionLink>
               );
             })}
           </nav>
@@ -173,13 +174,13 @@ export function Navigation() {
                 </div>
               </div>
               <div className="mt-2 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <Link
+                <TransitionLink
                   href="/modules"
                   className="w-full bg-[var(--secondary-container)] text-[var(--primary)] flex items-center justify-center gap-2 py-2 px-4 rounded-full font-bold text-sm shadow-sm hover:opacity-90 transition-opacity"
                 >
                   <span aria-hidden="true" className="material-symbols-outlined text-[20px]">add</span>
-                  Mulai Praktikum
-                </Link>
+                  <span>Mulai Praktikum</span>
+                </TransitionLink>
               </div>
             </div>
           </div>
@@ -187,12 +188,23 @@ export function Navigation() {
       </aside>
 
       {/* === Mobile Top Bar === */}
-      <header className="no-print lg:hidden sticky top-0 z-50 h-16 bg-[var(--primary)] text-white border-b border-[var(--outline-variant)] flex items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-[var(--secondary-container)] text-[var(--primary)] flex items-center justify-center font-bold text-sm" style={{ fontFamily: "Montserrat, sans-serif" }}>
-            K
-          </div>
-          <span className="font-bold text-sm" style={{ fontFamily: "Montserrat, sans-serif" }}>KUGU Lab</span>
+      <header style={{ viewTransitionName: "app-mobile-bar" }} className="no-print lg:hidden sticky top-0 z-50 h-16 bg-[var(--primary)] text-white border-b border-[var(--outline-variant)] flex items-center justify-between px-4">
+        <div className="flex items-center gap-2.5">
+          {pathname !== "/" ? (
+            <TransitionLink
+              href="/"
+              direction="nav-back"
+              aria-label="Kembali ke Beranda"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white transition-colors hover:bg-white/20 active:scale-95"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-lg">arrow_back</span>
+            </TransitionLink>
+          ) : (
+            <div className="w-9 h-9 rounded-lg bg-[var(--secondary-container)] text-[var(--primary)] flex items-center justify-center font-bold text-sm" style={{ fontFamily: "Montserrat, sans-serif" }}>K</div>
+          )}
+          <span className="font-bold text-sm tracking-[0.01em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
+            {pathname === "/" ? "Praktikum KUGU" : "KUGU Lab"}
+          </span>
         </div>
         <button
           ref={menuButtonRef}
@@ -214,7 +226,7 @@ export function Navigation() {
             {navItems.map((item) => {
               const active = isActive(item.href);
               return (
-                <Link
+                <TransitionLink
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
@@ -227,7 +239,7 @@ export function Navigation() {
                 >
                   <span aria-hidden="true" className="material-symbols-outlined">{item.icon}</span>
                   {item.label}
-                </Link>
+                </TransitionLink>
               );
             })}
           </div>

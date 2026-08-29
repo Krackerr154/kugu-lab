@@ -10,7 +10,7 @@ export function PhotocatalysisWorkspace() {
 
   return (
     <div className="space-y-4">
-      <div role="group" aria-label="Worksheet Modul 2" className="flex gap-1 rounded-lg bg-slate-100 p-1">
+      <div role="group" aria-label="Worksheet Modul 2" className="flex gap-1 rounded-lg bg-[var(--surface-muted)] p-1">
         {[
           { id: "conductivity", label: "Konduktivitas / Band Gap" },
           { id: "photocatalysis", label: "Fotokatalisis (Absorbansi vs Waktu)" },
@@ -20,7 +20,7 @@ export function PhotocatalysisWorkspace() {
             onClick={() => setTab(t.id as any)}
             aria-pressed={tab === t.id}
             className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              tab === t.id ? "bg-white text-[var(--primary-dark)] shadow-sm" : "text-[var(--muted)]"
+              tab === t.id ? "bg-[var(--surface-control)] text-[var(--primary-dark)] shadow-sm" : "text-[var(--muted)]"
             }`}
           >
             {t.label}
@@ -59,7 +59,7 @@ function ConductivityCalculator() {
   }));
 
   return (
-    <section className="rounded-xl border border-[var(--border)] bg-white p-4">
+    <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-4">
       <h3 className="text-lg font-bold">Worksheet Konduktivitas / Band Gap</h3>
       <Equation
         tex="\\sigma = \\frac{L}{R \\times A}"
@@ -127,7 +127,7 @@ function ConductivityCalculator() {
           title="ln(σ) vs 1000/T (Data Sampel)"
           xLabel="1000/T (K⁻¹)"
           yLabel="ln(σ)"
-          series={[{ name: "Data sampel", color: "#6366f1", points: sampleData }]}
+          series={[{ name: "Data sampel", color: "#001f3f", points: sampleData }]}
           height={300}
         />
       </div>
@@ -154,7 +154,7 @@ function PhotocatalysisChart() {
   ];
 
   return (
-    <section className="rounded-xl border border-[var(--border)] bg-white p-4">
+    <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-4">
       <h3 className="text-lg font-bold">Analisis Fotokatalisis</h3>
       <p className="text-sm text-[var(--muted)] mb-3">
         Plot absorbansi (metilen biru) terhadap waktu penyinaran UV. Data sampel.
@@ -165,12 +165,12 @@ function PhotocatalysisChart() {
         xLabel="Waktu (menit)"
         yLabel="Absorbansi"
         series={[
-          { name: "Absorbansi", color: "#6366f1", points: sampleData.map((d) => ({ x: d.time, y: d.absorbance })) },
+          { name: "Absorbansi", color: "#001f3f", points: sampleData.map((d) => ({ x: d.time, y: d.absorbance })) },
         ]}
         height={350}
       />
 
-      <div className="mt-3 rounded-md bg-slate-50 p-3 text-sm">
+      <div className="mt-3 rounded-md bg-[var(--surface-muted)] p-3 text-sm">
         <p className="font-semibold">Interpretasi:</p>
         <p className="text-[var(--muted)]">
           Penurunan absorbansi menunjukkan degradasi metilen biru oleh fotokatalis Mg2SnO4 di bawah UV.

@@ -1,0 +1,128 @@
+{
+  "id": "M5",
+  "nomor": 5,
+  "judul": "Karakterisasi dan Interpretasi Data XRD Hasil Sintesis",
+  "halaman_pdf": [
+    29,
+    33
+  ],
+  "sub_sesi": [
+    "M5 (dijadwalkan bersama M6: 'M5-M6')"
+  ],
+  "tujuan": [
+    "Melakukan pengolahan, analisis, dan interpretasi data XRD material hasil sintesis (zeolit, paduan logam Sn-Bi, dan Mg2SnO4)."
+  ],
+  "pendahuluan": {
+    "ringkas": "XRD memanfaatkan panjang gelombang sinar-X yang dekat dengan jarak antar-inti pada padatan. Kemampuan khas XRD adalah identifikasi fasa. Analisis kualitatif: tingkat keteraturan struktur dan identifikasi fasa; analisis kuantitatif: derajat kristalinitas dan ukuran kristalit (Scherrer).",
+    "konsep_kunci": [
+      {
+        "topik": "Prinsip difraksi sinar-X",
+        "isi": "Metode difraksi sinar-X digunakan untuk penentuan struktur padatan molekular (contoh: sukrosa) dan ionik (contoh: NaCl), karena panjang gelombang yang digunakan memiliki ukuran yang dekat dengan jarak antar-inti pada padatan. Prinsip difraktometer yaitu pengukuran intensitas sinar-X yang dihamburkan oleh sampel pada arah atau sudut tembak tertentu."
+      },
+      {
+        "topik": "Jenis teknik",
+        "isi": "Berdasarkan sampel yang dianalisis: difraksi sinar-X kristal tunggal (Single Crystal X-Ray Diffraction, SC-XRD) dan difraksi sinar-X serbuk (Powder X-Ray Diffraction, PXRD). Kemampuan khusus XRD yang tidak dimiliki teknik lain adalah identifikasi 'fasa' dari suatu senyawa padatan."
+      },
+      {
+        "topik": "Interferensi dan Hukum Bragg",
+        "isi": "Ketika berkas sinar-X berinteraksi dengan material, sebagian diabsorpsi, ditransmisikan, dan sebagian dihamburkan (didifraksi). Berkas terhambur dapat saling menghilangkan (interferensi destruktif) atau saling menguatkan (interferensi konstruktif). Hamburan yang saling menguatkan berasal dari sinar yang terdifraksi pada bidang dengan indeks Miller yang sama. Sinar pertama menumbuk atom pada bidang pertama (O), sinar kedua menumbuk atom pada bidang kedua (G) dan menempuh jarak lebih panjang sebesar FG+GH; agar saling menguatkan, FG+GH harus merupakan kelipatan (n) dari panjang gelombang."
+      },
+      {
+        "topik": "Analisis kualitatif",
+        "isi": "Pada difraktogram serbuk: tingkat keteraturan struktur dan identifikasi fasa yang terbentuk. Padatan dikategorikan menjadi kristalin, semikristalin, dan amorf berdasarkan tingkat keteraturan strukturnya. Identifikasi fasa dilakukan dengan mencocokkan pola difraksi dengan sumber data yang ada atau referensi penelitian. Tujuannya konfirmasi struktur senyawa padatan yang disintesis."
+      },
+      {
+        "topik": "Analisis kuantitatif",
+        "isi": "Misalnya perhitungan derajat kristalinitas dan ukuran partikel/kristalit. Derajat kristalinitas dihitung dengan membandingkan luas daerah kristalin yang berbentuk lancip dengan luas total (luas kristalin + luas amorf) pada difraktogram."
+      },
+      {
+        "topik": "Piranti lunak",
+        "isi": "VESTA digunakan untuk visualisasi struktur kristal zeolit, paduan Sn-Bi, dan Mg2SnO4 dengan fasa tertentu serta membuat difraktogram hasil kalkulasi sebagai referensi. Origin digunakan untuk memproses dan mengolah difraktogram secara numerik dan grafik serta penyajian grafik difraktogram sampel untuk laporan."
+      }
+    ]
+  },
+  "rumus": [
+    {
+      "nomor": 1,
+      "nama": "Selisih lintasan",
+      "latex": "n\\lambda = FG + GH"
+    },
+    {
+      "nomor": 2,
+      "nama": "Penjabaran geometri",
+      "latex": "n\\lambda = d\\sin\\theta + d\\sin\\theta = 2d\\sin\\theta"
+    },
+    {
+      "nomor": 3,
+      "nama": "Hukum Bragg",
+      "latex": "n\\lambda = 2d\\sin\\theta"
+    },
+    {
+      "nomor": 4,
+      "nama": "Derajat kristalinitas",
+      "latex": "\\%\\text{Kristalinitas} = \\frac{\\text{Luas daerah puncak kristalin}}{\\text{Luas daerah total pada difraktogram}} \\times 100\\%"
+    },
+    {
+      "nomor": 5,
+      "nama": "Persamaan Scherrer",
+      "latex": "D_{(hkl)} = \\frac{K\\lambda}{\\beta\\cos\\theta}",
+      "keterangan": "D(hkl) = ukuran kristalit berdasarkan puncak bidang (hkl) dalam nm; K = tetapan Scherrer (K = 0,9 dengan asumsi kristalit berbentuk bola yang seragam); lambda = panjang gelombang sinar-X dalam nm; beta = lebar setengah puncak maksimum (FWHM) dalam rad; theta = sudut Bragg."
+    }
+  ],
+  "prosedur": [
+    {
+      "bagian": "Penyiapan sampel",
+      "langkah": [
+        "Sampel yang akan dianalisis dengan PXRD dipastikan telah kering, kemudian dihaluskan menggunakan mortar. Untuk analisis XRD diperlukan sampel sebanyak 0,5-1 gram."
+      ]
+    },
+    {
+      "bagian": "Pengolahan data menggunakan software Origin",
+      "langkah": [
+        "Data hasil analisis XRD disimpan dalam file '.txt' yang dapat diolah menggunakan piranti lunak pengolah grafik seperti Origin ataupun Microsoft Excel.",
+        "Pola difraksi yang diperoleh dibandingkan dengan data literatur/sumber data yang ada. Gunakan VESTA untuk membuat pola difraksi dari data struktur kristal (CIF file atau Crystallographic Information File).",
+        "Berdasarkan hasil perbandingan pola difraksi, lakukan: (i) analisis jenis padatan berdasarkan tingkat keteraturannya dan (ii) analisis seluruh struktur/fasa yang terbentuk."
+      ]
+    },
+    {
+      "bagian": "Menentukan derajat kristalinitas (Origin)",
+      "langkah": [
+        "Menghitung luas daerah total: buka fitur 'peak analyzer'. Hitung luas total pola difraksi dengan mode baseline konstan y=0. Matikan fitur 'auto find peaks'. Tekan tombol add. Pilih salah satu puncak yang paling tinggi. Pilih 'adjust on preview graph' untuk pilihan 'integration width'. Atur daerah analisis dengan menggeser batas kurva keseluruhan. Pilih opsi untuk menghitung 'curve area' (luas daerah total di bawah kurva).",
+        "Menghitung luas puncak kristalin: buka fitur 'peak analyzer'. Gunakan baseline konstan y=0, tetapi pilih puncak-puncak yang sesuai dengan pola XRD. Pilih 'adjust on preview graph' untuk 'integration width'. Atur daerah analisis dengan menggeser batas setiap puncak. Pilih opsi untuk menghitung 'peak area' (luas puncak saja).",
+        "Menghitung derajat kristalinitas: jumlahkan luas seluruh puncak, bandingkan dengan luas total kurva, kalikan 100%."
+      ],
+      "catatan_dokumen": "Teks asli menyebut 'pola difraksi dari alumina' pada langkah luas total — kemungkinan sisa dari versi modul sebelumnya, karena sampel praktikum ini adalah zeolit, Sn-Bi, dan Mg2SnO4."
+    },
+    {
+      "bagian": "Menentukan ukuran kristalit (Scherrer)",
+      "langkah": [
+        "Tahap ini sama dengan langkah perhitungan luas puncak kristalin, tetapi opsi yang dicentang adalah 'peak center' dan 'FWHM'.",
+        "Setelah FWHM dan peak center setiap puncak diperoleh, masukkan masing-masing data ke dalam persamaan Scherrer.",
+        "Puncak dengan ukuran kristalit paling besar menunjukkan bidang dengan pertumbuhan dominan. Tentukan puncak mana yang memiliki ukuran kristalit paling besar dan mewakili bidang apa.",
+        "Tentukan ukuran kristalit rata-rata."
+      ]
+    }
+  ],
+  "kisi_kisi_laporan": {
+    "data_pengamatan": [
+      "Difraktogram sampel hasil sintesis."
+    ],
+    "pembahasan": [
+      "Kecocokan pola difraksi sampel hasil sintesis dengan database pola difraksi senyawa standar.",
+      "Identifikasi fasa yang dimiliki senyawa sampel.",
+      "Derajat kristalinitas sampel hasil sintesis (diambil dari semua puncak).",
+      "Ukuran partikel kristalit rata-rata (diambil dari 3 puncak tertinggi)."
+    ]
+  },
+  "tugas_pendahuluan": [
+    "Carilah pola XRD referensi dari zeolit FAU dan EMT. Tandai minimal 3 puncak pada pola XRD masing-masing dengan indeks Miller yang bersesuaian.",
+    "Apa arti dari sifat kristalin, semikristalin dan amorf? Carilah difraktogram senyawa padatan yang bersifat kristalin, semikristalin dan amorf.",
+    "Carilah 3 piranti lunak (freeware/shareware) yang dapat digunakan untuk mengolah dan menganalisa data XRD serbuk (selain yang disebutkan pada modul). Deskripsikan secara singkat fitur yang dapat dimanfaatkan dari software tersebut."
+  ],
+  "daftar_pustaka": [
+    "Housecroft, C.E., Sharpe, A.G. Inorganic Chemistry. 2005, 2nd ed., chapter 5, 146-147.",
+    "Holder, C. F.; Schaak, R. E. Tutorial on Powder X-Ray Diffraction for Characterizing Nanoscale Materials. ACS Nano 2019, 13 (7), 7359-7365.",
+    "Hulien, M. L.; Lekse, J. W.; Rosmus, K. A.; Devlin, K. P.; Glenn, J. R.; Wisneski, S. D.; Wildfong, P.; Lake, C. H.; MacNeil, J. H.; Aitken, J. A. An Inquiry-Based Project Focused on the X-Ray Powder Diffraction Analysis of Common Household Solids. J. Chem. Educ. 2015, 92 (12), 2152-2156.",
+    "Balko, J.; Lohwasser, R. H.; Sommer, M.; Thelakkat, M.; Thurn-Albrecht, T. Determination of the Crystallinity of Semicrystalline Poly(3-Hexylthiophene) by Means of Wide-Angle X-Ray Scattering. Macromolecules 2013, 46 (24), 9642-9651."
+  ]
+}

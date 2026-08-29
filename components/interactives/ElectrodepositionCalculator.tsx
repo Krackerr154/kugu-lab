@@ -48,14 +48,14 @@ export function ElectrodepositionCalculator() {
   return (
     <div className="space-y-4">
       {/* Interactive cell map */}
-      <section className="rounded-xl border border-[var(--border)] bg-white p-4">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-4">
         <h3 className="text-lg font-bold">Peta Interaktif Sel Elektrokimia</h3>
         <p className="text-sm text-[var(--muted)] mb-3">Klik komponen untuk penjelasan.</p>
         <CellExplorer />
       </section>
 
       {/* Current efficiency calculator */}
-      <section className="rounded-xl border border-[var(--border)] bg-white p-4">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-4">
         <h3 className="text-lg font-bold">Kalkulator Efisiensi Arus</h3>
         <p className="text-sm text-[var(--muted)] mb-3">
           Berdasarkan Hukum Faraday: massa teoretis = (I × t × M) / (n × F)
@@ -159,7 +159,7 @@ export function ElectrodepositionCalculator() {
         </div>
 
         {/* Results */}
-        <div className="mt-4 rounded-lg bg-slate-50 p-4">
+        <div className="mt-4 rounded-lg bg-[var(--surface-muted)] p-4">
           <h4 className="font-semibold text-sm mb-2">Hasil Perhitungan:</h4>
           <div className="grid gap-2 sm:grid-cols-2 text-sm">
             <div>
@@ -231,69 +231,69 @@ function CellExplorer() {
 
   return (
     <div>
-      <div className="relative mx-auto max-w-md rounded-lg border border-[var(--border)] bg-slate-50 p-4">
+      <div className="relative mx-auto max-w-md rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
         <svg viewBox="0 0 300 200" className="w-full" role="img" aria-label="Diagram sel elektrokimia">
           {/* DC Source */}
           <rect
             x="120" y="10" width="60" height="30" rx="4"
-            fill={selected === "dcSource" ? "#f59e0b" : "#e2e8f0"}
-            stroke="#475569" strokeWidth="2"
+            fill={selected === "dcSource" ? "#fcd400" : "#e1e3e4"}
+            stroke="#74777f" strokeWidth="2"
             onClick={() => setSelected("dcSource")}
             className="cursor-pointer"
           />
-          <text x="150" y="30" textAnchor="middle" fontSize="10" fill="#1e293b">DC</text>
+          <text x="150" y="30" textAnchor="middle" fontSize="10" fill="#191c1d">DC</text>
 
           {/* Wires */}
-          <line x1="120" y1="25" x2="60" y2="25" stroke="#475569" strokeWidth="2" />
-          <line x1="60" y1="25" x2="60" y2="70" stroke="#475569" strokeWidth="2" />
-          <line x1="180" y1="25" x2="240" y2="25" stroke="#475569" strokeWidth="2" />
-          <line x1="240" y1="25" x2="240" y2="70" stroke="#475569" strokeWidth="2" />
+          <line x1="120" y1="25" x2="60" y2="25" stroke="#74777f" strokeWidth="2" />
+          <line x1="60" y1="25" x2="60" y2="70" stroke="#74777f" strokeWidth="2" />
+          <line x1="180" y1="25" x2="240" y2="25" stroke="#74777f" strokeWidth="2" />
+          <line x1="240" y1="25" x2="240" y2="70" stroke="#74777f" strokeWidth="2" />
 
           {/* Anode (left) */}
           <rect
             x="50" y="70" width="20" height="60" rx="2"
-            fill={selected === "anode" ? "#dc2626" : "#94a3b8"}
-            stroke="#475569" strokeWidth="2"
+            fill={selected === "anode" ? "#ba1a1a" : "#74777f"}
+            stroke="#74777f" strokeWidth="2"
             onClick={() => setSelected("anode")}
             className="cursor-pointer"
           />
-          <text x="60" y="145" textAnchor="middle" fontSize="9" fill="#dc2626" fontWeight="bold">Anoda (+)</text>
+          <text x="60" y="145" textAnchor="middle" fontSize="9" fill="#ba1a1a" fontWeight="bold">Anoda (+)</text>
 
           {/* Cathode (right) */}
           <rect
             x="230" y="70" width="20" height="60" rx="2"
-            fill={selected === "cathode" ? "#16a34a" : "#94a3b8"}
-            stroke="#475569" strokeWidth="2"
+            fill={selected === "cathode" ? "#15803d" : "#74777f"}
+            stroke="#74777f" strokeWidth="2"
             onClick={() => setSelected("cathode")}
             className="cursor-pointer"
           />
-          <text x="240" y="145" textAnchor="middle" fontSize="9" fill="#16a34a" fontWeight="bold">Katoda (-)</text>
+          <text x="240" y="145" textAnchor="middle" fontSize="9" fill="#15803d" fontWeight="bold">Katoda (-)</text>
 
           {/* Electrolyte vessel */}
-          <rect x="40" y="70" width="220" height="80" rx="4" fill="none" stroke="#475569" strokeWidth="2" />
+          <rect x="40" y="70" width="220" height="80" rx="4" fill="none" stroke="#74777f" strokeWidth="2" />
           <rect
             x="70" y="75" width="160" height="70"
-            fill={selected === "electrolyte" ? "#6366f1" : "#a5b4fc"}
+            fill={selected === "electrolyte" ? "#001f3f" : "#afc8f0"}
             fillOpacity="0.3"
             onClick={() => setSelected("electrolyte")}
             className="cursor-pointer"
           />
-          <text x="150" y="115" textAnchor="middle" fontSize="9" fill="#4338ca">Elektrolit</text>
+          <text x="150" y="115" textAnchor="middle" fontSize="9" fill="#001f3f">Elektrolit</text>
 
           {/* Lead labels */}
-          <text x="90" y="20" fontSize="8" fill="#475569" onClick={() => setSelected("leads")} className="cursor-pointer">kabel</text>
-          <text x="210" y="20" fontSize="8" fill="#475569" onClick={() => setSelected("leads")} className="cursor-pointer">kabel</text>
+          <text x="90" y="20" fontSize="8" fill="#74777f" onClick={() => setSelected("leads")} className="cursor-pointer">kabel</text>
+          <text x="210" y="20" fontSize="8" fill="#74777f" onClick={() => setSelected("leads")} className="cursor-pointer">kabel</text>
 
           {/* Electron flow arrows */}
-          <text x="100" y="45" fontSize="8" fill="#7c3aed">e⁻ →</text>
-          <text x="195" y="45" fontSize="8" fill="#7c3aed">← e⁻</text>
+          <text x="100" y="45" fontSize="8" fill="#705d00">e⁻ →</text>
+          <text x="195" y="45" fontSize="8" fill="#705d00">← e⁻</text>
         </svg>
       </div>
 
       {selected ? (
         <div className="mt-3 rounded-md bg-[var(--primary-light)] p-3 text-sm">
           <p className="font-bold text-[var(--primary-dark)]">{components[selected].name}</p>
-          <p className="text-slate-700">{components[selected].description}</p>
+          <p className="text-[var(--text-primary)]">{components[selected].description}</p>
         </div>
       ) : (
         <p className="mt-3 text-center text-sm text-[var(--muted)]">Klik komponen pada diagram untuk penjelasan.</p>

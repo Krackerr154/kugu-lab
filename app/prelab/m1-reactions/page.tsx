@@ -172,7 +172,7 @@ export default function M1PrelabPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-3 text-sm text-[var(--on-surface-variant)]">
         <Link href="/prelab" className="hover:underline">Pre-lab</Link>
@@ -184,10 +184,9 @@ export default function M1PrelabPage() {
       <header className="rounded-xl bg-[var(--surface)] border border-[var(--outline-variant)]/30 shadow-ambient p-6 mb-6">
         <div className="flex items-start gap-4">
           <div
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-3xl"
-            style={{ backgroundColor: `${module.color}15` }}
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-3xl text-[var(--primary-container)]"
           >
-            <span aria-hidden="true">{module.icon}</span>
+            <span aria-hidden="true" className="material-symbols-outlined">{module.icon}</span>
           </div>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-[var(--primary)]" style={{ fontFamily: "Montserrat, sans-serif" }}>

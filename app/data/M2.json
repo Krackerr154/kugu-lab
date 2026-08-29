@@ -1,0 +1,278 @@
+{
+  "id": "M2",
+  "nomor": 2,
+  "judul": "Sintesis Material Fotokatalis Mg2SnO4 dengan Metode Sonokimia",
+  "halaman_pdf": [
+    13,
+    19
+  ],
+  "sub_sesi": [
+    {
+      "kode": "M2a",
+      "nama": "Sintesis Mg2SnO4"
+    },
+    {
+      "kode": "M2b",
+      "nama": "Tahap kalsinasi Mg2SnO4"
+    },
+    {
+      "kode": "M2c",
+      "nama": "Pengukuran nilai energi celah pita (band gap) Mg2SnO4"
+    },
+    {
+      "kode": "M2d",
+      "nama": "Uji fotokatalisis Mg2SnO4 hasil sintesis"
+    }
+  ],
+  "catatan_penomoran": "Daftar isi menyebut 'Uji fotokatalisis Mg2SnO4 hasil sintesis (M2c)', sedangkan badan modul memberi M2c untuk pengukuran band gap dan M2d untuk uji fotokatalisis. Jadwal praktikum mengelompokkan menjadi M2A-B dan M2C-D (dua pertemuan).",
+  "tujuan": [
+    "Memperoleh pemahaman mengenai sintesis Mg2SnO4",
+    "Karakterisasi produk dengan XRD",
+    "Penentuan nilai energi celah pita melalui pengukuran hambatan listrik",
+    "Evaluasi aktivitas fotokatalitik dalam mendegradasi metilen biru"
+  ],
+  "pendahuluan": {
+    "ringkas": "Fotokatalisis memanfaatkan energi cahaya untuk mempercepat reaksi kimia melalui pasangan elektron-hole pada material semikonduktor. Mg2SnO4 (spinel terbalik, Eg ~2,88-4,88 eV) disintesis secara sonokimia yang memanfaatkan kavitasi akustik untuk membentuk partikel oksida berukuran nano.",
+    "konsep_kunci": [
+      {
+        "topik": "Prinsip fotokatalisis",
+        "isi": "Fotokatalisis adalah proses yang memanfaatkan energi cahaya untuk mempercepat reaksi kimia dengan bantuan material fotokatalis. Material fotokatalis menyerap energi cahaya dan menghasilkan pasangan elektron-hole yang berperan dalam reaksi redoks, tanpa mengalami perubahan permanen secara kimia. Ketika disinari cahaya dengan panjang gelombang tertentu, elektron tereksitasi dari pita valensi ke pita konduksi membentuk pasangan elektron-hole; elektron berperan dalam reduksi dan hole dalam oksidasi."
+      },
+      {
+        "topik": "Reactive Oxygen Species (ROS)",
+        "isi": "Selain reduksi-oksidasi langsung, kontaminan juga dapat terdekomposisi melalui reaksi dengan spesi oksigen reaktif (ROS). ROS terbentuk dari interaksi pasangan elektron-hole dengan O2, H2O, atau OH-, menghasilkan radikal anion superoksida (•O2-), radikal hidroksil (•OH), dan hidrogen peroksida (H2O2). ROS mampu menonaktifkan mikroorganisme dan mengoksidasi senyawa organik."
+      },
+      {
+        "topik": "Keterbatasan TiO2",
+        "isi": "TiO2 memiliki band gap 3,2 eV, dipakai luas pada pemurnian air, pemurnian udara, dan self-cleaning paint. Performanya sangat baik di bawah sinar UV (lambda < 360 nm) tetapi kurang optimal di bawah sinar tampak (lambda = 400-700 nm) karena band gap-nya relatif besar. Sinar UV hanya sekitar 3% dari total spektrum elektromagnetik yang mencapai permukaan bumi. Rekombinasi elektron-hole yang cepat juga menurunkan efisiensi fotokatalisis."
+      },
+      {
+        "topik": "Material ortostanat",
+        "isi": "Material oksida berbasis ortostanat (SnO44-) berpotensi sebagai fotokatalis karena memiliki konduktivitas listrik yang baik; efisiensi fotokatalitik meningkat jika semikonduktor memiliki konduktivitas tinggi. Contoh: Mg2SnO4 dan Zn2SnO4, keduanya berstruktur kristal kubus spinel terbalik (inverse spinel)."
+      },
+      {
+        "topik": "Metode sonokimia",
+        "isi": "Mg2SnO4 termasuk semikonduktor dengan energi celah pita besar, sekitar 2,88-4,88 eV. Sintesis sonokimia memanfaatkan gelombang ultrasonik yang menghasilkan kavitasi akustik: pembentukan, pertumbuhan, dan pecahnya gelembung dalam larutan. Kavitasi berulang menimbulkan peningkatan suhu lokal dan tumbukan antargelembung intens yang memutus ikatan kimia dan membentuk ikatan baru, menghasilkan ikatan M-O-M dan jaringan -M-O-M-O-M-. Metode ini efektif menghasilkan partikel oksida berukuran nano; ukuran nano mengurangi peluang rekombinasi elektron-hole sehingga meningkatkan efisiensi fotokatalitik."
+      }
+    ]
+  },
+  "bahan": [
+    "SnCl2·2H2O",
+    "MgCl2·6H2O",
+    "etanol",
+    "NaOH 4 M",
+    "NH4OH",
+    "HCl pekat (32%)",
+    "H2O2 30%",
+    "air akuades",
+    "metilen biru",
+    "pasta konduktif (perak atau karbon)",
+    "plastic wrap",
+    "kertas amplas"
+  ],
+  "alat": [
+    "timbangan analitik",
+    "gelas kimia 100 mL",
+    "Erlenmeyer 250 mL",
+    "pipet tetes",
+    "pipet volume",
+    "hotplate dan pengaduk magnetik",
+    "indikator pH",
+    "ultrasonic bath",
+    "kertas saring",
+    "corong",
+    "alat filtrasi vakum",
+    "cawan penguapan",
+    "oven",
+    "furnace",
+    "krus alumina",
+    "mortar dan alu",
+    "alat press hidrolik",
+    "multimeter digital atau ohmmeter",
+    "probe dua titik atau empat titik",
+    "termokopel atau termometer digital",
+    "jangka sorong atau penggaris (mengukur dimensi pelet)",
+    "spektrofotometer UV-Vis (mode scanning 500-750 nm)",
+    "ruangan/kotak UV dengan lampu UV",
+    "sentrifugator (jika diperlukan)",
+    "klem dan statif",
+    "stopwatch atau timer"
+  ],
+  "prosedur": [
+    {
+      "kode": "M2a",
+      "bagian": "Sintesis Mg2SnO4",
+      "langkah": [
+        "Timbang SnCl2·2H2O sebanyak 1,355 g (6 mmol) kemudian larutkan dalam 5 mL air.",
+        "Tambahkan 1,2 mL HCl pekat (32%) lalu aduk 5 menit, kemudian tambahkan 0,75 mL H2O2 30% tetes-per-tetes. (Jika HCl 37% ambil 1 mL; jika H2O2 35% ambil setidaknya 0,516 mL, dapat dibulatkan menjadi 0,55 mL.)",
+        "Bagian atas dan permukaan gelas kimia ditutup seluruhnya dengan kaca arloji / aluminium foil / plastic wrap.",
+        "Aduk campuran dengan pengaduk magnetik selama 15 menit.",
+        "Buat campuran air dan etanol perbandingan 1:1 (volume akhir 50 mL) sebagai pelarut.",
+        "Timbang MgCl2·6H2O 2,44 g (12 mmol) dan larutkan dengan pelarut campuran air-etanol di dalam Erlenmeyer 250 mL.",
+        "Campurkan larutan SnCl2·2H2O ke dalam larutan MgCl2·6H2O dan bilas gelas kimia dengan 45 mL aqua DM, lalu masukkan ke dalam Erlenmeyer.",
+        "Aduk campuran reaksi selama 30 menit.",
+        "Tambahkan NaOH 4 M tetes demi tetes hingga pH larutan menjadi 10-13 (variatif).",
+        "Sonikasi larutan selama 2 jam (4 x 30 menit, dengan waktu istirahat 5 menit). Waktu sonikasi bervariasi mulai 1 jam (2 x 30 menit) hingga 2 jam (4 x 30 menit).",
+        "Pada proses ini, padatan berwarna putih akan terbentuk.",
+        "Saring padatan secara bertahap: filtrasi gravitasi, dilanjutkan sentrifugasi untuk memisahkan endapan jika dibutuhkan.",
+        "Cuci padatan dengan aqua DM untuk menghilangkan sisa ion lain seperti Na dan Cl.",
+        "Pindahkan padatan ke cawan penguapan. JANGAN dikeringkan di atas kertas saring. Keringkan selama 24 jam pada suhu 85 °C."
+      ]
+    },
+    {
+      "kode": "M2b",
+      "bagian": "Tahap kalsinasi Mg2SnO4",
+      "langkah": [
+        "Setelah padatan kering, timbang dan gerus padatan hingga homogen.",
+        "Tempatkan sampel padatan dalam krus alumina.",
+        "Kalsinasi sampel pada suhu 900 °C selama 24 jam dalam furnace, lalu timbang kembali untuk menghitung persentase hasil sintesis.",
+        "Siapkan sebanyak 0,5 g sampel hasil sintesis untuk analisis XRD."
+      ]
+    },
+    {
+      "kode": "M2c",
+      "bagian": "Pengukuran nilai energi celah pita Mg2SnO4",
+      "sub": [
+        {
+          "nama": "Penyiapan sampel",
+          "langkah": [
+            "Ambil bubuk Mg2SnO4 hasil kalsinasi dan press menjadi pelet padat dengan diameter dan ketebalan tertentu (2-5 mm) menggunakan alat press hidrolik.",
+            "Sintering pelet pada suhu 900 °C selama 12 jam.",
+            "Amplas kedua sisi pelet, bersihkan permukaan dari serbuk sisa pengampelasan dengan etanol lalu keringkan.",
+            "Lapisi kedua sisi pelet dengan elektrode konduktif seperti pasta perak untuk menjamin kontak listrik yang baik.",
+            "Keringkan pada suhu 120-150 °C."
+          ]
+        },
+        {
+          "nama": "Pengukuran hambatan",
+          "langkah": [
+            "Sambungkan pelet ke rangkaian pengukuran resistansi (dua probe atau empat probe).",
+            "Tempatkan pelet dalam oven/alat pemanas dengan suhu terkontrol dan monitor suhu menggunakan termokopel.",
+            "Ukur resistansi (R) pelet pada dua suhu berbeda yaitu suhu ruang dan 100 °C.",
+            "Catat nilai suhu (dalam Kelvin, T) dan nilai resistansi pada tiap titik suhu."
+          ]
+        },
+        {
+          "nama": "Analisis data",
+          "langkah": [
+            "Hitung konduktivitas sigma = L / (R x A), dengan L = ketebalan pelet, A = luas penampang, R = hambatan terukur.",
+            "Hitung ln(sigma1) dan ln(sigma2), serta 1/T1 dan 1/T2 (T dalam Kelvin).",
+            "Hitung slope dari dua titik data: slope = [ln(sigma2) - ln(sigma1)] / (1/T2 - 1/T1).",
+            "Hitung band gap: Eg = -2k x slope, dengan k = 8,617 x 10^-5 eV/K."
+          ]
+        }
+      ],
+      "rumus": [
+        {
+          "nama": "Konduktivitas",
+          "latex": "\\sigma = \\frac{L}{R \\times A}"
+        },
+        {
+          "nama": "Slope Arrhenius",
+          "latex": "slope = \\frac{\\ln(\\sigma_2) - \\ln(\\sigma_1)}{\\left(\\frac{1}{T_2} - \\frac{1}{T_1}\\right)}"
+        },
+        {
+          "nama": "Band gap",
+          "latex": "E_g = -2k \\times slope,\\quad k = 8{,}617 \\times 10^{-5}\\ \\mathrm{eV/K}"
+        }
+      ]
+    },
+    {
+      "kode": "M2d",
+      "bagian": "Uji fotokatalisis Mg2SnO4 hasil sintesis",
+      "langkah": [
+        "Buat larutan metilen biru 250 mL dengan konsentrasi 1,248 x 10^-5 M = 4 ppm dari larutan stok 6,24 x 10^-5 M = 20 ppm.",
+        "Ambil masing-masing 25 mL ke dalam 5 gelas kimia 100 mL. Beri label A, B, C, D, dan E.",
+        "Ukur absorbansi larutan A pada rentang panjang gelombang 500-750 nm (A0) dengan metode scanning pada spektrofotometer UV-Vis.",
+        "Tambahkan 0,10 g senyawa hasil sintesis ke dalam gelas kimia B, C, D, dan E dan aduk. (Gelas kimia A hanya berisi larutan metilen biru tanpa sampel = blanko.)",
+        "Simpan gelas kimia dalam ruangan UV mini tanpa menyalakan lampu UV (ruangan gelap), aduk selama 1 jam dan diamkan 5 menit.",
+        "Ambil 5 mL larutan sampel A dan B kemudian ukur absorbansinya (Ai). Hati-hati jangan sampai padatan fotokatalis terbawa; lakukan sentrifugasi jika padatan sulit dipisahkan.",
+        "Nyalakan sinar UV selama 30 menit. Matikan pengaduk dan lampu UV selama 5 menit. Ambil 5 mL larutan A dan C dan ukur absorbansinya.",
+        "Ulangi langkah sebelumnya pada larutan A dan D (penyinaran UV 60 menit).",
+        "Ulangi langkah sebelumnya pada larutan A dan E (penyinaran UV 90 menit).",
+        "Gambarkan grafik Ai/A0 vs waktu (menit).",
+        "Gambar grafik ln(Ci/C0) vs waktu dan hitung orde reaksi degradasi metilen biru menggunakan fotokatalis Mg2SnO4."
+      ],
+      "desain_eksperimen": [
+        {
+          "gelas": "A",
+          "perlakuan": "blanko metilen biru tanpa fotokatalis, diukur di setiap titik waktu"
+        },
+        {
+          "gelas": "B",
+          "perlakuan": "fotokatalis, gelap (0 menit UV)"
+        },
+        {
+          "gelas": "C",
+          "perlakuan": "fotokatalis, UV 30 menit"
+        },
+        {
+          "gelas": "D",
+          "perlakuan": "fotokatalis, UV 60 menit"
+        },
+        {
+          "gelas": "E",
+          "perlakuan": "fotokatalis, UV 90 menit"
+        }
+      ]
+    }
+  ],
+  "kisi_kisi_laporan": {
+    "data_pengamatan": [
+      "Uraikan bentuk, warna, dan tekstur padatan sebelum dan sesudah kalsinasi.",
+      "Massa prekursor dan produk.",
+      "Perubahan (warna, adanya endapan, gas, dll) yang terjadi saat pereaksi ditambahkan pada proses sintesis.",
+      "Data R dan T pada pengukuran konduktivitas.",
+      "Absorbansi larutan A, B, C, D, dan E pada uji fotokatalis."
+    ],
+    "pembahasan": [
+      {
+        "topik": "Sintesis dan Kalsinasi",
+        "poin": [
+          "Hitung dan bahas rendemen sintesis, serta kemungkinan penyebab penyimpangan dari massa teoritis.",
+          "Jelaskan peran bahan pereaksi dan pengaruh metode sonokimia terhadap pembentukan partikel."
+        ]
+      },
+      {
+        "topik": "Pengukuran konduktivitas dan Band Gap",
+        "poin": [
+          "Tuliskan data R dan T yang diperoleh dan nilai konduktivitas listriknya.",
+          "Tunjukkan hasil perhitungan band gap dan bandingkan dengan nilai literatur.",
+          "Bahas apakah band gap-nya mendukung aktivitas sebagai fotokatalis di bawah sinar UV atau tampak."
+        ]
+      },
+      {
+        "topik": "Uji Fotokatalitik",
+        "poin": [
+          "Bahas penurunan absorbansi metilen biru seiring waktu penyinaran.",
+          "Tampilkan dan jelaskan grafik Ai/A0 dan ln(Ci/C0) terhadap waktu.",
+          "Tentukan orde reaksi degradasi dan evaluasi efektivitas Mg2SnO4 sebagai fotokatalis.",
+          "Prediksikan aktivitas Mg2SnO4 jika sinar tampak digunakan sebagai sumber cahaya."
+        ]
+      },
+      {
+        "topik": "Keterkaitan Hasil",
+        "poin": [
+          "Kaitkan antara struktur, ukuran partikel, band gap, dan aktivitas fotokatalitik dari Mg2SnO4.",
+          "Bahas kelebihan atau keterbatasan Mg2SnO4 berdasarkan hasil yang diperoleh."
+        ]
+      }
+    ],
+    "catatan_penomoran": "Dokumen asli memakai penomoran tidak berurutan pada bagian pembahasan (1, 6, 7, 8)."
+  },
+  "tugas_pendahuluan": [
+    "Jelaskan prinsip dasar fotokatalisis, termasuk peran pasangan elektron-hole dan pembentukan spesi oksigen reaktif (ROS) dalam reaksi degradasi senyawa kontaminan.",
+    "Band gap merupakan salah satu parameter penting pada material semikonduktor. Jelaskan secara singkat apa yang dimaksud dengan band gap dan bagaimana cara menentukan nilai band gap secara eksperimental menggunakan pengukuran hambatan listrik.",
+    "Metode sonokimia digunakan dalam sintesis Mg2SnO4. Jelaskan secara ringkas prinsip metode sonokimia dan peran kavitasi akustik dalam pembentukan partikel.",
+    "Apa yang dimaksud dengan proses kalsinasi dalam sintesis material oksida, dan mengapa tahap ini penting dalam pembuatan Mg2SnO4?",
+    "Tuliskan reaksi pembentukan Mg2SnO4 berdasarkan pereaksi yang digunakan dan jelaskan proses transformasi ion Mg2+(aq) dan Sn4+(aq) menjadi oksidanya. Hitung juga massa teoritis Mg2SnO4 yang dihasilkan dari jumlah pereaksi sesuai prosedur sintesis.",
+    "Berdasarkan prinsip fotokatalisis, bagaimana kecenderungan perubahan absorbansi larutan metilen biru terhadap waktu selama penyinaran UV dalam uji aktivitas fotokatalitik Mg2SnO4? Apa yang akan terjadi jika sumber cahaya diganti dengan sinar tampak (lambda = 400-700 nm), dan mengapa?"
+  ],
+  "daftar_pustaka": [
+    "Aisnada, A.N.E. (2018) Sintesis Komposit Semikonduktor TiO2 anatase/M2SnO4 (M=Mg, Zn) sebagai Material Fotokatalis, Tugas Akhir Sarjana Program Studi Kimia ITB.",
+    "Tang, H., Cheng, C., Yu, G., Liu, H., Chen, W. (2015) Structure and electrochemical properties of Mg2SnO4 nanoparticles synthesized by a facile co-precipitation method, Materials Chemistry and Physics 159, 167-172.",
+    "Zhang, P., Hong, R.Y., Chen, Q., Feng, W.G. (2014) On the electrical conductivity and photocatalytic activity of aluminum-doped zinc oxide, Powder Technology 253, 360-367.",
+    "Boffa, V., Yue, Y., He, W. (2012) Sol-Gel Synthesis of a Biotemplated Inorganic Photocatalyst: A Simple Experiment for Introducing Undergraduate Students to Materials Chemistry, Journal of Chemical Education 89 (11), 1466-1469.",
+    "Costa, J. M., Lima, L. C., Li, M. S., Santos, I. M. G., Silva, M. R. S., Maia, A. S. (2019) Structural and Photocatalytic Properties of Mg2SnO4 Spinel Obtained by Modified Pechini Method, Materials Letter (236), 320-323."
+  ]
+}

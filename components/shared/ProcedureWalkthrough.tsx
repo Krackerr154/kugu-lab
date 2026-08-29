@@ -102,7 +102,7 @@ export function ProcedureWalkthrough({
             <span className="text-xs font-semibold text-[var(--on-surface-variant)] uppercase tracking-wider">
               Langkah {currentStep + 1} dari {totalSteps}
             </span>
-            <span className="text-xs font-bold text-[var(--secondary)]">{progressPct}%</span>
+            <span className="text-xs font-bold text-[var(--primary-container)]">{progressPct}%</span>
           </div>
           <div className="h-2 rounded-full bg-[var(--surface-container-high)] overflow-hidden">
             <div
@@ -203,7 +203,7 @@ export function ProcedureWalkthrough({
 
             {/* Safety note */}
             {step.safetyNote && (
-              <div className="mt-3 rounded-lg border-l-4 border-[var(--error)] bg-[var(--error-container)]/30 p-3">
+              <div className="mt-3 rounded-lg border border-[var(--error)] bg-[var(--error-container)]/30 p-3">
                 <div className="flex items-start gap-2">
                   <span aria-hidden="true" className="material-symbols-outlined text-[var(--error)] text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
                     warning
@@ -219,7 +219,7 @@ export function ProcedureWalkthrough({
             {/* Expected observation */}
             {step.expectedObservation && (
               <div className="mt-3 rounded-lg border border-[var(--secondary)]/30 bg-[var(--secondary-container)]/10 p-3">
-                <p className="text-xs font-semibold text-[var(--secondary)] uppercase tracking-wider mb-1">
+                <p className="text-xs font-semibold text-[var(--primary-container)] uppercase tracking-wider mb-1">
                   Observasi yang Diharapkan
                 </p>
                 <p className="text-sm text-[var(--on-surface)]"><ChemText>{step.expectedObservation}</ChemText></p>
@@ -258,7 +258,7 @@ export function ProcedureWalkthrough({
                           : selected
                           ? "border-[var(--error)] bg-[var(--error-container)]/30 text-[var(--error)]"
                           : "border-[var(--outline-variant)] text-[var(--on-surface-variant)] opacity-60"
-                        : "border-[var(--outline-variant)] text-[var(--on-surface)] hover:border-[var(--secondary)] hover:bg-[var(--surface-container)]"
+                        : "border-[var(--outline-variant)] text-[var(--on-surface)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)]"
                     }`}
                   >
                     <span className="flex items-center gap-3">

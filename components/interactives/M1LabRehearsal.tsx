@@ -228,7 +228,7 @@ export function M1LabRehearsal() {
               Latih urutan kerja sebelum masuk lab: pilih tindakan, prediksi hasil, amati perubahan, lalu gunakan bukti untuk mengambil keputusan.
             </p>
           </div>
-          <div className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-xs text-white/80">
+          <div className="rounded-xl border border-white/15 bg-[var(--surface-control)]/10 px-3 py-2 text-xs text-white/80">
             <p className="font-semibold text-white">Skenario latihan</p>
             <p className="mt-0.5">Cuplikan X · jalur konfirmasi klorida</p>
           </div>
@@ -251,15 +251,15 @@ export function M1LabRehearsal() {
                   active
                     ? "border-[var(--secondary-container)] bg-[var(--secondary-container)] text-[var(--primary)]"
                     : complete
-                    ? "border-white/30 bg-white/10 text-white"
+                    ? "border-white/30 bg-[var(--surface-control)]/10 text-white"
                     : unlocked
-                    ? "border-white/15 bg-white/5 text-white/75 hover:border-white/35 hover:bg-white/10"
-                    : "cursor-not-allowed border-white/10 bg-white/[0.03] text-white/35"
+                    ? "border-white/15 bg-[var(--surface-control)]/5 text-white/75 hover:border-white/35 hover:bg-[var(--surface-control)]/10"
+                    : "cursor-not-allowed border-white/10 bg-[var(--surface-control)]/[0.03] text-white/35"
                 }`}
               >
                 <span className="flex items-center gap-2">
                   <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                    active ? "bg-[var(--primary)] text-white" : complete ? "bg-[var(--secondary-container)] text-[var(--primary)]" : "bg-white/10"
+                    active ? "bg-[var(--primary)] text-white" : complete ? "bg-[var(--secondary-container)] text-[var(--primary)]" : "bg-[var(--surface-control)]/10"
                   }`}>
                     {complete ? "✓" : index + 1}
                   </span>
@@ -290,21 +290,21 @@ export function M1LabRehearsal() {
             <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/75 to-transparent" />
             <div className="relative z-10 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--on-surface-variant)]">
               <span>Bench view</span>
-              <span className="rounded-full bg-white/70 px-2 py-1">Cuplikan X</span>
+              <span className="rounded-full bg-[var(--surface-control)]/70 px-2 py-1">Cuplikan X</span>
             </div>
 
-            <div className="absolute left-5 top-16 rounded-lg border border-[var(--outline-variant)]/60 bg-white/75 px-2.5 py-2 text-[10px] font-semibold text-[var(--on-surface-variant)] shadow-sm sm:left-8">
+            <div className="absolute left-5 top-16 rounded-lg border border-[var(--outline-variant)]/60 bg-[var(--surface-control)]/75 px-2.5 py-2 text-[10px] font-semibold text-[var(--on-surface-variant)] shadow-sm sm:left-8">
               <span aria-hidden="true" className="material-symbols-outlined mr-1 align-middle text-[15px]">air</span>
               Fume hood siap
             </div>
 
             <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 items-end gap-5 sm:gap-8">
-              <div className="relative flex h-44 w-20 items-end justify-center rounded-b-[28px] rounded-t-lg border-2 border-slate-400/80 bg-white/65 p-1.5 shadow-sm sm:h-52 sm:w-24">
+              <div className="relative flex h-44 w-20 items-end justify-center rounded-b-[28px] rounded-t-lg border-2 border-[var(--outline)]/80 bg-[var(--surface-control)]/65 p-1.5 shadow-sm sm:h-52 sm:w-24">
                 <div className={`rehearsal-liquid absolute bottom-2 left-2 right-2 rounded-b-[20px] bg-gradient-to-b from-sky-200/80 to-sky-400/80 transition-all duration-700 ${visiblePrecipitate ? "h-28 sm:h-36" : "h-24 sm:h-32"}`}>
-                  <div className={`rehearsal-precipitate absolute bottom-1 left-1/2 h-4 w-14 -translate-x-1/2 rounded-full bg-white/95 shadow-inner transition-all duration-700 sm:w-16 ${visiblePrecipitate && !dissolvedPrecipitate ? "scale-100 opacity-100" : "scale-75 opacity-0"}`} />
+                  <div className={`rehearsal-precipitate absolute bottom-1 left-1/2 h-4 w-14 -translate-x-1/2 rounded-full bg-[var(--surface-control)]/95 shadow-inner transition-all duration-700 sm:w-16 ${visiblePrecipitate && !dissolvedPrecipitate ? "scale-100 opacity-100" : "scale-75 opacity-0"}`} />
                   {activeStage === 1 && isPlaying && (
                     <span
-                      className="rehearsal-ripple absolute left-1/2 top-0 h-1 w-10 -translate-x-1/2 rounded-full border-t-2 border-white/70"
+                      className="rehearsal-ripple absolute left-1/2 top-0 h-1 w-10 -translate-x-1/2 rounded-full border-t border-white/70"
                       aria-hidden="true"
                     />
                   )}
@@ -316,7 +316,7 @@ export function M1LabRehearsal() {
                     {activeStage === 1 && (
                       <>
                         <span
-                          className={`absolute left-1/2 top-0 h-6 w-2.5 -translate-x-1/2 rounded-t-sm rounded-b-full border border-slate-400/70 bg-white/80 transition-opacity duration-300 ${
+                          className={`absolute left-1/2 top-0 h-6 w-2.5 -translate-x-1/2 rounded-t-sm rounded-b-full border border-[var(--outline)]/70 bg-[var(--surface-control)]/80 transition-opacity duration-300 ${
                             isPlaying ? "opacity-100" : "opacity-0"
                           }`}
                         />
@@ -331,9 +331,9 @@ export function M1LabRehearsal() {
                     )}
                     {activeStage === 3 && isPlaying && (
                       <>
-                        <span className="rehearsal-steam absolute bottom-1 left-1/2 -ml-4 text-base text-slate-400">♨</span>
-                        <span className="rehearsal-steam rehearsal-steam-delay absolute bottom-1 left-1/2 -ml-1.5 text-lg text-slate-500">♨</span>
-                        <span className="rehearsal-steam rehearsal-steam-delay-2 absolute bottom-1 left-1/2 ml-1.5 text-base text-slate-400">♨</span>
+                        <span className="rehearsal-steam absolute bottom-1 left-1/2 -ml-4 text-base text-[var(--text-secondary)]">♨</span>
+                        <span className="rehearsal-steam rehearsal-steam-delay absolute bottom-1 left-1/2 -ml-1.5 text-lg text-[var(--text-secondary)]">♨</span>
+                        <span className="rehearsal-steam rehearsal-steam-delay-2 absolute bottom-1 left-1/2 ml-1.5 text-base text-[var(--text-secondary)]">♨</span>
                       </>
                     )}
                   </div>
@@ -352,13 +352,13 @@ export function M1LabRehearsal() {
                     {activeStage === 1 ? "HCl ditambahkan" : "Penangas aktif"}
                   </div>
                 )}
-                <span className="relative z-10 mb-1 rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-bold text-slate-600">X</span>
+                <span className="relative z-10 mb-1 rounded bg-[var(--surface-control)]/70 px-1.5 py-0.5 text-[10px] font-bold text-[var(--text-secondary)]">X</span>
               </div>
 
-              <div className="flex h-36 w-28 items-end justify-center rounded-xl border-b-4 border-slate-500 bg-slate-300/50 p-2 shadow-inner sm:h-40 sm:w-32">
+              <div className="flex h-36 w-28 items-end justify-center rounded-xl border border-[var(--border-strong)] bg-[var(--surface-container-high)]/60 p-2 shadow-inner sm:h-40 sm:w-32">
                 <div className="grid grid-cols-3 gap-2 opacity-70">
                   {[0, 1, 2, 3, 4, 5].map((slot) => (
-                    <span key={slot} className="h-9 w-5 rounded-b-full border border-slate-500/70 bg-slate-100/80 sm:h-11 sm:w-6" />
+                    <span key={slot} className="h-9 w-5 rounded-b-full border border-[var(--border-strong)]/70 bg-[var(--surface-muted)]/80 sm:h-11 sm:w-6" />
                   ))}
                 </div>
               </div>
@@ -366,12 +366,12 @@ export function M1LabRehearsal() {
 
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-[10px] font-medium text-[var(--on-surface-variant)]">
               <span>Tabung reaksi · rak · pipet tetes</span>
-              <span className={`rounded-full px-2 py-1 ${visiblePrecipitate && !dissolvedPrecipitate ? "bg-white text-slate-700" : "bg-white/60"}`}>
+              <span className={`rounded-full px-2 py-1 ${visiblePrecipitate && !dissolvedPrecipitate ? "bg-[var(--surface-control)] text-[var(--text-primary)]" : "bg-[var(--surface-control)]/60"}`}>
                 {dissolvedPrecipitate ? "Endapan larut" : visiblePrecipitate ? "Endapan putih" : "Belum ada hasil"}
               </span>
             </div>
             {activeStage === 0 && !allSafetyChecked && (
-              <div className="absolute bottom-12 left-1/2 -translate-x-1/2 rounded-full border border-[var(--secondary)]/40 bg-white/90 px-3 py-1.5 text-center text-[10px] font-semibold text-[var(--on-surface-variant)] shadow-sm">
+              <div className="absolute bottom-12 left-1/2 -translate-x-1/2 rounded-full border border-[var(--secondary)]/40 bg-[var(--surface-control)]/90 px-3 py-1.5 text-center text-[10px] font-semibold text-[var(--on-surface-variant)] shadow-sm">
                 Lengkapi checklist untuk membuka animasi
               </div>
             )}
@@ -436,7 +436,7 @@ export function M1LabRehearsal() {
                 <legend className="text-sm font-bold text-[var(--on-surface)]">Prediksi pengamatan sebelum melihat hasil</legend>
                 <div className="mt-3 space-y-2">
                   {observationOptions.map((option) => (
-                    <label key={option.value} className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-sm transition-colors ${observation === option.value ? "border-[var(--secondary)] bg-[var(--secondary-container)]/15" : "border-[var(--outline-variant)]/50 bg-white hover:border-[var(--secondary)]"}`}>
+                    <label key={option.value} className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-sm transition-colors ${observation === option.value ? "border-[var(--secondary)] bg-[var(--secondary-container)]/15" : "border-[var(--outline-variant)]/50 bg-[var(--surface-control)] hover:border-[var(--secondary)]"}`}>
                       <input type="radio" name="m1-observation" value={option.value} checked={observation === option.value} onChange={() => { setObservation(option.value); setObservationRevealed(false); }} className="h-4 w-4 accent-[var(--secondary)]" />
                       <span>{option.label}</span>
                     </label>
@@ -468,7 +468,7 @@ export function M1LabRehearsal() {
               <p className="mt-1 text-xs leading-relaxed text-[var(--on-surface-variant)]">Prediksikan kelarutan sebelum menjalankan animasi penangas air.</p>
               <div className="mt-3 space-y-2">
                 {hotWaterOptions.map((option) => (
-                  <label key={option.value} className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-sm transition-colors ${hotWaterResult === option.value ? "border-[var(--secondary)] bg-[var(--secondary-container)]/15" : "border-[var(--outline-variant)]/50 bg-white hover:border-[var(--secondary)]"}`}>
+                  <label key={option.value} className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-sm transition-colors ${hotWaterResult === option.value ? "border-[var(--secondary)] bg-[var(--secondary-container)]/15" : "border-[var(--outline-variant)]/50 bg-[var(--surface-control)] hover:border-[var(--secondary)]"}`}>
                     <input type="radio" name="m1-hot-water" value={option.value} checked={hotWaterResult === option.value} onChange={() => { setHotWaterResult(option.value); setHotWaterRevealed(false); }} className="h-4 w-4 accent-[var(--secondary)]" />
                     <span>{option.label}</span>
                   </label>
@@ -520,7 +520,7 @@ export function M1LabRehearsal() {
                       type="button"
                       aria-pressed={selectedIon === option.value}
                       onClick={() => { setSelectedIon(option.value); setDecisionConfirmed(false); }}
-                      className={`min-h-11 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary)] ${selectedIon === option.value ? "border-[var(--secondary)] bg-[var(--secondary-container)]/20 text-[var(--on-surface)]" : "border-[var(--outline-variant)]/50 bg-white text-[var(--on-surface-variant)] hover:border-[var(--secondary)]"}`}
+                      className={`min-h-11 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary)] ${selectedIon === option.value ? "border-[var(--secondary)] bg-[var(--secondary-container)]/20 text-[var(--on-surface)]" : "border-[var(--outline-variant)]/50 bg-[var(--surface-control)] text-[var(--on-surface-variant)] hover:border-[var(--secondary)]"}`}
                     >
                       <ChemText>{option.label}</ChemText>
                     </button>

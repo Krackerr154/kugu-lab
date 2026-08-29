@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navigation } from "@/components/layout/Navigation";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { TransitionWatcher } from "@/components/layout/TransitionLink";
 
 export const metadata: Metadata = {
   title: "KUGU Lab — Interactive Praktikum Kimia Unsur Golongan Utama",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="id" className="h-full antialiased">
+    <html lang="id" className="h-full antialiased" suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap"
@@ -23,8 +24,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-full bg-[var(--background)] text-[var(--on-surface)] flex flex-col lg:flex-row">
+        <TransitionWatcher />
         <Navigation />
-        <div className="app-shell flex-1 flex flex-col lg:ml-20 min-h-screen">
+        <div className="app-shell min-w-0 flex-1 flex flex-col min-h-screen transition-all duration-300 ease-out">
           <AppHeader />
           <main className="flex-1">{children}</main>
           <footer className="no-print border-t border-[var(--outline-variant)] bg-[var(--surface)] py-4 px-6 text-center text-xs text-[var(--on-surface-variant)]">
@@ -33,7 +35,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             Pendamping digital ini bukan pengganti SOP, SDS, putusan instruktur, atau kerja praktikum fisik.
           </footer>
         </div>
-      </body>
+{/* impeccable-live-start */}
+<script src="http://localhost:8400/live.js?token=c39a60ff-9e14-4f3b-9f80-e6da6c1894f4"></script>
+{/* impeccable-live-end */}
+</body>
     </html>
   );
 }

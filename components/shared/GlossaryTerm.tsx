@@ -29,7 +29,7 @@ export function GlossaryTermInline({ term, english, definition }: GlossaryTermPr
           <span className="font-semibold">{term}</span>
           {english && <span className="text-xs text-[var(--muted)]"> ({english})</span>}
           <br />
-          <span className="text-slate-600">{definition}</span>
+          <span className="text-[var(--text-secondary)]">{definition}</span>
         </span>
       )}
     </span>

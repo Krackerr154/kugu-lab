@@ -13,7 +13,7 @@ export function SourceBadge({
   lastReviewed = null,
 }: SourceBadgeProps) {
   return (
-    <div className="inline-flex flex-wrap items-center gap-2 rounded-md bg-slate-100 px-3 py-1 text-xs text-[var(--muted)]">
+    <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-[var(--outline-variant)] bg-[var(--surface-muted)] px-3 py-1 text-xs text-[var(--muted)]">
       <span className="font-medium">Manual {revision}</span>
       <span>·</span>
       <span>Hal. {pages}</span>

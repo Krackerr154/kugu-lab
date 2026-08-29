@@ -13,7 +13,7 @@ export function TGAWorkspace() {
 
   return (
     <div className="space-y-4">
-      <div role="group" aria-label="Worksheet Modul 6" className="flex gap-1 rounded-lg bg-slate-100 p-1">
+      <div role="group" aria-label="Worksheet Modul 6" className="flex gap-1 rounded-lg bg-[var(--surface-muted)] p-1">
         {[
           { id: "thermogram", label: "Termogram / DTG" },
           { id: "worksheet", label: "Worksheet Teoretis vs Eksperimental" },
@@ -99,7 +99,7 @@ function Thermogram() {
         data: tgData.map((p) => [p.x, p.y]),
         smooth: true,
         symbol: "none",
-        lineStyle: { color: "#dc2626", width: 2 },
+        lineStyle: { color: "#ba1a1a", width: 2 },
         yAxisIndex: 0,
       },
       {
@@ -108,7 +108,7 @@ function Thermogram() {
         data: dtgData.map((p) => [p.x, p.y]),
         smooth: true,
         symbol: "none",
-        lineStyle: { color: "#3b82f6", width: 1, type: "dashed" },
+        lineStyle: { color: "#476083", width: 1, type: "dashed" },
         yAxisIndex: 1,
       },
     ],
@@ -133,7 +133,7 @@ function Thermogram() {
         {annotations.length > 0 && (
           <button
             onClick={() => setAnnotations([])}
-            className="rounded-md border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-slate-50"
+            className="rounded-md border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-[var(--surface-muted)]"
           >
             Hapus ({annotations.length})
           </button>
@@ -160,7 +160,7 @@ function Thermogram() {
             </thead>
             <tbody>
               {annotations.map((a, i) => (
-                <tr key={i} className="border-b border-slate-100">
+                <tr key={i} className="border-b border-[var(--outline-variant)]">
                   <td className="py-1 pr-3">{i + 1}</td>
                   <td className="py-1 pr-3 font-mono">{a.x.toFixed(0)}</td>
                   <td className="py-1 pr-3">—</td>
@@ -172,7 +172,7 @@ function Thermogram() {
         </div>
       )}
 
-      <div className="mt-3 rounded-md bg-slate-50 p-3 text-xs">
+      <div className="mt-3 rounded-md bg-[var(--surface-muted)] p-3 text-xs">
         <p className="font-semibold">Region kunci (berdasarkan sampel):</p>
         <ul className="mt-1 space-y-0.5 text-[var(--muted)]">
           <li>• ~150°C: kehilangan air/hidrasi (≈2%)</li>
@@ -278,8 +278,8 @@ function TheoreticalWorksheet() {
         Asumsi model harus disertakan dalam laporan.
       </p>
 
-      <div className="mt-3 rounded-md bg-[var(--danger-light)] p-3 text-xs text-red-800">
-        🛑 Jalur "Henti dan Panggil Asisten": untuk anomali gas/perubahan tak terduga, henti instrumen dan panggil asisten.
+      <div className="mt-3 rounded-md bg-[var(--danger-light)] p-3 text-xs text-[var(--danger)]">
+        <span aria-hidden="true" className="material-symbols-outlined align-middle text-base">report</span> Jalur "Henti dan Panggil Asisten": untuk anomali gas/perubahan tak terduga, henti instrumen dan panggil asisten.
       </div>
     </section>
   );

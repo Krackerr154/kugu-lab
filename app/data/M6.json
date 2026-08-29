@@ -1,0 +1,142 @@
+{
+  "id": "M6",
+  "nomor": 6,
+  "judul": "Karakterisasi dan Interpretasi Data TGA Senyawa Hasil Sintesis",
+  "halaman_pdf": [
+    34,
+    38
+  ],
+  "sub_sesi": [
+    "M6 (dijadwalkan bersama M5: 'M5-M6')"
+  ],
+  "tujuan": [
+    "Memahami prinsip dasar thermogravimetric analysis (TGA)",
+    "Menganalisis perubahan massa dan suhu onset dua sampel zeolit",
+    "Mengolah data TGA dan DTG menggunakan piranti lunak Origin"
+  ],
+  "pendahuluan": {
+    "ringkas": "TGA mengukur perubahan massa sampel secara kontinu selama pemanasan/pendinginan/penahanan suhu dalam atmosfer terkontrol. Penurunan massa menandai dekomposisi, reduksi, atau evaporasi; kenaikan massa menandai absorpsi atau oksidasi. Kurva DTG (turunan pertama TGA) memperlihatkan laju kehilangan massa dan titik belok.",
+    "konsep_kunci": [
+      {
+        "topik": "Prinsip dasar TGA",
+        "isi": "TGA mengukur perubahan massa sampel secara kontinu selama proses pemanasan, pendinginan, atau penahanan suhu dalam atmosfer yang terkontrol (udara, nitrogen, atau argon). Dengan mengamati perubahan massa pada suhu tertentu, TGA memungkinkan identifikasi proses termal seperti dekomposisi, reduksi, evaporasi (ditandai penurunan massa). Sebaliknya peningkatan massa mengindikasikan absorpsi atau oksidasi."
+      },
+      {
+        "topik": "Penyajian data",
+        "isi": "Hasil pengukuran TGA disajikan sebagai grafik massa sampel (sumbu Y) terhadap suhu atau waktu (sumbu X). Massa dapat dinyatakan dalam gram atau persen massa relatif terhadap massa awal (100%)."
+      },
+      {
+        "topik": "Contoh dekomposisi CaCO3",
+        "isi": "Ketika CaCO3 dipanaskan dari suhu ruang hingga 900 °C dalam suasana inert (aliran N2), CaCO3 terdekomposisi menjadi CaO dan gas CO2. Dekomposisi termal ini melibatkan pengurangan massa hingga 44%. Kesesuaian persentase pengurangan massa teoritis dan eksperimen menunjukkan proses dekomposisi benar terjadi.",
+        "reaksi": "CaCO3(s) -> CaO(s) + CO2(g)",
+        "perhitungan": "%massa yang berkurang = Mr CO2 / Mr CaCO3 x 100% = 44 g/mol / 100 g/mol = 44%"
+      },
+      {
+        "topik": "Onset temperature",
+        "isi": "Penentuan onset temperature dilakukan dengan cara mengekstrapolasi 2 garis lurus pada kurva termogram (lihat Gambar 6.2)."
+      },
+      {
+        "topik": "Kurva DTG",
+        "isi": "Kurva Differential Thermogravimetry (DTG) merupakan turunan pertama dari kurva TGA terhadap waktu atau suhu, yang menunjukkan laju perubahan massa selama pemanasan. Dengan DTG dapat diidentifikasi puncak maksimum laju kehilangan massa (suhu di mana dekomposisi paling intensif) dan inflection point/titik belok yang mencerminkan perubahan karakteristik mekanisme dekomposisi."
+      },
+      {
+        "topik": "Fokus analisis praktikum",
+        "isi": "Perubahan pada dua termogram zeolit dianalisis secara kuantitatif dan kualitatif. Analisis difokuskan pada tiga parameter utama: pengurangan massa, suhu onset, dan titik belok dari masing-masing kurva termogram. Ketiganya memberi gambaran stabilitas termal dan mekanisme dekomposisi sampel. Analisis data menggunakan Origin untuk pemrosesan kurva TGA dan DTG secara numerik, termasuk penentuan nilai turunan dan interpolasi titik kritis."
+      }
+    ]
+  },
+  "rumus": [
+    {
+      "nama": "Persen massa berkurang teoritis",
+      "latex": "\\%\\text{massa berkurang} = \\frac{M_r\\,\\mathrm{CO_2}}{M_r\\,\\mathrm{CaCO_3}} \\times 100\\% = \\frac{44}{100} = 44\\%"
+    }
+  ],
+  "prosedur": [
+    {
+      "bagian": "1. Persiapan sampel",
+      "langkah": [
+        "Timbang sekitar 0,3 g sampel zeolit kering menggunakan timbangan analitik.",
+        "Masukkan sampel ke dalam wadah (crucible) berbahan inert, seperti alumina atau platinum.",
+        "Pastikan permukaan sampel rata dan tidak menumpuk di satu sisi crucible."
+      ]
+    },
+    {
+      "bagian": "2. Pemasangan sampel",
+      "langkah": [
+        "Pasang crucible berisi sampel pada neraca mikro di dalam ruang pemanas TGA.",
+        "Pasang crucible referensi kosong (jika diperlukan oleh instrumen) untuk menjaga keseimbangan sistem."
+      ]
+    },
+    {
+      "bagian": "3. Pengaturan program pemanasan",
+      "langkah": [
+        "Atur laju alir gas N2.",
+        "Atur metode pemanasan sesuai parameter.",
+        "Simpan dan beri nama metode sesuai identifikasi sampel."
+      ],
+      "parameter_kunci": {
+        "suhu_awal": "suhu ruang (sekitar 30 °C)",
+        "suhu_akhir": "900 °C",
+        "laju_pemanasan": "10 °C/menit",
+        "atmosfer": "inert (gas N2)",
+        "mode": "heating only (tanpa pendinginan)"
+      }
+    },
+    {
+      "bagian": "4. Pelaksanaan pengukuran",
+      "langkah": [
+        "Mulai proses analisis dan amati grafik yang muncul pada layar monitor.",
+        "Biarkan sistem berjalan hingga suhu akhir tercapai dan massa stabil.",
+        "Setelah proses selesai, biarkan sistem mendingin hingga suhu aman sebelum membuka ruang sampel."
+      ]
+    },
+    {
+      "bagian": "5. Penyimpanan data",
+      "langkah": [
+        "Simpan data hasil analisis TGA dalam format berkas '.txt' yang dapat diolah menggunakan perangkat lunak pengolah grafik seperti Origin atau Microsoft Excel."
+      ]
+    },
+    {
+      "bagian": "6. Pembersihan dan penutupan",
+      "langkah": [
+        "Lepaskan crucible.",
+        "Matikan sistem gas, instrumen TGA, dan sistem pendingin sesuai urutan yang dianjurkan."
+      ]
+    },
+    {
+      "bagian": "7. Pengolahan data menggunakan software Origin",
+      "langkah": [
+        "Plot grafik TGA dengan sumbu-X suhu (°C) dan sumbu-Y persen massa (% massa) terhadap massa awal.",
+        "Hitung turunan pertama dari data TGA terhadap suhu sehingga diperoleh grafik DTG, dengan sumbu-X suhu (°C) dan sumbu-Y laju perubahan massa (% massa/d°C).",
+        "Plot kedua grafik (TGA dan DTG) untuk masing-masing sampel yang dianalisis, lalu simpan dan sertakan dalam laporan praktikum."
+      ],
+      "catatan_dokumen": "Teks asli menyebut 'masing-masing sampel alumina yang dianalisis', sementara tujuan modul menyebut dua sampel zeolit. Perlu konfirmasi sampel mana yang dipakai."
+    }
+  ],
+  "kisi_kisi_laporan": {
+    "data_pengamatan": [
+      "Termogram sampel hasil sintesis."
+    ],
+    "pembahasan": [
+      "Perubahan yang terjadi saat sampel dikenai temperatur tinggi.",
+      "Reaksi yang terjadi pada perubahan yang diamati (berdasarkan termogram).",
+      "Stabilitas termal sampel.",
+      "Mekanisme dekomposisi sampel."
+    ]
+  },
+  "tugas_pendahuluan": [
+    "Sebutkan dan jelaskan minimal tiga faktor yang dapat memengaruhi hasil pengukuran TGA.",
+    "Apa yang mungkin anda amati pada grafik TG hasil pengukuran TG gel alumina dari suhu ruang hingga 1000 °C.",
+    "Apa peran suhu pemanasan dan laju pemanasan dalam interpretasi data TGA?",
+    "Sebutkan 2 karakterisasi termal selain TGA. Jelaskan secara singkat prinsip kedua metode tersebut dan apa perbedaan antara TGA dan kedua metode tersebut.",
+    "Bagaimana cara menghitung jumlah air terhidrat secara eksperimen dari pemanasan suatu garam hidrat dengan TGA?"
+  ],
+  "daftar_pustaka": [
+    "Frequently Asked Question (FAQ) - Thermogravimetric Analysis: A Beginner's Guide. 2010. PerkinElmer, Inc.",
+    "Pemberton, A. T.; Magers, D. B.; King, D. A. Integrated TGA, FTIR, and Computational Laboratory Experiment. J. Chem. Educ. 2019, 96 (1), 132-136.",
+    "Shen, S.; Ng, W. K.; Chia, L. S. O.; Dong, Y.; Tan, R. B. H. Morphology Controllable Synthesis of Nanostructured Boehmite and gamma-Alumina by Facile Dry Gel Conversion. Cryst. Growth Des. 2012, 12 (10), 4987-4994.",
+    "Harris, J. D.; Rusch, A. W. Identifying Hydrated Salts Using Simultaneous Thermogravimetric Analysis and Differential Scanning Calorimetry. J. Chem. Educ. 2013, 90 (2), 235-238.",
+    "Shen, S. C.; Chen, Q.; Chow, P. S.; Tan, G. H.; Zeng, X. T.; Wang, Z.; Tan, R. B. H. Steam-Assisted Solid Wet-Gel Synthesis of High-Quality Nanorods of Boehmite and Alumina. J. Phys. Chem. C 2007, 111 (2), 700-707.",
+    "Mueller, R.; Kammler, H. K.; Wegner, K.; Pratsinis, S. E. OH Surface Density of SiO2 and TiO2 by Thermogravimetric Analysis. Langmuir 2003, 19 (1), 160-165."
+  ]
+}

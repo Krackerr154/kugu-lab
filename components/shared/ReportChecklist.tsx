@@ -12,8 +12,8 @@ interface ReportChecklistProps {
 
 export function ReportChecklist({ title, items, rubric }: ReportChecklistProps) {
   return (
-    <section className="rounded-xl border border-[var(--border)] bg-white p-4">
-      <h3 className="text-lg font-bold"><span aria-hidden="true">📋</span> {title}</h3>
+    <section className="surface-panel p-4">
+      <h3 className="text-lg font-bold"><span aria-hidden="true" className="material-symbols-outlined align-middle text-base">fact_check</span> {title}</h3>
       {rubric && (
         <div className="mb-4 overflow-x-auto">
           <table className="w-full text-sm">
@@ -25,7 +25,7 @@ export function ReportChecklist({ title, items, rubric }: ReportChecklistProps) 
             </thead>
             <tbody>
               {rubric.map((item) => (
-                <tr key={item.element} className="border-b border-slate-100">
+                <tr key={item.element} className="border-b border-[var(--outline-variant)]">
                   <td className="py-1.5 pr-4">{item.element}</td>
                   <td className="py-1.5 text-right font-medium">{item.points}</td>
                 </tr>

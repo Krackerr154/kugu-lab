@@ -60,6 +60,23 @@
   --inverse-on-surface: #f0f1f2;
   --inverse-primary: #afc8f0;
 
+  /* Semantic product states and controlled scientific visualization colors */
+  --focus-ring: #fcd400;
+  --surface-control: #ffffff;
+  --surface-muted: #f3f4f5;
+  --surface-selected: #fff4b8;
+  --border-strong: #74777f;
+  --text-primary: #191c1d;
+  --text-secondary: #43474e;
+  --warning-ink: #6e5c00;
+  --info-ink: #2f486a;
+  --verification-ink: #166534;
+  --chart-navy: #001f3f;
+  --chart-gold: #705d00;
+  --chart-blue: #476083;
+  --chart-red: #ba1a1a;
+  --chart-green: #15803d;
+
   /* Legacy compat (used by existing components) */
   --foreground: #191c1d;
   --card: #ffffff;
@@ -126,6 +143,21 @@
   --color-tertiary: var(--tertiary);
   --color-tertiary-container: var(--tertiary-container);
   --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-focus-ring: var(--focus-ring);
+  --color-surface-control: var(--surface-control);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-selected: var(--surface-selected);
+  --color-border-strong: var(--border-strong);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-warning-ink: var(--warning-ink);
+  --color-info-ink: var(--info-ink);
+  --color-verification-ink: var(--verification-ink);
+  --color-chart-navy: var(--chart-navy);
+  --color-chart-gold: var(--chart-gold);
+  --color-chart-blue: var(--chart-blue);
+  --color-chart-red: var(--chart-red);
+  --color-chart-green: var(--chart-green);
 
   /* Fonts — Montserrat headlines, Inter body/labels */
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
@@ -147,6 +179,30 @@ h1, h2, h3, h4, h5, h6 {
 /* Ambient shadow — tinted with primary navy, not pure black */
 .shadow-ambient {
   box-shadow: 0 8px 32px rgba(0, 31, 63, 0.08);
+}
+
+.surface-panel {
+  background: var(--surface-control);
+  border: 1px solid var(--outline-variant);
+  border-radius: 0.75rem;
+}
+
+.control-field {
+  border: 1px solid var(--outline);
+  border-radius: 0.5rem;
+  background: var(--surface-control);
+  color: var(--text-primary);
+}
+
+.control-field::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.78;
+}
+
+.control-field:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-color: var(--primary-container);
 }
 
 /* Keep the compact rail usable on short laptop viewports. */
@@ -270,17 +326,87 @@ h1, h2, h3, h4, h5, h6 {
   animation-delay: 0.56s;
 }
 
-/* Glass card for overlays */
-.glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
 /* KaTeX sizing */
 .katex { font-size: 1.1em; }
 .katex-display { margin: 0.5em 0; }
+
+/* ── View Transitions (module navigation) ─────────────────────────
+   `TransitionLink` puts `nav-forward` / `nav-back` on <html> for the
+   duration of the transition, so the direction is selectable here.
+   Only opacity and translate animate — never layout properties. */
+
+/* The snapshot overlay swallows clicks; let them reach the live page. */
+::view-transition {
+  pointer-events: none;
+}
+
+@keyframes vt-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes vt-slide {
+  from { translate: var(--slide-offset); }
+  to   { translate: 0; }
+}
+
+:root.nav-forward::view-transition-old(root) {
+  --slide-offset: -48px;
+  animation:
+    140ms ease-in both vt-fade reverse,
+    320ms ease-in-out both vt-slide reverse;
+}
+
+:root.nav-forward::view-transition-new(root) {
+  --slide-offset: 48px;
+  animation:
+    200ms ease-out 140ms both vt-fade,
+    320ms ease-in-out both vt-slide;
+}
+
+:root.nav-back::view-transition-old(root) {
+  --slide-offset: 48px;
+  animation:
+    140ms ease-in both vt-fade reverse,
+    320ms ease-in-out both vt-slide reverse;
+}
+
+:root.nav-back::view-transition-new(root) {
+  --slide-offset: -48px;
+  animation:
+    200ms ease-out 140ms both vt-fade,
+    320ms ease-in-out both vt-slide;
+}
+
+/* Anchor the persistent shell: the rail, contextual header, and mobile bar
+   must stay put so only the content reads as moving. */
+::view-transition-group(app-rail),
+::view-transition-group(app-header),
+::view-transition-group(app-mobile-bar) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(app-rail),
+::view-transition-old(app-header),
+::view-transition-old(app-mobile-bar) {
+  display: none;
+}
+
+::view-transition-new(app-rail),
+::view-transition-new(app-header),
+::view-transition-new(app-mobile-bar) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -290,7 +416,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Focus visible */
 :focus-visible {
-  outline: 2px solid var(--primary-container);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

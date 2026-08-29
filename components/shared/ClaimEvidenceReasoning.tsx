@@ -23,8 +23,8 @@ export function ClaimEvidenceReasoning({
   const reasoningId = `${fieldPrefix}-reasoning`;
 
   return (
-    <section className="rounded-xl border border-[var(--border)] bg-white p-4">
-      <h3 className="text-lg font-bold"><span aria-hidden="true">🔍</span> Claim · Evidence · Reasoning</h3>
+    <section className="surface-panel p-4">
+      <h3 className="text-lg font-bold"><span aria-hidden="true" className="material-symbols-outlined align-middle text-base">fact_check</span> Claim · Evidence · Reasoning</h3>
       <p className="mb-3 text-sm text-[var(--muted)]">{prompt}</p>
       <div className="space-y-3">
         <div>
@@ -34,7 +34,7 @@ export function ClaimEvidenceReasoning({
             value={fields.claim}
             onChange={(e) => setFields({ ...fields, claim: e.target.value })}
             placeholder={claimPlaceholder}
-            className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
+            className="control-field mt-1 w-full p-2 text-sm"
             rows={2}
           />
         </div>
@@ -45,7 +45,7 @@ export function ClaimEvidenceReasoning({
             value={fields.evidence}
             onChange={(e) => setFields({ ...fields, evidence: e.target.value })}
             placeholder={evidencePlaceholder}
-            className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
+            className="control-field mt-1 w-full p-2 text-sm"
             rows={3}
           />
         </div>
@@ -56,7 +56,7 @@ export function ClaimEvidenceReasoning({
             value={fields.reasoning}
             onChange={(e) => setFields({ ...fields, reasoning: e.target.value })}
             placeholder={reasoningPlaceholder}
-            className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
+            className="control-field mt-1 w-full p-2 text-sm"
             rows={3}
           />
         </div>

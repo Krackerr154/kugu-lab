@@ -1,0 +1,158 @@
+{
+  "id": "M4",
+  "nomor": 4,
+  "judul": "Sintesis Zeolit FAU dengan Metode Hidrotermal",
+  "halaman_pdf": [
+    26,
+    28
+  ],
+  "sub_sesi": [
+    "M4"
+  ],
+  "tujuan": [
+    "Melakukan sintesis zeolit FAU (X atau Y) menggunakan metode hidrotermal",
+    "Mengamati proses kristalisasi pembentukan zeolit",
+    "Menghubungkan kondisi sintesis (komposisi, suhu, waktu) dengan sifat produk zeolit",
+    "Mengenal karakterisasi dasar zeolit melalui teknik XRD"
+  ],
+  "pendahuluan": {
+    "ringkas": "Zeolit adalah aluminosilikat kristalin mikropori dari unit tetrahedral [SiO4]4- dan [AlO4]5-. Zeolit FAU (faujasite) memiliki supercage, rasio Si/Al 1-3, dan dipakai sebagai katalis FCC. Sintesis hidrotermal memanfaatkan nukleasi dan pertumbuhan kristal dari larutan silikat-aluminat dalam kondisi basa dan tekanan tinggi.",
+    "konsep_kunci": [
+      {
+        "topik": "Definisi dan aplikasi zeolit",
+        "isi": "Zeolit adalah material kristalin anorganik mikropori berbasis aluminosilikat yang tersusun dari unit tetrahedral [SiO4]4- dan [AlO4]5- yang saling terhubung melalui atom oksigen. Diaplikasikan sebagai adsorben, penukar ion, dan katalis; contohnya katalis komersial industri petrokimia yang menghasilkan bensin, solar, dan avtur. Sekitar 255 struktur zeolit telah ditemukan dan mayoritas didapatkan dari sintesis di laboratorium."
+      },
+      {
+        "topik": "Zeolit FAU (faujasite)",
+        "isi": "FAU memiliki struktur tiga dimensi (3D framework) dengan saluran besar dan rongga supercage. Dimanfaatkan sebagai katalis pada proses pemecahan minyak bumi (FCC), adsorben gas dan logam berat, serta penukar ion dalam pengolahan air. Ukuran pori 7,4 A, rasio Si/Al 1-3, keasaman Bronsted kuat, selektivitas tinggi, dan stabilitas termal tinggi."
+      },
+      {
+        "topik": "Pengaruh rasio Si/Al",
+        "isi": "Zeolit X (Si/Al = 1-1,5) memiliki kapasitas tukar ion yang tinggi; Zeolit Y (Si/Al = 2-3) menunjukkan stabilitas termal yang lebih baik. Perbedaan rasio memengaruhi sifat keasaman serta stabilitas termal."
+      },
+      {
+        "topik": "Metode hidrotermal",
+        "isi": "Sebagian besar sintesis zeolit dijelaskan sebagai proses rekristalisasi di bawah perlakuan hidrotermal. Larutan prekursor yang mengandung sumber silika dan alumina dipanaskan dalam kondisi tekanan tinggi, sehingga terjadi nukleasi dan pertumbuhan kristal zeolit secara bertahap. Faktor suhu, waktu reaksi, dan konsentrasi prekursor sangat mempengaruhi struktur dan sifat akhir zeolit. Metode ini memungkinkan pembentukan zeolit dengan struktur kristal baik dan kemurnian tinggi."
+      }
+    ]
+  },
+  "bahan": [
+    "natrium aluminat (NaAlO2)",
+    "natrium silikat (Na2SiO3)",
+    "kalium hidroksida (KOH)",
+    "natrium hidroksida (NaOH)",
+    "aquadest (H2O)",
+    "larutan NaOH 0,01 N",
+    "kertas saring",
+    "kertas timbang"
+  ],
+  "alat": [
+    "botol polipropilena (botol PP) tahan panas",
+    "gelas kimia",
+    "batang pengaduk",
+    "spatula",
+    "pemanas listrik (heating plate)",
+    "oven",
+    "timbangan digital",
+    "alat XRD",
+    "corong Buchner"
+  ],
+  "prosedur": [
+    {
+      "bagian": "Bagian 1: Persiapan larutan prekursor",
+      "langkah": [
+        "Siapkan larutan A dengan melarutkan 4,47 g NaAlO2 dalam 6 g air suling, aduk hingga larut.",
+        "Siapkan larutan B dengan melarutkan 4,30 g KOH dan 6,21 g NaOH ke dalam 14 g air suling, aduk hingga homogen.",
+        "Campurkan larutan A dan larutan B menjadi larutan C. Aduk larutan C hingga homogen.",
+        "Tambahkan 14,36 g aquadest dan 9,2 g Na2SiO3 ke dalam larutan C. Aduk hingga campuran merata (suspensi D)."
+      ],
+      "komposisi": [
+        {
+          "larutan": "A",
+          "bahan": [
+            "NaAlO2 4,47 g",
+            "air suling 6 g"
+          ]
+        },
+        {
+          "larutan": "B",
+          "bahan": [
+            "KOH 4,30 g",
+            "NaOH 6,21 g",
+            "air suling 14 g"
+          ]
+        },
+        {
+          "larutan": "C",
+          "bahan": [
+            "larutan A + larutan B"
+          ]
+        },
+        {
+          "larutan": "D (suspensi)",
+          "bahan": [
+            "larutan C",
+            "aquadest 14,36 g",
+            "Na2SiO3 9,2 g"
+          ]
+        }
+      ]
+    },
+    {
+      "bagian": "Bagian 2: Proses kristalisasi zeolit",
+      "langkah": [
+        "Masukkan larutan D ke dalam botol PP tahan panas.",
+        "Inkubasi selama 3 jam pada suhu 70 °C tanpa pengadukan.",
+        "Sorot suspensi D dengan senter/laser berwarna. Amati setiap jam. Catat apa yang terjadi. (Pengamatan efek Tyndall.)",
+        "Lanjutkan proses kristalisasi dengan memanaskan botol PP pada suhu 100 °C selama 2 jam.",
+        "Sorot suspensi dengan senter/laser sesudah proses kristalisasi. Amati dan catat apa yang terjadi.",
+        "Setelah reaksi selesai, dinginkan botol PP hingga suhu ruang."
+      ],
+      "parameter_kunci": {
+        "tahap_1": "70 °C, 3 jam, tanpa pengadukan",
+        "tahap_2": "100 °C, 2 jam"
+      }
+    },
+    {
+      "bagian": "Bagian 3: Isolasi produk",
+      "langkah": [
+        "Encerkan campuran hasil reaksi dengan 100 mL akuades dan saring menggunakan corong Buchner.",
+        "Residu dicuci dengan menambahkan 100 mL akuades pada corong Buchner.",
+        "Lanjutkan pencucian dengan menggunakan NaOH 0,01 M sebanyak 20 mL.",
+        "Keringkan padatan yang diperoleh pada suhu 110-125 °C (4-5 jam)."
+      ]
+    },
+    {
+      "bagian": "Bagian 4: Karakterisasi produk",
+      "langkah": [
+        "Produk hasil sintesis dikarakterisasi menggunakan XRD dan TGA."
+      ]
+    }
+  ],
+  "catatan_dokumen": "Bahan menyebut 'larutan NaOH 0,01 N' sedangkan prosedur menulis 'NaOH 0,01 M'. Suhu tahap kedua ditulis '100 C' tanpa simbol derajat pada dokumen asli.",
+  "kisi_kisi_laporan": {
+    "data_pengamatan": [
+      "Massa prekursor dan produk.",
+      "Pengamatan efek Tyndall pada campuran prekursor saat proses kristalisasi.",
+      "Analisis organoleptik produk."
+    ],
+    "pembahasan": [
+      "Peran dari masing-masing bahan kimia yang digunakan dalam sintesis faujasite menggunakan metode hidrotermal.",
+      "Mekanisme pertumbuhan kristal zeolit.",
+      "Proses yang terjadi dan tujuan dari setiap tahapan sintesis."
+    ]
+  },
+  "tugas_pendahuluan": [
+    "Jelaskan prinsip metode hidrotermal.",
+    "Jelaskan keunggulan metode hidrotermal untuk sintesis zeolit.",
+    "Tuliskan 10 jenis zeolit yang anda ketahui.",
+    "Tuliskan elemen utama dari zeolit.",
+    "Jelaskan karakterisasi utama yang digunakan untuk mengkonfirmasi terbentuknya zeolit."
+  ],
+  "daftar_pustaka": [
+    "Database of Zeolite Structure (2017): Framework Type FAU, https://europe.iza-structure.org/IZA-SC/framework.php?ID=93, diunduh 31 Juli 2025.",
+    "G. H. Kuhl (1987), Crystallization of low-silica faujasite (SiO2/Al2O3 ~2.0), Zeolites, 7, 451-457.",
+    "I. Daems (2006), Influence of Si:Al-ratio of faujasites on the adsorption of alkanes, alkenes and aromatics, Microporous and Mesoporous Materials, 96, 149-156.",
+    "R. J. Farrauto (2017), Industrial Catalyst: A Practical Guide, In: Kent, J., Bommaraju, T., Barnicki, S. (eds) Handbook of Industrial Chemistry and Biotechnology. Springer, Cham. 1995-2035."
+  ]
+}

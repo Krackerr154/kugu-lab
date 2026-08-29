@@ -8,7 +8,7 @@ export function ZeoliteWorkspace() {
 
   return (
     <div className="space-y-4">
-      <div role="group" aria-label="Worksheet Modul 4" className="flex gap-1 rounded-lg bg-slate-100 p-1">
+      <div role="group" aria-label="Worksheet Modul 4" className="flex gap-1 rounded-lg bg-[var(--surface-muted)] p-1">
         {[
           { id: "stoichiometry", label: "Stoikiometri Prekursor" },
           { id: "conditions", label: "Penjelajah Kondisi" },
@@ -73,7 +73,7 @@ function StoichiometryWorksheet() {
           </thead>
           <tbody>
             {ratios.map((r, i) => (
-              <tr key={i} className="border-b border-slate-100">
+              <tr key={i} className="border-b border-[var(--outline-variant)]">
                 <td className="py-1.5 pr-3 font-medium">{r.name}</td>
                 <td className="py-1.5 pr-3">
                   <input
@@ -96,7 +96,7 @@ function StoichiometryWorksheet() {
         Rasio molar menunjukkan komposisi relatif prekursor. Rasio Si/Al dari resep ini menentukan tipe zeolit FAU (X atau Y).
       </p>
 
-      <div className="mt-3 rounded-md bg-[var(--warning-light)] p-2 text-xs text-amber-800">
+      <div className="mt-3 rounded-md bg-[var(--secondary-container)]/25 p-2 text-xs text-[var(--warning-ink)]">
         <span aria-hidden="true">⚠️</span> CR-05: Manual menyebut kondisi hidrotermal/tekanan tetapi prosedur menggunakan botol PP. 
         Rating wadah, tutup, fraksi pengisian, batas suhu/tekanan harus ditentukan oleh tim pengajar.
       </div>
@@ -116,7 +116,7 @@ function ConditionExplorer() {
   return (
     <section className="rounded-xl border border-[var(--border)] bg-white p-4">
       <h3 className="text-lg font-bold">Penjelajah Kondisi Sintesis</h3>
-      <div className="mb-3 rounded-md bg-[var(--accent-light)] p-2 text-xs text-indigo-800">
+      <div className="mb-3 rounded-md bg-[var(--accent-light)] p-2 text-xs text-[var(--info-ink)]">
         <span aria-hidden="true">ℹ️</span> Ini adalah model konsep untuk pembelajaran — BUKAN mesin prediksi eksperimental. 
         Hubungan aktual ditentukan oleh kondisi laboratorium yang disetujui.
       </div>
@@ -154,7 +154,7 @@ function ConditionExplorer() {
         </div>
       </div>
 
-      <div className="mt-4 rounded-lg bg-slate-50 p-4">
+      <div className="mt-4 rounded-lg bg-[var(--surface-muted)] p-4">
         <h4 className="font-semibold text-sm">Prediksi Konseptual:</h4>
         <div className="mt-2 space-y-2 text-sm">
           <div className="flex justify-between">
@@ -172,7 +172,7 @@ function ConditionExplorer() {
         </div>
       </div>
 
-      <div className="mt-3 rounded-md bg-slate-50 p-3 text-xs">
+      <div className="mt-3 rounded-md bg-[var(--surface-muted)] p-3 text-xs">
         <p className="font-semibold">Konteks teoritis:</p>
         <ul className="mt-1 space-y-0.5 text-[var(--muted)]">
           <li>• Suhu lebih tinggi → nukleasi lebih cepat, tetapi kristalitas bergantung pada kondisi sebenarnya</li>

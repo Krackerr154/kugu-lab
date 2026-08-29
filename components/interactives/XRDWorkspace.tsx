@@ -16,7 +16,7 @@ export function XRDWorkspace() {
   return (
     <div className="space-y-4">
       {/* Tabs */}
-      <div role="group" aria-label="Worksheet Modul 5" className="flex gap-1 rounded-lg bg-slate-100 p-1">
+      <div role="group" aria-label="Worksheet Modul 5" className="flex gap-1 rounded-lg bg-[var(--surface-muted)] p-1">
         {[
           { id: "bragg", label: "Sandbox Bragg" },
           { id: "diffractogram", label: "Difraktogram" },
@@ -121,7 +121,7 @@ function BraggSandbox() {
       </div>
 
       {/* Visualization */}
-      <div className="mt-4 rounded-lg border border-[var(--border)] bg-slate-50 p-4">
+      <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
         <svg viewBox="0 0 300 150" className="w-full max-w-md mx-auto" role="img" aria-label="Visualisasi Hukum Bragg">
           {/* Crystal planes */}
           <line x1="20" y1="50" x2="280" y2="50" stroke="#475569" strokeWidth="1" strokeDasharray="4,2" />
@@ -140,26 +140,26 @@ function BraggSandbox() {
           {/* Reflected beam */}
           <line
             x1="150" y1="50" x2="250" y2="130"
-            stroke="#3b82f6" strokeWidth="2"
+            stroke="#476083" strokeWidth="2"
             markerEnd="url(#arrowblue)"
           />
           {/* Angle arcs */}
           <path d="M 130 65 A 25 25 0 0 1 150 50" fill="none" stroke="#ef4444" strokeWidth="1" />
-          <path d="M 150 50 A 25 25 0 0 0 170 65" fill="none" stroke="#3b82f6" strokeWidth="1" />
+          <path d="M 150 50 A 25 25 0 0 0 170 65" fill="none" stroke="#476083" strokeWidth="1" />
           <text x="125" y="60" fontSize="8" fill="#ef4444">θ</text>
-          <text x="168" y="60" fontSize="8" fill="#3b82f6">θ</text>
+          <text x="168" y="60" fontSize="8" fill="#476083">θ</text>
 
           <defs>
             <marker id="arrowred" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
               <polygon points="0 0, 6 3, 0 6" fill="#ef4444" />
             </marker>
             <marker id="arrowblue" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <polygon points="0 0, 6 3, 0 6" fill="#3b82f6" />
+              <polygon points="0 0, 6 3, 0 6" fill="#476083" />
             </marker>
           </defs>
 
           <text x="80" y="140" fontSize="8" fill="#ef4444">Sinar masuk</text>
-          <text x="210" y="140" fontSize="8" fill="#3b82f6">Sinar difraksi</text>
+          <text x="210" y="140" fontSize="8" fill="#476083">Sinar difraksi</text>
         </svg>
         <p className="text-center text-xs text-[var(--muted)] mt-1">
           Bidang kristal (garis putus-putus) dengan jarak d = {d.toFixed(4)} Å
@@ -229,7 +229,7 @@ function Diffractogram() {
         data: sampleData.map((p) => [p.x, p.y]),
         smooth: false,
         symbol: "none",
-        lineStyle: { color: "#6366f1", width: 1 },
+        lineStyle: { color: "#001f3f", width: 1 },
         markPoint: { data: markPoints, symbol: "pin", symbolSize: 40 },
       },
     ],
@@ -254,7 +254,7 @@ function Diffractogram() {
         {annotations.length > 0 && (
           <button
             onClick={() => setAnnotations([])}
-            className="rounded-md border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-slate-50"
+            className="rounded-md border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-[var(--surface-muted)]"
           >
             Hapus Anotasi ({annotations.length})
           </button>
@@ -284,7 +284,7 @@ function Diffractogram() {
               {annotations.map((a, i) => {
                 const d = (1.5406) / (2 * Math.sin((a.x / 2) * Math.PI / 180));
                 return (
-                  <tr key={i} className="border-b border-slate-100">
+                  <tr key={i} className="border-b border-[var(--outline-variant)]">
                     <td className="py-1 pr-3">{i + 1}</td>
                     <td className="py-1 pr-3 font-mono">{a.x.toFixed(2)}</td>
                     <td className="py-1 pr-3 font-mono">{a.y.toFixed(1)}</td>
@@ -369,7 +369,7 @@ function ScherrerCalculator() {
             step="0.0001"
             value={lambda}
             disabled
-            className="mt-1 w-full rounded-md border border-[var(--border)] bg-slate-100 p-2 text-sm"
+            className="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-muted)] p-2 text-sm"
           />
         </div>
       </div>

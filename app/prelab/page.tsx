@@ -4,7 +4,7 @@ import { ChemText } from "@/components/shared/ChemText";
 
 export default function PrelabPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
       {/* Header */}
       <header className="rounded-xl bg-[var(--surface)] border border-[var(--outline-variant)]/30 shadow-ambient p-6 mb-6">
         <div className="flex items-center gap-3 mb-2">
@@ -83,14 +83,13 @@ export default function PrelabPage() {
               <Link
                 key={m.id}
                 href={hasWalkthrough ? walkthroughRoute : m.route}
-                className="group rounded-xl border border-[var(--outline-variant)]/40 bg-[var(--surface)] p-5 transition-all hover:-translate-y-0.5 hover:border-[var(--secondary)] hover:shadow-ambient focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary)] focus-visible:ring-offset-2"
+                className="group rounded-xl border border-[var(--outline-variant)]/40 bg-[var(--surface)] p-5 transition-all hover:-translate-y-0.5 hover:border-[var(--primary-container)] hover:shadow-ambient focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary)] focus-visible:ring-offset-2"
               >
                 <div className="flex items-start gap-3">
                   <div
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl"
-                    style={{ backgroundColor: `${m.color}15` }}
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-2xl text-[var(--primary-container)]"
                   >
-                    <span aria-hidden="true">{m.icon}</span>
+                    <span aria-hidden="true" className="material-symbols-outlined">{m.icon}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -117,7 +116,7 @@ export default function PrelabPage() {
                   <ChemText>{m.learningOutcomes[0]}</ChemText>
                 </p>
 
-                <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[var(--secondary)] group-hover:underline">
+                <div className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-[var(--primary-container)] group-hover:underline">
                   <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
                     {hasWalkthrough ? "play_arrow" : "menu_book"}
                   </span>

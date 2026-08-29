@@ -98,16 +98,16 @@ export function ScientificChart({
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-lg font-bold">{title}</h3>
         <div className="flex gap-2 text-xs">
-          <button onClick={exportCSV} className="rounded-md border border-[var(--border)] px-2 py-1 hover:bg-slate-50">
+          <button onClick={exportCSV} className="rounded-md border border-[var(--border)] px-2 py-1 hover:bg-[var(--surface-muted)]">
             ⬇ CSV
           </button>
-          <button onClick={exportPNG} className="rounded-md border border-[var(--border)] px-2 py-1 hover:bg-slate-50">
+          <button onClick={exportPNG} className="rounded-md border border-[var(--border)] px-2 py-1 hover:bg-[var(--surface-muted)]">
             ⬇ PNG
           </button>
           {showTable && (
             <button
               onClick={() => setTableVisible(!tableVisible)}
-              className="rounded-md border border-[var(--border)] px-2 py-1 hover:bg-slate-50"
+              className="rounded-md border border-[var(--border)] px-2 py-1 hover:bg-[var(--surface-muted)]"
             >
               {tableVisible ? "Sembunyikan Tabel" : "Tampilkan Tabel"}
             </button>
@@ -131,7 +131,7 @@ export function ScientificChart({
             <tbody>
               {Math.max(...series.map((s) => s.points.length)) > 0 &&
                 Array.from({ length: Math.max(...series.map((s) => s.points.length)) }).map((_, i) => (
-                  <tr key={i} className="border-b border-slate-100">
+                  <tr key={i} className="border-b border-[var(--outline-variant)]">
                     <td className="py-0.5 pr-3">{series[0]?.points[i]?.x?.toFixed(2) ?? ""}</td>
                     {series.map((s) => (
                       <td key={s.name} className="py-0.5 pr-3">{s.points[i]?.y?.toFixed(2) ?? ""}</td>

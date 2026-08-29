@@ -1,0 +1,270 @@
+{
+  "id": "M3",
+  "nomor": 3,
+  "judul": "Sintesis Paduan Logam Tin-Bismuth dengan Metode Elektrodeposisi",
+  "halaman_pdf": [
+    20,
+    25
+  ],
+  "sub_sesi": [
+    {
+      "kode": "M3a",
+      "nama": "Pembuatan katoda & anoda"
+    },
+    {
+      "kode": "M3b",
+      "nama": "Pengerjaan elektrodeposisi (penyiapan elektrolit + proses deposisi)"
+    }
+  ],
+  "tujuan": {
+    "ringkas": "Pembuatan paduan logam Sn-Bi dengan metode elektrodeposisi menggunakan reagen pengompleks.",
+    "tahapan": [
+      "Pembuatan katoda",
+      "Pembuatan anoda",
+      "Penyiapan larutan elektrolit",
+      "Penyusunan rangkaian alat elektrodeposisi",
+      "Proses elektrodeposisi",
+      "Karakterisasi produk dengan XRD"
+    ]
+  },
+  "pendahuluan": {
+    "ringkas": "Elektrodeposisi mengendapkan logam pada permukaan konduktif melalui reduksi ion logam dalam elektrolit menggunakan arus listrik. Paduan Sn-Bi penting sebagai solder bebas timbal; tantangan utamanya adalah perbedaan potensial reduksi Sn2+ dan Bi3+ yang diatasi dengan reagen pengompleks.",
+    "konsep_kunci": [
+      {
+        "topik": "Paduan logam",
+        "isi": "Paduan logam memiliki sifat fisik dan mekanik lebih unggul dibandingkan logam murni, banyak digunakan pada elektronik, otomotif, kelistrikan, dan pelapisan pelindung. Kombinasi dua atau lebih logam dapat menghasilkan sifat yang disesuaikan, misalnya peningkatan kekuatan mekanik, ketahanan korosi, dan konduktivitas listrik."
+      },
+      {
+        "topik": "Prinsip elektrodeposisi",
+        "isi": "Elektrodeposisi adalah proses pengendapan logam pada permukaan konduktif melalui reduksi ion-ion logam di dalam larutan elektrolit menggunakan arus listrik."
+      },
+      {
+        "topik": "Keunggulan elektrodeposisi",
+        "isi": "Dibandingkan metalurgi serbuk atau peleburan: (i) dapat dilakukan pada suhu rendah, (ii) memungkinkan pelapisan pada substrat berbentuk kompleks, (iii) dapat mengontrol komposisi dan ketebalan lapisan. Parameter yang dapat diatur: kerapatan arus, tegangan, pH, suhu, dan konsentrasi ion logam, untuk mengendalikan struktur mikro, komposisi, dan sifat akhir paduan."
+      },
+      {
+        "topik": "Paduan Sn-Bi",
+        "isi": "Paduan timah-bismut (Sn-Bi) banyak digunakan sebagai solder bebas timbal (Pb-free solder) di industri elektronik. Komposisi eutektik Sn-58Bi memiliki titik lebur rendah (~139 °C) dan ketahanan korosi lebih baik. Sn-Bi lebih ramah lingkungan dan sesuai regulasi RoHS (Restriction of Hazardous Substances)."
+      },
+      {
+        "topik": "Tantangan kodeposisi",
+        "isi": "Terdapat perbedaan sifat elektrokimia antara ion Sn2+ dan Bi3+. Bismut memiliki potensial reduksi yang lebih besar sehingga cenderung terdeposit lebih dahulu dibandingkan timah. Solusinya: elektrolit berbasis asam metansulfonat (MSA) dan reagen pengompleks seperti EDTA dan asam sitrat untuk menghasilkan kodeposisi kedua logam."
+      },
+      {
+        "topik": "Komponen rangkaian elektrodeposisi",
+        "isi": "(i) katoda: logam tembaga, nikel, atau baja; (ii) anoda: elektroda inert Pt atau grafit; (iii) sumber daya listrik DC dengan output 0-10 V dan 0-10 A; (iv) wadah elektrolit tahan korosi; (v) larutan elektrolit."
+      }
+    ]
+  },
+  "bahan": [
+    "plat tembaga",
+    "batang grafit",
+    "resin",
+    "resin-hardener",
+    "baterai bekas",
+    "SnCl2·2H2O 0,15 M",
+    "Bi(NO3)3·5H2O 0,05 M",
+    "asam sitrat 0,30 M",
+    "EDTA 0,05 M",
+    "PEG400 0,20 M",
+    "NH3",
+    "HCl"
+  ],
+  "alat": [
+    "solder dan timah",
+    "kabel",
+    "cetakan silikon",
+    "kertas amplas",
+    "power supply",
+    "gelas kimia 250 mL",
+    "tutup gelas kimia berlubang (karton duplex)",
+    "Ampere meter",
+    "sonikator",
+    "hotplate",
+    "oven",
+    "desikator",
+    "neraca"
+  ],
+  "prosedur": [
+    {
+      "kode": "M3a",
+      "bagian": "Pembuatan katoda",
+      "langkah": [
+        "Siapkan satu buah plat tembaga.",
+        "Buatlah goresan-goresan pada salah satu sisi plat tembaga.",
+        "Sambungkan sisi tersebut dengan kawat tembaga sepanjang 15 cm menggunakan solder dan kawat timah. Tunggu hingga sambungan mengeras.",
+        "Cek apakah kabel dan tembaga sudah tersambung dengan baik (gunakan Ampere meter).",
+        "Siapkan cetakan silikon.",
+        "Campurkan resin dan hardener dengan perbandingan volume 3:1 di dalam gelas plastik. Aduk perlahan agar tidak terbentuk gelembung.",
+        "Taruh plat tembaga di dasar cetakan. Tuangkan campuran resin ke dalam cetakan.",
+        "Biarkan resin mengeras hingga 2 x 24 jam."
+      ]
+    },
+    {
+      "kode": "M3a",
+      "bagian": "Pembuatan anoda",
+      "langkah": [
+        "Siapkan anoda grafit dengan membuka baterai yang sudah tidak terpakai.",
+        "Rendam grafit di dalam etanol, dan selanjutnya dengan aqua DM (sonikasi masing-masing sekitar 5 menit).",
+        "Keringkan grafit di atas hotplate yang dilapisi aluminium foil. Dalam proses ini, pengotor dari dalam grafit akan keluar."
+      ]
+    },
+    {
+      "kode": "M3b",
+      "bagian": "Penyiapan 100 mL larutan elektrolit",
+      "tabel_komposisi": [
+        {
+          "larutan": "A",
+          "langkah": 1,
+          "bahan": "H2O",
+          "jumlah": "4 mL"
+        },
+        {
+          "larutan": "A",
+          "langkah": 1,
+          "bahan": "NH3 (pekat)",
+          "jumlah": "1 mL"
+        },
+        {
+          "larutan": "A",
+          "langkah": 2,
+          "bahan": "EDTA",
+          "jumlah": "0,05 M (1,4612 g)"
+        },
+        {
+          "larutan": "A",
+          "langkah": "-",
+          "bahan": "Volume akhir larutan A",
+          "jumlah": "5 mL"
+        },
+        {
+          "larutan": "B",
+          "langkah": 1,
+          "bahan": "H2O",
+          "jumlah": "4 mL"
+        },
+        {
+          "larutan": "B",
+          "langkah": 1,
+          "bahan": "HCl (pekat)",
+          "jumlah": "1,5 mL"
+        },
+        {
+          "larutan": "B",
+          "langkah": 2,
+          "bahan": "SnCl2·2H2O",
+          "jumlah": "0,15 M (3,3846 g)"
+        },
+        {
+          "larutan": "B",
+          "langkah": 3,
+          "bahan": "Bi(NO3)3·5H2O",
+          "jumlah": "0,05 M (2,4254 g)"
+        },
+        {
+          "larutan": "B",
+          "langkah": "-",
+          "bahan": "Volume akhir larutan B",
+          "jumlah": "5,5 mL"
+        },
+        {
+          "larutan": "C",
+          "langkah": 1,
+          "bahan": "H2O",
+          "jumlah": "8 mL"
+        },
+        {
+          "larutan": "C",
+          "langkah": 1,
+          "bahan": "HCl",
+          "jumlah": "1 mL"
+        },
+        {
+          "larutan": "C",
+          "langkah": 2,
+          "bahan": "Asam sitrat",
+          "jumlah": "0,30 M (5,7636 g)"
+        },
+        {
+          "larutan": "C",
+          "langkah": "-",
+          "bahan": "Volume akhir larutan C",
+          "jumlah": "9 mL"
+        }
+      ],
+      "langkah": [
+        "Siapkan 3 larutan (A, B, dan C) sesuai komposisi pada tabel.",
+        "Pipet larutan A sedikit demi sedikit ke dalam larutan B.",
+        "Tuangkan larutan (A+B) ke dalam larutan C secara perlahan.",
+        "Tambahkan PEG400 (konsentrasi akhir PEG400 0,20 M).",
+        "Tambahkan NH3 (pekat) sebanyak 0,5 mL.",
+        "Tambahkan air hingga volume akhir 100 mL.",
+        "Cek pH larutan (pH larutan ~2)."
+      ]
+    },
+    {
+      "kode": "M3b",
+      "bagian": "Proses elektrodeposisi",
+      "langkah": [
+        "Keluarkan resin dari cetakan silikon.",
+        "Haluskan plat tembaga dengan kertas amplas ukuran 200, 500, 800, dan 1000 mesh hingga permukaan terlihat cemerlang (mirror polishing). Gunakan beberapa tetes aqua DM untuk membantu menghaluskan permukaan.",
+        "Ukur panjang dan lebar plat tembaga, dan hitung luasnya.",
+        "Sonikasi plat yang telah dihaluskan di dalam gelas kimia berisi aseton selama minimal 10 menit.",
+        "Keringkan di dalam oven bersuhu 60 °C sebelum disimpan di dalam desikator. Dianjurkan mengambil gambar sebelum dan sesudah deposisi.",
+        "Timbang katoda dan ambil gambar katoda sebelum proses elektrodeposisi.",
+        "Isi gelas kimia 250 mL dengan larutan elektrolit.",
+        "Timbang anoda.",
+        "Siapkan karton duplex ukuran 9 x 9 cm. Buat dua lubang kecil dengan jarak kurang lebih 3 cm di tengah karton menggunakan cutter.",
+        "Pasang katoda dan anoda sesuai Gambar 3.3. Sambungkan dengan sumber listrik.",
+        "Jalankan percobaan dengan mengalirkan arus listrik sebesar 14,5 mA/cm2 selama 15 menit.",
+        "Setelah elektrodeposisi 15 menit, bilas katoda dengan aqua DM. Keringkan di dalam oven bersuhu 60 °C hingga kering sebelum disimpan di desikator.",
+        "Timbang katoda.",
+        "Hitung efisiensi arus.",
+        "Amati permukaan plat tembaga setelah deposisi dan bandingkan dengan sebelum deposisi. Dianjurkan mengambil gambar sebelum dan sesudah deposisi."
+      ],
+      "parameter_kunci": {
+        "kerapatan_arus": "14,5 mA/cm2",
+        "waktu_deposisi": "15 menit",
+        "pH_elektrolit": "~2",
+        "suhu_pengeringan": "60 °C"
+      },
+      "rumus": [
+        {
+          "nama": "Efisiensi arus",
+          "teks": "Efisiensi Arus = (pertambahan massa aktual / pertambahan massa teoretis) x 100%"
+        }
+      ]
+    }
+  ],
+  "kisi_kisi_laporan": {
+    "data_pengamatan": [
+      "Gambar katoda dan anoda sebelum dan setelah proses elektrodeposisi.",
+      "Massa katoda dan anoda sebelum dan setelah proses elektrodeposisi."
+    ],
+    "pembahasan": [
+      "Deskripsikan proses sintesis paduan logam Sn-Bi dengan metode elektrodeposisi.",
+      "Jelaskan fungsi dari masing-masing larutan A, B, dan C.",
+      "Perubahan yang diamati pada katoda, sebelum dan sesudah proses elektrodeposisi.",
+      "Hitung efisiensi arus."
+    ]
+  },
+  "tugas_pendahuluan": [
+    "Jelaskan prinsip metode sintesis dengan cara elektrodeposisi.",
+    "Tuliskan reaksi-reaksi yang mungkin terjadi di anoda dan katoda dalam percobaan ini, lengkapi dengan potensial reduksi masing-masing reaksi tersebut.",
+    "Rujuk makalah http://dx.doi.org/10.1149/1.3276678 dan bahas apa fungsi dari PEG-400.",
+    "Apa kelebihan dan kekurangan dari metode yang digunakan dalam praktikum ini?",
+    "Rujuk makalah https://doi.org/10.1166/jnn.2013.6850, bandingkan persamaan dan perbedaan percobaan praktikum ini dengan penelitian yang dilakukan oleh kimiawan pada referensi di atas."
+  ],
+  "daftar_pustaka": [
+    "Housecroft, C.E., Sharpe, A.G. (2012), Inorganic Chemistry, 4th ed., chapter 8, 242.",
+    "Hsiao, P-C. (2015), Eutectic Sn-Bi Alloy for Interconnection of Silicon Solar Cells, Disertasi Doktoral, University of New South Wales.",
+    "Jingjing Du, dkk (2013), Electrodeposition of Nanocrystalline Ni-W Coatings with Citric Acid System, Journal of Nanoscience and Nanotechnology 13(1):690-693.",
+    "Rajamani, A.R., Jothi, S., Datta, M., Rangarajan, M. (2018), Electrodeposition of Tin-Bismuth Alloys: Additives, Morphologies, and Compositions, Journal of The Electrochemical Society 165 (2), D50-D57.",
+    "Tsai, Y-D., Hu, C-C. (2009), Composition Control of Sn-Bi Deposits: Interactive Effects of Citric Acid, Ethylenediaminetetraacetic Acid, and Poly(ethylene glycol), Journal of The Electrochemical Society 156, D490-D496.",
+    "Tzevetanka, dkk (2010), Effect of PEG-400 on Zn-Cr Alloy Electrodeposition, Journal of Electrochemical Society 157 (3), D159.",
+    "Tsai, Y-D., Hu, C-C., Lin, C-C. (2007), Electrodeposition of Sn-Bi lead-free solders: Effects of complex agents on the composition, adhesion, and dendrite formation, Electrochimica Acta 53, 2040-2047.",
+    "http://dx.doi.org/10.1149/1.3276678 (fungsi PEG-400).",
+    "https://doi.org/10.1166/jnn.2013.6850"
+  ],
+  "catatan_dokumen": "Daftar pustaka asli memuat 13 entri dengan beberapa duplikasi (Tsai 2009, Tzevetanka 2010, dan kedua tautan DOI muncul dua kali). Daftar di atas sudah dideduplikasi."
+}

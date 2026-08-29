@@ -30,8 +30,8 @@ export const modules: ModuleMeta[] = [
     route: "/modules/m1-reactions",
     sampleLineage: "Observasi kualitatif; penalaran ion/cuplikan tidak dikenal",
     status: "published",
-    color: "#0d9488",
-    icon: "🧪",
+    color: "#001f3f",
+    icon: "science",
     learningOutcomes: [
       "Mengamati perubahan pada reaksi senyawa golongan utama: pembentukan endapan dan gas.",
       "Mengetahui senyawa golongan utama terpilih yang memiliki kelarutan rendah dalam air.",
@@ -39,7 +39,7 @@ export const modules: ModuleMeta[] = [
       "Menuliskan persamaan reaksi secara benar.",
     ],
     theorySummary:
-      "Reaksi ionik dalam larutan akuatik, pengendapan, kelarutan, observasi vs inferensi, reaksi asam-basa dan redoks yang menghasilkan gas, serta persamaan ion netto.",
+      "Kita bakal mengamati langsung apa yang terjadi saat larutan ionik dicampur—mulai dari terbentuknya endapan sampai letupan gas. Kuncinya: bedakan apa yang kita lihat (observasi) dengan kesimpulan reaksinya (inferensi)!",
     keyInteractives: [
       "Matriks reaksi (kation/anion vs pereaksi)",
       "Aktivitas pembentukan gas dengan safety gate",
@@ -63,8 +63,8 @@ export const modules: ModuleMeta[] = [
     route: "/modules/m2-mg2sno4",
     sampleLineage: "Sintesis M2 → pengeringan/kalsinasi → pelet/pengukuran → fotokatalisis → XRD",
     status: "published",
-    color: "#6366f1",
-    icon: "☀️",
+    color: "#705d00",
+    icon: "light_mode",
     learningOutcomes: [
       "Memahami sintesis Mg_{2}SnO_{4}.",
       "Karakterisasi produk dengan XRD.",
@@ -72,7 +72,7 @@ export const modules: ModuleMeta[] = [
       "Mengevaluasi aktivitas fotokatalitik melalui data degradasi methylene blue.",
     ],
     theorySummary:
-      "Fotokatalisis: absorpsi cahaya, pasangan elektron-hole semikonduktor, reaksi redoks. Band gap dan konteks panjang gelombang (TiO_{2} ~3.2 eV, aktif UV). Sonokimia: kavitasi, kondisi lokal, pembentukan jaringan logam-oksigen.",
+      "Kita bikin partikel fotokatalis Mg_{2}SnO_{4} pakai energi gelombang suara (ultrasonik), lalu kita uji kemampuannya mengurai polutan warna saat disinari cahaya.",
     keyInteractives: [
       "Peta proses / linimasa durasi panjang",
       "Log sintesis dan pH",
@@ -95,8 +95,8 @@ export const modules: ModuleMeta[] = [
     route: "/modules/m3-sn-bi-electrodeposition",
     sampleLineage: "Elektrodeposisi M3 → bukti permukaan/massa → XRD",
     status: "published",
-    color: "#f59e0b",
-    icon: "⚡",
+    color: "#001f3f",
+    icon: "bolt",
     learningOutcomes: [
       "Sintesis paduan Sn–Bi via elektrodeposisi dengan reagen pengkompleks.",
       "Preparasi katoda dan anoda.",
@@ -106,7 +106,7 @@ export const modules: ModuleMeta[] = [
       "Handoff karakterisasi XRD.",
     ],
     theorySummary:
-      "Paduan vs logam murni, anatomi sel elektrokimia (Anoda/Katoda, arah arus), prinsip elektrodeposisi, peran agen pengkompleks, rapat arus, luas area, waktu, perubahan massa, efisiensi arus.",
+      "Melapisi permukaan logam dengan paduan Timah-Bismut (Sn-Bi) memanfaatkan aliran listrik DC. Kita atur rapat arus dan waktu agar lapisan nempel rata dan efisien!",
     keyInteractives: [
       "Penjelajah sel elektrokimia (diagram berlabel interaktif)",
       "Worksheet preparasi elektrolit (Larutan A/B/C)",
@@ -129,8 +129,8 @@ export const modules: ModuleMeta[] = [
     route: "/modules/m4-zeolite-fau",
     sampleLineage: "Prekursor M4 → kristalisasi hidrotermal → isolasi/pengeringan → XRD + TGA",
     status: "published",
-    color: "#16a34a",
-    icon: "💠",
+    color: "#705d00",
+    icon: "hexagon",
     learningOutcomes: [
       "Sintesis zeolit FAU (X atau Y) dengan metode hidrotermal.",
       "Mengamati kristalisasi zeolit.",
@@ -138,7 +138,7 @@ export const modules: ModuleMeta[] = [
       "Mengenali karakterisasi zeolit dasar melalui XRD.",
     ],
     theorySummary:
-      "Zeolit sebagai aluminosilikat mikropori kristalin dari tetrahedra [SiO_{4}]^{4-} dan [AlO_{4}]^{5-}. Aplikasi: adsorben, penukar ion, katalis. Sintesis hidrotermal: nukleasi/rekristalisasi/pertumbuhan kristal.",
+      "Kita 'memasak' mineral berpori mikroskopis (Zeolit FAU) dari campuran silika-alumina basa. Pori-pori kristalnya sangat ampuh menyaring zat dan jadi katalis industri.",
     keyInteractives: [
       "Workspace resep prekursor dan stoikiometri",
       "Penjelajah kondisi (komposisi-suhu-waktu)",
@@ -161,13 +161,13 @@ export const modules: ModuleMeta[] = [
     route: "/modules/m5-xrd",
     sampleLineage: "Data XRD dari produk sintesis M2, M3, M4",
     status: "published",
-    color: "#8b5cf6",
-    icon: "📐",
+    color: "#001f3f",
+    icon: "monitoring",
     learningOutcomes: [
       "Memproses, menganalisis, dan menafsirkan data XRD dari bahan sintesis.",
     ],
     theorySummary:
-      "Prinsip difraksi sinar-X, material kristalin vs amorf, Hukum Bragg (nλ = 2d sin θ), posisi/intensitas/lebar puncak, Kristalinitas, persamaan Scherrer (K = 0.9), perbandingan pola referensi.",
+      "XRD itu ibarat 'sidik jari' material padat. Dengan menembakkan sinar-X, kita bisa tahu pasti apakah kristal kita sudah terbentuk rapi dan berapa ukuran nanokristalnya.",
     keyInteractives: [
       "Sandbox Hukum Bragg",
       "Workspace difraktogram interaktif (peak picking)",
@@ -190,13 +190,13 @@ export const modules: ModuleMeta[] = [
     route: "/modules/m6-tga",
     sampleLineage: "Termogram dari produk sintesis (terutama sampel zeolit)",
     status: "published",
-    color: "#dc2626",
-    icon: "🔥",
+    color: "#705d00",
+    icon: "thermostat",
     learningOutcomes: [
       "Memahami analisis termogravimetri dasar, menganalisis perubahan massa dan suhu onset untuk dua sampel, dan memproses data TGA/DTG.",
     ],
     theorySummary:
-      "Prinsip TGA: pengukuran massa berkelanjutan selama pemanasan terprogram. Interpretasi TG vs DTG, region kehilangan massa, suhu onset, titik infleksi, stabilitas, mekanisme dekomposisi.",
+      "TGA memanaskan sampel sambil menimbangnya terus-menerus. Dari sini, kita bisa melacak pada suhu berapa air menguap dan kapan struktur material mulai terurai.",
     keyInteractives: [
       "Planner instrumen-run",
       "Workspace TG/DTG (grafik sinkron)",

@@ -1,0 +1,202 @@
+{
+  "id": "M1",
+  "nomor": 1,
+  "judul": "Reaksi-reaksi Kimia Senyawa Golongan Utama",
+  "halaman_pdf": [
+    9,
+    12
+  ],
+  "sub_sesi": [
+    "M1"
+  ],
+  "tujuan": [
+    "Mengamati perubahan yang terjadi dalam reaksi-reaksi senyawa golongan utama. Perubahan yang dapat diamati di antaranya: terbentuk endapan dan gelembung gas.",
+    "Mengetahui beberapa senyawa golongan utama yang memiliki kelarutan yang kecil dalam air.",
+    "Mengidentifikasi jenis kation/anion yang terdapat dalam suatu sampel larutan.",
+    "Menuliskan persamaan kimia dengan baik."
+  ],
+  "pendahuluan": {
+    "ringkas": "Reaksi kimia dinyatakan berlangsung bila teramati produk reaksi berupa endapan, gas, perubahan pH, atau perubahan warna larutan. Perbedaan kelarutan garam golongan utama dipakai sebagai dasar identifikasi kualitatif kation dan anion.",
+    "paragraf": [
+      "Suatu reaksi kimia dikatakan berlangsung bila diamati adanya produk reaksi, yang dapat berupa: (i) endapan, (ii) gas, (iii) perubahan pH larutan, dan (iv) perubahan warna larutan. Secara umum, senyawa nitrat, halida, asetat, dan klorat dari golongan utama larut baik dalam air. Sementara senyawa hidroksida, karbonat, sulfat, fosfat dari unsur golongan 2 memiliki kelarutan yang kecil dalam air dibandingkan dengan senyawa-senyawa unsur golongan 1. Perbedaan kelarutan tersebut digunakan untuk identifikasi garam-garam golongan utama secara kualitatif.",
+      "Reaksi asam-basa dan reaksi redoks pada senyawa yang mengandung unsur golongan utama juga digunakan dalam pembentukan gas, seperti pembentukan gas hidrogen, oksigen, nitrogen dioksida, belerang dioksida, dan klor."
+    ],
+    "aturan_kelarutan": {
+      "larut_dalam_air": [
+        "Semua senyawa golongan 1",
+        "Garam dengan ion NH4+, NO3-, ClO4-, ClO3- dan C2H3O2-",
+        "Semua senyawa klorida, bromida, dan iodida, kecuali AgX, PbX2, dan Hg2X2 (X = Cl-, Br-, I-)",
+        "Semua senyawa sulfat, kecuali PbSO4, CaSO4, SrSO4, BaSO4 dan Hg2SO4"
+      ],
+      "kelarutan_kecil": [
+        "Semua senyawa hidroksida logam dan oksida logam, kecuali kation golongan 1, Ca2+, Sr2+ dan Ba2+",
+        "Semua senyawa dengan anion PO43-, CO32-, SO32- dan S2-, kecuali kation NH4+ dan golongan 1"
+      ]
+    },
+    "reaksi_pembentukan_gas": [
+      {
+        "gas": "H2",
+        "persamaan": [
+          "M(s) + 2HCl(aq) -> M2+(aq) + H2(g)  (M = gol 1,2)",
+          "M(s) + H2O(aq) -> MOH(aq) + H2(g)  (M = gol 1)",
+          "2Al(s) + 2NaOH(aq) + 6H2O(l) -> 2Na[Al(OH)4] + 3H2(g)"
+        ]
+      },
+      {
+        "gas": "CO2",
+        "persamaan": [
+          "CO32-(aq) + 2H3O+(aq) -> CO2(g) + 3H2O(l)"
+        ]
+      },
+      {
+        "gas": "SO2",
+        "persamaan": [
+          "SO32-(aq) + 2H3O+(aq) -> SO2(g) + 3H2O(l)"
+        ]
+      },
+      {
+        "gas": "O2",
+        "persamaan": [
+          "2KClO3 -> 3O2(g) + 2KCl(s)  (dipanaskan, katalis MnO2)"
+        ]
+      }
+    ]
+  },
+  "alat": [
+    "kertas mika (plastik mika transparan)",
+    "karton hitam",
+    "pipet tetes",
+    "tabung reaksi",
+    "peralatan gelas",
+    "balon"
+  ],
+  "bahan": {
+    "uji_kation": [
+      "NH4Cl",
+      "KNO3",
+      "Mg(NO3)2",
+      "Ca(NO3)2",
+      "Ba(NO3)2",
+      "Al(NO3)3",
+      "Pb(NO3)2"
+    ],
+    "uji_anion": [
+      "HCl",
+      "NaOH",
+      "Na2CO3",
+      "Na2SO3",
+      "Na2SO4",
+      "Na3PO4",
+      "Na2HPO4",
+      "Na2CrO4",
+      "Na2S"
+    ],
+    "padatan": [
+      "Na2CO3 padat",
+      "potongan aluminium foil"
+    ],
+    "catatan_konsentrasi": "Konsentrasi masing-masing larutan berkisar 0,5-1 M.",
+    "catatan_inkonsistensi_dokumen": "Daftar bahan menulis Al(NO3)2 dan Na2CrO4, sedangkan prosedur menulis Al(NO3)3 dan K2CrO4; tabel kisi-kisi memakai CrO42-."
+  },
+  "prosedur": [
+    {
+      "bagian": "Uji kualitatif kation-anion pada plastik mika",
+      "langkah": [
+        "Siapkan plastik mika transparan dengan alas kertas karton hitam agar produk reaksi (gelembung gas, endapan, perubahan warna) mudah diamati.",
+        "Teteskan 1-2 tetes masing-masing larutan NH4Cl, KNO3, Mg(NO3)2, Ca(NO3)2, Ba(NO3)2, Al(NO3)3, Pb(NO3)2 pada plastik mika dengan jarak antar larutan.",
+        "Teteskan 1-2 tetes larutan HCl pada masing-masing larutan tersebut. Amati ada/tidaknya perubahan dan catat pada lembar kerja. Setelah pengamatan, bersihkan plastik mika dengan kertas tisu.",
+        "Ulangi tahap di atas dengan mengganti HCl dengan 1-2 tetes larutan NaOH, Na2CO3, Na2SO3, Na2SO4, Na3PO4, Na2HPO4, K2CrO4, dan Na2S."
+      ]
+    },
+    {
+      "bagian": "Pembentukan gas",
+      "langkah": [
+        "Siapkan tabung reaksi bersih, masukkan padatan natrium bikarbonat dan larutan asam asetat. Pasang balon karet pada mulut tabung reaksi dan amati perubahan yang terjadi.",
+        "Ulangi percobaan menggunakan potongan kecil aluminium foil dengan larutan basa, amati perubahan yang terjadi.",
+        "Amati balon manakah yang dapat terbang."
+      ]
+    },
+    {
+      "bagian": "Analisis sampel",
+      "langkah": [
+        "Identifikasi kation dan anion yang terdapat dalam larutan sampel menggunakan pereaksi yang tersedia."
+      ]
+    }
+  ],
+  "matriks_uji": {
+    "kation": [
+      "NH4+",
+      "K+",
+      "Mg2+",
+      "Ca2+",
+      "Ba2+",
+      "Al3+",
+      "Pb2+"
+    ],
+    "kation_tugas_pendahuluan": [
+      "NH4+",
+      "Na+",
+      "K+",
+      "Mg2+",
+      "Ca2+",
+      "Ba2+",
+      "Al3+",
+      "Pb2+",
+      "H+"
+    ],
+    "anion_pereaksi": [
+      "Cl-",
+      "OH-",
+      "CO3-",
+      "SO32-",
+      "SO42-",
+      "PO43-",
+      "HPO42-",
+      "CrO42-",
+      "S2-"
+    ],
+    "catatan": "Tabel data pengamatan memakai 7 kation; tabel tugas pendahuluan memakai 9 kolom (termasuk Na+ dan H+). Baris 'CO3-' tertulis demikian pada dokumen asli (seharusnya CO32-)."
+  },
+  "kisi_kisi_laporan": {
+    "data_pengamatan": [
+      "Tuliskan pengamatan pada reaksi-reaksi kation dan anion dalam tabel matriks kation x pereaksi.",
+      "Tuliskan hasil pengamatan untuk percobaan pembentukan gas.",
+      "Tuliskan hasil pengamatan untuk analisis kualitatif kation dan anion larutan sampel."
+    ],
+    "pembahasan": [
+      "Berdasarkan hasil pengamatan tabel, tuliskan persamaan kimia yang menghasilkan produk reaksi berupa endapan.",
+      "Tuliskan hasil pengamatan dan persamaan kimia untuk percobaan pembentukan gas.",
+      "Tentukan kation dan anion yang terkandung dalam larutan sampel.",
+      "Lengkapi dengan hasil pengamatan dan analisis."
+    ]
+  },
+  "tugas_pendahuluan": {
+    "instruksi": "Perkirakan pengamatan yang akan diperoleh dalam reaksi-reaksi kation dan anion dalam tabel, dengan menuliskan kode notasi berikut.",
+    "notasi": [
+      {
+        "kode": "N.R",
+        "arti": "tidak ada perubahan apapun (warna, endapan, atau gelembung gas)"
+      },
+      {
+        "kode": "W",
+        "arti": "endapan berwarna putih"
+      },
+      {
+        "kode": "C",
+        "arti": "endapan berwarna (selain putih)"
+      },
+      {
+        "kode": "(gelembung)",
+        "arti": "ada gelembung gas"
+      },
+      {
+        "kode": "C",
+        "arti": "warna larutan berubah"
+      }
+    ],
+    "catatan": "Dokumen asli memakai kode 'C' dua kali (endapan berwarna dan perubahan warna larutan) dan satu simbol gelembung gas yang tidak terbaca pada ekstraksi teks. Perlu konfirmasi asisten sebelum dipakai di web."
+  },
+  "daftar_pustaka": [
+    "Housecroft, C.E., Sharpe, A.G. (2005), Inorganic Chemistry, 2nd ed., Pearson-Prentice Hall."
+  ]
+}

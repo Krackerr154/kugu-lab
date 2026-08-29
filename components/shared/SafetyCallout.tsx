@@ -14,17 +14,17 @@ export function SafetyCallout({
   sopLink,
 }: SafetyCalloutProps) {
   const styles = {
-    warning: "border-[var(--warning)] bg-[var(--warning-light)] text-amber-900",
-    danger: "border-[var(--danger)] bg-[var(--danger-light)] text-red-900",
-    info: "border-[var(--accent)] bg-[var(--accent-light)] text-indigo-900",
+    warning: "border-[var(--secondary)] bg-[var(--secondary-container)]/25 text-[var(--warning-ink)]",
+    danger: "border-[var(--danger)] bg-[var(--danger-light)] text-[var(--danger)]",
+    info: "border-[var(--primary-container)] bg-[var(--primary-fixed)] text-[var(--info-ink)]",
   };
 
-  const icons = { warning: "⚠️", danger: "🛑", info: "ℹ️" };
+  const icons = { warning: "warning", danger: "report", info: "info" };
 
   return (
-    <div className={`rounded-lg border-l-4 p-4 ${styles[variant]}`}>
+    <div className={`rounded-lg border p-4 ${styles[variant]}`}>
       <div className="flex items-start gap-2">
-        <span className="text-xl" aria-hidden>{icons[variant]}</span>
+        <span aria-hidden="true" className="material-symbols-outlined text-xl">{icons[variant]}</span>
         <div className="flex-1">
           <p className="font-semibold">{title}</p>
           <div className="mt-1 text-sm">{children}</div>

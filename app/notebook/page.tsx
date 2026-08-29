@@ -2,7 +2,7 @@ import { LabNotebook } from "@/components/shared/LabNotebook";
 
 export default function NotebookPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
       <h1 className="text-2xl font-bold">Catatan Praktikum</h1>
       <p className="mt-1 text-sm text-[var(--muted)]">
         Notebook terstruktur per modul. Data tersimpan otomatis di browser (localStorage).
