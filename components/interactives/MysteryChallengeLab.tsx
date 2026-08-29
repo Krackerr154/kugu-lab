@@ -81,6 +81,80 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
     return () => clearTimeout(timer);
   }, []);
 
+  // Helper functions for determining reaction visual properties
+  const determineFinalColor = (cation: string, reagent: string): string => {
+    if (hasPrecipitate(cation, reagent)) return "rgba(245, 240, 235, 0.6)";
+    if (cation.includes("Cu") && reagent === "NH3") return "rgba(79, 70, 229, 0.5)"; // Royal blue
+    return "rgba(240, 248, 255, 0.5)";
+  };
+
+  const determinePrecipitateColor = (cation: string, reagent: string): "white" | "black" | "blue" | "brown" | "no_color" => {
+    if (!hasPrecipitate(cation, reagent)) return "no_color";
+    
+    // Based on actual chemistry observations
+    switch (cation) {
+      case "Ag+":
+        if (reagent === "HCl") return "white"; // White curdy AgCl
+        if (reagent === "NaOH") return "brown"; // Brown Ag2O
+        if (reagent === "H2S") return "black"; // Black Ag2S
+        break;
+      case "Pb2+":
+        if (reagent === "HCl") return "white"; // White PbCl2
+        if (reagent === "NaOH") return "white"; // White amphoteric
+        if (reagent === "H2S") return "black"; // Black PbS
+        break;
+      case "Cu2+":
+        if (reagent === "NaOH") return "blue"; // Blue Cu(OH)2
+        break;
+      case "Al3+":
+        if (reagent === "NaOH") return "white"; // White amphoteric
+        break;
+      default:
+        return "white";
+    }
+    return "white";
+  };
+
+  const observePrecipitateType = (text: string): "curd" | "gelatinous" | "crystalline" | "powder" | "none" => {
+    if (text.includes("kental") || text.includes("curdy")) return "curd";
+    if (text.includes("kristal") || text.includes("jarum")) return "crystalline";
+    if (text.includes("gelatinous") || text.includes("gel")) return "gelatinous";
+    if (text.includes("putih") && !text.includes("kental")) return "powder";
+    return "powder";
+  };
+
+  const hasGasFormation = (reagent: string): boolean => {
+    return reagent === "NaOH" || reagent === "H2S" || reagent === "NH3";
+  };
+
+  const hasPrecipitate = (cation: string, reagent: string): boolean => {
+    const cationsWithPrecipitates: Record<string, string[]> = {
+      "Ag+": ["HCl", "NaOH", "H2S"],
+      "Pb2+": ["HCl", "NaOH", "H2S"],
+      "Cu2+": ["NaOH"],
+      "Al3+": ["NaOH"],
+    };
+    return cationsWithPrecipitates[cation]?.includes(reagent) ?? false;
+  };
+
+  const getPrecipitateHex = (color: "white" | "black" | "blue" | "brown" | "no_color"): string => {
+    switch (color) {
+      case "white":
+        return "#ffffff";
+      case "black":
+        return "#000000";
+      case "blue":
+        return "#3b82f6";
+      case "brown":
+        return "#78350f";
+      case "no_color":
+        return "#ffffff";
+      default:
+        return "#ffffff";
+    }
+  };
+
+
   const handleTestDrop = async (reagentId: string) => {
     if (isTesting || testedReagents.includes(reagentId)) return;
 
@@ -274,8 +348,10 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
                                    observations[observations.length - 1].reagent}
                       visualSpec={{
                         initialLiquidColor: "rgba(235, 245, 255, 0.4)",
-                        finalLiquidColor: "rgba(240, 248, 255, 0.5)",
-                        precipitateType: "powder",
+                        finalLiquidColor: determineFinalColor(selectedMystery.actualCation, observations[observations.length - 1].reagent),
+                        precipitateColor: getPrecipitateHex(determinePrecipitateColor(selectedMystery.actualCation, observations[observations.length - 1].reagent)),
+                        precipitateType: observePrecipitateType(observations[observations.length - 1].text),
+                        hasGas: hasGasFormation(observations[observations.length - 1].reagent),
                       }}
                       isUnknown={!showSolution}
                     />
