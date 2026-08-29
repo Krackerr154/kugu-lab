@@ -8,6 +8,7 @@
 
 import { useState, useEffect } from "react";
 import { Equation } from "../shared/Equation";
+import { ReactionTubeAnimation, type VisualSpec } from "./ReactionTubeAnimation";
 
 interface MysteryChallenge {
   id: string;
@@ -244,42 +245,73 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
 
         {/* Right: Live Observation Pad */}
         <div className="md:col-span-1 space-y-4">
-          {/* Test Results */}
+          {/* Test Results - REPLACED WITH REACTION TUBE ANIMATION */}
           <div className="p-5 bg-[var(--surface-container-low)] rounded-xl border border-[var(--outline-variant)]/40 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)] flex items-center gap-2">
-              <span aria-hidden="true" className="material-symbols-outlined text-sm">assignment</span>
-              Hasil Observasi Langsung:
-            </h4>
-
             {observations.length === 0 ? (
-              <p className="text-sm text-[var(--muted)] italic py-4">
-                Klik botol reagen di sebelah kiri untuk meneteskan ke dalam cuplikan misterius.
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {observations.map((obs, idx) => (
-                  <div 
-                    key={idx} 
-                    className="p-3 bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)]/40 text-sm animate-fade-in"
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-[var(--primary-container)]">
-                        Tes #{idx + 1}: {obs.reagent === "H2S" ? "H₂S" : obs.reagent === "NH3" ? "NH₃" : obs.reagent}
-                      </span>
-                      <span className="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
-                    </div>
-                    <p className="text-[var(--foreground)] leading-relaxed">{obs.text}</p>
-                  </div>
-                ))}
-
-                {/* Drop Animation Indicator */}
-                {isTesting && (
-                  <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 text-sm font-semibold animate-pulse px-2">
-                    <span className="material-symbols-outlined">ev_station</span>
-                    Meneteskan reagen...
-                  </div>
-                )}
+              <div className="py-8 text-center">
+                <span aria-hidden="true" className="material-symbols-outlined text-6xl text-[var(--muted)] mb-3">
+                  science
+                </span>
+                <p className="text-sm text-[var(--muted)] italic">
+                  Klik botol reagen di sebelah kiri untuk memulai pengujian
+                </p>
               </div>
+            ) : (
+              <>
+                {/* Animation Display */}
+                <div className="relative">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)] flex items-center gap-2 mb-3">
+                    <span aria-hidden="true" className="material-symbols-outlined text-sm">science</span>
+                    Visualisasi Reaksi:
+                  </h4>
+                  
+                  {/* Show reaction tube animation for last test */}
+                  {observations.length > 0 && (
+                    <ReactionTubeAnimation
+                      cationName={selectedMystery.actualCation.replace('+', '+').replace('2+', '²⁺')}
+                      reagentName={observations[observations.length - 1].reagent === "H2S" ? "H₂S (suasana asam)" : 
+                                   observations[observations.length - 1].reagent === "NH3" ? "NH₃ (amonia)" : 
+                                   observations[observations.length - 1].reagent}
+                      visualSpec={{
+                        initialLiquidColor: "rgba(235, 245, 255, 0.4)",
+                        finalLiquidColor: "rgba(240, 248, 255, 0.5)",
+                        precipitateType: "powder",
+                      }}
+                      isUnknown={!showSolution}
+                    />
+                  )}
+                </div>
+
+                {/* Observations List */}
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)] flex items-center gap-2 mt-4">
+                  <span aria-hidden="true" className="material-symbols-outlined text-sm">assignment</span>
+                  Hasil Observasi Langsung:
+                </h4>
+
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {observations.map((obs, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`p-3 ${obs.reagent === observations[observations.length - 1].reagent 
+                        ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300" 
+                        : "bg-[var(--surface-container-lowest)] border-[var(--outline-variant)]/40"} 
+                       rounded-lg border text-sm animate-fade-in`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-sm">
+                          Tes #{idx + 1}: {obs.reagent === "H2S" ? "H₂S" : obs.reagent === "NH3" ? "NH₃" : obs.reagent}
+                        </span>
+                        {obs.reagent === observations[observations.length - 1].reagent && !showSolution ? (
+                          <span className="material-symbols-outlined text-emerald-500 text-lg animate-pulse">ev_station</span>
+                        ) : (
+                          <span className="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+                        )}
+                      </div>
+                      <p className="text-[var(--foreground)] leading-relaxed">{obs.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 
