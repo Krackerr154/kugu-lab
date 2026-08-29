@@ -213,7 +213,7 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
   const timeSpent = Math.floor((Date.now() - timeStart) / 1000);
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="min-h-[680px] space-y-6 animate-fade-in flex flex-col">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-4 border-b border-[var(--outline-variant)] gap-4">
         <div>

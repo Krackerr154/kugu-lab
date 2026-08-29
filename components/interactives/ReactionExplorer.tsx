@@ -931,9 +931,9 @@ export function ReactionExplorer() {
 
       {/* TAB 1: WORKBENCH & ANIMATED MATRIX */}
       {activeTab === "workbench" && (
-        <div className="space-y-6">
-          {/* Main 2-Column Lab Workbench */}
-          <section className="surface-panel p-5 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl">
+        <div className="space-y-6 animate-fade-in">
+          {/* Fixed height wrapper for consistent tab sizing */}
+          <section className="min-h-[680px] surface-panel p-5 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl flex flex-col">
             <div className="flex items-center justify-between flex-wrap gap-2 pb-4 mb-4 border-b border-[var(--outline-variant)]/40">
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
@@ -1183,7 +1183,7 @@ export function ReactionExplorer() {
 
       {/* TAB 2: GAS EVOLUTION & DETECTION SIMULATOR */}
       {activeTab === "gas" && (
-        <section className="surface-panel p-5 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl space-y-6">
+        <section className="min-h-[680px] surface-panel p-5 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl space-y-6 animate-fade-in flex flex-col">
           <div>
             <h3 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
               <span aria-hidden="true" className="material-symbols-outlined text-amber-500">bubble_chart</span>
@@ -1271,7 +1271,11 @@ export function ReactionExplorer() {
       {activeTab === "unknown" && <MysteryChallengeLab />}
 
       {/* TAB 4: EQUATION BALANCING EXERCISES */}
-      {activeTab === "equations" && <EquationBuilder />}
+      {activeTab === "equations" && (
+        <section className="min-h-[680px] surface-panel p-5 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl space-y-4 animate-fade-in flex flex-col">
+          <EquationExercise />
+        </section>
+      )}
     </div>
   );
 }
@@ -1474,8 +1478,8 @@ function UnknownSampleLab() {
   );
 }
 
-// Equation Balancing Step-by-Step Exercise
-function EquationBuilder() {
+// Equation Balancing Step-by-Step Exercise - renamed for consistency
+function EquationExercise() {
   const exercises = [
     {
       equation: "AgNO_3 + NaCl \\rightarrow AgCl + NaNO_3",
