@@ -283,11 +283,11 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
                   <button
                     key={reagentId}
                     onClick={() => handleTestDrop(reagentId)}
-                    disabled={isUsed || isTesting}
-                    className={`relative p-4 rounded-lg text-left border-2 transition-all flex items-center gap-3 min-h-[70px] ${
+                    disabled={isTesting || testedReagents.includes(reagentId)}
+                    className={`relative p-4 rounded-lg text-left border-2 transition-all flex items-center gap-3 min-h-[70px] hover-scale ${
                       isUsed
                         ? "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400 cursor-not-allowed opacity-50"
-                        : "bg-[var(--surface-container-lowest)] border-[var(--outline-variant)]/60 hover:border-[var(--primary-container)] hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                        : "bg-[var(--surface-container-lowest)] border-[var(--outline-variant)]/60 hover:border-[var(--primary-container)] hover:shadow-md active:scale-[0.98]"
                     }`}
                   >
                     <span aria-hidden="true" className="material-symbols-outlined text-xl text-amber-400">
@@ -368,10 +368,10 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
                   {observations.map((obs, idx) => (
                     <div 
                       key={idx} 
-                      className={`p-3 ${obs.reagent === observations[observations.length - 1].reagent 
-                        ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300" 
+                      className={`p-3 transition-all duration-300 ease-out transform hover:scale-[1.02] ${obs.reagent === observations[observations.length - 1].reagent 
+                        ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-300 shadow-md" 
                         : "bg-[var(--surface-container-lowest)] border-[var(--outline-variant)]/40"} 
-                       rounded-lg border text-sm animate-fade-in`}
+                       rounded-lg border text-sm animate-slide-up`}
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-sm">
