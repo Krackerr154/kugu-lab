@@ -933,7 +933,7 @@ export function ReactionExplorer() {
       {activeTab === "workbench" && (
         <div className="space-y-6 animate-fade-in">
           {/* Fixed height wrapper for consistent tab sizing */}
-          <section className="min-h-[680px] surface-panel p-5 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl flex flex-col">
+          <section className="min-h-[700px] surface-panel p-3 sm:p-4 md:p-5 lg:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-xl md:rounded-2xl flex flex-col">
             <div className="flex items-center justify-between flex-wrap gap-2 pb-4 mb-4 border-b border-[var(--outline-variant)]/40">
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
@@ -949,8 +949,8 @@ export function ReactionExplorer() {
             {/* Selection Bars */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
               {/* Cation Rack */}
-              <div className="p-3.5 bg-[var(--surface-container-low)] rounded-xl border border-[var(--outline-variant)]/40">
-                <label className="text-xs font-bold text-[var(--muted)] uppercase tracking-wider block mb-2">
+              <div className="p-2.5 sm:p-3 bg-[var(--surface-container-low)] rounded-lg md:rounded-xl border border-[var(--outline-variant)]/40">
+                <label className="text-[10px] sm:text-xs font-bold text-[var(--muted)] uppercase tracking-wider block mb-2">
                   1. Pilih Sampel Kation di Rak:
                 </label>
                 <div className="grid grid-cols-4 sm:grid-cols-4 gap-1.5">
@@ -960,14 +960,14 @@ export function ReactionExplorer() {
                       <button
                         key={c.id}
                         onClick={() => setSelectedCation(c.id)}
-                        className={`px-2 py-2 rounded-lg text-xs font-bold transition-all flex flex-col items-center justify-center gap-1 border ${
+                        className={`px-1.5 py-2 sm:px-2 sm:py-2 rounded-md md:rounded-lg text-[9px] sm:text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 sm:gap-1 border ${
                           isSelected
                             ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm scale-[1.02]"
                             : "bg-[var(--surface-container-lowest)] text-[var(--foreground)] border-[var(--outline-variant)]/60 hover:border-[var(--primary-container)]"
                         }`}
                       >
-                        <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: c.naturalColor }}></span>
-                        <span>{c.short}</span>
+                        <span className="w-3 h-3 sm:w-2.5 sm:h-2.5 rounded-full border border-black/10" style={{ backgroundColor: c.naturalColor }}></span>
+                        <span className="text-[8px] sm:text-[10px]">{c.short}</span>
                       </button>
                     );
                   })}
@@ -978,8 +978,8 @@ export function ReactionExplorer() {
               </div>
 
               {/* Reagent Dropper Shelf */}
-              <div className="p-3.5 bg-[var(--surface-container-low)] rounded-xl border border-[var(--outline-variant)]/40">
-                <label className="text-xs font-bold text-[var(--muted)] uppercase tracking-wider block mb-2">
+              <div className="p-2.5 sm:p-3 bg-[var(--surface-container-low)] rounded-lg md:rounded-xl border border-[var(--outline-variant)]/40">
+                <label className="text-[10px] sm:text-xs font-bold text-[var(--muted)] uppercase tracking-wider block mb-2">
                   2. Pilih Botol Pipet Pereaksi:
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-2 gap-2">
@@ -989,16 +989,13 @@ export function ReactionExplorer() {
                       <button
                         key={r.id}
                         onClick={() => setSelectedReagent(r.id)}
-                        className={`p-2.5 rounded-lg text-left text-xs transition-all border flex items-start gap-2 ${
+                        className={`p-2 sm:p-2.5 rounded-md md:rounded-lg text-left text-[10px] sm:text-xs transition-all border flex items-start gap-1.5 sm:gap-2 ${
                           isSelected
                             ? "bg-[var(--primary-container)] text-white border-[var(--primary-container)] shadow-sm scale-[1.02]"
                             : "bg-[var(--surface-container-lowest)] text-[var(--foreground)] border-[var(--outline-variant)]/60 hover:border-[var(--primary-container)]"
                         }`}
-                      >
-                        <span aria-hidden="true" className="material-symbols-outlined text-base mt-0.5 text-amber-400">{r.icon}</span>
-                        <div>
-                          <p className="font-bold">{r.name}</p>
-                          <p className="text-[10px] opacity-80 line-clamp-1">{r.desc}</p>
+                      >\n                        <span aria-hidden="true" className="material-symbols-outlined text-base mt-0.5 text-amber-400">{r.icon}</span>\n                        <div>\n                          <p className="font-semibold text-[10px] sm:text-[11px]">{r.name}</p>
+                          <p className="text-[9px] opacity-80 line-clamp-1">{r.desc}</p>
                         </div>
                       </button>
                     );
@@ -1008,9 +1005,9 @@ export function ReactionExplorer() {
             </div>
 
             {/* Workbench Grid: Live Animated Tube + Observation Inspector */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 md:gap-4 lg:gap-6 items-stretch">
               {/* Left: Animated Tube Simulation */}
-              <div className="md:col-span-5 flex items-center justify-center">
+              <div className="sm:col-span-full lg:col-span-5 flex items-center justify-center min-h-[200px]">
                 {currentReaction && (
                   <ReactionTubeAnimation
                     cationName={cationMeta?.short || selectedCation}

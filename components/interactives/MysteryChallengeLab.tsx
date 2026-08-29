@@ -213,7 +213,7 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
   const timeSpent = Math.floor((Date.now() - timeStart) / 1000);
 
   return (
-    <div className="min-h-[680px] space-y-6 animate-fade-in flex flex-col">
+    <div className="min-h-[720px] sm:min-h-[750px] md:min-h-[800px] space-y-4 sm:space-y-6 animate-fade-in flex flex-col">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-4 border-b border-[var(--outline-variant)] gap-4">
         <div>
@@ -244,18 +244,18 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
       </div>
 
       {/* Hint Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
         {selectedMystery.hints.map((hint, idx) => (
-          <div key={idx} className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800/40 text-sm text-blue-900 dark:text-blue-100 flex items-start gap-3">
+          <div key={idx} className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-md sm:rounded-lg border border-blue-200 dark:border-blue-800/40 text-sm text-blue-900 dark:text-blue-100 flex items-start gap-2 sm:gap-3">
             <span aria-hidden="true" className="material-symbols-outlined text-base mt-0.5 text-blue-500 flex-shrink-0">lightbulb</span>
-            <span>{hint}</span>
+            <span className="text-[11px] sm:text-sm">{hint}</span>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
         {/* Left: Reagent Dispenser */}
-        <div className="p-5 rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] space-y-4">
+        <div className="p-4 sm:p-5 rounded-lg md:rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] space-y-3 sm:space-y-4">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg">?</div>
             <div>
@@ -284,7 +284,7 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
                     key={reagentId}
                     onClick={() => handleTestDrop(reagentId)}
                     disabled={isTesting || testedReagents.includes(reagentId)}
-                    className={`relative p-4 rounded-lg text-left border-2 transition-all flex items-center gap-3 min-h-[70px] hover-scale ${
+                    className={`relative p-3 sm:p-4 rounded-md md:rounded-lg text-left border-2 transition-all flex items-center gap-2 sm:gap-3 min-h-[60px] hover-scale ${
                       isUsed
                         ? "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-400 cursor-not-allowed opacity-50"
                         : "bg-[var(--surface-container-lowest)] border-[var(--outline-variant)]/60 hover:border-[var(--primary-container)] hover:shadow-md active:scale-[0.98]"
