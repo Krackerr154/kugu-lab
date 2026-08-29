@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-23T08:02:28Z",
+  "title": "Design System: KUGU Lab",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Midnight Bench Navy",
+        "canonical": "#000613",
+        "tonalRamp": ["#000613", "#001c3a", "#001f3f", "#2f486a", "#476083", "#6f88ad", "#afc8f0", "#d4e3ff"]
+      },
+      "bench-navy": {
+        "role": "primary",
+        "displayName": "Bench Navy",
+        "canonical": "#001f3f",
+        "tonalRamp": ["#00264c", "#003f80", "#0058b2", "#0071e6", "#1a8aff", "#4da4ff", "#80beff", "#dbedff"]
+      },
+      "signal-gold": {
+        "role": "secondary",
+        "displayName": "Safety Signal Gold",
+        "canonical": "#fcd400",
+        "tonalRamp": ["#4c4000", "#705d00", "#806b00", "#b29600", "#e9c400", "#fcd400", "#ffe16d", "#fff9db"]
+      },
+      "gold-on-signal": {
+        "role": "secondary",
+        "displayName": "Gold-on-Signal Ink",
+        "canonical": "#6e5c00",
+        "tonalRamp": ["#4b3f00", "#6e5c00", "#806a00", "#b29400", "#e6bf00", "#ffd81a", "#ffe14d", "#fff9db"]
+      },
+      "gold-ink": {
+        "role": "secondary",
+        "displayName": "Gold Ink",
+        "canonical": "#705d00",
+        "tonalRamp": ["#4c4000", "#705d00", "#806a00", "#b29400", "#e6bf00", "#ffd81a", "#ffe14d", "#fff9db"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Cool Paper",
+        "canonical": "#f8f9fa",
+        "tonalRamp": ["#20262d", "#35404a", "#4a5968", "#607386", "#798c9f", "#97a6b5", "#b5bfca", "#f8f9fa"]
+      },
+      "surface-white": {
+        "role": "neutral",
+        "displayName": "White Reading Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#262626", "#404040", "#595959", "#737373", "#8c8c8c", "#a6a6a6", "#bfbfbf", "#ffffff"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Graphite Ink",
+        "canonical": "#191c1d",
+        "tonalRamp": ["#191c1d", "#3b4244", "#535d60", "#6a777b", "#849095", "#9fa9ac", "#bbc2c4", "#eceeee"]
+      },
+      "muted-ink": {
+        "role": "neutral",
+        "displayName": "Muted Graphite",
+        "canonical": "#43474e",
+        "tonalRamp": ["#232529", "#3b3e45", "#525760", "#6a707b", "#848a95", "#9fa4ad", "#babec4", "#ecedef"]
+      },
+
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Safety Red",
+        "canonical": "#ba1a1a",
+        "tonalRamp": ["#430909", "#701010", "#9d1616", "#ba1a1a", "#c91c1c", "#e33636", "#e96262", "#fbe0e0"]
+      },
+      "danger-soft": {
+        "role": "tertiary",
+        "displayName": "Safety Red Wash",
+        "canonical": "#ffdad6",
+        "tonalRamp": ["#4c0700", "#800c00", "#b21100", "#e61600", "#ff301a", "#ff5e4d", "#ff8c80", "#ffdad6"]
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Verification Green",
+        "canonical": "#16a34a",
+        "tonalRamp": ["#09431f", "#0f7033", "#159d47", "#16a34a", "#1bca5c", "#35e475", "#62ea94", "#e0fbea"]
+      },
+      "success-soft": {
+        "role": "tertiary",
+        "displayName": "Verification Green Wash",
+        "canonical": "#dcfce7",
+        "tonalRamp": ["#06461c", "#0a752f", "#0ea442", "#12d355", "#2ced6e", "#5bf18e", "#8af5ae", "#dcfce7"]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Academic Headline",
+        "purpose": "Screen, panel, and procedure headings that carry hierarchy without ornament."
+      },
+      "body": {
+        "displayName": "Instructional Body",
+        "purpose": "Explanatory chemistry content, reading, and dense operational detail."
+      },
+      "utility": {
+        "displayName": "Operational Utility",
+        "purpose": "Manual references, metadata, chips, table values, and secondary actions."
+      },
+      "eyebrow": {
+        "displayName": "Course Locator",
+        "purpose": "Uppercase course and context signals above a primary heading."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient-lift",
+        "value": "0 8px 32px rgba(0, 31, 63, 0.08)",
+        "purpose": "Restrained navy-tinted separation for the fixed rail, primary cards, and guided walkthrough surfaces."
+      },
+      {
+        "name": "control-lift",
+        "value": "0 1px 3px rgba(0, 0, 0, 0.10)",
+        "purpose": "Small active-control elevation; never a substitute for content hierarchy."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-transition",
+        "value": "color and opacity transitions; progress bars use 500ms ease-out",
+        "purpose": "Communicate state change and guided-procedure progress without decorative movement."
+      },
+      {
+        "name": "reduced-motion-equivalent",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Suppresses nonessential transitions and rehearsal effects while leaving persistent status cues visible."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "40rem" },
+      { "name": "md", "value": "48rem" },
+      { "name": "lg", "value": "64rem" },
+      { "name": "xl", "value": "80rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The decisive forward action for a procedure or preparation task.",
+      "html": "<button class=\"ds-btn-primary\">Lanjutkan persiapan <span aria-hidden=\"true\">→</span></button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; border: 0; border-radius: var(--rounded-control, 0.5rem); background: var(--primary-container, #001f3f); color: var(--on-primary, #ffffff); padding: 0.625rem 1.25rem; font: 700 0.875rem/1.25rem Inter, system-ui, sans-serif; cursor: pointer; transition: opacity 160ms ease; } .ds-btn-primary:hover { opacity: 0.9; } .ds-btn-primary:focus-visible { outline: 2px solid var(--secondary, #705d00); outline-offset: 2px; } .ds-btn-primary:disabled { cursor: not-allowed; opacity: 0.4; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A secondary navigation or reversible action that remains quieter than the forward path.",
+      "html": "<button class=\"ds-btn-outline\">Sebelumnya</button>",
+      "css": ".ds-btn-outline { border: 1px solid var(--outline-variant, #c4c6cf); border-radius: var(--rounded-control, 0.5rem); background: var(--surface-container-lowest, #ffffff); color: var(--on-surface-variant, #43474e); padding: 0.625rem 1rem; font: 500 0.875rem/1.25rem Inter, system-ui, sans-serif; cursor: pointer; transition: background 160ms ease, border-color 160ms ease; } .ds-btn-outline:hover { background: var(--surface-container-low, #f3f4f5); border-color: var(--secondary, #705d00); } .ds-btn-outline:focus-visible { outline: 2px solid var(--secondary, #705d00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Study Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A quiet, bounded reading or working surface for a module, worksheet, or dashboard region.",
+      "html": "<section class=\"ds-card\"><p class=\"ds-card-kicker\">MODUL AKTIF</p><h3>Reaksi Golongan Utama</h3><p>Ringkasan keputusan dan bukti belajar berada di permukaan yang tenang.</p></section>",
+      "css": ".ds-card { border: 1px solid color-mix(in srgb, var(--outline-variant, #c4c6cf) 30%, transparent); border-radius: var(--rounded-card, 0.75rem); background: var(--surface-container-lowest, #ffffff); color: var(--on-surface, #191c1d); padding: 1.5rem; box-shadow: 0 8px 32px rgba(0, 31, 63, 0.08); font-family: Inter, system-ui, sans-serif; } .ds-card-kicker { margin: 0 0 0.5rem; color: var(--secondary, #705d00); font-size: 0.625rem; font-weight: 700; letter-spacing: 0.18em; } .ds-card h3 { margin: 0; color: var(--primary, #000613); font: 700 1.25rem/1.5rem Montserrat, system-ui, sans-serif; } .ds-card p:not(.ds-card-kicker) { margin: 0.5rem 0 0; color: var(--on-surface-variant, #43474e); font-size: 0.875rem; line-height: 1.4; }"
+    },
+    {
+      "name": "Safety Callout",
+      "kind": "custom",
+      "description": "A left-ruled, text-first warning that keeps approved safety wording visible at the decision point.",
+      "html": "<aside class=\"ds-safety\" role=\"note\"><strong>Keselamatan</strong><p>Ikuti SOP/SDS yang disetujui dan konfirmasi dengan asisten sebelum melanjutkan.</p></aside>",
+      "css": ".ds-safety { border: 1px solid color-mix(in srgb, var(--error, #ba1a1a) 35%, transparent); border-left: 4px solid var(--error, #ba1a1a); border-radius: 0.5rem; background: color-mix(in srgb, var(--error-container, #ffdad6) 30%, transparent); color: var(--on-surface, #191c1d); padding: 0.75rem; font-family: Inter, system-ui, sans-serif; } .ds-safety strong { color: var(--error, #ba1a1a); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; } .ds-safety p { margin: 0.35rem 0 0; font-size: 0.875rem; line-height: 1.4; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip",
+      "description": "Compact state metadata for active, scheduled, safety, or verified learning status.",
+      "html": "<span class=\"ds-chip\"><span class=\"ds-chip-dot\"></span>Aktif</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 0.375rem; border-radius: 9999px; background: var(--surface-variant, #e1e3e4); color: var(--on-surface-variant, #43474e); padding: 0.25rem 0.5rem; font: 500 0.75rem/1rem Inter, system-ui, sans-serif; } .ds-chip-dot { width: 0.375rem; height: 0.375rem; border-radius: 9999px; background: var(--secondary, #705d00); }"
+    },
+    {
+      "name": "Procedure Progress",
+      "kind": "custom",
+      "description": "The signature instructional progress pattern: a labeled stage, gold completion bar, and visible current-step context.",
+      "html": "<section class=\"ds-progress\"><div class=\"ds-progress-label\"><span>Langkah 2 dari 5</span><strong>40%</strong></div><div class=\"ds-progress-track\"><span></span></div></section>",
+      "css": ".ds-progress { font-family: Inter, system-ui, sans-serif; } .ds-progress-label { display: flex; justify-content: space-between; gap: 1rem; color: var(--on-surface-variant, #43474e); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; } .ds-progress-label strong { color: var(--secondary, #705d00); } .ds-progress-track { height: 0.5rem; margin-top: 0.5rem; overflow: hidden; border-radius: 9999px; background: var(--surface-container-high, #e7e8e9); } .ds-progress-track span { display: block; width: 40%; height: 100%; border-radius: inherit; background: var(--secondary-container, #fcd400); transition: width 500ms ease-out; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Academic Instrument Notebook",
+    "overview": "KUGU Lab makes pre-lab preparation feel like working through a precise, calm laboratory record beside a purposeful instrument panel. The interface supports repeated study and procedural decision-making: dense enough to retain meaningful chemistry context, yet disciplined enough that the next action, safety status, and evidence remain scannable. Midnight Bench Navy establishes the controlled laboratory frame; Safety Signal Gold is the visible cue for action, progression, and attention. Soft paper-like grays keep long study sessions quiet, while gentle ambient lift separates operational surfaces without turning the application into a glossy dashboard.",
+    "keyCharacteristics": [
+      "Calm academic precision over marketing or gamification.",
+      "Operational hierarchy: task, status, evidence, then secondary reference material.",
+      "Safety cues are explicit, local to the decision, and never merely decorative.",
+      "Rounded, low-contrast containers support dense study material without visual noise.",
+      "Motion communicates progress or a physical laboratory phenomenon and always has a reduced-motion equivalent."
+    ],
+    "rules": [
+      {
+        "name": "The Signal-Not-Decoration Rule",
+        "body": "Gold signals a meaningful action, active state, progress marker, or safety-relevant emphasis. Do not scatter it across neutral cards for decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Safety Has a Voice Rule",
+        "body": "Danger and warning colors must arrive with clear text, an icon or label, and an actionable boundary; color alone never carries the meaning.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Voice Rule",
+        "body": "Use Montserrat only for hierarchy-bearing headings and short emphasis. Use Inter for everything that must be read, compared, entered, or acted on.",
+        "section": "typography"
+      },
+      {
+        "name": "The Paper-Before-Shadow Rule",
+        "body": "Establish hierarchy with surface tone and outline first. Add ambient shadow only when a surface truly needs elevation or interaction emphasis.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use Midnight Bench Navy to establish the application frame and Safety Signal Gold to indicate meaningful action or progression.",
+      "Do use Montserrat for short hierarchy and Inter for instructional, data-heavy, or interactive copy.",
+      "Do keep cards quiet: white or cool-gray surfaces, soft outlines, and ambient navy lift only where hierarchy demands it.",
+      "Do pair every safety, correctness, and progress color with readable text and a semantic control or live-status treatment.",
+      "Do preserve visible keyboard focus and the existing reduced-motion fallback for every animated or interactive state."
+    ],
+    "donts": [
+      "Don't turn the system into a marketing hero, a game reward layer, or an analytics dashboard full of decorative metrics.",
+      "Don't use gold as a generic accent on every card, or use red/green without an explicit safety or verification meaning.",
+      "Don't replace the two-font hierarchy with display-heavy or novelty typography.",
+      "Don't use hard black shadows, high-gloss glass panels, or unbounded animation to create false importance.",
+      "Don't let a digital completion state imply independent authorization for physical laboratory work."
+    ]
+  }
+}
