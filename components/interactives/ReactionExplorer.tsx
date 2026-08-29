@@ -556,8 +556,6 @@ reactionDatabase["NH4+"] = {
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.5)",
-      bubbles: true,
-      bubbleColor: "#ffffff",
       precipitateType: "none",
     },
   },

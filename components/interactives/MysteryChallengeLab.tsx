@@ -6,7 +6,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Equation } from "../shared/Equation";
 
 interface MysteryChallenge {
