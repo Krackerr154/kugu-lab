@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Equation } from "@/components/shared/Equation";
 import { ChemText } from "@/components/shared/ChemText";
-import { PredictionPrompt } from "@/components/shared/PredictionPrompt";
+import { PredictionPrompt } from "../shared/PredictionPrompt";
+import { MysteryChallengeLab } from "./MysteryChallengeLab";
 import { ReactionTubeAnimation, type VisualSpec } from "@/components/interactives/ReactionTubeAnimation";
 
 interface ReactionDetail {
@@ -512,6 +513,7 @@ const reactionDatabase: Record<string, Record<string, ReactionDetail>> = {
         precipitateType: "none",
         canDissolveInExcess: true,
         excessResult: "clear",
+      },
     },
   },
 };
@@ -1267,8 +1269,8 @@ export function ReactionExplorer() {
         </section>
       )}
 
-      {/* TAB 3: UNKNOWN SAMPLE DETECTIVE LAB */}
-      {activeTab === "unknown" && <UnknownSampleLab />}
+      {/* TAB 3: UNKNOWN SAMPLE DETECTIVE LAB - ENHANCED */}
+      {activeTab === "unknown" && <MysteryChallengeLab />}
 
       {/* TAB 4: EQUATION BALANCING EXERCISES */}
       {activeTab === "equations" && <EquationBuilder />}
