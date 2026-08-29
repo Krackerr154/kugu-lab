@@ -35,18 +35,18 @@ export default function M1Page() {
         <div className="mb-4">
           <h3 className="font-bold text-md mb-2 text-[var(--primary-container)]">Aturan Kelarutan (Solubility Rules)</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="p-3 bg-sky-50 dark:bg-sky-950/20 rounded-lg border border-sky-200 dark:border-sky-900/40">
-              <p className="text-xs font-bold mb-1 text-sky-800 dark:text-sky-300">✅ Senyawa Larut:</p>
-              <ul className="text-xs space-y-1 text-sky-900 dark:text-sky-200 list-disc list-inside">
+            <div className="p-3 bg-gradient-to-br from-sky-100 to-sky-200 dark:from-sky-900 dark:to-sky-800 rounded-lg border-2 border-sky-300 dark:border-sky-700 shadow-sm">
+              <p className="text-xs font-bold mb-1 text-sky-900 dark:text-sky-100">✅ Senyawa Larut:</p>
+              <ul className="text-xs space-y-1 text-sky-800 dark:text-sky-200 list-disc list-inside">
                 <li>Semua senyawa Golongan IA (Na⁺, K⁺, dll)</li>
                 <li>Garam dengan NH₄⁺ dan NO₃⁻</li>
                 <li>Halida (Cl⁻, Br⁻, I⁻), kecuali AgX, PbX₂, Hg₂X₂</li>
                 <li>Sulfat (SO₄²⁻), kecuali PbSO₄, BaSO₄, CaSO₄</li>
               </ul>
             </div>
-            <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-900/40">
-              <p className="text-xs font-bold mb-1 text-amber-800 dark:text-amber-300">❌ Kelarutan Rendah:</p>
-              <ul className="text-xs space-y-1 text-amber-900 dark:text-amber-200 list-disc list-inside">
+            <div className="p-3 bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900 dark:to-amber-800 rounded-lg border-2 border-amber-300 dark:border-amber-700 shadow-sm">
+              <p className="text-xs font-bold mb-1 text-amber-900 dark:text-amber-100">❌ Kelarutan Rendah:</p>
+              <ul className="text-xs space-y-1 text-amber-800 dark:text-amber-200 list-disc list-inside">
                 <li>Hidroksida (OH⁻), kecuali NaOH, KOH</li>
                 <li>Karbonat (CO₃²⁻), fosfat (PO₄³⁻)</li>
                 <li>Sulfida (S²⁻) dalam suasana asam</li>
@@ -71,29 +71,29 @@ export default function M1Page() {
       <section className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold mb-3">Pembentukan Gas (Gas Evolution Reactions)</h2>
         <div className="space-y-3">
-          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg border border-emerald-200 dark:border-emerald-900/40">
-            <h3 className="font-bold text-sm text-emerald-800 dark:text-emerald-300 mb-1">Gas Hidrogen (H₂)</h3>
-            <p className="text-xs text-emerald-900 dark:text-emerald-200 mb-1"><strong>Rumus:</strong> Logam aktif + Asam encer</p>
-            <p className="text-xs text-emerald-900 dark:text-emerald-200 font-mono">M(s) + 2HCl(aq) → MCl₂(aq) + H₂(g)↑</p>
-            <p className="text-xs text-emerald-900 dark:text-emerald-200 mt-1"><strong>Uji:</strong> Kayu menyala → bunyi "pop"</p>
+          <div className="p-3 bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-900 dark:to-emerald-800 rounded-lg border-2 border-emerald-300 dark:border-emerald-700 shadow-sm">
+            <h3 className="font-bold text-sm text-emerald-900 dark:text-emerald-100 mb-1">Gas Hidrogen (H₂)</h3>
+            <p className="text-xs text-emerald-800 dark:text-emerald-200 mb-1"><strong>Rumus:</strong> Logam aktif + Asam encer</p>
+            <p className="text-xs text-emerald-900 dark:text-emerald-100 font-mono bg-emerald-50 dark:bg-emerald-950/50 p-1 rounded">M(s) + 2HCl(aq) → MCl₂(aq) + H₂(g)↑</p>
+            <p className="text-xs text-emerald-800 dark:text-emerald-200 mt-1"><strong>Uji:</strong> Kayu menyala → bunyi "pop"</p>
           </div>
-          <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900/40">
-            <h3 className="font-bold text-sm text-blue-800 dark:text-blue-300 mb-1">Gas Karbon Dioksida (CO₂)</h3>
-            <p className="text-xs text-blue-900 dark:text-blue-200 mb-1"><strong>Rumus:</strong> Karbonat + Asam</p>
-            <p className="text-xs text-blue-900 dark:text-blue-200 font-mono">CO₃²⁻(aq) + 2H⁺(aq) → CO₂(g)↑ + H₂O(l)</p>
-            <p className="text-xs text-blue-900 dark:text-blue-200 mt-1"><strong>Uji:</strong> Air kapur (Ca(OH)₂) → keruh putih</p>
+          <div className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-lg border-2 border-blue-300 dark:border-blue-700 shadow-sm">
+            <h3 className="font-bold text-sm text-blue-900 dark:text-blue-100 mb-1">Gas Karbon Dioksida (CO₂)</h3>
+            <p className="text-xs text-blue-800 dark:text-blue-200 mb-1"><strong>Rumus:</strong> Karbonat + Asam</p>
+            <p className="text-xs text-blue-900 dark:text-blue-100 font-mono bg-blue-50 dark:bg-blue-950/50 p-1 rounded">CO₃²⁻(aq) + 2H⁺(aq) → CO₂(g)↑ + H₂O(l)</p>
+            <p className="text-xs text-blue-800 dark:text-blue-200 mt-1"><strong>Uji:</strong> Air kapur (Ca(OH)₂) → keruh putih</p>
           </div>
-          <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-900/40">
-            <h3 className="font-bold text-sm text-amber-800 dark:text-amber-300 mb-1">Gas Amonia (NH₃)</h3>
-            <p className="text-xs text-amber-900 dark:text-amber-200 mb-1"><strong>Rumus:</strong> Amonium + Basa kuat</p>
-            <p className="text-xs text-amber-900 dark:text-amber-200 font-mono">NH₄⁺(aq) + OH⁻(aq) → NH₃(g)↑ + H₂O(l)</p>
-            <p className="text-xs text-amber-900 dark:text-amber-200 mt-1"><strong>Uji:</strong> Bau tajam, lakmus biru makin biru</p>
+          <div className="p-3 bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-900 dark:to-amber-800 rounded-lg border-2 border-amber-300 dark:border-amber-700 shadow-sm">
+            <h3 className="font-bold text-sm text-amber-900 dark:text-amber-100 mb-1">Gas Amonia (NH₃)</h3>
+            <p className="text-xs text-amber-800 dark:text-amber-200 mb-1"><strong>Rumus:</strong> Amonium + Basa kuat</p>
+            <p className="text-xs text-amber-900 dark:text-amber-100 font-mono bg-amber-50 dark:bg-amber-950/50 p-1 rounded">NH₄⁺(aq) + OH⁻(aq) → NH₃(g)↑ + H₂O(l)</p>
+            <p className="text-xs text-amber-800 dark:text-amber-200 mt-1"><strong>Uji:</strong> Bau tajam, lakmus biru makin biru</p>
           </div>
-          <div className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-900/40">
-            <h3 className="font-bold text-sm text-purple-800 dark:text-purple-300 mb-1">Gas Belerang Dioksida (SO₂)</h3>
-            <p className="text-xs text-purple-900 dark:text-purple-200 mb-1"><strong>Rumus:</strong> Sulfit + Asam</p>
-            <p className="text-xs text-purple-900 dark:text-purple-200 font-mono">SO₃²⁻(aq) + 2H⁺(aq) → SO₂(g)↑ + H₂O(l)</p>
-            <p className="text-xs text-purple-900 dark:text-purple-200 mt-1"><strong>Uji:</strong> Bau menusuk, merubah KMnO₄ ungu menjadi tak berwarna</p>
+          <div className="p-3 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900 dark:to-purple-800 rounded-lg border-2 border-purple-300 dark:border-purple-700 shadow-sm">
+            <h3 className="font-bold text-sm text-purple-900 dark:text-purple-100 mb-1">Gas Belerang Dioksida (SO₂)</h3>
+            <p className="text-xs text-purple-800 dark:text-purple-200 mb-1"><strong>Rumus:</strong> Sulfit + Asam</p>
+            <p className="text-xs text-purple-900 dark:text-purple-100 font-mono bg-purple-50 dark:bg-purple-950/50 p-1 rounded">SO₃²⁻(aq) + 2H⁺(aq) → SO₂(g)↑ + H₂O(l)</p>
+            <p className="text-xs text-purple-800 dark:text-purple-200 mt-1"><strong>Uji:</strong> Bau menusuk, merubah KMnO₄ ungu menjadi tak berwarna</p>
           </div>
         </div>
         <div className="mt-3">
