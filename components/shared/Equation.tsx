@@ -8,9 +8,10 @@ interface EquationProps {
   tex: string;
   label?: string;
   description?: string;
+  compact?: boolean;
 }
 
-export function Equation({ tex, label, description }: EquationProps) {
+export function Equation({ tex, label, description, compact = false }: EquationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,6 +20,7 @@ export function Equation({ tex, label, description }: EquationProps) {
         katex.render(tex, containerRef.current, {
           displayMode: true,
           throwOnError: false,
+          strict: false,
         });
       } catch {
         if (containerRef.current) {
@@ -29,14 +31,20 @@ export function Equation({ tex, label, description }: EquationProps) {
   }, [tex]);
 
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-white p-4">
+    <div
+      className={`rounded-xl border border-[var(--outline-variant)]/50 bg-[var(--surface-container-low)] ${
+        compact ? "p-2.5" : "p-4"
+      }`}
+    >
       {label && (
-        <p className="mb-2 text-sm font-semibold text-[var(--primary-dark)]">{label}</p>
+        <p className={`font-bold text-[var(--primary)] mb-1 flex items-center gap-1 ${compact ? "text-[10px] uppercase tracking-wider" : "text-sm"}`}>
+          {label}
+        </p>
       )}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto py-0.5">
         <div ref={containerRef} aria-label={tex} />
       </div>
-      {description && (
+      {description && !compact && (
         <p className="mt-2 text-xs text-[var(--muted)]" aria-label="Penjelasan persamaan">
           {description}
         </p>

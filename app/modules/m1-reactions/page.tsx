@@ -1,5 +1,5 @@
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
-import { SourceBadge } from "@/components/shared/SourceBadge";
+
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { ProcedureStepper } from "@/components/shared/ProcedureStepper";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -22,9 +22,6 @@ export default function M1Page() {
           <li>Mengidentifikasi jenis kation/anion dalam cuplikan larutan.</li>
           <li>Menuliskan persamaan reaksi secara benar.</li>
         </ol>
-        <div className="mt-3">
-          <SourceBadge pages="9" />
-        </div>
       </section>
 
       {/* Theory */}
@@ -62,9 +59,6 @@ export default function M1Page() {
           <p><strong>Reaksi Pembentukan Gas:</strong> Reaksi asam-basa atau redoks tertentu bisa menghasilkan gas (seperti CO₂ atau H₂). Perhatikan letupan gelembung dan bau atau perubahan warna uapnya.</p>
           <p><strong>Persamaan Ion Netto:</strong> Kita hanya menuliskan spesi ion yang benar-benar bereaksi membentuk produk baru. Ion-ion penonton yang tidak berubah wujud dicoret agar reaksinya lebih simpel dan jelas.</p>
         </div>
-        <div className="mt-3">
-          <SourceBadge pages="9-12" />
-        </div>
       </section>
 
       {/* Gas Formation Reactions */}
@@ -95,9 +89,6 @@ export default function M1Page() {
             <p className="text-xs text-purple-900 dark:text-purple-100 font-mono bg-purple-50 dark:bg-purple-950/50 p-1 rounded">SO₃²⁻(aq) + 2H⁺(aq) → SO₂(g)↑ + H₂O(l)</p>
             <p className="text-xs text-purple-800 dark:text-purple-200 mt-1"><strong>Uji:</strong> Bau menusuk, merubah KMnO₄ ungu menjadi tak berwarna</p>
           </div>
-        </div>
-        <div className="mt-3">
-          <SourceBadge pages="138-143" />
         </div>
       </section>
 

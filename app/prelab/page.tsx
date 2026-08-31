@@ -29,7 +29,7 @@ export default function PrelabPage() {
           <h2 className="text-xl font-bold text-[var(--primary)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
             Ritme Praktikum
           </h2>
-          <span className="text-xs text-[var(--on-surface-variant)] ml-auto">Manual hal. 5-8</span>
+          <span className="text-xs text-[var(--on-surface-variant)] ml-auto">Pedoman KI3131</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-xl border border-[var(--outline-variant)]/50 bg-[var(--surface-container-low)] p-4">

@@ -1,5 +1,5 @@
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
-import { SourceBadge } from "@/components/shared/SourceBadge";
+
 import { Equation } from "@/components/shared/Equation";
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -22,7 +22,7 @@ export default function M5Page() {
           <p><strong>Hukum Bragg (<ChemText>{"n\\lambda = 2d \\sin\\theta"}</ChemText>):</strong> Persamaan kunci yang menghubungkan sudut pantul sinar-X (θ) dengan jarak antarlapisan bidang atom (d). Dari letak puncak-puncak 2θ, kita bisa mengetahui geometri kisi kristal sampel kita.</p>
           <p><strong>Persamaan Scherrer (Ukuran Kristal):</strong> Makin ramping puncak difraksi, biasanya ukuran butir kristalnya makin besar. Jika puncak XRD melebar (nilai FWHM besar), berarti ukuran kristalitnya sangat halus dan berada dalam skala nanometer.</p>
         </div>
-        <div className="mt-3"><SourceBadge pages="29-33" /></div>
+
       </section>
 
       <div className="mt-4">

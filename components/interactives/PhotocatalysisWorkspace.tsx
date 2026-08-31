@@ -133,7 +133,7 @@ function ConductivityCalculator() {
       </div>
 
       <p className="mt-2 text-xs italic text-[var(--muted)]">
-        Manual menggunakan workflow ln(σ) dan slope 1/T. Jangan mengasumsikan model material yang tidak disetujui.
+        Analisis konduktivitas menggunakan workflow ln(σ) dan kemiringan kurva 1/T sesuai model Arrhenius.
       </p>
     </section>
   );

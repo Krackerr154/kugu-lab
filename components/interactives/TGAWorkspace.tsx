@@ -203,7 +203,7 @@ function TheoreticalWorksheet() {
       <Equation
         tex="\\text{mass loss}_{\\text{teoretis}} = \\frac{M_{\\text{hilang}}}{M_{\\text{senyawa}}} \\times 100\\%"
         label="Kehilangan Massa Teoretis"
-        description="Contoh manual: CaCO3 → CaO + CO2. Massa CO2 = 44.01 g/mol, massa CaCO3 = 100.09 g/mol → teoretis ≈ 44%"
+        description="Contoh stoikiometri: CaCO3 → CaO + CO2. Massa CO2 = 44.01 g/mol, massa CaCO3 = 100.09 g/mol → teoretis ≈ 44%"
       />
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">

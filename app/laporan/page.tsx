@@ -10,7 +10,7 @@ export default function LaporanPage() {
 
       <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold">Rubrik Laporan Penuh</h2>
-        <p className="text-xs text-[var(--muted)]">Manual hal. 7</p>
+        <p className="text-xs text-[var(--muted)]">Pedoman penilaian laporan praktikum</p>
         <div className="mt-3">
           <ReportChecklist
             title="Rubrik Laporan Penuh"
@@ -26,7 +26,7 @@ export default function LaporanPage() {
             ]}
             items={[
               { label: "Cover lengkap (nama, NIM, kelompok, tanggal)" },
-              { label: "Judul modul sesuai manual" },
+              { label: "Judul modul sesuai silabus praktikum" },
               { label: "Tujuan dirumuskan dengan jelas" },
               { label: "Data observasi lengkap dan terstruktur" },
               { label: "Pengolahan data menampilkan rumus, satuan, dan perhitungan" },

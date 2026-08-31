@@ -1,5 +1,5 @@
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
-import { SourceBadge } from "@/components/shared/SourceBadge";
+
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { ProcedureStepper } from "@/components/shared/ProcedureStepper";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -20,7 +20,7 @@ export default function M3Page() {
           <p><strong>Peran Agen Pengkompleks:</strong> Karena ion Sn dan Bi punya kecenderungan mengendap dengan kecepatan yang beda jauh (<em>potensial reduksinya berbeda</em>), kita tambahkan zat pengkompleks supaya kedua ion bisa mengendap barengan dengan komposisi yang seragam.</p>
           <p><strong>Hukum Faraday & Efisiensi:</strong> Banyaknya endapan paduan bisa kita hitung dari kuat arus listrik (I) dan waktu pelapisan (t). Rasio antara pertambahan massa asli di timbangan dengan hasil hitungan teoretis disebut <em>efisiensi arus</em>.</p>
         </div>
-        <div className="mt-3"><SourceBadge pages="20-25" /></div>
+
       </section>
 
       <div className="mt-4">
@@ -32,7 +32,7 @@ export default function M3Page() {
         <ProcedureStepper title="Prosedur Ringkas" steps={[
           { id: 1, title: "Preparasi katoda", detail: "Polishing cermin katoda, ukur luas area, bersihkan (sonikasi/keringkan), timbang massa sebelum.", holdPoint: true, rationale: "Permukaan katoda mempengaruhi kualitas deposit." },
           { id: 2, title: "Preparasi anoda", detail: "Siapkan anoda sesuai prosedur (bisa logam Sn/Bi atau inert).", },
-          { id: 3, title: "Preparasi elektrolit (Larutan A/B/C)", detail: "Siapkan komposisi elektrolit sesuai manual. Catat massa/volume aktual dan pH.", rationale: "Komposisi elektrolit menentukan kualitas deposit paduan." },
+          { id: 3, title: "Preparasi elektrolit (Larutan A/B/C)", detail: "Siapkan komposisi elektrolit sesuai formula praktikum. Catat massa/volume aktual dan pH.", rationale: "Komposisi elektrolit menentukan kualitas deposit paduan." },
           { id: 4, title: "Perakitan sel", detail: "Pasang katoda, anoda, dan elektrolit. Hubungkan ke sumber DC. Verifikasi polaritas.", holdPoint: true, rationale: "Polaritas salah dapat merusak eksperimen." },
           { id: 5, title: "Elektrodeposisi", detail: "Set arus/rapat arus yang ditetapkan. Jalankan selama waktu yang ditentukan. Catat arus, voltase, pH, suhu.", estimatedTime: "Sesuai protokol" },
           { id: 6, title: "Pasca-deposisi", detail: "Keluarkan katoda, bilas, keringkan, timbang massa sesudah. Dokumentasikan permukaan (foto jika diizinkan).", holdPoint: true },
@@ -58,8 +58,8 @@ export default function M3Page() {
       </div>
 
       <div className="mt-4">
-        <SafetyCallout variant="warning" title="CR-06: Grafit dari Baterai Bekas">
-          <p>Manual menyebut grafit dari baterai bekas. Tim pengajar harus menentukan: jenis baterai yang disetujui, metode isolasi grafit, supervise, dan jalur e-waste. Jangan membongkar baterai tanpa persetujuan.</p>
+        <SafetyCallout variant="warning" title="Perhatian: Grafit Elektroda">
+          <p>Gunakan elektroda grafit standar laboratorium yang telah disetujui. Jangan membongkar sel baterai bekas secara mandiri tanpa protokol penanganan limbah B3 dan persetujuan instruktur.</p>
         </SafetyCallout>
       </div>
 

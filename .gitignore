@@ -16,6 +16,10 @@
 /playwright-report/
 /blob-report/
 /.playwright/
+/artifacts/
+tests/review/*.png
+tests/review/*.webm
+tests/review/*.json
 
 # next.js
 /.next/

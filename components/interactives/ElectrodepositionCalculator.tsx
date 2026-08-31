@@ -224,7 +224,7 @@ function CellExplorer() {
   const components: Record<string, { name: string; description: string }> = {
     anode: { name: "Anoda (+)", description: "Elektroda positif dalam sel elektrolisis. Tempat oksidasi. Dalam elektrodeposisi Sn-Bi, anoda bisa berupa logam yang akan larut atau elektroda inert." },
     cathode: { name: "Katoda (-)", description: "Elektroda negatif. Tempat reduksi. Logam (Sn, Bi) diendapkan di katoda. Massa katoda bertambah setelah elektrodeposisi." },
-    electrolyte: { name: "Elektrolit", description: "Larutan mengandung ion logam yang akan diendapkan. Manual menyebut Larutan A, B, C dengan komposisi yang disetujui. Complexing agents mengontrol laju deposisi." },
+    electrolyte: { name: "Elektrolit", description: "Larutan mengandung ion logam yang akan diendapkan (misal Larutan A, B, C). Agen pengompleks mengontrol laju deposisi dan keseragaman fasa paduan." },
     dcSource: { name: "Sumber DC", description: "Catu daya arus searah yang menyediakan arus konstan. Rapat arus diatur sesuai protokol. Jangan melebihi arus yang disetujui." },
     leads: { name: "Kabel Penghubung", description: "Kabel penghantar dari sumber DC ke elektroda. Pastikan polaritas benar sebelum menyalakan." },
   };

@@ -39,6 +39,8 @@ interface ReactionTubeAnimationProps {
   reagentName: string;
   visualSpec: VisualSpec;
   isUnknown?: boolean;
+  /** Compact mode: tighter paddings and a shorter tube, for use inside pop-up cards. */
+  compact?: boolean;
   onAnimationComplete?: () => void;
 }
 
@@ -47,6 +49,7 @@ export function ReactionTubeAnimation({
   reagentName,
   visualSpec,
   isUnknown = false,
+  compact = false,
   onAnimationComplete,
 }: ReactionTubeAnimationProps) {
   const [animState, setAnimState] = useState<"idle" | "dropping" | "reacting" | "reacted">("idle");
@@ -155,43 +158,72 @@ export function ReactionTubeAnimation({
     { cx: 66, delay: "0.8s", duration: "0.9s", size: 4.0 },
   ];
 
+  const hasActiveReaction = Boolean(
+    (visualSpec.precipitateColor && visualSpec.precipitateType && visualSpec.precipitateType !== "none") ||
+      visualSpec.hasGas ||
+      (visualSpec.finalLiquidColor && visualSpec.finalLiquidColor !== visualSpec.initialLiquidColor) ||
+      visualSpec.canDissolveInExcess ||
+      visualSpec.canDissolveInHeat
+  );
+
   return (
-    <div className="flex flex-col items-center justify-between h-full w-full max-w-[420px] mx-auto p-4 bg-gradient-to-b from-[var(--surface-container-lowest)] to-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/60 shadow-lg select-none">
+    <div
+      className={`flex flex-col items-center justify-between h-full w-full max-w-[420px] mx-auto bg-gradient-to-b from-[var(--surface-container-lowest)] to-[var(--surface-container-low)] rounded-2xl border border-[var(--outline-variant)]/60 shadow-lg select-none ${
+        compact ? "p-2.5" : "p-4"
+      }`}
+    >
       {/* Header Info */}
-      <div className="w-full flex items-center justify-between border-b border-[var(--outline-variant)]/40 pb-3 mb-2">
-        <div>
-          <span className="text-[10px] font-bold tracking-wider uppercase text-[var(--muted)]">Tabung Reaksi</span>
-          <h4 className="text-sm font-bold text-[var(--foreground)] flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[var(--primary-container)]"></span>
-            <span>{isUnknown ? "Cuplikan Misterius" : cationName}</span>
+      <div
+        className={`w-full flex items-center justify-between gap-2 border-b border-[var(--outline-variant)]/40 ${
+          compact ? "pb-2 mb-1" : "pb-3 mb-2"
+        }`}
+      >
+        <div className="min-w-0">
+          {!compact && (
+            <span className="text-[10px] font-bold tracking-wider uppercase text-[var(--muted)]">Tabung Reaksi</span>
+          )}
+          <h4 className={`font-bold text-[var(--foreground)] flex items-center gap-1.5 ${compact ? "text-xs" : "text-sm"}`}>
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--primary-container)] shrink-0"></span>
+            <span className="truncate">{isUnknown ? "Cuplikan Misterius" : cationName}</span>
             <span className="text-[var(--muted)] font-normal">+</span>
-            <span className="text-[var(--primary-container)]">{reagentName}</span>
+            <span className="text-[var(--primary-container)] truncate">{reagentName}</span>
           </h4>
         </div>
 
         <span
-          className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-all ${
+          data-testid="tube-status-badge"
+          className={`font-semibold px-2 py-0.5 rounded-full border transition-all shrink-0 ${
+            compact ? "text-[10px]" : "text-[11px] px-2.5 py-1"
+          } ${
             animState === "dropping"
               ? "bg-amber-50 dark:bg-amber-950/40 text-amber-600 border-amber-300 animate-pulse"
               : animState === "reacting"
               ? "bg-sky-50 dark:bg-sky-950/40 text-sky-600 border-sky-300 animate-pulse"
-              : "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border-emerald-300"
+              : animState === "reacted"
+              ? hasActiveReaction
+                ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border-emerald-300"
+                : "bg-slate-100 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700"
+              : "bg-slate-50 dark:bg-slate-800/40 text-slate-500 border-slate-200 dark:border-slate-700"
           }`}
         >
           {animState === "dropping" && "💧 Meneteskan..."}
-          {animState === "reacting" && "⚡ Bereaksi..."}
-          {animState === "reacted" && "✓ Reaksi Teramati"}
+          {animState === "reacting" && (hasActiveReaction ? "⚡ Bereaksi..." : "💧 Mencampur...")}
+          {animState === "reacted" && (hasActiveReaction ? "✓ Bereaksi" : "— Tidak Bereaksi")}
           {animState === "idle" && "Siap"}
         </span>
       </div>
 
       {/* Main SVG Animation Area */}
-      <div className="relative w-full h-[280px] sm:h-[300px] flex items-center justify-center my-2">
+      <div
+        className={`relative w-full flex items-center justify-center ${
+          compact ? "h-[168px] sm:h-[186px] my-0.5" : "h-[280px] sm:h-[300px] my-2"
+        }`}
+      >
         {/* Agitate Shake Wrapper */}
         <div className={`relative w-full h-full flex items-center justify-center ${isShaking ? "animate-shake" : ""}`}>
           <svg
             viewBox="0 0 200 320"
-            className="w-full h-full max-h-[300px] overflow-visible drop-shadow-md"
+            className={`w-full h-full overflow-visible drop-shadow-md ${compact ? "max-h-[186px]" : "max-h-[300px]"}`}
             aria-label="Animasi Tabung Reaksi Kimia"
           >
             <defs>
@@ -432,11 +464,11 @@ export function ReactionTubeAnimation({
       </div>
 
       {/* Interactive Workbench Action Bar */}
-      <div className="w-full flex items-center justify-center gap-2 flex-wrap pt-2 border-t border-[var(--outline-variant)]/40 mt-1">
+      <div className={`w-full flex items-center justify-center gap-1.5 flex-wrap border-t border-[var(--outline-variant)]/40 ${compact ? "pt-1.5 mt-0.5" : "pt-2 mt-1 gap-2"}`}>
         <button
           onClick={handleRetrigger}
           disabled={animState === "dropping" || animState === "reacting"}
-          className="flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] rounded-lg text-xs font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] active:scale-95 disabled:opacity-50 transition-all shadow-xs"
+          className={`flex items-center gap-1 rounded-lg font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] active:scale-95 disabled:opacity-50 transition-all shadow-xs ${compact ? "px-2.5 py-1 min-h-[32px] text-[11px]" : "px-3 py-1.5 min-h-[40px] text-xs gap-1.5"}`}
           title="Ulangi tetesan reagen"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-sm">water_drop</span>
@@ -446,7 +478,7 @@ export function ReactionTubeAnimation({
         <button
           onClick={handleAgitate}
           disabled={animState === "dropping"}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 min-h-[40px] rounded-lg text-xs font-medium border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:bg-[var(--surface-container-highest)] hover:border-[var(--primary-container)] active:scale-95 transition-all"
+          className={`flex items-center gap-1 rounded-lg font-medium border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:bg-[var(--surface-container-highest)] hover:border-[var(--primary-container)] active:scale-95 transition-all ${compact ? "px-2 py-1 min-h-[32px] text-[11px]" : "px-2.5 py-1.5 min-h-[40px] text-xs gap-1.5"}`}
           title="Kocok tabung agar homogen"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-sm">sync</span>
@@ -457,7 +489,7 @@ export function ReactionTubeAnimation({
           <button
             onClick={handleExcess}
             disabled={isExcess || animState !== "reacted"}
-            className={`flex items-center gap-1 px-2.5 py-1.5 min-h-[40px] rounded-lg text-xs font-medium border transition-all active:scale-95 ${
+            className={`flex items-center gap-1 rounded-lg font-medium border transition-all active:scale-95 ${compact ? "px-2 py-1 min-h-[32px] text-[11px]" : "px-2.5 py-1.5 min-h-[40px] text-xs"} ${
               isExcess
                 ? "bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border-blue-400"
                 : "border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-blue-500 hover:text-blue-700"
@@ -465,7 +497,7 @@ export function ReactionTubeAnimation({
             title="Tambahkan reagen berlebih (excess) untuk menguji kelarutan kompleks/amfoter"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-sm">add_circle</span>
-            <span>{isExcess ? "Excess Aktif" : "+ Reagen Berlebih"}</span>
+            <span>{isExcess ? "Excess Aktif" : compact ? "+ Berlebih" : "+ Reagen Berlebih"}</span>
           </button>
         )}
 
@@ -473,7 +505,7 @@ export function ReactionTubeAnimation({
           <button
             onClick={handleHeat}
             disabled={isHeated || animState !== "reacted"}
-            className={`flex items-center gap-1 px-2.5 py-1.5 min-h-[40px] rounded-lg text-xs font-medium border transition-all active:scale-95 ${
+            className={`flex items-center gap-1 rounded-lg font-medium border transition-all active:scale-95 ${compact ? "px-2 py-1 min-h-[32px] text-[11px]" : "px-2.5 py-1.5 min-h-[40px] text-xs"} ${
               isHeated
                 ? "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-amber-400"
                 : "border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-amber-500 hover:text-amber-700"
@@ -481,7 +513,7 @@ export function ReactionTubeAnimation({
             title="Panaskan tabung di water bath (uji kelarutan PbCl2)"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-sm">local_fire_department</span>
-            <span>{isHeated ? "Dipanaskan (Larut)" : "🔥 Panaskan"}</span>
+            <span>{isHeated ? (compact ? "Larut (Panas)" : "Dipanaskan (Larut)") : "🔥 Panaskan"}</span>
           </button>
         )}
 
@@ -489,11 +521,11 @@ export function ReactionTubeAnimation({
           <button
             onClick={handleGasTest}
             disabled={animState !== "reacted"}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 active:scale-95 transition-all shadow-xs"
+            className={`flex items-center gap-1 rounded-lg font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 active:scale-95 transition-all shadow-xs ${compact ? "px-2 py-1 min-h-[32px] text-[11px]" : "px-2.5 py-1.5 text-xs"}`}
             title="Uji nyala atau air kapur untuk gas yang dihasilkan"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-sm">mode_heat</span>
-            <span>Uji Gas (Splint)</span>
+            <span>{compact ? "Uji Gas" : "Uji Gas (Splint)"}</span>
           </button>
         )}
       </div>

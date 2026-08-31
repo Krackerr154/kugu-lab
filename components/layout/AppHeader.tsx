@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { contentConflicts } from "@/lib/conflicts";
 import { TransitionLink } from "@/components/layout/TransitionLink";
 
 const routeContext: Array<[string, string]> = [
@@ -11,7 +10,6 @@ const routeContext: Array<[string, string]> = [
   ["/notebook", "Catatan observasi tersimpan"],
   ["/laporan", "Susun bukti dan laporan"],
   ["/referensi", "Keselamatan, SDS, dan referensi"],
-  ["/pengajar", "Review konten dan konflik manual"],
 ];
 
 function getContext(pathname: string) {
@@ -21,7 +19,6 @@ function getContext(pathname: string) {
 
 export function AppHeader() {
   const pathname = usePathname();
-  const unresolvedConflicts = contentConflicts.filter((conflict) => conflict.status === "unresolved");
   const isHome = pathname === "/";
 
   return (
@@ -71,37 +68,12 @@ export function AppHeader() {
         </TransitionLink>
 
         <TransitionLink
-          href="/pengajar"
-          aria-label={
-            unresolvedConflicts.length > 0
-              ? `Buka ruang pengajar, ${unresolvedConflicts.length} konflik perlu ditinjau`
-              : "Buka ruang pengajar"
-          }
-          className="relative flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-[var(--surface-container-high)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
-        >
-          <span aria-hidden="true" className="material-symbols-outlined">notifications</span>
-          {unresolvedConflicts.length > 0 && (
-            <span
-              aria-hidden="true"
-              className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[var(--error)] ring-2 ring-[var(--surface)]"
-            />
-          )}
-        </TransitionLink>
-
-        <TransitionLink
           href="/referensi"
           aria-label="Buka referensi dan bantuan keselamatan"
           className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-[var(--surface-container-high)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
         >
           <span aria-hidden="true" className="material-symbols-outlined">help</span>
         </TransitionLink>
-
-        <div
-          aria-label="Profil Praktikan"
-          className="ml-1 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--outline-variant)] bg-[var(--surface-variant)] text-sm font-bold text-[var(--on-surface-variant)]"
-        >
-          P
-        </div>
       </div>
     </header>
   );

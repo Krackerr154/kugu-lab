@@ -395,7 +395,7 @@ function ScherrerCalculator() {
 
       <p className="mt-3 text-xs italic text-[var(--muted)]">
         Ukuran kristalit ini bersifat model-dependent (asumsi kristalit bulat dan seragam). 
-        Manual menggunakan K = 0.9. Hasil harus disertai asumsi dan batasan.
+        Perhitungan menggunakan faktor bentuk Scherrer K = 0.9. Hasil harus disertai asumsi dan batasan.
       </p>
     </section>
   );

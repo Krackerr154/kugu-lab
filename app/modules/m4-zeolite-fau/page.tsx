@@ -1,5 +1,5 @@
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
-import { SourceBadge } from "@/components/shared/SourceBadge";
+
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { ProcedureStepper } from "@/components/shared/ProcedureStepper";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -21,7 +21,7 @@ export default function M4Page() {
           <p><strong>Sintesis Hidrotermal ("Memasak Kristal"):</strong> Kita campurkan sumber silika dan alumina dalam suasana basa pekat, lalu dipanaskan pada wadah tertutup. Di kondisi ini, ion-ion berkumpul membentuk inti kristal (<em>nukleasi</em>) lalu tumbuh menjadi zeolit murni.</p>
           <p><strong>Zeolit X vs Zeolit Y:</strong> Dua saudara ini punya kerangka FAU yang sama, tapi rasio Si/Al-nya berbeda. Zeolit X punya kandungan Al lebih banyak (lebih cocok untuk penukar ion), sedangkan Zeolit Y lebih kaya Si (lebih tahan panas dan asam untuk katalis).</p>
         </div>
-        <div className="mt-3"><SourceBadge pages="26-28" /></div>
+
       </section>
 
       <div className="mt-4">
@@ -30,8 +30,8 @@ export default function M4Page() {
       </div>
 
       <div className="mt-4">
-        <SafetyCallout variant="danger" title="CR-05: Hidrotermal vs Botol PP">
-          <p>Manual menyebut kondisi hidrotermal/tekanan tinggi tetapi prosedur menggunakan botol PP yang dipanaskan. Tim pengajar HARUS menentukan: rating wadah, tutup, fraksi pengisian, batas suhu, proses pendinginan/pembukaan, dan kontrol tekanan.</p>
+        <SafetyCallout variant="danger" title="Perhatian: Wadah Tekanan Sintesis Zeolit">
+          <p>Gunakan wadah polipropilena (PP) berlabel tahan panas atau autoklaf sesuai batas suhu operasional praktikum. Pastikan fraksi pengisian tidak melebihi kapasitas aman dan lakukan pendinginan sebelum membuka tutup wadah.</p>
         </SafetyCallout>
       </div>
 

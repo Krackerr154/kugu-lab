@@ -1,5 +1,5 @@
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
-import { SourceBadge } from "@/components/shared/SourceBadge";
+
 import { Equation } from "@/components/shared/Equation";
 import { ProcedureStepper } from "@/components/shared/ProcedureStepper";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -21,7 +21,6 @@ export default function M2Page() {
           <p><strong>Band Gap (Celah Energi):</strong> Celah energi menentukan seberapa besar energi foton/cahaya yang dibutuhkan agar material bisa aktif. Contohnya TiO₂ butuh sinar UV (band gap ~3.2 eV), sedangkan Mg₂SnO₄ diuji celah energinya untuk melihat panjang gelombang cahaya yang paling cocok.</p>
           <p><strong>Spesies Oksigen Reaktif (ROS):</strong> Elektron dan hole tadi bereaksi dengan air atau oksigen di sekitarnya menghasilkan radikal bebas (seperti •OH dan •O₂⁻). Radikal inilah yang bertindak sebagai "pasukan pembersih" untuk membabat molekul pewarna (methylene blue) sampai terurai bersih.</p>
         </div>
-        <div className="mt-3"><SourceBadge pages="13-19" /></div>
       </section>
 
       {/* Interactive */}
@@ -42,7 +41,7 @@ export default function M2Page() {
       {/* Procedure */}
       <div className="mt-4">
         <ProcedureStepper title="Prosedur Ringkas" steps={[
-          { id: 1, title: "Preparasi larutan reagen", detail: "Timbang MgCl2/SnCl4 dan NaOH sesuai resep manual. Catat massa aktual.", rationale: "Stoikiometri menentukan fasa produk." },
+          { id: 1, title: "Preparasi larutan reagen", detail: "Timbang MgCl2/SnCl4 dan NaOH sesuai prosedur standar. Catat massa aktual.", rationale: "Stoikiometri menentukan fasa produk." },
           { id: 2, title: "Atur pH ke target (10-13)", detail: "Tambahkan NaOH bertahap sambil memantau pH. Catat setiap titik pH.", holdPoint: true, estimatedTime: "15-30 min" },
           { id: 3, title: "Sonication", detail: "Lakukan sonikasi selama durasi yang ditentukan (1-2 jam) dengan istirahat antar siklus.", estimatedTime: "1-2 jam", rationale: "Kavitasi ultrasonik mendorong pembentukan material nanoskala." },
           { id: 4, title: "Filtrasi dan pencucian", detail: "Saring produk, cuci dengan air/etanol untuk menghapus pengotor ionik." },

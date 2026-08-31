@@ -1,5 +1,5 @@
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
-import { SourceBadge } from "@/components/shared/SourceBadge";
+
 import { Equation } from "@/components/shared/Equation";
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -24,13 +24,13 @@ export default function M6Page() {
           </ul>
           <p><strong>Tahapan Dekomposisi Sampel:</strong> Suhu &lt; 150°C biasanya pelepasan molekul air yang terperangkap (seperti pada rongga zeolit). Suhu lebih tinggi (&gt; 300°C) menandakan rusaknya ikatan kerangka utama atau terbakarnya residu organik.</p>
         </div>
-        <div className="mt-3"><SourceBadge pages="34-38" /></div>
+
       </section>
 
       <div className="mt-4">
         <Equation
           tex="\\text{CaCO}_3(s) \\rightarrow \\text{CaO}(s) + \\text{CO}_2(g)"
-          label="Contoh Dekomposisi (Manual)"
+          label="Contoh Dekomposisi Termal"
           description="Contoh pengajaran: teoretis 44% kehilangan massa berdasarkan rasio massa CO2 terhadap CaCO3. Jangan digeneralisasi ke semua sampel."
         />
       </div>

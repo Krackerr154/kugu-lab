@@ -1,6 +1,5 @@
 // ModuleLayout — shared template for all module pages
 import { TransitionLink } from "@/components/layout/TransitionLink";
-import { SourceBadge } from "@/components/shared/SourceBadge";
 import { ChemText } from "@/components/shared/ChemText";
 import { modules } from "@/lib/modules";
 import type { ModuleMeta } from "@/lib/modules";
@@ -44,7 +43,6 @@ export function ModuleLayout({ module, children }: ModuleLayoutProps) {
                   <span className="inline-flex items-center gap-1 rounded-full bg-[var(--primary)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
                     Modul {module.number}
                   </span>
-                  <SourceBadge pages={module.manualPages} />
                 </div>
                 <h1 className="mt-2 text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl"><ChemText>{module.title}</ChemText></h1>
                 <p className="mt-2 text-xs text-[var(--muted)]">
@@ -140,10 +138,6 @@ export function ModuleLayout({ module, children }: ModuleLayoutProps) {
               <div className="flex items-center justify-between">
                 <span className="text-[var(--muted)]">Status:</span>
                 <span className="font-semibold text-emerald-600 dark:text-emerald-400 capitalize">{module.status}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[var(--muted)]">Manual Hal:</span>
-                <span className="font-semibold">{module.manualPages}</span>
               </div>
             </div>
           </div>

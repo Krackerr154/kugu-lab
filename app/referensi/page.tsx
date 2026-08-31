@@ -12,7 +12,7 @@ export default function ReferensiPage() {
       {/* Safety */}
       <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold"><span aria-hidden="true" className="material-symbols-outlined align-middle text-base">shield</span> Keselamatan Umum</h2>
-        <p className="text-xs text-[var(--muted)]">Manual hal. 6 — harus diganti dengan SOP lokal jika berbeda.</p>
+        <p className="text-xs text-[var(--muted)]">Pedoman keselamatan laboratorium — sesuaikan dengan SOP lokal jika terdapat pembaruan.</p>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 text-sm">
           <div className="rounded-lg bg-[var(--surface-muted)] p-3">
             <p className="font-semibold">APD Wajib</p>
@@ -61,7 +61,7 @@ export default function ReferensiPage() {
       {/* Content conflicts */}
       <section className="mt-6 rounded-xl border border-[var(--secondary)] bg-[var(--secondary-container)]/20 p-5">
         <h2 className="text-lg font-bold text-[var(--warning-ink)]"><span aria-hidden="true" className="material-symbols-outlined align-middle text-base">warning</span> Register Konflik Konten</h2>
-        <p className="text-xs text-[var(--warning-ink)]">Hal. ini memetakan konflik manual — harus diselesaikan oleh tim pengajar.</p>
+        <p className="text-xs text-[var(--warning-ink)]">Daftar ini memetakan catatan prosedur praktikum yang memerlukan konfirmasi instruktur.</p>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-xs">
             <thead>

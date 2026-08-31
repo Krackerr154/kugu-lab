@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>KUGU Lab — Device Preview</title>
+<style>
+  :root {
+    --accent: #fcd400;
+    --bg: #0b1220;
+    --panel: #121c30;
+    --line: #26344c;
+    --text: #e8eefc;
+    --muted: #93a3c0;
+    --chrome: #001f3f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.45 Inter, "Segoe UI", system-ui, sans-serif;
+  }
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--chrome); border-bottom: 2px solid var(--accent);
+    padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  }
+  header h1 { font: 700 15px/1 Montserrat, Inter, sans-serif; margin: 0 8px 0 0; letter-spacing: .3px; }
+  header h1 span { color: var(--accent); }
+  label { color: var(--muted); font-size: 12px; display: flex; gap: 6px; align-items: center; }
+  select, button, input[type=text] {
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--line); border-radius: 6px;
+    padding: 5px 8px; font: inherit; font-size: 12px;
+  }
+  button { cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.on { background: var(--accent); color: #001f3f; border-color: var(--accent); font-weight: 700; }
+  #stage { display: flex; flex-wrap: wrap; gap: 28px; padding: 24px; align-items: flex-start; }
+  .device { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .caption { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .caption b { color: var(--text); font-weight: 600; }
+  .shell {
+    background: #1b2436; border: 1px solid var(--line); border-radius: 34px; padding: 10px;
+    box-shadow: 0 18px 50px rgba(0,0,0,.55); position: relative;
+  }
+  .shell.tablet { border-radius: 20px; padding: 14px; }
+  .shell.desktop { border-radius: 10px; padding: 8px; }
+  .notch {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 84px; height: 20px; background: #0b1220; border-radius: 12px; z-index: 2; pointer-events: none;
+  }
+  .shell.tablet .notch, .shell.desktop .notch { display: none; }
+  .screen { background: #fff; border-radius: 26px; overflow: hidden; position: relative; }
+  .shell.tablet .screen { border-radius: 12px; }
+  .shell.desktop .screen { border-radius: 4px; }
+  iframe { border: 0; display: block; background: #fff; }
+  .ruler { height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); width: 100%; opacity: .5; }
+  #note { padding: 0 24px 28px; color: var(--muted); font-size: 12px; max-width: 900px; }
+  #note code { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>KUGU Lab <span>Device Preview</span></h1>
+  <label>Route <select id="route"></select></label>
+  <label>or <input type="text" id="custom" placeholder="/any/path" size="18" /></label>
+  <label>Zoom
+    <select id="zoom">
+      <option value="1">100%</option>
+      <option value="0.85">85%</option>
+      <option value="0.75" selected>75%</option>
+      <option value="0.6">60%</option>
+      <option value="0.5">50%</option>
+    </select>
+  </label>
+  <button id="rotate">Rotate</button>
+  <button id="reload">Reload all</button>
+  <span style="flex:1"></span>
+  <span id="presets"></span>
+</header>
+
+<div id="stage"></div>
+
+<div id="note">
+  <div class="ruler" style="margin-bottom:14px"></div>
+  <p><b>Accurate here:</b> real viewport width, so every <code>@media</code> query and Tailwind
+  breakpoint (<code>sm:640</code>, <code>md:768</code>, <code>lg:1024</code>) fires exactly as on a
+  real device. Horizontal overflow, uncollapsed grids and clipped text are genuine.</p>
+  <p><b>NOT emulated:</b> touch events, <code>hover</code> vs <code>:active</code> on touch devices,
+  device pixel ratio (font sharpness), mobile user-agent, iOS safe-area insets. For those use
+  Chrome DevTools device toolbar (<code>Ctrl+Shift+M</code>) or a real phone on your LAN.</p>
+</div>
+
+<script>
+const DEVICES = [
+  { name: "iPhone SE",     w: 375,  h: 667,  kind: "phone"   },
+  { name: "iPhone 14 Pro", w: 393,  h: 852,  kind: "phone"   },
+  { name: "Pixel 7",       w: 412,  h: 915,  kind: "phone"   },
+  { name: "Galaxy S8+",    w: 360,  h: 740,  kind: "phone"   },
+  { name: "iPad mini",     w: 768,  h: 1024, kind: "tablet"  },
+  { name: "iPad Pro 11",   w: 834,  h: 1194, kind: "tablet"  },
+  { name: "Laptop",        w: 1280, h: 800,  kind: "desktop" },
+];
+
+// Shell padding per kind — MUST match the .shell CSS padding above, or scaled
+// shells overhang their reserved spacer box and collide with the next row.
+const SHELL_PAD = { phone: 10, tablet: 14, desktop: 8 };
+const SHELL_BORDER = 1;
+
+const active = new Set(["iPhone SE", "iPhone 14 Pro", "Pixel 7", "iPad mini"]);
+let landscape = false;
+
+const ROUTES = ["/", "/analisis", "/laporan", "/modules", "/notebook", "/pengajar", "/prelab", "/referensi", "/modules/m1-reactions", "/modules/m2-mg2sno4", "/modules/m3-sn-bi-electrodeposition", "/modules/m4-zeolite-fau", "/modules/m5-xrd", "/modules/m6-tga", "/prelab/m1-reactions"];
+
+const $ = (id) => document.getElementById(id);
+const routeSel = $("route"), custom = $("custom"), zoomSel = $("zoom"), stage = $("stage");
+
+ROUTES.forEach((r) => {
+  const o = document.createElement("option");
+  o.value = r; o.textContent = r;
+  routeSel.appendChild(o);
+});
+
+DEVICES.forEach((d) => {
+  const b = document.createElement("button");
+  b.textContent = d.name;
+  b.className = active.has(d.name) ? "on" : "";
+  b.style.marginLeft = "5px";
+  b.onclick = () => {
+    active.has(d.name) ? active.delete(d.name) : active.add(d.name);
+    b.className = active.has(d.name) ? "on" : "";
+    render();
+  };
+  $("presets").appendChild(b);
+});
+
+function currentRoute() {
+  const c = custom.value.trim();
+  return c ? (c.startsWith("/") ? c : "/" + c) : routeSel.value;
+}
+
+function render() {
+  const zoom = parseFloat(zoomSel.value);
+  const route = currentRoute();
+  stage.innerHTML = "";
+
+  DEVICES.filter((d) => active.has(d.name)).forEach((d) => {
+    const w = landscape && d.kind !== "desktop" ? d.h : d.w;
+    const h = landscape && d.kind !== "desktop" ? d.w : d.h;
+
+    const wrap = document.createElement("div");
+    wrap.className = "device";
+
+    const shell = document.createElement("div");
+    shell.className = "shell " + d.kind;
+    // Scale the SHELL, never the iframe width: a narrower iframe would change the
+    // viewport and fire the wrong breakpoint, defeating the whole purpose.
+    shell.style.transform = `scale(${zoom})`;
+    shell.style.transformOrigin = "top center";
+
+    const notch = document.createElement("div");
+    notch.className = "notch";
+
+    const screen = document.createElement("div");
+    screen.className = "screen";
+    screen.style.width = w + "px";
+    screen.style.height = h + "px";
+
+    const f = document.createElement("iframe");
+    f.src = route;
+    f.width = w; f.height = h;
+    f.loading = "eager";
+    f.setAttribute("data-device", d.name);
+    f.setAttribute("data-target-width", String(w));
+
+    screen.appendChild(f);
+    shell.appendChild(notch);
+    shell.appendChild(screen);
+
+    const cap = document.createElement("div");
+    cap.className = "caption";
+    cap.innerHTML = `<b>${d.name}</b> — ${w}x${h} @ ${Math.round(zoom * 100)}%`;
+
+    // transform:scale() does not affect layout, so reserve space with a spacer.
+    const pad = SHELL_PAD[d.kind];
+    const spacer = document.createElement("div");
+    spacer.style.height = (h + pad * 2 + SHELL_BORDER * 2) * zoom + "px";
+    spacer.style.width = (w + pad * 2 + SHELL_BORDER * 2) * zoom + "px";
+    spacer.style.position = "relative";
+    shell.style.position = "absolute";
+    shell.style.left = "0"; shell.style.top = "0";
+    spacer.appendChild(shell);
+
+    wrap.appendChild(spacer);
+    wrap.appendChild(cap);
+    stage.appendChild(wrap);
+  });
+}
+
+routeSel.onchange = () => { custom.value = ""; render(); };
+custom.onchange = render;
+custom.onkeydown = (e) => { if (e.key === "Enter") render(); };
+zoomSel.onchange = render;
+$("rotate").onclick = (e) => {
+  landscape = !landscape;
+  e.target.className = landscape ? "on" : "";
+  render();
+};
+$("reload").onclick = render;
+
+render();
+</script>
+</body>
+</html>

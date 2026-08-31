@@ -1,6 +1,6 @@
-// SourceBadge — shows manual page reference, revision, reviewer info
+// SourceBadge — shows module reference, revision, reviewer info
 interface SourceBadgeProps {
-  pages: string;
+  pages?: string;
   revision?: string;
   reviewer?: string | null;
   lastReviewed?: string | null;
@@ -14,9 +14,13 @@ export function SourceBadge({
 }: SourceBadgeProps) {
   return (
     <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-[var(--outline-variant)] bg-[var(--surface-muted)] px-3 py-1 text-xs text-[var(--muted)]">
-      <span className="font-medium">Manual {revision}</span>
-      <span>·</span>
-      <span>Hal. {pages}</span>
+      <span className="font-medium">Panduan {revision}</span>
+      {pages && (
+        <>
+          <span>·</span>
+          <span>Hal. {pages}</span>
+        </>
+      )}
       {reviewer && (
         <>
           <span>·</span>

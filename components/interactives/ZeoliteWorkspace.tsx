@@ -57,7 +57,7 @@ function StoichiometryWorksheet() {
     <section className="rounded-xl border border-[var(--border)] bg-white p-4">
       <h3 className="text-lg font-bold">Workspace Stoikiometri Prekursor</h3>
       <p className="text-sm text-[var(--muted)] mb-3">
-        Gunakan resep manual yang disetujui. Catat massa aktual dan hitung rasio molar.
+        Gunakan formula resep yang disetujui. Catat massa aktual dan hitung rasio molar.
       </p>
 
       <div className="overflow-x-auto">
@@ -97,8 +97,8 @@ function StoichiometryWorksheet() {
       </p>
 
       <div className="mt-3 rounded-md bg-[var(--secondary-container)]/25 p-2 text-xs text-[var(--warning-ink)]">
-        <span aria-hidden="true">⚠️</span> CR-05: Manual menyebut kondisi hidrotermal/tekanan tetapi prosedur menggunakan botol PP. 
-        Rating wadah, tutup, fraksi pengisian, batas suhu/tekanan harus ditentukan oleh tim pengajar.
+        <span aria-hidden="true">⚠️</span> Perhatian: Sintesis menggunakan botol polipropilena (PP). 
+        Rating wadah, kerapatan tutup, fraksi pengisian, serta batas suhu/tekanan harus selalu diverifikasi bersama instruktur.
       </div>
     </section>
   );

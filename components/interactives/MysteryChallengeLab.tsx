@@ -296,7 +296,7 @@ export function MysteryChallengeLab({ onSelectTest, initialIndex }: { onSelectTe
                     <div className="flex-1">
                       <span className={`font-semibold ${isUsed ? "text-gray-500" : "text-[var(--foreground)]"}`}>
                         {reagentId === "H2S" ? "H₂S (suasana asam)" : 
-                         reagentId === "NH3" ? "NH₃ (amoniak)" : 
+                         reagentId === "NH3" ? "NH₃ (amonia)" : 
                          reagentId}
                       </span>
                       {isUsed && (

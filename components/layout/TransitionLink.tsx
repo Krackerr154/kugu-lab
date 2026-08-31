@@ -35,7 +35,7 @@ export function computeDirection(fromPath: string, toPath: string): Direction {
   }
 
   // Hierarchy order
-  const order = ["/", "/modules", "/prelab", "/notebook", "/analisis", "/laporan", "/referensi", "/pengajar"];
+  const order = ["/", "/modules", "/prelab", "/notebook", "/analisis", "/laporan", "/referensi"];
   const fromIdx = order.findIndex((p) => p === fromPath || (p !== "/" && fromPath.startsWith(p)));
   const toIdx = order.findIndex((p) => p === toPath || (p !== "/" && toPath.startsWith(p)));
 

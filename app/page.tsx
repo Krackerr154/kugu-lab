@@ -7,11 +7,10 @@ import { ChemText } from "@/components/shared/ChemText";
 export default function HomePage() {
   const unresolvedConflicts = contentConflicts.filter((c) => c.status === "unresolved");
 
-  // Map module status to schedule-like items (using manual pages as reference)
+  // Map module status to schedule-like items
   const scheduleItems = modules.slice(0, 4).map((m, i) => ({
     module: m,
     label: m.titleShort,
-    pages: m.manualPages,
     status: i === 0 ? "Aktif" : i === 1 ? " Mendatang" : "Terjadwal",
     statusColor: i === 0 ? "secondary" : "outline",
   }));
@@ -33,13 +32,6 @@ export default function HomePage() {
                   Penting: {unresolvedConflicts.length} konflik konten belum diselesaikan — tim pengajar harus meninjau sebelum publikasi final
                 </p>
               </div>
-              <Link
-                href="/pengajar"
-                aria-label="Tinjau konflik konten di Ruang Pengajar"
-                className="text-[var(--on-secondary-container)] hover:bg-[var(--secondary)]/10 p-2 rounded-full transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-container)]"
-              >
-                <span aria-hidden="true" className="material-symbols-outlined">arrow_forward</span>
-              </Link>
             </div>
           )}
 
@@ -120,7 +112,7 @@ export default function HomePage() {
                           {item.label}
                         </h3>
                         <p className="text-xs text-[var(--on-surface-variant)] mb-2 break-words">
-                          Hal. {item.pages} · <ChemText>{item.module.sampleLineage}</ChemText>
+                          <ChemText>{item.module.sampleLineage}</ChemText>
                         </p>
                         {/* Status chip */}
                         <span
@@ -157,7 +149,7 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="text-sm text-[var(--on-surface-variant)] mb-6">
-              Alur pembelajaran mengikuti urutan manual: observasi → sintesis → karakterisasi → integrasi bukti.
+              Alur pembelajaran terstruktur: observasi → sintesis → karakterisasi → integrasi bukti.
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {[
@@ -258,7 +250,7 @@ export default function HomePage() {
               <h2 className="text-xl sm:text-2xl font-bold text-[var(--primary)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
                 Penilaian
               </h2>
-              <span className="text-xs text-[var(--on-surface-variant)]">Berdasarkan manual hal. 5-7</span>
+              <span className="text-xs text-[var(--on-surface-variant)]">Pedoman Praktikum KI3131</span>
             </div>
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="rounded-xl bg-[var(--surface-container-low)] p-4 sm:p-5 border border-[var(--outline-variant)]/30 min-w-0">
@@ -317,7 +309,7 @@ export default function HomePage() {
                 </h2>
               </div>
               <p className="text-xs text-[var(--on-surface-variant)] mb-4">
-                Item berikut ditemukan saat memetakan manual. Tim pengajar harus menyelesaikan keputusan ini sebelum konten dipublikasikan sebagai final.
+                Item berikut ditemukan saat penelaahan prosedur. Tim pengajar harus menyelesaikan keputusan ini sebelum konten dipublikasikan sebagai final.
               </p>
               <ul className="space-y-2">
                 {unresolvedConflicts.map((c) => (

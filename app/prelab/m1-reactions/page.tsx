@@ -9,12 +9,12 @@ export default function M1PrelabPage() {
   const steps: WalkthroughStep[] = [
     {
       id: 1,
-      title: "Baca Manual & Siapkan Jurnal",
+      title: "Pelajari Prosedur & Siapkan Jurnal",
       detail:
-        "Baca halaman 9-12 manual praktikum. Siapkan jurnal pre-lab: tulis tujuan, dasar teori singkat (reaksi pengendapan, reaksi gas), dan alat/bahan yang akan digunakan.",
+        "Pelajari prosedur praktikum reaksi kation golongan utama. Siapkan jurnal pre-lab: tulis tujuan, dasar teori singkat (reaksi pengendapan, reaksi gas), dan alat/bahan yang akan digunakan.",
       rationale:
         "Pre-lab jurnal wajib dikumpulkan sebelum sesi dimulai. Tanpa jurnal, Anda tidak diperbolehkan masuk lab.",
-      equipment: ["Manual praktikum KI3131", "Jurnal pre-lab", "Pulpen", "Kalkulator"],
+      equipment: ["Jurnal pre-lab", "Pulpen", "Kalkulator"],
       estimatedTime: "30-45 min",
     },
     {
@@ -196,7 +196,7 @@ export default function M1PrelabPage() {
               {module.title}
             </p>
             <p className="text-xs text-[var(--on-surface-variant)] mt-2">
-              Manual hal. {module.manualPages} · Selesaikan walkthrough ini sebelum masuk lab
+              Selesaikan walkthrough ini sebelum masuk lab
             </p>
           </div>
         </div>
@@ -230,7 +230,7 @@ export default function M1PrelabPage() {
         <ul className="space-y-2 text-sm text-[var(--on-surface)]">
           <li className="flex items-start gap-2">
             <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-[var(--secondary)] mt-0.5">task_alt</span>
-            Baca manual hal. 9-12 dan tulis jurnal pre-lab (tujuan, teori, alat/bahan)
+            Tulis jurnal pre-lab (tujuan, teori, alat/bahan, dan bagan alir)
           </li>
           <li className="flex items-start gap-2">
             <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-[var(--secondary)] mt-0.5">task_alt</span>

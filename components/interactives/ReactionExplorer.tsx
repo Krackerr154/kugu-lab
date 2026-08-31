@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Equation } from "@/components/shared/Equation";
 import { ChemText } from "@/components/shared/ChemText";
 import { PredictionPrompt } from "../shared/PredictionPrompt";
@@ -525,7 +525,7 @@ reactionDatabase["NH4+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada reaksi yang terlihat; larutan tetap jernih.",
     inference: "NH₄Cl larut sempurna dalam air. Amonium klorida tidak membentuk endapan dengan HCl.",
-    equation: "\\\\text{NH}_4^+(aq) + \\\\text{Cl}^-(aq) \\\\rightarrow \\\\text{NH}_4\\\\text{Cl}(aq)",
+    equation: "\\text{NH}_4^+(aq) + \\text{Cl}^-(aq) \\rightarrow \\text{NH}_4^+(aq) + \\text{Cl}^-(aq) \\quad (\\text{Larut})",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -538,7 +538,7 @@ reactionDatabase["NH4+"] = {
     label: "— (Jernih)",
     observation: "Tidak terbentuk endapan dalam larutan asam.",
     inference: "NH₄⁺ tidak mengendap sebagai sulfida dalam suasana asam.",
-    equation: "\\\\text{Tidak bereaksi dalam asam}",
+    equation: "\\text{Tidak bereaksi dalam suasana asam}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -548,11 +548,11 @@ reactionDatabase["NH4+"] = {
   },
   "NaOH": {
     code: "gas",
-    label: "Gas (amoniak)",
-    observation: "Larutan mengeluarkan bau tajam amoniak (NH₃). Kertas lakmus biru basah di atas tabung menjadi biru lebih pekat.",
-    inference: "Pemanasan dengan basa kuat menyebabkan pembentukan gas amonia dari ion amonium. NH₄⁺ + OH⁻ → NH₃↑ + H₂O",
-    equation: "\\\\text{NH}_4^+(aq) + \\\\text{OH}^-(aq) \\\\xrightarrow{\\Delta} \\\\text{NH}_3(g) \\\\uparrow + \\\\text{H}_2\\\\text{O}(l)",
-    notes: "Uji khas NH₄⁺: baunya menusuk dan membuat lakmus biru makin biru.",
+    label: "Gas (amonia)",
+    observation: "Larutan mengeluarkan bau tajam amonia (NH₃). Kertas lakmus merah basah di atas tabung berubah menjadi biru.",
+    inference: "Reaksi asam-basa Bronsted-Lowry: ion amonium dideprotonasi oleh OH⁻ membentuk gas amonia (NH₃).",
+    equation: "\\text{NH}_4^+(aq) + \\text{OH}^-(aq) \\xrightarrow{\\Delta} \\text{NH}_3(g) \\uparrow + \\text{H}_2\\text{O}(l)",
+    notes: "Uji khas NH₄⁺: bau amonia menyengat dan uapnya membirukan lakmus merah basah.",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.5)",
@@ -564,7 +564,7 @@ reactionDatabase["NH4+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada perubahan yang terlihat dengan penambahan amonia.",
     inference: "NH₄⁺ adalah asam konjugat dari NH₃, sehingga tidak bereaksi lebih lanjut.",
-    equation: "\\\\text{Tidak bereaksi}",
+    equation: "\\text{Tidak bereaksi (kesetimbangan asam-basa)}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -580,7 +580,7 @@ reactionDatabase["Na+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan atau reaksi terlihat.",
     inference: "NaCl sangat larut dalam air dan tidak membentuk senyawa sukar larut dengan HCl.",
-    equation: "\\\\text{Na}^+(aq) + \\\\text{Cl}^-(aq) \\\\rightarrow \\\\text{NaCl}(aq)",
+    equation: "\\text{Na}^+(aq) + \\text{Cl}^-(aq) \\rightarrow \\text{Na}^+(aq) + \\text{Cl}^-(aq) \\quad (\\text{Larut})",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -593,7 +593,7 @@ reactionDatabase["Na+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada reaksi terlihat.",
     inference: "Na⁺ tidak mengendap sebagai sulfida.",
-    equation: "\\\\text{Tidak bereaksi}",
+    equation: "\\text{Tidak bereaksi}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -606,7 +606,7 @@ reactionDatabase["Na+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada reaksi pengendapan dengan NaOH.",
     inference: "NaOH larut sempurna dalam air, membentuk garam natrium yang larut.",
-    equation: "\\\\text{Na}^+(aq) + \\\\text{OH}^-(aq) \\\\rightarrow \\\\text{NaOH}(aq)",
+    equation: "\\text{Tidak bereaksi (larutan basa bebas endapan)}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -619,7 +619,7 @@ reactionDatabase["Na+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan atau perubahan warna.",
     inference: "Na⁺ tidak membentuk kompleks amina.",
-    equation: "\\\\text{Tidak bereaksi}",
+    equation: "\\text{Tidak bereaksi}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -635,7 +635,7 @@ reactionDatabase["K+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan atau reaksi terlihat.",
     inference: "KCl sangat larut dalam air.",
-    equation: "\\\\text{K}^+(aq) + \\\\text{Cl}^-(aq) \\\\rightarrow \\\\text{KCl}(aq)",
+    equation: "\\text{K}^+(aq) + \\text{Cl}^-(aq) \\rightarrow \\text{K}^+(aq) + \\text{Cl}^-(aq) \\quad (\\text{Larut})",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -648,7 +648,7 @@ reactionDatabase["K+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada reaksi terlihat.",
     inference: "K⁺ tidak membentuk sulfida sukar larut.",
-    equation: "\\\\text{Tidak bereaksi}",
+    equation: "\\text{Tidak bereaksi}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -661,7 +661,7 @@ reactionDatabase["K+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada reaksi pengendapan.",
     inference: "KOH larut sempurna dalam air.",
-    equation: "\\\\text{K}^+(aq) + \\\\text{OH}^-(aq) \\\\rightarrow \\\\text{KOH}(aq)",
+    equation: "\\text{Tidak bereaksi (larutan basa)}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -674,7 +674,7 @@ reactionDatabase["K+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan atau perubahan yang terlihat.",
     inference: "K⁺ tidak membentuk kompleks dengan amonia.",
-    equation: "\\\\text{Tidak bereaksi}",
+    equation: "\\text{Tidak bereaksi}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -690,7 +690,7 @@ reactionDatabase["Mg2+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan; larutan tetap jernih.",
     inference: "MgCl₂ larut sempurna dalam air.",
-    equation: "\\\\text{Mg}^{2+}(aq) + 2\\\\text{Cl}^-(aq) \\\\rightarrow \\\\text{MgCl}_2(aq)",
+    equation: "\\text{Mg}^{2+}(aq) + 2\\text{Cl}^-(aq) \\rightarrow \\text{MgCl}_2(aq)",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -703,7 +703,7 @@ reactionDatabase["Mg2+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan dalam suasana asam.",
     inference: "Mg²⁺ tidak mengendap sebagai sulfida dalam suasana asam.",
-    equation: "\\\\text{Tidak bereaksi dalam asam}",
+    equation: "\\text{Tidak bereaksi dalam asam}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -716,7 +716,7 @@ reactionDatabase["Mg2+"] = {
     label: "End. Putih",
     observation: "Terbentuk endapan putih gelatinous Mg(OH)₂ yang halus.",
     inference: "Magnesium hidroksida adalah basa lemah yang mengendap dalam pH tinggi. TAPI: Mg(OH)₂ BUKAN amfoter, tidak larut kembali dalam NaOH berlebih.",
-    equation: "\\\\text{Mg}^{2+}(aq) + 2\\\\text{OH}^-(aq) \\\\rightarrow \\\\text{Mg(OH)}_2(s) \\\\downarrow",
+    equation: "\\text{Mg}^{2+}(aq) + 2\\text{OH}^-(aq) \\rightarrow \\text{Mg(OH)}_2(s) \\downarrow",
     notes: "Penting: Mg(OH)₂ berbeda dengan Al³⁺/Zn²⁺ karena TIDAK bersifat amfoter — endapan tidak larut dalam NaOH berlebih!",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -732,7 +732,7 @@ reactionDatabase["Mg2+"] = {
     label: "End. Putih",
     observation: "Terbentuk endapan putih Mg(OH)₂ saat ditambah NH₃.",
     inference: "Amonia menghasilkan OH⁻ cukup untuk mengendapkan Mg(OH)₂ karena Ksp-nya cukup besar.",
-    equation: "\\\\text{Mg}^{2+}(aq) + 2\\\\text{NH}_3(aq) + 2\\\\text{H}_2\\\\text{O}(l) \\\\rightarrow \\\\text{Mg(OH)}_2(s) \\\\downarrow + 2\\\\text{NH}_4^+(aq)",
+    equation: "\\text{Mg}^{2+}(aq) + 2\\text{NH}_3(aq) + 2\\text{H}_2\\text{O}(l) \\rightarrow \\text{Mg(OH)}_2(s) \\downarrow + 2\\text{NH}_4^+(aq)",
     notes: "Mg²⁺ juga mengendap sebagai hidroksida dalam basa lemah amonia.",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -750,7 +750,7 @@ reactionDatabase["Ca2+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan yang terbentuk.",
     inference: "CaCl₂ larut sempurna dalam air.",
-    equation: "\\\\text{Ca}^{2+}(aq) + 2\\\\text{Cl}^-(aq) \\\\rightarrow \\\\text{CaCl}_2(aq)",
+    equation: "\\text{Ca}^{2+}(aq) + 2\\text{Cl}^-(aq) \\rightarrow \\text{CaCl}_2(aq)",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -763,7 +763,7 @@ reactionDatabase["Ca2+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan sulfida dalam suasana asam.",
     inference: "Ca²⁺ tidak mengendap sebagai sulfida.",
-    equation: "\\\\text{Tidak bereaksi}",
+    equation: "\\text{Tidak bereaksi}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -776,7 +776,7 @@ reactionDatabase["Ca2+"] = {
     label: "End. Putih",
     observation: "Jika konsentrasi cukup tinggi, terbentuk endapan putih kapur sirih Ca(OH)₂ yang sedikit larut.",
     inference: "Kalsium hidroksida memiliki kelarutan terbatas. Pada konsentrasi reagen tinggi (>0.1 M), akan mengendap.",
-    equation: "\\\\text{Ca}^{2+}(aq) + 2\\\\text{OH}^-(aq) \\\\rightarrow \\\\text{Ca(OH)}_2(s) \\\\downarrow",
+    equation: "\\text{Ca}^{2+}(aq) + 2\\text{OH}^-(aq) \\rightarrow \\text{Ca(OH)}_2(s) \\downarrow",
     notes: "Ca(OH)₂ hanya mengendap jika reagen cukup pekat. Kelarutannya lebih besar dibanding Mg(OH)₂.",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -792,7 +792,7 @@ reactionDatabase["Ca2+"] = {
     label: "— (Jernih)",
     observation: "Tidak terbentuk endapan (konsentrasi OH⁻ dari NH₃ terlalu rendah untuk mencapai Ksp Ca(OH)₂).",
     inference: "NH₃ menghasilkan [OH⁻] yang terlalu rendah untuk mengendapkan Ca(OH)₂.",
-    equation: "\\\\text{Tidak bereaksi dalam kondisi ini}",
+    equation: "\\text{Tidak bereaksi dalam kondisi ini}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -808,7 +808,7 @@ reactionDatabase["Ba2+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan; larutan tetap jernih.",
     inference: "BaCl₂ sangat larut dalam air.",
-    equation: "\\\\text{Ba}^{2+}(aq) + 2\\\\text{Cl}^-(aq) \\\\rightarrow \\\\text{BaCl}_2(aq)",
+    equation: "\\text{Ba}^{2+}(aq) + 2\\text{Cl}^-(aq) \\rightarrow \\text{BaCl}_2(aq)",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -821,7 +821,7 @@ reactionDatabase["Ba2+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan sulfida.",
     inference: "BaS larut dalam air; tidak mengendap.",
-    equation: "\\\\text{Tidak bereaksi}",
+    equation: "\\text{Tidak bereaksi}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -834,7 +834,7 @@ reactionDatabase["Ba2+"] = {
     label: "— (Jernih)",
     observation: "Tidak terbentuk endapan pada konsentrasi reagen standar.",
     inference: "Ba(OH)₂ cukup larut. Hanya mengendap jika reagen sangat pekat.",
-    equation: "\\\\text{Tidak bereaksi (larut)}",
+    equation: "\\text{Tidak bereaksi (larut)}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -847,7 +847,7 @@ reactionDatabase["Ba2+"] = {
     label: "— (Jernih)",
     observation: "Tidak ada endapan yang terbentuk.",
     inference: "NH₃ tidak dapat mengendapkan Ba²⁺ dalam kondisi praktikum standar.",
-    equation: "\\\\text{Tidak bereaksi}",
+    equation: "\\text{Tidak bereaksi}",
     visualSpec: {
       initialLiquidColor: "rgba(235, 245, 255, 0.4)",
       finalLiquidColor: "rgba(235, 245, 255, 0.4)",
@@ -871,10 +871,29 @@ export function ReactionExplorer() {
   const [selectedCation, setSelectedCation] = useState("Ag+");
   const [selectedReagent, setSelectedReagent] = useState("HCl");
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [modalReaction, setModalReaction] = useState<{ cationId: string; reagentId: string } | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setModalReaction(null);
+      }
+    };
+    if (modalReaction) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [modalReaction]);
 
   const currentReaction = reactionDatabase[selectedCation]?.[selectedReagent];
   const cationMeta = cationsMeta.find((c) => c.id === selectedCation);
   const reagentMeta = reagentsList.find((r) => r.id === selectedReagent);
+
+  const activeModalDetail = modalReaction ? reactionDatabase[modalReaction.cationId]?.[modalReaction.reagentId] : null;
+  const activeModalCation = modalReaction ? cationsMeta.find((c) => c.id === modalReaction.cationId) : null;
+  const activeModalReagent = modalReaction ? reagentsList.find((r) => r.id === modalReaction.reagentId) : null;
 
   return (
     <div className="space-y-6">
@@ -1087,8 +1106,9 @@ export function ReactionExplorer() {
                 <h3 className="text-base font-bold text-[var(--foreground)]">
                   Matriks Reaksi Lengkap (32 Reaksi Kation vs Pereaksi)
                 </h3>
-                <p className="text-xs text-[var(--muted)] mt-0.5">
-                  Klik sel mana saja di tabel untuk memutar animasi reaksi tabung secara langsung pada workbench di atas.
+                <p className="text-xs text-[var(--muted)] mt-0.5 flex items-center gap-1.5">
+                  <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary-container)]">touch_app</span>
+                  <span>Klik sel mana saja untuk membuka pop-up interaktif detail reaksi, simulasi tabung, dan persamaan ion netto.</span>
                 </p>
               </div>
 
@@ -1124,14 +1144,14 @@ export function ReactionExplorer() {
             </div>
 
             <div className="overflow-x-auto rounded-xl border border-[var(--outline-variant)]/50">
-              <table className="w-full text-xs sm:text-sm border-collapse bg-[var(--surface-container-lowest)]">
+              <table className="w-full text-xs sm:text-sm border-collapse bg-[var(--surface-container-lowest)] table-fixed min-w-[640px]">
                 <thead>
                   <tr className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)]/60">
-                    <th className="sticky left-0 bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)]/40 px-3 py-2.5 text-left font-bold text-[var(--foreground)]">
+                    <th className="sticky left-0 z-20 bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)]/40 px-3 py-2.5 text-center font-bold text-[var(--foreground)] w-32 sm:w-36 shadow-xs">
                       Kation \ Pereaksi
                     </th>
                     {reagentsList.map((r) => (
-                      <th key={r.id} className="border-r border-[var(--outline-variant)]/40 px-3 py-2.5 text-center font-bold text-[var(--foreground)] min-w-[120px]">
+                      <th key={r.id} className="border-r border-[var(--outline-variant)]/40 px-3 py-2.5 text-center font-bold text-[var(--foreground)]">
                         {r.name}
                       </th>
                     ))}
@@ -1139,11 +1159,13 @@ export function ReactionExplorer() {
                 </thead>
                 <tbody>
                   {cationsMeta.map((cation) => (
-                    <tr key={cation.id} className="border-b border-[var(--outline-variant)]/30 hover:bg-[var(--surface-container-low)]/50 transition-colors">
-                      <td className="sticky left-0 bg-[var(--surface-container-lowest)] border-r border-[var(--outline-variant)]/40 px-3 py-2.5 font-mono font-bold text-[var(--primary-container)]">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: cation.naturalColor }}></span>
-                          <span>{cation.id}</span>
+                    <tr key={cation.id} className="border-b border-[var(--outline-variant)]/30 hover:bg-[var(--surface-container-low)]/40 transition-colors">
+                      <td className="sticky left-0 z-10 bg-[var(--surface-container-lowest)] border-r border-[var(--outline-variant)]/40 px-3 py-2 font-bold text-[var(--foreground)] shadow-xs text-center">
+                        <div className="flex items-center justify-center gap-1.5 font-sans">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cation.naturalColor }}></span>
+                          <span className="text-xs sm:text-sm font-semibold tracking-wide text-[var(--primary-container)]">
+                            {cation.short}
+                          </span>
                         </div>
                       </td>
                       {reagentsList.map((r) => {
@@ -1154,21 +1176,41 @@ export function ReactionExplorer() {
                         return (
                           <td
                             key={r.id}
-                            className={`border-r border-[var(--outline-variant)]/30 px-3 py-2 text-center cursor-pointer transition-all duration-200 ${
-                              cell ? cellColorMap[cell.code] : ""
-                            } ${
-                              isSelected
-                                ? "ring-2 ring-[var(--primary-container)] ring-inset font-bold scale-[0.98] shadow-inner"
-                                : matchesFilter ? "hover:brightness-95" : "opacity-30"
-                            }`}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`Lihat detail reaksi ${cation.name} dengan ${r.name}: ${cell?.label || "Tidak ada reaksi"}`}
+                            className="border-r border-[var(--outline-variant)]/30 p-1 text-center cursor-pointer select-none transition-colors align-middle focus-visible:outline-none"
                             onClick={() => {
-                              setSelectedCation(cation.id);
-                              setSelectedReagent(r.id);
-                              // Smooth scroll to workbench
-                              window.scrollTo({ top: 300, behavior: "smooth" });
+                              setModalReaction({ cationId: cation.id, reagentId: r.id });
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                setModalReaction({ cationId: cation.id, reagentId: r.id });
+                              }
                             }}
                           >
-                            <span className="text-xs">{cell?.label || "—"}</span>
+                            <div
+                              className={`relative w-full min-h-[36px] px-2 py-1.5 rounded-lg flex items-center justify-center transition-all text-xs ${
+                                cell ? cellColorMap[cell.code] : ""
+                              } ${
+                                isSelected
+                                  ? "ring-2 ring-[var(--primary)] font-bold shadow-xs brightness-95"
+                                  : matchesFilter
+                                  ? "hover:brightness-90 dark:hover:brightness-125 hover:shadow-xs group/cell"
+                                  : "opacity-30"
+                              }`}
+                            >
+                              <span className="truncate font-medium text-center">{cell?.label || "—"}</span>
+                              {cell && (
+                                <span
+                                  aria-hidden="true"
+                                  className="material-symbols-outlined text-[11px] opacity-0 group-hover/cell:opacity-80 transition-opacity text-[var(--primary)] absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                                >
+                                  open_in_new
+                                </span>
+                              )}
+                            </div>
                           </td>
                         );
                       })}
@@ -1275,6 +1317,118 @@ export function ReactionExplorer() {
         <section className="min-h-[680px] surface-panel p-5 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl space-y-4 animate-fade-in flex flex-col">
           <EquationExercise />
         </section>
+      )}
+
+      {/* REACTION DETAIL POP-UP WINDOW WITH EMBEDDED SIMULATION */}
+      {modalReaction && activeModalDetail && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="reaction-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/50 backdrop-blur-xs animate-backdrop-enter"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setModalReaction(null);
+          }}
+        >
+          <div className="relative w-full max-w-2xl max-h-[90vh] bg-[var(--surface-container-lowest)] text-[var(--foreground)] rounded-2xl border border-[var(--outline-variant)]/60 shadow-2xl overflow-hidden animate-popup-enter flex flex-col">
+            {/* Header */}
+            <div className="p-3 sm:p-4 bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)]/40 flex items-start justify-between gap-3 shrink-0">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[var(--surface-container-high)] text-[var(--foreground)] border border-[var(--outline-variant)]/50">
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: activeModalCation?.naturalColor }} />
+                    <span>{activeModalCation?.short} + {activeModalReagent?.short}</span>
+                  </span>
+                  <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${cellColorMap[activeModalDetail.code]}`}>
+                    {activeModalDetail.label}
+                  </span>
+                </div>
+                <h3 id="reaction-modal-title" className="text-sm sm:text-base font-bold text-[var(--foreground)] truncate">
+                  {activeModalCation?.name} + {activeModalReagent?.name}
+                </h3>
+              </div>
+              <button
+                onClick={() => setModalReaction(null)}
+                aria-label="Tutup popup reaksi"
+                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-container-high)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] shrink-0 min-h-[36px] min-w-[36px] flex items-center justify-center"
+              >
+                <span aria-hidden="true" className="material-symbols-outlined text-lg">close</span>
+              </button>
+            </div>
+
+            {/* Main Interactive Body: Left Tube Simulation + Right Observation Details & Equation */}
+            <div className="p-3 sm:p-4 overflow-y-auto space-y-2.5 flex-1 overscroll-contain">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
+                {/* Left: Compact Test Tube Animation on the same card */}
+                <div className="md:col-span-5 flex flex-col items-center justify-center p-2 rounded-xl bg-[var(--surface-container-low)] border border-[var(--outline-variant)]/40">
+                  <ReactionTubeAnimation
+                    cationName={activeModalCation?.short || modalReaction.cationId}
+                    reagentName={activeModalReagent?.short || modalReaction.reagentId}
+                    visualSpec={activeModalDetail.visualSpec}
+                    compact={true}
+                  />
+                </div>
+
+                {/* Right: Chemical Observation, Inference, & Net Ionic Equation */}
+                <div className="md:col-span-7 flex flex-col space-y-2">
+                  {/* Observation Box */}
+                  <div className="p-2.5 rounded-xl bg-[var(--surface-container-low)] border border-[var(--outline-variant)]/40 shadow-xs">
+                    <p className="text-[10px] font-bold text-[var(--primary-container)] flex items-center gap-1.5 uppercase tracking-wider mb-1">
+                      <span aria-hidden="true" className="material-symbols-outlined text-sm">visibility</span>
+                      <span>Observasi Visual</span>
+                    </p>
+                    <p className="text-xs text-[var(--foreground)] leading-relaxed">
+                      {activeModalDetail.observation}
+                    </p>
+                  </div>
+
+                  {/* Inference Box */}
+                  <div className="p-2.5 rounded-xl bg-[var(--surface-container-low)] border border-[var(--outline-variant)]/40 shadow-xs">
+                    <p className="text-[10px] font-bold text-[var(--secondary)] flex items-center gap-1.5 uppercase tracking-wider mb-1">
+                      <span aria-hidden="true" className="material-symbols-outlined text-sm">psychology</span>
+                      <span>Inferensi & Mekanisme</span>
+                    </p>
+                    <p className="text-xs text-[var(--foreground)] leading-relaxed">
+                      {activeModalDetail.inference}
+                    </p>
+                  </div>
+
+                  {/* Net Ionic Equation right below visual observation & inference */}
+                  {activeModalDetail.equation && (
+                    <Equation
+                      tex={activeModalDetail.equation}
+                      label="Persamaan Reaksi Ion Netto"
+                      compact={true}
+                    />
+                  )}
+
+                  {/* Reaction Notes / Quirks */}
+                  {activeModalDetail.notes && (
+                    <div className="p-2 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-900/40 text-[11px] text-amber-900 dark:text-amber-200 flex items-start gap-1.5">
+                      <span aria-hidden="true" className="material-symbols-outlined text-sm shrink-0 mt-0.5 text-amber-600">tips_and_updates</span>
+                      <p className="leading-relaxed">{activeModalDetail.notes}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-3 sm:px-4 bg-[var(--surface-container-low)]/60 border-t border-[var(--outline-variant)]/40 flex items-center justify-between gap-2 shrink-0">
+              <span className="text-[10px] text-[var(--muted)] hidden sm:inline">
+                <kbd className="px-1 py-0.5 text-[9px] font-mono bg-[var(--surface-container-high)] rounded border border-[var(--outline-variant)]/60">Esc</kbd> tutup
+              </span>
+              <div className="flex items-center gap-2 ml-auto">
+                <button
+                  onClick={() => setModalReaction(null)}
+                  className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] shadow-sm transition-all active:scale-[0.98] min-h-[34px]"
+                >
+                  Selesai / Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

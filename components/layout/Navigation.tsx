@@ -13,7 +13,6 @@ const navItems = [
   { href: "/analisis", label: "Analisis Data", icon: "analytics", short: "Analysis" },
   { href: "/laporan", label: "Laporan", icon: "description", short: "Reports" },
   { href: "/referensi", label: "Referensi & Keselamatan", icon: "shield", short: "Safety" },
-  { href: "/pengajar", label: "Ruang Pengajar", icon: "school", short: "Instructor" },
 ];
 
 const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
