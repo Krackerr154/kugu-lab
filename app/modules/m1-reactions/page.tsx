@@ -14,7 +14,7 @@ export default function M1Page() {
   return (
       <ModuleLayout module={module}>
       {/* Learning Objectives */}
-      <section className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
+      <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold mb-3" id="tujuan-pembelajaran">Tujuan Pembelajaran</h2>
         <ol className="space-y-2 text-sm text-[var(--foreground)] list-decimal list-inside ml-4">
           <li>Mengamati perubahan pada reaksi senyawa golongan utama: pembentukan endapan dan gas.</li>
@@ -28,7 +28,7 @@ export default function M1Page() {
       </section>
 
       {/* Theory */}
-      <section className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
+      <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold mb-3">Teori Singkat</h2>
         
         {/* Solubility Rules */}
@@ -68,7 +68,7 @@ export default function M1Page() {
       </section>
 
       {/* Gas Formation Reactions */}
-      <section className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
+      <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold mb-3">Pembentukan Gas (Gas Evolution Reactions)</h2>
         <div className="space-y-3">
           <div className="p-3 bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-900 dark:to-emerald-800 rounded-lg border-2 border-emerald-300 dark:border-emerald-700 shadow-sm">
@@ -102,7 +102,7 @@ export default function M1Page() {
       </section>
 
       {/* Theory continued - same as before */}
-      <section className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
+      <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold">Observasi vs Inferensi</h2>
         <div className="mt-2 space-y-2 text-sm text-[var(--text-secondary)]">
           <p><strong>Observasi:</strong> Apa yang mata kita lihat langsung (contoh: larutan jadi keruh, endapan putih, gelembung gas).</p>
@@ -112,13 +112,13 @@ export default function M1Page() {
       </section>
 
       {/* Interactive */}
-      <div className="mt-4">
+      <div className="mt-6">
         <h2 className="mb-2 text-lg font-bold">Interaktif Modul 1</h2>
         <ReactionExplorer />
       </div>
 
       {/* Procedure */}
-      <div className="mt-4">
+      <div className="mt-6">
         <ProcedureStepper title="Prosedur Ringkas (Verifikasi SOP)" steps={[
           { id: 1, title: "Siapkan larutan kation", detail: "Buat larutan kation yang ditugaskan sesuai konsentrasi yang disetujui.", rationale: "Konsentrasi mempengaruhi hasil pengendapan." },
           { id: 2, title: "Tambahkan pereaksi grup", detail: "Tambahkan HCl encer pertama, lalu reagen grup berikutnya sesuai alur analisis kualitatif.", holdPoint: true, rationale: "Urutan penambahan penting untuk identifikasi grup yang benar." },
@@ -129,7 +129,7 @@ export default function M1Page() {
       </div>
 
       {/* Notebook */}
-      <div className="mt-4">
+      <div className="mt-6">
         <LabNotebook title="Catatan Observasi M1" storageKey="m1-notebook" fields={[
           { id: "sample", label: "ID Sampel/Cuplikan", type: "text", placeholder: "mis. M1-A01" },
           { id: "ion", label: "Ion/Cuplikan diuji", type: "text", placeholder: "mis. Ag+ atau Cuplikan X" },
@@ -142,14 +142,14 @@ export default function M1Page() {
       </div>
 
       {/* CER */}
-      <div className="mt-4">
+      <div className="mt-6">
         <ClaimEvidenceReasoning
           prompt="Berdasarkan hasil identifikasi ion tidak dikenal, buat klaim tentang identitas ion, dukung dengan bukti observasi, dan berikan penalaran kimia."
         />
       </div>
 
       {/* Report checklist */}
-      <div className="mt-4">
+      <div className="mt-6">
         <ReportChecklist
           title="Kisi-Kisi Laporan M1"
           rubric={[

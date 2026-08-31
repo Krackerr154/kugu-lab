@@ -436,7 +436,7 @@ export function ReactionTubeAnimation({
         <button
           onClick={handleRetrigger}
           disabled={animState === "dropping" || animState === "reacting"}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] active:scale-95 disabled:opacity-50 transition-all shadow-xs"
+          className="flex items-center gap-1.5 px-3 py-1.5 min-h-[40px] rounded-lg text-xs font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] active:scale-95 disabled:opacity-50 transition-all shadow-xs"
           title="Ulangi tetesan reagen"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-sm">water_drop</span>
@@ -446,7 +446,7 @@ export function ReactionTubeAnimation({
         <button
           onClick={handleAgitate}
           disabled={animState === "dropping"}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:bg-[var(--surface-container-highest)] hover:border-[var(--primary-container)] active:scale-95 transition-all"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 min-h-[40px] rounded-lg text-xs font-medium border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:bg-[var(--surface-container-highest)] hover:border-[var(--primary-container)] active:scale-95 transition-all"
           title="Kocok tabung agar homogen"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-sm">sync</span>
@@ -457,7 +457,7 @@ export function ReactionTubeAnimation({
           <button
             onClick={handleExcess}
             disabled={isExcess || animState !== "reacted"}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all active:scale-95 ${
+            className={`flex items-center gap-1 px-2.5 py-1.5 min-h-[40px] rounded-lg text-xs font-medium border transition-all active:scale-95 ${
               isExcess
                 ? "bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 border-blue-400"
                 : "border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-blue-500 hover:text-blue-700"
@@ -473,7 +473,7 @@ export function ReactionTubeAnimation({
           <button
             onClick={handleHeat}
             disabled={isHeated || animState !== "reacted"}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-all active:scale-95 ${
+            className={`flex items-center gap-1 px-2.5 py-1.5 min-h-[40px] rounded-lg text-xs font-medium border transition-all active:scale-95 ${
               isHeated
                 ? "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-amber-400"
                 : "border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-amber-500 hover:text-amber-700"

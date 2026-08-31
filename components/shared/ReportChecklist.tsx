@@ -41,7 +41,7 @@ export function ReportChecklist({ title, items, rubric }: ReportChecklistProps) 
       <ul className="space-y-1">
         {items.map((item, i) => (
           <li key={i} className="flex items-start gap-2 text-sm">
-            <input type="checkbox" className="mt-0.5" id={`check-${i}`} />
+            <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--primary-container)]" id={`check-${i}`} />
             <label htmlFor={`check-${i}`} className="cursor-pointer">
               {item.label}
               {item.points && <span className="ml-1 text-xs text-[var(--muted)]">({item.points} poin)</span>}

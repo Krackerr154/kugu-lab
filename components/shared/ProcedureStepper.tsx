@@ -56,7 +56,7 @@ export function ProcedureStepper({ steps, title = "Prosedur" }: ProcedureStepper
             <div className="flex items-start gap-3">
               <button
                 onClick={() => toggleComplete(step.id)}
-                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition-colors ${
+                className={`mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition-colors ${
                   completed.has(step.id)
                     ? "border-[var(--success)] bg-[var(--success)] text-white"
                     : "border-[var(--outline)] text-transparent hover:border-[var(--primary-container)]"
@@ -85,7 +85,7 @@ export function ProcedureStepper({ steps, title = "Prosedur" }: ProcedureStepper
                 <div className="mt-2 flex gap-2">
                   <button
                     onClick={() => toggleDeviation(step.id)}
-                    className="text-xs font-medium text-[var(--primary-container)] underline-offset-2 hover:underline"
+                    className="inline-flex min-h-[40px] items-center text-xs font-medium text-[var(--primary-container)] underline-offset-2 hover:underline"
                   >
                     {showDeviation.has(step.id) ? "Sembunyikan" : "Catat deviasi"}
                   </button>

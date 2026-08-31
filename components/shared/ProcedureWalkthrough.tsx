@@ -118,7 +118,7 @@ export function ProcedureWalkthrough({
             <button
               key={s.id}
               onClick={() => setCurrentStep(i)}
-              className="group flex h-8 w-8 shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary)]"
+              className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary)]"
               aria-label={`Langkah ${i + 1}`}
             >
               <span

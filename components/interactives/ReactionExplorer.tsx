@@ -960,14 +960,14 @@ export function ReactionExplorer() {
                       <button
                         key={c.id}
                         onClick={() => setSelectedCation(c.id)}
-                        className={`px-1.5 py-2 sm:px-2 sm:py-2 rounded-md md:rounded-lg text-[9px] sm:text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 sm:gap-1 border ${
+                        className={`px-1.5 py-2 sm:px-2 sm:py-2 rounded-md md:rounded-lg text-[11px] sm:text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 sm:gap-1 border ${
                           isSelected
                             ? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm scale-[1.02]"
                             : "bg-[var(--surface-container-lowest)] text-[var(--foreground)] border-[var(--outline-variant)]/60 hover:border-[var(--primary-container)]"
                         }`}
                       >
                         <span className="w-3 h-3 sm:w-2.5 sm:h-2.5 rounded-full border border-black/10" style={{ backgroundColor: c.naturalColor }}></span>
-                        <span className="text-[8px] sm:text-[10px]">{c.short}</span>
+                        <span className="text-[10px] sm:text-[10px]">{c.short}</span>
                       </button>
                     );
                   })}
@@ -994,7 +994,10 @@ export function ReactionExplorer() {
                             ? "bg-[var(--primary-container)] text-white border-[var(--primary-container)] shadow-sm scale-[1.02]"
                             : "bg-[var(--surface-container-lowest)] text-[var(--foreground)] border-[var(--outline-variant)]/60 hover:border-[var(--primary-container)]"
                         }`}
-                      >\n                        <span aria-hidden="true" className="material-symbols-outlined text-base mt-0.5 text-amber-400">{r.icon}</span>\n                        <div>\n                          <p className="font-semibold text-[10px] sm:text-[11px]">{r.name}</p>
+                      >
+                        <span aria-hidden="true" className="material-symbols-outlined text-base mt-0.5 text-amber-400">{r.icon}</span>
+                        <div>
+                          <p className="font-semibold text-[10px] sm:text-[11px]">{r.name}</p>
                           <p className="text-[9px] opacity-80 line-clamp-1">{r.desc}</p>
                         </div>
                       </button>
@@ -1093,7 +1096,7 @@ export function ReactionExplorer() {
               <div className="flex flex-wrap gap-1.5 text-xs">
                 <button
                   onClick={() => setActiveFilter("all")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium border transition-all ${
+                  className={`px-2.5 py-2 min-h-[40px] rounded-md text-[11px] font-medium border transition-all ${
                     activeFilter === "all" ? "bg-[var(--primary)] text-white" : "bg-[var(--surface-container-low)]"
                   }`}
                 >
@@ -1101,19 +1104,19 @@ export function ReactionExplorer() {
                 </button>
                 <button
                   onClick={() => setActiveFilter("white_precipitate")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium border ${cellColorMap.white_precipitate}`}
+                  className={`px-2.5 py-2 min-h-[40px] rounded-md text-[11px] font-medium border ${cellColorMap.white_precipitate}`}
                 >
                   End. Putih
                 </button>
                 <button
                   onClick={() => setActiveFilter("coloured_precipitate")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium border ${cellColorMap.coloured_precipitate}`}
+                  className={`px-2.5 py-2 min-h-[40px] rounded-md text-[11px] font-medium border ${cellColorMap.coloured_precipitate}`}
                 >
                   End. Berwarna
                 </button>
                 <button
                   onClick={() => setActiveFilter("colour_change")}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium border ${cellColorMap.colour_change}`}
+                  className={`px-2.5 py-2 min-h-[40px] rounded-md text-[11px] font-medium border ${cellColorMap.colour_change}`}
                 >
                   Perubahan Warna
                 </button>

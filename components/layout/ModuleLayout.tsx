@@ -16,12 +16,12 @@ export function ModuleLayout({ module, children }: ModuleLayoutProps) {
       {/* Breadcrumb Bar */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[var(--muted)]">
-          <TransitionLink href="/" direction="nav-back" className="hover:underline hover:text-[var(--primary-container)] transition-colors flex items-center gap-1">
+          <TransitionLink href="/" direction="nav-back" className="hover:underline hover:text-[var(--primary-container)] transition-colors inline-flex min-h-[40px] items-center gap-1">
             <span aria-hidden="true" className="material-symbols-outlined text-base">home</span>
             <span>Beranda</span>
           </TransitionLink>
           <span className="text-[var(--outline-variant)]">/</span>
-          <TransitionLink href="/modules" direction="nav-back" className="hover:underline hover:text-[var(--primary-container)] transition-colors">
+          <TransitionLink href="/modules" direction="nav-back" className="hover:underline hover:text-[var(--primary-container)] transition-colors inline-flex min-h-[40px] items-center">
             Modul
           </TransitionLink>
           <span className="text-[var(--outline-variant)]">/</span>

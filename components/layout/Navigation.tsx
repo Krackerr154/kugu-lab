@@ -195,7 +195,7 @@ export function Navigation() {
               href="/"
               direction="nav-back"
               aria-label="Kembali ke Beranda"
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white transition-colors hover:bg-white/20 active:scale-95"
+              className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/10 text-white transition-colors hover:bg-white/20 active:scale-95"
             >
               <span aria-hidden="true" className="material-symbols-outlined text-lg">arrow_back</span>
             </TransitionLink>

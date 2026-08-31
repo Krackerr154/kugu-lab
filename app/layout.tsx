@@ -35,10 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             Pendamping digital ini bukan pengganti SOP, SDS, putusan instruktur, atau kerja praktikum fisik.
           </footer>
         </div>
-{/* impeccable-live-start */}
-<script src="http://localhost:8400/live.js?token=c39a60ff-9e14-4f3b-9f80-e6da6c1894f4"></script>
-{/* impeccable-live-end */}
-</body>
+      </body>
     </html>
   );
 }

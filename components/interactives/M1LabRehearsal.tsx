@@ -401,7 +401,7 @@ export function M1LabRehearsal() {
                     type="checkbox"
                     checked={Boolean(safety[item.id])}
                     onChange={(event) => setSafety((previous) => ({ ...previous, [item.id]: event.target.checked }))}
-                    className="mt-0.5 h-4 w-4 accent-[var(--secondary)]"
+                    className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--secondary)]"
                   />
                   <span>{item.label}</span>
                 </label>
@@ -551,7 +551,7 @@ export function M1LabRehearsal() {
           {currentStage.key === "cleanup" && (
             <div className="mt-5 rounded-xl border border-[var(--outline-variant)]/50 bg-[var(--surface-container-low)] p-4">
               <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--error)]/30 bg-[var(--error-container)]/25 p-4 text-sm text-[var(--on-surface)]">
-                <input type="checkbox" checked={wasteChecked} onChange={(event) => setWasteChecked(event.target.checked)} className="mt-0.5 h-4 w-4 accent-[var(--error)]" />
+                <input type="checkbox" checked={wasteChecked} onChange={(event) => setWasteChecked(event.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--error)]" />
                 <span><strong>Wadah limbah logam berat</strong><br /><span className="text-xs text-[var(--on-surface-variant)]">Residu yang mengandung Pb/Ag/Hg/Cr tidak masuk ke wastafel.</span></span>
               </label>
               {wasteChecked && <p className="mt-3 text-sm font-semibold text-[var(--success)]" role="status">✓ Jalur limbah sudah dipilih. Tetap ikuti SOP dan instruksi asisten.</p>}
