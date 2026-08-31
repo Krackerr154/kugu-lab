@@ -872,6 +872,8 @@ export function ReactionExplorer() {
   const [selectedReagent, setSelectedReagent] = useState("HCl");
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [modalReaction, setModalReaction] = useState<{ cationId: string; reagentId: string } | null>(null);
+  const [mobileMatrixView, setMobileMatrixView] = useState<"reagent_cards" | "table">("reagent_cards");
+  const [mobileSelectedReagent, setMobileSelectedReagent] = useState<string>("HCl");
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -1099,24 +1101,50 @@ export function ReactionExplorer() {
             </div>
           </section>
 
-          {/* Interactive Matrix Grid (Click any cell to inspect on Workbench) */}
-          <section className="surface-panel p-5 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl">
-            <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          {/* Interactive Matrix Grid & Mobile Zero-Scroll Cards */}
+          <section className="surface-panel p-4 sm:p-6 border border-[var(--outline-variant)]/60 shadow-sm rounded-2xl space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
                 <h3 className="text-base font-bold text-[var(--foreground)]">
                   Matriks Reaksi Lengkap (32 Reaksi Kation vs Pereaksi)
                 </h3>
                 <p className="text-xs text-[var(--muted)] mt-0.5 flex items-center gap-1.5">
                   <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary-container)]">touch_app</span>
-                  <span>Klik sel mana saja untuk membuka pop-up interaktif detail reaksi, simulasi tabung, dan persamaan ion netto.</span>
+                  <span>Klik sel atau kartu untuk membuka detail reaksi, animasi tabung, dan persamaan ion netto.</span>
                 </p>
               </div>
 
-              {/* Legend Filter */}
+              {/* Mobile View Toggle (Visible only on mobile/tablet screens) */}
+              <div className="flex md:hidden items-center p-1 bg-[var(--surface-container)] rounded-lg border border-[var(--outline-variant)]/50 text-xs w-full sm:w-auto">
+                <button
+                  onClick={() => setMobileMatrixView("reagent_cards")}
+                  className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-all ${
+                    mobileMatrixView === "reagent_cards"
+                      ? "bg-[var(--primary)] text-white shadow-xs"
+                      : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                  }`}
+                >
+                  <span aria-hidden="true" className="material-symbols-outlined text-sm">view_agenda</span>
+                  <span>Kartu Pereaksi</span>
+                </button>
+                <button
+                  onClick={() => setMobileMatrixView("table")}
+                  className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-all ${
+                    mobileMatrixView === "table"
+                      ? "bg-[var(--primary)] text-white shadow-xs"
+                      : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                  }`}
+                >
+                  <span aria-hidden="true" className="material-symbols-outlined text-sm">table_chart</span>
+                  <span>Tabel Matriks</span>
+                </button>
+              </div>
+
+              {/* Legend Filter Chips */}
               <div className="flex flex-wrap gap-1.5 text-xs">
                 <button
                   onClick={() => setActiveFilter("all")}
-                  className={`px-2.5 py-2 min-h-[40px] rounded-md text-[11px] font-medium border transition-all ${
+                  className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium border transition-all ${
                     activeFilter === "all" ? "bg-[var(--primary)] text-white" : "bg-[var(--surface-container-low)]"
                   }`}
                 >
@@ -1124,100 +1152,201 @@ export function ReactionExplorer() {
                 </button>
                 <button
                   onClick={() => setActiveFilter("white_precipitate")}
-                  className={`px-2.5 py-2 min-h-[40px] rounded-md text-[11px] font-medium border ${cellColorMap.white_precipitate}`}
+                  className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium border ${cellColorMap.white_precipitate}`}
                 >
                   End. Putih
                 </button>
                 <button
                   onClick={() => setActiveFilter("coloured_precipitate")}
-                  className={`px-2.5 py-2 min-h-[40px] rounded-md text-[11px] font-medium border ${cellColorMap.coloured_precipitate}`}
+                  className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium border ${cellColorMap.coloured_precipitate}`}
                 >
                   End. Berwarna
                 </button>
                 <button
                   onClick={() => setActiveFilter("colour_change")}
-                  className={`px-2.5 py-2 min-h-[40px] rounded-md text-[11px] font-medium border ${cellColorMap.colour_change}`}
+                  className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium border ${cellColorMap.colour_change}`}
                 >
                   Perubahan Warna
                 </button>
               </div>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-[var(--outline-variant)]/50">
-              <table className="w-full text-xs sm:text-sm border-collapse bg-[var(--surface-container-lowest)] table-fixed min-w-[640px]">
-                <thead>
-                  <tr className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)]/60">
-                    <th className="sticky left-0 z-20 bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)]/40 px-3 py-2.5 text-center font-bold text-[var(--foreground)] w-32 sm:w-36 shadow-xs">
-                      Kation \ Pereaksi
-                    </th>
-                    {reagentsList.map((r) => (
-                      <th key={r.id} className="border-r border-[var(--outline-variant)]/40 px-3 py-2.5 text-center font-bold text-[var(--foreground)]">
-                        {r.name}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {cationsMeta.map((cation) => (
-                    <tr key={cation.id} className="border-b border-[var(--outline-variant)]/30 hover:bg-[var(--surface-container-low)]/40 transition-colors">
-                      <td className="sticky left-0 z-10 bg-[var(--surface-container-lowest)] border-r border-[var(--outline-variant)]/40 px-3 py-2 font-bold text-[var(--foreground)] shadow-xs text-center">
-                        <div className="flex items-center justify-center gap-1.5 font-sans">
-                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cation.naturalColor }}></span>
-                          <span className="text-xs sm:text-sm font-semibold tracking-wide text-[var(--primary-container)]">
-                            {cation.short}
-                          </span>
-                        </div>
-                      </td>
-                      {reagentsList.map((r) => {
-                        const cell = reactionDatabase[cation.id]?.[r.id];
-                        const isSelected = selectedCation === cation.id && selectedReagent === r.id;
-                        const matchesFilter = activeFilter === "all" || cell?.code === activeFilter;
+            {/* MOBILE VIEW: Segmented Reagent Pivot Cards (Zero horizontal scroll) */}
+            <div
+              key={mobileMatrixView}
+              className={`space-y-3 animate-smooth-fade ${mobileMatrixView === "reagent_cards" ? "block md:hidden" : "hidden"}`}
+            >
+              {/* 4-way Reagent Switcher */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                {reagentsList.map((r) => {
+                  const isSelected = mobileSelectedReagent === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      onClick={() => setMobileSelectedReagent(r.id)}
+                      className={`p-2.5 rounded-xl border text-left flex flex-col gap-0.5 transition-all duration-200 ease-out ${
+                        isSelected
+                          ? "bg-[var(--primary-container)] text-white border-[var(--primary-container)] shadow-xs scale-[1.01]"
+                          : "bg-[var(--surface-container-lowest)] text-[var(--foreground)] border-[var(--outline-variant)]/60 hover:border-[var(--primary-container)]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span aria-hidden="true" className="material-symbols-outlined text-sm shrink-0">
+                          {r.icon}
+                        </span>
+                        <span className="font-bold text-xs truncate">{r.short}</span>
+                      </div>
+                      <span className={`text-[10px] truncate transition-colors duration-150 ${isSelected ? "text-white/80" : "text-[var(--muted)]"}`}>
+                        {r.name.replace(/^[^(]+/, "").trim()}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-                        return (
-                          <td
-                            key={r.id}
-                            role="button"
-                            tabIndex={0}
-                            aria-label={`Lihat detail reaksi ${cation.name} dengan ${r.name}: ${cell?.label || "Tidak ada reaksi"}`}
-                            className="border-r border-[var(--outline-variant)]/30 p-1 text-center cursor-pointer select-none transition-colors align-middle focus-visible:outline-none"
-                            onClick={() => {
-                              setModalReaction({ cationId: cation.id, reagentId: r.id });
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                e.preventDefault();
-                                setModalReaction({ cationId: cation.id, reagentId: r.id });
-                              }
-                            }}
-                          >
-                            <div
-                              className={`relative w-full min-h-[36px] px-2 py-1.5 rounded-lg flex items-center justify-center transition-all text-xs ${
-                                cell ? cellColorMap[cell.code] : ""
-                              } ${
-                                isSelected
-                                  ? "ring-2 ring-[var(--primary)] font-bold shadow-xs brightness-95"
-                                  : matchesFilter
-                                  ? "hover:brightness-90 dark:hover:brightness-125 hover:shadow-xs group/cell"
-                                  : "opacity-30"
-                              }`}
-                            >
-                              <span className="truncate font-medium text-center">{cell?.label || "—"}</span>
-                              {cell && (
-                                <span
-                                  aria-hidden="true"
-                                  className="material-symbols-outlined text-[11px] opacity-0 group-hover/cell:opacity-80 transition-opacity text-[var(--primary)] absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none"
-                                >
-                                  open_in_new
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                        );
-                      })}
+              {/* Active Reagent Description Banner */}
+              {(() => {
+                const activeR = reagentsList.find((r) => r.id === mobileSelectedReagent);
+                return (
+                  <div className="p-2.5 bg-[var(--surface-container-low)] rounded-xl border border-[var(--outline-variant)]/40 flex items-center gap-2 transition-all duration-200">
+                    <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary-container)] shrink-0">
+                      info
+                    </span>
+                    <p className="text-[11px] text-[var(--foreground)]">
+                      <span className="font-bold">{activeR?.name}:</span> {activeR?.desc}
+                    </p>
+                  </div>
+                );
+              })()}
+
+              {/* 10 Cation Result Cards (Vertical, zero horizontal scroll, animated on switch) */}
+              <div
+                key={mobileSelectedReagent}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-2 animate-smooth-fade"
+              >
+                {cationsMeta.map((cation) => {
+                  const cell = reactionDatabase[cation.id]?.[mobileSelectedReagent];
+                  const matchesFilter = activeFilter === "all" || cell?.code === activeFilter;
+                  if (!matchesFilter) return null;
+
+                  return (
+                    <button
+                      key={cation.id}
+                      onClick={() => setModalReaction({ cationId: cation.id, reagentId: mobileSelectedReagent })}
+                      className="w-full text-left p-3 rounded-xl bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)]/50 hover:border-[var(--primary)] flex items-center justify-between gap-3 active:scale-[0.98] transition-all duration-150 shadow-xs"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="w-3 h-3 rounded-full shrink-0 border border-black/10" style={{ backgroundColor: cation.naturalColor }} />
+                        <div className="min-w-0">
+                          <p className="font-bold text-sm text-[var(--foreground)] truncate font-sans">
+                            {cation.short}
+                          </p>
+                          <p className="text-[11px] text-[var(--muted)] truncate">
+                            {cation.name.split("—")[0].trim()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-colors duration-150 ${cell ? cellColorMap[cell.code] : ""}`}>
+                          {cell?.label || "—"}
+                        </span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--muted)]">
+                          chevron_right
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* FULL MATRIX TABLE (Default on Desktop, and when mobile selects table view) */}
+            <div
+              key={mobileMatrixView === "table" ? "table" : "matrix-desktop"}
+              className={`${mobileMatrixView === "table" ? "block animate-smooth-fade" : "hidden md:block"}`}
+            >
+              {/* Mobile Table Scroll Hint */}
+              <p className="text-[11px] text-[var(--muted)] mb-2 md:hidden flex items-center gap-1">
+                <span aria-hidden="true" className="material-symbols-outlined text-xs text-[var(--primary)]">swipe</span>
+                <span>Geser tabel ke kanan untuk melihat pereaksi lainnya</span>
+              </p>
+
+              <div className="overflow-x-auto rounded-xl border border-[var(--outline-variant)]/50">
+                <table className="w-full text-xs sm:text-sm border-collapse bg-[var(--surface-container-lowest)] table-fixed min-w-[640px]">
+                  <thead>
+                    <tr className="bg-[var(--surface-container-low)] border-b border-[var(--outline-variant)]/60">
+                      <th className="sticky left-0 z-20 bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)]/40 px-3 py-2.5 text-center font-bold text-[var(--foreground)] w-32 sm:w-36 shadow-xs">
+                        Kation \ Pereaksi
+                      </th>
+                      {reagentsList.map((r) => (
+                        <th key={r.id} className="border-r border-[var(--outline-variant)]/40 px-3 py-2.5 text-center font-bold text-[var(--foreground)]">
+                          {r.name}
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {cationsMeta.map((cation) => (
+                      <tr key={cation.id} className="border-b border-[var(--outline-variant)]/30 hover:bg-[var(--surface-container-low)]/40 transition-colors">
+                        <td className="sticky left-0 z-10 bg-[var(--surface-container-lowest)] border-r border-[var(--outline-variant)]/40 px-3 py-2 font-bold text-[var(--foreground)] shadow-xs text-center">
+                          <div className="flex items-center justify-center gap-1.5 font-sans">
+                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cation.naturalColor }}></span>
+                            <span className="text-xs sm:text-sm font-semibold tracking-wide text-[var(--primary-container)]">
+                              {cation.short}
+                            </span>
+                          </div>
+                        </td>
+                        {reagentsList.map((r) => {
+                          const cell = reactionDatabase[cation.id]?.[r.id];
+                          const isSelected = selectedCation === cation.id && selectedReagent === r.id;
+                          const matchesFilter = activeFilter === "all" || cell?.code === activeFilter;
+
+                          return (
+                            <td
+                              key={r.id}
+                              role="button"
+                              tabIndex={0}
+                              aria-label={`Lihat detail reaksi ${cation.name} dengan ${r.name}: ${cell?.label || "Tidak ada reaksi"}`}
+                              className="border-r border-[var(--outline-variant)]/30 p-1 text-center cursor-pointer select-none transition-colors align-middle focus-visible:outline-none"
+                              onClick={() => {
+                                setModalReaction({ cationId: cation.id, reagentId: r.id });
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault();
+                                  setModalReaction({ cationId: cation.id, reagentId: r.id });
+                                }
+                              }}
+                            >
+                              <div
+                                className={`relative w-full min-h-[36px] px-2 py-1.5 rounded-lg flex items-center justify-center transition-all text-xs ${
+                                  cell ? cellColorMap[cell.code] : ""
+                                } ${
+                                  isSelected
+                                    ? "ring-2 ring-[var(--primary)] font-bold shadow-xs brightness-95"
+                                    : matchesFilter
+                                    ? "hover:brightness-90 dark:hover:brightness-125 hover:shadow-xs group/cell"
+                                    : "opacity-30"
+                                }`}
+                              >
+                                <span className="truncate font-medium text-center">{cell?.label || "—"}</span>
+                                {cell && (
+                                  <span
+                                    aria-hidden="true"
+                                    className="material-symbols-outlined text-[11px] opacity-0 group-hover/cell:opacity-80 transition-opacity text-[var(--primary)] absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                                  >
+                                    open_in_new
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
         </div>

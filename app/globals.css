@@ -412,7 +412,7 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes popup-enter {
   0% {
     opacity: 0;
-    transform: scale(0.95) translateY(8px);
+    transform: scale(0.96) translateY(12px);
   }
   100% {
     opacity: 1;
@@ -426,11 +426,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .animate-popup-enter {
-  animation: popup-enter 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: popup-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-backdrop-enter {
-  animation: backdrop-enter 0.18s ease-out forwards;
+  animation: backdrop-enter 0.3s ease-out forwards;
+}
+
+@keyframes smooth-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-smooth-fade {
+  animation: smooth-fade-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Scrollbar */
