@@ -34,7 +34,7 @@ export default function PrelabPage() {
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="rounded-xl border border-[var(--outline-variant)]/50 bg-[var(--surface-container-low)] p-4">
             <div className="flex items-center gap-2 mb-1">
-              <span aria-hidden="true" className="material-symbols-outlined text-[var(--primary)] text-lg">log_in</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[var(--primary)] text-lg">login</span>
               <p className="font-bold text-sm text-[var(--on-surface)]">Sebelum Lab</p>
             </div>
             <p className="text-sm text-[var(--on-surface-variant)]">Registrasi/briefing, pre-lab task, jurnal, persiapan alat/bahan, flowchart, reaksi/tabel/perhitungan yang diharapkan.</p>
@@ -76,7 +76,7 @@ export default function PrelabPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {modules.map((m) => {
-            const hasWalkthrough = m.id === "m1"; // Phase 1: only M1
+            const hasWalkthrough = m.id === "m1" || m.id === "m2" || m.id === "m3";
             const walkthroughRoute = `/prelab/${m.slug}`;
 
             return (
