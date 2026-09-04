@@ -19,7 +19,8 @@ export interface WalkthroughStep {
 }
 
 export interface WalkthroughCheck {
-  /** Step index (0-based) after which this check appears */
+  /** Renders on the step that follows step number `afterStep` (step ids are 1-based),
+   *  and blocks advancing past it until the learner answers. */
   afterStep: number;
   question: string;
   options: string[];
@@ -43,18 +44,22 @@ export function ProcedureWalkthrough({
   const [currentStep, setCurrentStep] = useState(0);
   const [completed, setCompleted] = useState<Set<number>>(new Set());
   const [checkAnswers, setCheckAnswers] = useState<Record<number, number | null>>({});
-  const [checkRevealed, setCheckRevealed] = useState<Set<number>>(new Set());
 
   const totalSteps = steps.length;
   const progressPct = Math.round((completed.size / totalSteps) * 100);
 
-  // Find check that should appear after current step
-  const activeCheck = checks.find((c) => c.afterStep === currentStep && !checkRevealed.has(c.afterStep));
+  // The check attached to this step stays mounted after it is answered, so the
+  // learner can read the explanation before moving on.
+  const activeCheck = checks.find((c) => c.afterStep === currentStep);
+  const activeCheckAnswered =
+    activeCheck !== undefined &&
+    checkAnswers[activeCheck.afterStep] !== undefined &&
+    checkAnswers[activeCheck.afterStep] !== null;
 
   const canAdvance = useCallback(() => {
     if (!activeCheck) return true;
-    const answered = checkAnswers[activeCheck.afterStep] !== undefined && checkAnswers[activeCheck.afterStep] !== null;
-    return answered;
+    const answer = checkAnswers[activeCheck.afterStep];
+    return answer !== undefined && answer !== null;
   }, [activeCheck, checkAnswers]);
 
   const handleNext = () => {
@@ -73,7 +78,6 @@ export function ProcedureWalkthrough({
 
   const handleAnswerCheck = (checkAfterStep: number, optionIndex: number) => {
     setCheckAnswers((prev) => ({ ...prev, [checkAfterStep]: optionIndex }));
-    setCheckRevealed((prev) => new Set(prev).add(checkAfterStep));
   };
 
   const step = steps[currentStep];
@@ -244,7 +248,7 @@ export function ProcedureWalkthrough({
               {activeCheck.options.map((opt, i) => {
                 const selected = checkAnswers[activeCheck.afterStep] === i;
                 const isCorrect = i === activeCheck.correctIndex;
-                const revealed = checkRevealed.has(activeCheck.afterStep);
+                const revealed = activeCheckAnswered;
 
                 return (
                   <button
@@ -281,7 +285,7 @@ export function ProcedureWalkthrough({
             </div>
 
             {/* Explanation */}
-            {checkRevealed.has(activeCheck.afterStep) && (
+            {activeCheckAnswered && (
               <div className="mt-4 rounded-lg bg-[var(--surface-container-lowest)] p-4 border border-[var(--outline-variant)]/30">
                 <p className="text-xs font-semibold text-[var(--on-surface-variant)] uppercase tracking-wider mb-1">
                   Penjelasan
@@ -321,11 +325,22 @@ export function ProcedureWalkthrough({
               {activeCheck && !canAdvance() ? "Jawab cek pemahaman dulu" : "Lanjut"}
               {canAdvance() && <span aria-hidden="true" className="material-symbols-outlined text-[18px]">arrow_forward</span>}
             </button>
-          ) : (
+          ) : allDone ? (
             <div className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary)] px-5 py-2.5 text-sm font-bold text-[var(--on-primary)]">
               <span aria-hidden="true" className="material-symbols-outlined text-[18px]">check_circle</span>
               Prosedur Selesai
             </div>
+          ) : (
+            /* The final step needs its own commit action, otherwise it is never
+               added to `completed` and progress stops one step short of 100%. */
+            <button
+              onClick={handleNext}
+              disabled={!canAdvance()}
+              className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary)] px-5 py-2.5 text-sm font-bold text-[var(--on-primary)] hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {activeCheck && !canAdvance() ? "Jawab cek pemahaman dulu" : "Tandai Prosedur Selesai"}
+              {canAdvance() && <span aria-hidden="true" className="material-symbols-outlined text-[18px]">check_circle</span>}
+            </button>
           )}
         </div>
 

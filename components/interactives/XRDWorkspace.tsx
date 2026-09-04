@@ -58,7 +58,7 @@ function BraggSandbox() {
     <section className="rounded-xl border border-[var(--border)] bg-white p-4">
       <h3 className="text-lg font-bold">Sandbox Hukum Bragg</h3>
       <Equation
-        tex="n\\lambda = 2d \\sin\\theta"
+        tex={"n\\lambda = 2d \\sin\\theta"}
         label="Hukum Bragg"
         description="n = orde refleksi, λ = panjang gelombang (Å), d = jarak bidang (Å), θ = sudut Bragg (setengah dari 2θ)"
       />
@@ -322,7 +322,7 @@ function ScherrerCalculator() {
     <section className="rounded-xl border border-[var(--border)] bg-white p-4">
       <h3 className="text-lg font-bold">Kalkulator FWHM / Scherrer</h3>
       <Equation
-        tex="D = \\frac{K\\lambda}{\\beta \\cos\\theta}"
+        tex={"D = \\frac{K\\lambda}{\\beta \\cos\\theta}"}
         label="Persamaan Scherrer"
         description="D = ukuran kristalit (nm), K = faktor bentuk (0.9), λ = panjang gelombang (nm), β = FWHM (radian), θ = sudut Bragg. Catatan: hasil model-dependent."
       />

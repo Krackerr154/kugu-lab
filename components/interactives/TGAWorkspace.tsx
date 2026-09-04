@@ -201,7 +201,7 @@ function TheoreticalWorksheet() {
       </p>
 
       <Equation
-        tex="\\text{mass loss}_{\\text{teoretis}} = \\frac{M_{\\text{hilang}}}{M_{\\text{senyawa}}} \\times 100\\%"
+        tex={"\\text{mass loss}_{\\text{teoretis}} = \\frac{M_{\\text{hilang}}}{M_{\\text{senyawa}}} \\times 100\\%"}
         label="Kehilangan Massa Teoretis"
         description="Contoh stoikiometri: CaCO3 → CaO + CO2. Massa CO2 = 44.01 g/mol, massa CaCO3 = 100.09 g/mol → teoretis ≈ 44%"
       />

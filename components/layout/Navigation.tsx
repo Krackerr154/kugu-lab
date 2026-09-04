@@ -9,7 +9,7 @@ const navItems = [
   { href: "/", label: "Beranda", icon: "dashboard", short: "Home" },
   { href: "/modules", label: "Modul", icon: "menu_book", short: "Modules" },
   { href: "/prelab", label: "Pre-lab", icon: "edit_note", short: "Pre-lab" },
-  { href: "/notebook", label: "Catatan Praktikum", icon: "notebook", short: "Notebook" },
+  { href: "/notebook", label: "Catatan Praktikum", icon: "note_alt", short: "Notebook" },
   { href: "/analisis", label: "Analisis Data", icon: "analytics", short: "Analysis" },
   { href: "/laporan", label: "Laporan", icon: "description", short: "Reports" },
   { href: "/referensi", label: "Referensi & Keselamatan", icon: "shield", short: "Safety" },

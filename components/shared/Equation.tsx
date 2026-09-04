@@ -32,7 +32,7 @@ export function Equation({ tex, label, description, compact = false }: EquationP
 
   return (
     <div
-      className={`rounded-xl border border-[var(--outline-variant)]/50 bg-[var(--surface-container-low)] ${
+      className={`min-w-0 rounded-xl border border-[var(--outline-variant)]/50 bg-[var(--surface-container-low)] ${
         compact ? "p-2.5" : "p-4"
       }`}
     >

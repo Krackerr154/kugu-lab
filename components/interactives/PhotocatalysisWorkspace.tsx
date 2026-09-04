@@ -62,7 +62,7 @@ function ConductivityCalculator() {
     <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-4">
       <h3 className="text-lg font-bold">Worksheet Konduktivitas / Band Gap</h3>
       <Equation
-        tex="\\sigma = \\frac{L}{R \\times A}"
+        tex={"\\sigma = \\frac{L}{R \\times A}"}
         label="Konduktivitas"
         description="σ = konduktivitas (S/cm), L = tebal pelet (cm), R = resistansi (Ω), A = luas penampang (cm²)"
       />
@@ -117,7 +117,7 @@ function ConductivityCalculator() {
       </div>
 
       <Equation
-        tex="\\ln(\\sigma) = \\ln(\\sigma_0) - \\frac{E_g}{2k_B T}"
+        tex={"\\ln(\\sigma) = \\ln(\\sigma_0) - \\frac{E_g}{2k_B T}"}
         label="Hubungan Band Gap"
         description="Slope dari ln(σ) vs 1/T memberikan estimasi Eg/2k_B. Eg = band gap energy."
       />

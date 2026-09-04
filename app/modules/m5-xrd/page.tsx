@@ -32,13 +32,13 @@ export default function M5Page() {
 
       <div className="mt-4">
         <Equation
-          tex="n\\lambda = 2d \\sin\\theta"
+          tex={"n\\lambda = 2d \\sin\\theta"}
           label="Hukum Bragg"
           description="n = orde refleksi, λ = panjang gelombang sinar-X (Å), d = jarak bidang kristal (Å), θ = sudut Bragg"
         />
         <div className="mt-2">
           <Equation
-            tex="D = \\frac{K\\lambda}{\\beta \\cos\\theta}"
+            tex={"D = \\frac{K\\lambda}{\\beta \\cos\\theta}"}
             label="Persamaan Scherrer"
             description="D = ukuran kristalit, K = 0.9 (faktor bentuk), λ = panjang gelombang, β = FWHM (radian), θ = sudut Bragg"
           />

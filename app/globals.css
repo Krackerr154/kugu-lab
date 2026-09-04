@@ -330,6 +330,19 @@ h1, h2, h3, h4, h5, h6 {
 .katex { font-size: 1.1em; }
 .katex-display { margin: 0.5em 0; }
 
+/* Material Symbols is a ligature font: until it loads, the raw icon name
+   ("table_chart") renders in a fallback face and is several times wider than the
+   final glyph, which stretches flex rows and causes transient horizontal overflow
+   on narrow viewports. Clamp every icon to a square advance so the pre-load state
+   can never affect layout. */
+.material-symbols-outlined {
+  display: inline-block;
+  width: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 /* ── View Transitions (module navigation) ─────────────────────────
    `TransitionLink` puts `nav-forward` / `nav-back` on <html> for the
    duration of the transition, so the direction is selectable here.

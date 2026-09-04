@@ -29,7 +29,7 @@ export default function M6Page() {
 
       <div className="mt-4">
         <Equation
-          tex="\\text{CaCO}_3(s) \\rightarrow \\text{CaO}(s) + \\text{CO}_2(g)"
+          tex={"\\text{CaCO}_3(s) \\rightarrow \\text{CaO}(s) + \\text{CO}_2(g)"}
           label="Contoh Dekomposisi Termal"
           description="Contoh pengajaran: teoretis 44% kehilangan massa berdasarkan rasio massa CO2 terhadap CaCO3. Jangan digeneralisasi ke semua sampel."
         />

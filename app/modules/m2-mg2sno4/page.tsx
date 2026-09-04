@@ -32,7 +32,7 @@ export default function M2Page() {
       {/* Yield calculator inline */}
       <div className="mt-4">
         <Equation
-          tex="\\text{Yield} = \\frac{m_{\\text{aktual}}}{m_{\\text{teoretis}}} \\times 100\\%"
+          tex={"\\text{Yield} = \\frac{m_{\\text{aktual}}}{m_{\\text{teoretis}}} \\times 100\\%"}
           label="Kalkulator Hasil (Yield)"
           description="m_aktual = massa produk yang diperoleh, m_teoretis = massa berdasarkan stoikiometri reaksi."
         />
