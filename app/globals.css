@@ -461,6 +461,74 @@ h1, h2, h3, h4, h5, h6 {
   animation: smooth-fade-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* === M3 electrochemical cell simulation ===
+   Animations live in CSS (not SMIL) so they can be paused with a single class
+   and collapsed by prefers-reduced-motion. Translate units inside an SVG are
+   user units, so the distances below are tied to the 300x200 viewBox geometry. */
+
+/* Electrons travel anode -> up -> across the top -> down -> cathode. */
+@keyframes m3-e-up {
+  from { transform: translateY(0); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  to   { transform: translateY(-45px); opacity: 0; }
+}
+@keyframes m3-e-right {
+  from { transform: translateX(0); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  to   { transform: translateX(58px); opacity: 0; }
+}
+@keyframes m3-e-down {
+  from { transform: translateY(0); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  to   { transform: translateY(45px); opacity: 0; }
+}
+
+/* Metal ions migrate toward the cathode. `arrive` reaches the plate; `stall`
+   only crosses part of the vessel and fades — used for Sn2+ when no complexing
+   agent is present, since bismuth wins the competition for the surface. */
+@keyframes m3-ion-arrive {
+  from { transform: translateX(0); opacity: 0; }
+  12%  { opacity: 0.95; }
+  88%  { opacity: 0.95; }
+  to   { transform: translateX(138px); opacity: 0; }
+}
+@keyframes m3-ion-stall {
+  from { transform: translateX(0); opacity: 0; }
+  20%  { opacity: 0.85; }
+  70%  { opacity: 0.55; }
+  to   { transform: translateX(62px); opacity: 0; }
+}
+
+/* Hydrogen evolved at the cathode: the side reaction that spends current
+   without adding deposited mass. */
+@keyframes m3-bubble-rise {
+  from { transform: translate(0, 0); opacity: 0; }
+  20%  { opacity: 0.85; }
+  to   { transform: translate(-6px, -54px); opacity: 0; }
+}
+
+/* Deposit thickening on the cathode face. */
+@keyframes m3-deposit-grow {
+  from { opacity: 0.15; }
+  to   { opacity: 1; }
+}
+
+.m3-sim-paused * {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m3-sim-motion {
+    animation: none !important;
+    /* Elements keep their authored position and opacity, so the diagram stays
+       readable as a still illustration rather than disappearing. */
+    opacity: 0.9 !important;
+  }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--surface-container); }
