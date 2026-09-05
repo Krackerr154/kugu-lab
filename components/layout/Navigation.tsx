@@ -144,45 +144,6 @@ export function Navigation() {
               );
             })}
           </nav>
-
-          {/* Term pulse footer */}
-          <div className="mt-auto px-4 pb-4">
-            <div className="flex items-center gap-4 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <span className="w-12 h-[2px] bg-[var(--secondary-container)] flex-shrink-0"></span>
-              <span className="font-bold uppercase tracking-wider text-xs whitespace-nowrap text-[var(--secondary-container)]">
-                Praktikum Pulse
-              </span>
-            </div>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-white/10 text-white/70 flex items-center justify-center flex-shrink-0">
-                  <span aria-hidden="true" className="material-symbols-outlined text-[20px]">science</span>
-                </div>
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                  <span className="text-xs text-white/50 block">Total Modul</span>
-                  <span className="font-bold text-white">6</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-[var(--secondary-container)]/10 text-[var(--secondary-container)] flex items-center justify-center flex-shrink-0">
-                  <span aria-hidden="true" className="material-symbols-outlined text-[20px]">grade</span>
-                </div>
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                  <span className="text-xs text-white/50 block">Ambang Lulus</span>
-                  <span className="font-bold text-[var(--secondary-container)]">NA ≥ 55</span>
-                </div>
-              </div>
-              <div className="mt-2 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <TransitionLink
-                  href="/modules"
-                  className="w-full bg-[var(--secondary-container)] text-[var(--primary)] flex items-center justify-center gap-2 py-2 px-4 rounded-full font-bold text-sm shadow-sm hover:opacity-90 transition-opacity"
-                >
-                  <span aria-hidden="true" className="material-symbols-outlined text-[20px]">add</span>
-                  <span>Mulai Praktikum</span>
-                </TransitionLink>
-              </div>
-            </div>
-          </div>
         </div>
       </aside>
 
