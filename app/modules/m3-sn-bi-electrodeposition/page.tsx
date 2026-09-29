@@ -3,7 +3,7 @@ import { type JourneyStage } from "@/components/shared/ModuleJourney";
 import { StudentIdentityProvider } from "@/components/shared/StudentIdentityProvider";
 import { StudentIdentityGate } from "@/components/shared/StudentIdentityGate";
 import { M3PresentationProvider } from "@/components/shared/M3PresentationProvider";
-import { M3Journey, M3FollowControls } from "@/components/shared/M3GuidedJourney";
+import { M3Journey, M3FollowControls, M3PresenterDeck } from "@/components/shared/M3GuidedJourney";
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { BenchChecklist } from "@/components/shared/BenchChecklist";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -273,6 +273,10 @@ export default function M3Page() {
             { id: "ph", label: "pH elektrolit", type: "number" },
             { id: "obs", label: "Observasi permukaan", type: "textarea", placeholder: "Warna, kekasaran, adhesi..." },
           ]} />
+
+          {/* Presenter deck lives in the instructor-facing Ready stage so it does
+              not add chrome to the student's arrival. Students never start it. */}
+          <M3PresenterDeck />
         </>
       ),
     },
