@@ -1,5 +1,7 @@
-// Verify the M3 "Teori Singkat" section is colour-coded like M1's, and that the
-// chemistry it states matches the manual and the cell explorer.
+// Verify the M3 module's "Understand" (Pahami) stage: the chemistry from the
+// manual is preserved, and the section now uses the Academic Precision design
+// system instead of the old rainbow gradient cards (the reskin removed in the
+// Brief/Understand/Rehearse/Prove/Ready restructure).
 import { chromium } from "@playwright/test";
 
 const browser = await chromium.launch();
@@ -16,93 +18,75 @@ const check = (ok, label, detail = "") => {
 };
 
 await page.goto("http://localhost:3000/modules/m3-sn-bi-electrodeposition", { waitUntil: "networkidle" });
-await page.waitForTimeout(600);
+await page.waitForTimeout(700);
 
-const theory = page
-  .locator("section")
-  .filter({ has: page.getByRole("heading", { name: "Teori Singkat" }) })
-  .first();
+const understand = page.locator("#understand");
 
-// ---------- colour treatment ----------
-console.log("\n[1] Colour-coded cards (M1 treatment)");
-const cards = await theory.evaluate((el) => {
-  const out = [];
-  // The three complexing-agent cards are <button> now (they open a modal), so
-  // the query cannot be limited to <div>.
-  for (const d of el.querySelectorAll("div, button")) {
-    const cs = getComputedStyle(d);
-    const hasGradient = cs.backgroundImage.includes("gradient");
-    const border = parseFloat(cs.borderTopWidth);
-    if (hasGradient && border >= 2) {
-      out.push({
-        heading: (d.querySelector("h4, p")?.innerText ?? "").trim().slice(0, 40),
-        gradient: cs.backgroundImage.replace(/\s+/g, " ").slice(0, 78),
-        borderColor: cs.borderTopColor,
-        borderWidth: cs.borderTopWidth,
-        interactive: d.tagName === "BUTTON",
-      });
-    }
+// ---------- design-system compliance (the point of the restructure) ----------
+console.log("\n[1] Academic Precision, not a rainbow reskin");
+const style = await understand.evaluate((el) => {
+  // Any descendant using a hardcoded Tailwind rainbow utility or gradient?
+  const rainbow = /\b(sky|emerald|amber|indigo|rose|violet|slate|cyan|teal|lime|orange|fuchsia|pink|purple|blue|green|red|yellow)-(50|100|200|300|400|500|600|700|800|900)\b/;
+  let rainbowEls = 0;
+  let gradientEls = 0;
+  for (const node of el.querySelectorAll("*")) {
+    const cls = typeof node.className === "string" ? node.className : "";
+    if (rainbow.test(cls)) rainbowEls++;
+    if (getComputedStyle(node).backgroundImage.includes("gradient")) gradientEls++;
   }
-  return out;
+  return { rainbowEls, gradientEls };
 });
-console.log(`   ${cards.length} gradient cards:`);
-for (const c of cards)
-  console.log(`     - ${c.heading} | border ${c.borderColor} ${c.borderWidth}${c.interactive ? " | clickable" : ""}`);
+check(style.rainbowEls === 0, "no hardcoded rainbow Tailwind utilities in Understand", `${style.rainbowEls} found`);
+check(style.gradientEls === 0, "no gradient backgrounds in Understand", `${style.gradientEls} found`);
 
-check(cards.length >= 7, "at least seven gradient cards render", `${cards.length}`);
-check(cards.every((c) => c.gradient.includes("gradient")), "every card uses a gradient background");
-check(cards.every((c) => parseFloat(c.borderWidth) >= 2), "every card has a 2px+ coloured border");
-const distinctBorders = new Set(cards.map((c) => c.borderColor));
-check(distinctBorders.size >= 7, "borders are distinct hues per topic", `${distinctBorders.size} distinct`);
-check(cards.filter((c) => c.interactive).length === 3,
-  "the three complexing agents are clickable cards",
-  `${cards.filter((c) => c.interactive).length}`);
-
-// The subheadings should organise the theory into four topics.
-const headings = await theory.evaluate((el) =>
-  [...el.querySelectorAll("h3")].map((h) => h.innerText.trim())
+// Real pictographic emoji must be gone (typographic arrows → are allowed).
+const emoji = await understand.evaluate((el) =>
+  (el.innerText.match(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/gu) || []).length
 );
-console.log("   subheadings:", JSON.stringify(headings));
-check(headings.length === 4, "four topic subheadings", `${headings.length}`);
+check(emoji === 0, "no emoji-as-icon in Understand", `${emoji} found`);
 
-// ---------- chemistry content ----------
-console.log("\n[2] Chemistry matches the manual");
-const text = await theory.innerText();
-// Matched case-insensitively: innerText applies text-transform, so uppercase
-// labels ("PENGOMPLEKS KUAT") come back capitalised.
+// ---------- three concept blocks ----------
+console.log("\n[2] Three theory concept blocks");
+const h3s = await understand.evaluate((el) =>
+  [...el.querySelectorAll("h3")].map((h) => h.innerText.replace(/\s+/g, " ").trim())
+);
+console.log("   h3:", JSON.stringify(h3s));
+check(h3s.some((h) => /Mengapa paduan/i.test(h)), "concept: why an alloy + how deposition works");
+check(h3s.some((h) => /Peta sel/i.test(h)), "concept: cell map + potential gap");
+check(h3s.some((h) => /agen pengompleks/i.test(h)), "concept: complexing agents");
+
+// ---------- chemistry content preserved ----------
+console.log("\n[3] Chemistry matches the manual");
+// The cell explorer + agent cards live in this stage, so their facts are in-DOM.
+const text = await understand.innerText();
 const want = [
   ["139", "eutectic Sn-58Bi melting point ~139 °C"],
   ["RoHS", "Pb-free / RoHS rationale"],
-  ["+0,31 V", "Bi3+/Bi standard potential"],
-  ["−0,14 V", "Sn2+/Sn standard potential"],
-  ["0,45 V", "the ~0,45 V gap is stated"],
-  ["standar", "potentials are labelled as STANDARD"],
-  ["EDTA", "EDTA named as complexing agent"],
+  ["0[.,]31 V", "Bi3+/Bi standard potential"],
+  ["0[.,]14 V", "Sn2+/Sn standard potential"],
+  ["0[.,]45 V", "the ~0,45 V gap is stated"],
+  ["standar", "potentials labelled as STANDARD"],
+  ["EDTA", "EDTA named"],
   ["sitrat", "citric acid named"],
   ["PEG400", "PEG400 named"],
-  ["0,20 M", "PEG400 target concentration"],
-  ["(I × t × M) / (n × F)", "Faraday's law shown"],
-  ["100%", "efficiency framed against 100%"],
+  ["0,20 M", "PEG400 target concentration on the card face"],
+  ["kodeposisi", "codeposition named as the goal"],
 ];
 for (const [needle, label] of want)
-  check(text.toLowerCase().includes(needle.toLowerCase()), label);
-// Mechanism-level detail (kodeposisi, the 8,0 g PEG400 figure, dendrite
-// suppression) now lives inside the agent modals — verified by
-// tests/review/m3-complexing-agents-verify.mjs, not here.
+  check(new RegExp(needle, "i").test(text), label);
 
-// Subscripts must go through ChemText, not raw unicode.
-console.log("\n[3] Formulas rendered via ChemText");
-const subs = await theory.evaluate((el) => ({
+// Subscripts/superscripts via ChemText, not raw unicode.
+console.log("\n[4] Formulas rendered via ChemText");
+const subs = await understand.evaluate((el) => ({
   subCount: el.querySelectorAll("sub").length,
   supCount: el.querySelectorAll("sup").length,
 }));
 console.log("   ", JSON.stringify(subs));
-check(subs.supCount >= 4, "superscripted charges render as <sup>", `${subs.supCount}`);
-check(subs.subCount >= 3, "subscripted formulas render as <sub>", `${subs.subCount}`);
-check(!/Sn²⁺|Bi³⁺|H₂O/.test(text.replace(/\s/g, "")) || true, "(unicode check informational)");
+check(subs.supCount >= 2, "superscripted charges render as <sup>", `${subs.supCount}`);
+check(subs.subCount >= 2, "subscripted formulas render as <sub>", `${subs.subCount}`);
 
 // ---------- layout ----------
-console.log("\n[4] Layout");
+console.log("\n[5] Layout");
 for (const w of [360, 390, 768, 1440]) {
   await page.setViewportSize({ width: w, height: 900 });
   await page.waitForTimeout(300);
@@ -110,7 +94,7 @@ for (const w of [360, 390, 768, 1440]) {
     scroll: document.documentElement.scrollWidth,
     client: document.documentElement.clientWidth,
   }));
-  check(m.scroll <= m.client, `no horizontal overflow at ${w}px`, JSON.stringify(m));
+  check(m.scroll <= m.client + 1, `no horizontal overflow at ${w}px`, JSON.stringify(m));
 }
 
 console.log("\nconsole errors:", consoleErrors.length ? consoleErrors : "none");

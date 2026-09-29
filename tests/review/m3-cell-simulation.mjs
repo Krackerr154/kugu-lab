@@ -1,89 +1,81 @@
-// Verify the M3 CellSimulation: animated electrons/ions/bubbles, the
-// complexing-agent contrast toggle, pause control, reduced-motion collapse, and
-// that the existing hotspot accessibility survived the SVG rewrite.
-import { chromium } from "@playwright/test";
+// Verify the deterministic frame model and actual browser motion. Illustration
+// counts/times are authored schematic data, never physical composition/yield.
+import assert from "node:assert/strict";
+import { chromium, expect } from "@playwright/test";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { cellFrame, METAL_EVENTS, ILLUSTRATION_SECONDS } from "../../lib/m3-simulation.ts";
 
-const URL = "http://localhost:3000/modules/m3-sn-bi-electrodeposition";
+const output = "artifacts/m3-codeposition";
+mkdirSync(output, { recursive: true });
+const report = { model: [], motion: {}, errors: [] };
+for (const complexed of [true, false]) {
+  let previous = 0;
+  for (let tick = 0; tick <= 120; tick++) {
+    const frame = cellFrame(tick / 10, complexed);
+    assert(frame.deposited.length >= previous, "deposit must not shrink while time advances");
+    previous = frame.deposited.length;
+    assert(frame.ions.every((ion) => ion.x >= 70 && ion.x <= 230 && ion.y >= 75 && ion.y <= 145));
+    assert.deepEqual(frame, cellFrame(tick / 10, complexed), "replay must be deterministic");
+    for (const row of new Set(frame.deposited.map((ion) => ion.row))) {
+      const layers = frame.deposited.filter((ion) => ion.row === row).map((ion) => ion.layer).sort();
+      assert.deepEqual(layers, layers.map((_, index) => index), "metal must grow from the substrate, not float over missing atoms");
+    }
+  }
+  const end = cellFrame(ILLUSTRATION_SECONDS, complexed);
+  assert.equal(end.deposited.length, METAL_EVENTS.filter((ion) => ion.species === "bi" || complexed).length);
+  assert.equal(end.outcome, complexed ? "alloy" : "bismuth-rich");
+  if (!complexed) assert(end.ions.filter((ion) => ion.species === "sn").every((ion) => ion.travel === 1 && !ion.deposited));
+  report.model.push({ complexed, sampledFrames: 121, illustrationParticles: end.deposited.length, outcome: end.outcome });
+}
+assert.equal(cellFrame(NaN, true).elapsed, 0);
+assert.equal(cellFrame(-3, true).deposited.length, 0);
+assert.equal(cellFrame(99, true).elapsed, ILLUSTRATION_SECONDS);
+
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1440, height: 1300 } });
+try {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, reducedMotion: "no-preference" });
+  page.on("pageerror", (error) => report.errors.push(error.message));
+  page.on("console", (message) => { if (message.type() === "error") report.errors.push(message.text()); });
+  await page.goto("http://localhost:3000/modules/m3-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
+  const sim = page.getByRole("region", { name: "Simulasi kodeposisi" });
+  const timeline = sim.getByRole("slider", { name: "Posisi animasi" });
+  await sim.getByRole("button", { name: "Jalankan Sel", exact: true }).click();
+  await expect(sim).toHaveAttribute("data-playing", "true");
+  const electron = sim.locator('[data-electron="e-up-1"]');
+  const before = await electron.getAttribute("cy");
+  await expect.poll(() => electron.getAttribute("cy")).not.toBe(before);
+  report.motion.electronBefore = before;
+  report.motion.electronAfter = await electron.getAttribute("cy");
+  await sim.getByRole("combobox", { name: "Kecepatan animasi" }).selectOption("2");
+  const fastStart = Number(await sim.getAttribute("data-time"));
+  const wallStart = performance.now();
+  await page.waitForTimeout(700);
+  const wallSeconds = (performance.now() - wallStart) / 1000;
+  const simulatedSeconds = Number(await sim.getAttribute("data-time")) - fastStart;
+  report.motion.measuredSpeed = simulatedSeconds / wallSeconds;
+  assert(report.motion.measuredSpeed > 1.4 && report.motion.measuredSpeed < 2.6, "2x changes the shared clock, not only a label");
 
-const consoleErrors = [];
-page.on("console", (m) => { if (m.type() === "error") consoleErrors.push(m.text()); });
-page.on("pageerror", (e) => consoleErrors.push("pageerror: " + e.message));
-
-let fails = 0;
-const check = (ok, label, detail = "") => {
-  console.log(`  ${ok ? "PASS" : "FAIL"}  ${label}${detail ? " — " + detail : ""}`);
-  if (!ok) fails++;
-};
-
-await page.goto(URL, { waitUntil: "networkidle" });
-await page.waitForTimeout(800);
-
-// ---------- animated parts exist and are actually animating ----------
-console.log("\n[1] Animated elements");
-const anim = await page.evaluate(() => {
-  const read = (sel) =>
-    [...document.querySelectorAll(sel)].map((el) => {
-      const cs = getComputedStyle(el);
-      return {
-        name: cs.animationName,
-        dur: cs.animationDuration,
-        state: cs.animationPlayState,
-        iter: cs.animationIterationCount,
-      };
-    });
-  return {
-    electrons: read("[data-electron]"),
-    ions: read("[data-ion]"),
-    bubbles: read("[data-bubble]"),
-    deposit: read("[data-testid='m3-deposit']"),
-  };
-});
-console.log(`   electrons=${anim.electrons.length} ions=${anim.ions.length} bubbles=${anim.bubbles.length}`);
-console.log("   electron animations:", JSON.stringify([...new Set(anim.electrons.map((e) => e.name))]));
-console.log("   ion animations:", JSON.stringify([...new Set(anim.ions.map((e) => e.name))]));
-
-check(anim.electrons.length >= 6, "travelling electrons rendered", `${anim.electrons.length}`);
-check(anim.ions.length >= 6, "migrating metal ions rendered", `${anim.ions.length}`);
-check(anim.bubbles.length >= 3, "H2 bubbles rendered", `${anim.bubbles.length}`);
-check(anim.deposit.length === 1, "deposit layer rendered");
-
-const electronNames = new Set(anim.electrons.map((e) => e.name));
-check(
-  ["m3-e-up", "m3-e-right", "m3-e-down"].every((n) => electronNames.has(n)),
-  "electrons animate up the anode wire, across the top, and down into the cathode",
-  [...electronNames].join(",")
-);
-check(anim.ions.every((i) => /m3-ion-(arrive|stall)/.test(i.name)), "ions use the migration keyframes");
-check(anim.bubbles.every((b) => b.name === "m3-bubble-rise"), "bubbles use the rise keyframes");
-check(
-  [...anim.electrons, ...anim.ions, ...anim.bubbles].every((a) => a.iter === "infinite"),
-  "animations loop"
-);
-check(
-  [...anim.electrons, ...anim.ions, ...anim.bubbles].every((a) => a.state === "running"),
-  "simulation starts running"
-);
-
-// Motion must actually change geometry over time, not merely declare a keyframe.
-console.log("\n[2] Motion is real (geometry changes over time)");
-const samplePos = () =>
-  page.evaluate(() => {
-    const el = document.querySelector("[data-electron='e-up-1']");
-    const r = el.getBoundingClientRect();
-    return { x: Math.round(r.x * 10) / 10, y: Math.round(r.y * 10) / 10 };
-  });
-const p1 = await samplePos();
-await page.waitForTimeout(400);
-const p2 = await samplePos();
-console.log("   electron position:", JSON.stringify(p1), "->", JSON.stringify(p2));
-check(p1.y !== p2.y || p1.x !== p2.x, "an electron physically moves between samples",
-  `${JSON.stringify(p1)} vs ${JSON.stringify(p2)}`);
-
-console.log("\nconsole errors:", consoleErrors.length ? consoleErrors : "none");
-if (consoleErrors.length) fails++;
-console.log(fails === 0 ? "\nPART 1: PASS" : `\nPART 1: ${fails} FAILURE(S)`);
-
-await browser.close();
-process.exit(fails === 0 ? 0 : 1);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await expect(sim).toHaveAttribute("data-playing", "false");
+  const offscreen = await sim.getAttribute("data-time");
+  await page.waitForTimeout(350);
+  assert.equal(await sim.getAttribute("data-time"), offscreen, "offscreen playback must freeze");
+  report.motion.offscreenPausedAt = offscreen;
+  await sim.scrollIntoViewIfNeeded();
+  await expect(sim).toHaveAttribute("data-playing", "true");
+  await sim.getByRole("button", { name: "Jeda Sel", exact: true }).click();
+  await timeline.focus();
+  await page.keyboard.press("End");
+  await expect(timeline).toHaveValue("100");
+  const endCount = await sim.locator("[data-deposited-atom]").count();
+  await page.waitForTimeout(300);
+  assert.equal(await sim.locator("[data-deposited-atom]").count(), endCount);
+  report.motion.persistentEndParticles = endCount;
+  await expect(sim).toContainText("Ilustrasi selesai");
+  assert.deepEqual(report.errors, []);
+  console.log("PASS deterministic growth, transport/reduction distinction, real motion, speed, offscreen pause, persistent result");
+} finally {
+  writeFileSync(`${output}/motion-evidence.json`, JSON.stringify(report, null, 2));
+  await browser.close();
+}
+console.log(JSON.stringify(report, null, 2));

@@ -1,197 +1,97 @@
-// Part 2: the complexing-agent contrast toggle, pause control, reduced-motion
-// collapse, hotspot regression, and layout.
-import { chromium } from "@playwright/test";
+// Controls, species focus, reduced-motion equivalence, hotspots and responsive
+// geometry for the seekable M3 illustration (replaces old CSS-loop assertions).
+import assert from "node:assert/strict";
+import { chromium, expect } from "@playwright/test";
+import { mkdirSync, writeFileSync } from "node:fs";
 
-const URL = "http://localhost:3000/modules/m3-sn-bi-electrodeposition";
+const output = "artifacts/m3-codeposition";
+mkdirSync(output, { recursive: true });
+const widths = [320, 390, 768, 1024, 1440, 1920];
+const rows = [];
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1440, height: 1300 } });
+try {
+  for (const width of widths) {
+    const page = await browser.newPage({ viewport: { width, height: 1000 }, reducedMotion: "reduce" });
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+    await page.goto("http://localhost:3000/modules/m3-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
+    const sim = page.getByRole("region", { name: "Simulasi kodeposisi" });
+    const timeline = sim.getByRole("slider", { name: "Posisi animasi" });
+    await expect(sim.getByRole("button", { name: "Jalankan Sel", exact: true })).toBeDisabled();
+    await sim.getByRole("button", { name: "Langkah berikutnya" }).click();
+    await sim.getByRole("button", { name: "Langkah berikutnya" }).click();
+    await expect(timeline).toHaveValue("50");
+    const alloyCount = await sim.locator("[data-deposited-atom]").count();
+    assert(alloyCount > 0);
+    await sim.getByRole("button", { name: "Sorot Sn", exact: true }).click();
+    await expect(sim).toHaveAttribute("data-focus", "sn");
+    await expect(sim.getByRole("region", { name: "Reaksi yang diamati" })).toContainText("Reduksi timah");
+    await sim.getByRole("button", { name: "Dengan pengompleks", exact: true }).click();
+    await expect(timeline).toHaveValue("50");
+    await expect(sim.locator('[data-deposited-atom][data-species="sn"]')).toHaveCount(0);
+    await expect(sim).toContainText("kaya bismut");
+    await sim.getByRole("button", { name: "Sorot H2", exact: true }).click();
+    await expect(sim.getByRole("region", { name: "Reaksi yang diamati" })).toContainText("tanpa menambah massa deposit");
+    await sim.getByRole("button", { name: "Tanpa pengompleks", exact: true }).click();
+    await sim.getByRole("button", { name: "Semua proses", exact: true }).click();
+    await timeline.focus();
+    await page.keyboard.press("End");
+    await expect(timeline).toHaveValue("100");
 
-const consoleErrors = [];
-page.on("console", (m) => { if (m.type() === "error") consoleErrors.push(m.text()); });
-page.on("pageerror", (e) => consoleErrors.push("pageerror: " + e.message));
-
-let fails = 0;
-const check = (ok, label, detail = "") => {
-  console.log(`  ${ok ? "PASS" : "FAIL"}  ${label}${detail ? " — " + detail : ""}`);
-  if (!ok) fails++;
-};
-
-await page.goto(URL, { waitUntil: "networkidle" });
-await page.waitForTimeout(700);
-
-const simState = () =>
-  page.evaluate(() => {
-    const ions = [...document.querySelectorAll("[data-ion]")].map((el) => ({
-      species: el.getAttribute("data-species"),
-      arrives: el.getAttribute("data-arrives"),
-      anim: getComputedStyle(el).animationName,
-    }));
-    const dep = document.querySelector("[data-testid='m3-deposit']");
-    return {
-      ions,
-      snArrive: ions.filter((i) => i.species === "sn" && i.arrives === "true").length,
-      snStall: ions.filter((i) => i.species === "sn" && i.arrives === "false").length,
-      biArrive: ions.filter((i) => i.species === "bi" && i.arrives === "true").length,
-      deposit: dep?.getAttribute("data-deposit"),
-      depositFill: dep ? getComputedStyle(dep).fill : null,
-    };
-  });
-
-// ---------- complexing-agent contrast: the core teaching interaction ----------
-console.log("\n[3] Complexing-agent contrast toggle");
-const withAgents = await simState();
-console.log("   with agents:", JSON.stringify({ ...withAgents, ions: undefined }));
-check(withAgents.snArrive === 3 && withAgents.snStall === 0,
-  "with agents: every Sn2+ ion reaches the cathode",
-  `arrive=${withAgents.snArrive} stall=${withAgents.snStall}`);
-check(withAgents.biArrive === 4, "with agents: Bi3+ also reaches the cathode", `${withAgents.biArrive}`);
-check(withAgents.deposit === "alloy", "with agents: deposit is labelled alloy", String(withAgents.deposit));
-
-// The PEG400 agent card also matches /pengompleks/ ("bukan pengompleks"), so
-// anchor on the toggle's exact labels instead.
-const toggle = page.getByRole("button", { name: /^(Dengan|Tanpa) pengompleks$/ });
-check((await toggle.getAttribute("aria-pressed")) === "true", "toggle starts pressed (agents present)");
-await toggle.click();
-await page.waitForTimeout(400);
-
-const withoutAgents = await simState();
-console.log("   without agents:", JSON.stringify({ ...withoutAgents, ions: undefined }));
-check(withoutAgents.snStall === 3 && withoutAgents.snArrive === 0,
-  "without agents: every Sn2+ ion stalls before the cathode",
-  `arrive=${withoutAgents.snArrive} stall=${withoutAgents.snStall}`);
-check(withoutAgents.biArrive === 4,
-  "without agents: Bi3+ still reaches the cathode (it deposits first)",
-  `${withoutAgents.biArrive}`);
-check(withoutAgents.deposit === "bismuth-rich",
-  "without agents: deposit is labelled bismuth-rich", String(withoutAgents.deposit));
-check(withoutAgents.depositFill !== withAgents.depositFill,
-  "deposit colour differs between the two states",
-  `${withAgents.depositFill} vs ${withoutAgents.depositFill}`);
-check(withoutAgents.ions.filter((i) => i.anim === "m3-ion-stall").length === 3,
-  "stalling ions use the stall keyframes");
-
-// The explanation text must change with the state, and be announced.
-const explain = await page.evaluate(() => {
-  const el = [...document.querySelectorAll("[aria-live='polite']")]
-    .find((n) => /pengompleks/i.test(n.innerText));
-  return el ? el.innerText.replace(/\s+/g, " ") : null;
-});
-console.log("   explanation:", explain?.slice(0, 130));
-check(/Tanpa pengompleks/i.test(explain ?? ""), "explanation switches to the uncomplexed case");
-check(/\+0,31 V/.test(explain ?? "") && /−0,14 V/.test(explain ?? ""),
-  "explanation cites both standard potentials");
-check(/kaya bismut/i.test(explain ?? ""), "explanation names the bismuth-rich outcome");
-
-await toggle.click();
-await page.waitForTimeout(300);
-const back = await simState();
-check(back.deposit === "alloy" && back.snArrive === 3, "toggling back restores codeposition");
-
-// ---------- pause ----------
-console.log("\n[4] Pause control");
-const pauseBtn = page.getByRole("button", { name: /Jeda Sel|Jalankan Sel/ });
-check(/Jeda Sel/.test(await pauseBtn.innerText()), "button offers pause while running");
-await pauseBtn.click();
-await page.waitForTimeout(350);
-
-const paused = await page.evaluate(() => {
-  const els = [...document.querySelectorAll("[data-electron], [data-ion], [data-bubble]")];
-  return {
-    allPaused: els.every((el) => getComputedStyle(el).animationPlayState === "paused"),
-    label: [...document.querySelectorAll("button")]
-      .map((b) => b.innerText.trim())
-      .find((t) => /Jalankan Sel|Jeda Sel/.test(t)),
-    svgClass: document.querySelector("svg[aria-label]")?.getAttribute("class") ?? "",
-  };
-});
-check(paused.allPaused, "every animation is paused");
-check(/Jalankan Sel/.test(paused.label ?? ""), "button switches to resume", String(paused.label));
-check(paused.svgClass.includes("m3-sim-paused"), "svg carries the paused class");
-
-// Paused elements must remain visible, not vanish.
-const visibleWhilePaused = await page.evaluate(() =>
-  [...document.querySelectorAll("[data-ion]")].filter((el) => el.getBoundingClientRect().width > 0).length
-);
-check(visibleWhilePaused >= 6, "ions stay on screen while paused", `${visibleWhilePaused}`);
-
-await pauseBtn.click();
-await page.waitForTimeout(300);
-const resumed = await page.evaluate(() =>
-  [...document.querySelectorAll("[data-electron]")].every(
-    (el) => getComputedStyle(el).animationPlayState === "running"
-  )
-);
-check(resumed, "resume restarts the animation");
-
-// ---------- hotspot regression: the SVG was rewritten ----------
-console.log("\n[5] Hotspot accessibility survived the rewrite");
-const a11y = await page.evaluate(() => {
-  const svg = document.querySelector("svg[aria-label]");
-  const hs = [...svg.querySelectorAll('[role="button"]')];
-  return {
-    count: hs.length,
-    tabbable: hs.every((h) => h.getAttribute("tabindex") === "0"),
-    labelled: hs.every((h) => (h.getAttribute("aria-label") || "").length > 3),
-    pressed: hs.every((h) => h.hasAttribute("aria-pressed")),
-  };
-});
-check(a11y.count === 6, "six hotspots still present", `${a11y.count}`);
-check(a11y.tabbable && a11y.labelled && a11y.pressed, "hotspots keep tabindex/aria-label/aria-pressed");
-
-const enterWorks = await page.evaluate(() => {
-  const svg = document.querySelector("svg[aria-label]");
-  const cathode = [...svg.querySelectorAll('[role="button"]')]
-    .find((h) => /katoda/i.test(h.getAttribute("aria-label")));
-  cathode.focus();
-  const ok = document.activeElement === cathode;
-  cathode.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
-  return ok;
-});
-await page.waitForTimeout(300);
-check(enterWorks, "cathode hotspot accepts focus");
-check(/Katoda \(−\) — plat tembaga/.test(await page.evaluate(() => document.body.innerText)),
-  "Enter still opens the cathode detail");
-
-// ---------- reduced motion ----------
-console.log("\n[6] prefers-reduced-motion");
-await page.emulateMedia({ reducedMotion: "reduce" });
-await page.reload({ waitUntil: "networkidle" });
-await page.waitForTimeout(600);
-const reduced = await page.evaluate(() => {
-  const els = [...document.querySelectorAll("[data-electron], [data-ion], [data-bubble]")];
-  return {
-    total: els.length,
-    noneAnimated: els.every((el) => getComputedStyle(el).animationName === "none"),
-    stillVisible: els.filter((el) => {
-      const cs = getComputedStyle(el);
-      return cs.visibility !== "hidden" && parseFloat(cs.opacity) > 0.3;
-    }).length,
-  };
-});
-console.log("   ", JSON.stringify(reduced));
-check(reduced.noneAnimated, "all animations disabled under reduced motion");
-check(reduced.stillVisible === reduced.total,
-  "diagram remains a readable still illustration",
-  `${reduced.stillVisible}/${reduced.total}`);
-await page.emulateMedia({ reducedMotion: null });
-
-// ---------- layout ----------
-console.log("\n[7] Layout");
-await page.reload({ waitUntil: "networkidle" });
-await page.waitForTimeout(500);
-for (const w of [360, 390, 768, 1440]) {
-  await page.setViewportSize({ width: w, height: 900 });
-  await page.waitForTimeout(300);
-  const m = await page.evaluate(() => ({
-    scroll: document.documentElement.scrollWidth,
-    client: document.documentElement.clientWidth,
-  }));
-  check(m.scroll <= m.client, `no horizontal overflow at ${w}px`, JSON.stringify(m));
+    const measurements = await sim.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      const figures = [...element.querySelectorAll("figure")].map((figure) => {
+        const r = figure.getBoundingClientRect();
+        return { width: r.width, x: r.x, y: r.y };
+      });
+      const controls = [...element.querySelectorAll("button, select, input")].map((control) => {
+        const r = control.getBoundingClientRect();
+        return { label: control.getAttribute("aria-label") ?? control.textContent.trim(), width: r.width, height: r.height };
+      });
+      const hotspots = [...element.querySelectorAll('[data-testid="m3-cell-scene"] [data-cell-component]')];
+      return {
+        width: bounds.width, figures, controls,
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        hotspotCount: hotspots.length,
+        keyboardHotspots: hotspots.every((hotspot) => hotspot.getAttribute("tabindex") === "0" && hotspot.hasAttribute("aria-label") && hotspot.hasAttribute("aria-pressed")),
+      };
+    });
+    assert.equal(measurements.overflow, 0);
+    assert.equal(measurements.hotspotCount, 6);
+    assert(measurements.keyboardHotspots);
+    const hotspots = sim.locator('[data-testid="m3-cell-scene"] [data-cell-component]');
+    for (let index = 0; index < measurements.hotspotCount; index++) {
+      for (const key of ["Enter", "Space"]) {
+        // Select a different component first: a missing handler must fail,
+        // rather than inheriting an already-pressed state from the previous key.
+        await hotspots.nth(index === 0 ? 1 : 0).click();
+        const hotspot = hotspots.nth(index);
+        await expect(hotspot).toHaveAttribute("aria-pressed", "false");
+        await hotspot.focus();
+        await page.keyboard.press(key);
+        await expect(hotspot).toHaveAttribute("aria-pressed", "true");
+      }
+    }
+    assert(measurements.controls.every((control) => control.width >= 44 && control.height >= 44), "controls need full-sized tap targets");
+    assert(width < 1024 ? measurements.figures[1].y > measurements.figures[0].y : Math.abs(measurements.figures[1].y - measurements.figures[0].y) < 1);
+    assert.deepEqual(errors, []);
+    if (width === 390 || width === 1440 || width === 1920) {
+      await sim.screenshot({
+        path: `${output}/${width}-codeposition.png`,
+        // Component-only evidence: fixed page chrome otherwise appears midway
+        // through a screenshot taller than the viewport. Layout is not changed.
+        style: '.no-print, nextjs-portal { visibility: hidden !important; }',
+      });
+    }
+    rows.push({ viewport: width, ...measurements, errors });
+    writeFileSync(`${output}/controls-evidence.json`, JSON.stringify({ expected: widths.length, verified: rows.length, rows }, null, 2));
+    console.log(`PASS ${width}px: seek, comparison, reaction focus, static fallback, six keyboard hotspots, touch targets, responsive figures`);
+    await page.close();
+  }
+} finally {
+  await browser.close();
 }
-
-console.log("\nconsole errors:", consoleErrors.length ? consoleErrors : "none");
-if (consoleErrors.length) fails++;
-console.log(fails === 0 ? "\nPART 2: PASS" : `\nPART 2: ${fails} FAILURE(S)`);
-
-await browser.close();
-process.exit(fails === 0 ? 0 : 1);
+assert.equal(rows.length, widths.length);
+assert.equal(new Set(rows.map((row) => row.viewport)).size, widths.length);
+console.log(`PASS ${rows.length}/${widths.length} viewport scenarios; evidence ${output}`);

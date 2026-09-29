@@ -135,11 +135,19 @@ test.describe("module navigation transitions", () => {
   });
 
   test("content is visibly displaced mid-transition", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/");
+    // The probe dispatches a raw click below; wait for React's handler binding,
+    // not merely the server-rendered link, before intercepting the transition.
+    await page.waitForFunction(() => {
+      const link = document.querySelector('a[href="/modules/m1-reactions"]');
+      return link && Object.keys(link).some((key) => key.startsWith("__reactProps$"));
+    });
 
     const offsets = await page.evaluate(async () => {
       const root = document.documentElement;
       const measured: number[] = [];
+      const sampled = Promise.withResolvers<number[]>();
       const original = document.startViewTransition.bind(document);
 
       document.startViewTransition = ((cb: () => void) => {
@@ -156,17 +164,17 @@ test.describe("module navigation transitions", () => {
             const x = Number.parseFloat(getComputedStyle(root, pseudo).translate);
             if (Number.isFinite(x) && x !== 0) measured.push(Math.abs(x));
           }
-        });
+          sampled.resolve(measured);
+        }).catch(sampled.reject);
         return t;
       }) as typeof document.startViewTransition;
 
       (
         document.querySelector('a[href="/modules/m1-reactions"]') as HTMLElement | null
       )?.click();
-      const settled = Promise.withResolvers<void>();
-      setTimeout(settled.resolve, 400);
-      await settled.promise;
-      return measured;
+      // Rendering a destination can exceed 400ms under parallel test load.
+      // Resolve only after the real transition's animation geometry is sampled.
+      return sampled.promise;
     });
 
     expect(offsets.length).toBeGreaterThan(0);

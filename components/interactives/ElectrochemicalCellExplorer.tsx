@@ -1,7 +1,7 @@
 // M3 Electrochemical Cell Explorer — cell anatomy, half-reactions, and the
 // reduction-potential gap that makes Sn-Bi codeposition non-trivial.
 //
-// The diagram itself is CellSimulation (animated); component copy and the
+// Playback and diagrams live in CodepositionWorkbench; component copy and the
 // ComponentKey union live in lib/m3-cell-components.ts.
 "use client";
 
@@ -9,7 +9,7 @@ import { useState } from "react";
 import { Equation } from "@/components/shared/Equation";
 import { ChemText } from "@/components/shared/ChemText";
 import { PredictionPrompt } from "@/components/shared/PredictionPrompt";
-import { CellSimulation } from "@/components/interactives/CellSimulation";
+import { CodepositionWorkbench } from "@/components/interactives/CodepositionWorkbench";
 import { CELL_COMPONENTS, type ComponentKey } from "@/lib/m3-cell-components";
 
 // Potentials plotted on a shared axis so the ~0,45 V gap is visible, not just stated.
@@ -25,8 +25,6 @@ const potentialToPercent = (v: number) =>
 
 export function ElectrochemicalCellExplorer() {
   const [selected, setSelected] = useState<ComponentKey | null>(null);
-  const [running, setRunning] = useState(true);
-  const [complexed, setComplexed] = useState(true);
   const detail = selected ? CELL_COMPONENTS[selected] : null;
 
   // SVG shapes are not focusable by default. Each hotspot gets role="button",
@@ -34,6 +32,7 @@ export function ElectrochemicalCellExplorer() {
   // operable by keyboard and announced by screen readers.
   const hotspot = (key: ComponentKey, label: string) => ({
     role: "button" as const,
+    "data-cell-component": key,
     tabIndex: 0,
     "aria-label": label,
     "aria-pressed": selected === key,
@@ -49,96 +48,7 @@ export function ElectrochemicalCellExplorer() {
 
   return (
     <div className="space-y-4">
-      {/* Cell anatomy diagram */}
-      <div className="relative mx-auto max-w-md rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
-        <CellSimulation
-          running={running}
-          complexed={complexed}
-          selected={selected}
-          hotspot={hotspot}
-        />
-      </div>
-
-      {/* Simulation controls */}
-      <div className="mx-auto max-w-md space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setRunning((v) => !v)}
-            aria-pressed={running}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[var(--primary-container)] px-3 py-2 text-xs font-bold text-[var(--on-primary)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary)]"
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
-              {running ? "pause" : "play_arrow"}
-            </span>
-            {running ? "Jeda Sel" : "Jalankan Sel"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setComplexed((v) => !v)}
-            aria-pressed={complexed}
-            className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border-2 px-3 py-2 text-xs font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary)] ${
-              complexed
-                ? "border-[var(--success)] bg-[var(--success-light)] text-[var(--success)]"
-                : "border-[var(--secondary)] bg-[var(--secondary-container)]/25 text-[var(--warning-ink)]"
-            }`}
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
-              {complexed ? "hub" : "block"}
-            </span>
-            {complexed ? "Dengan pengompleks" : "Tanpa pengompleks"}
-          </button>
-        </div>
-
-        {/* Legend — the ion colours carry meaning, so they must be named */}
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-[var(--on-surface-variant)]">
-          <span className="inline-flex items-center gap-1.5">
-            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--chart-gold)" }} />
-            <ChemText>{"Bi^{3+}"}</ChemText>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--chart-navy)" }} />
-            <ChemText>{"Sn^{2+}"}</ChemText>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full" style={{ background: "var(--secondary)" }} />
-            e⁻
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span
-              aria-hidden="true"
-              className="h-2.5 w-2.5 rounded-full border border-[var(--outline)]"
-            />
-            <ChemText>{"gelembung H_{2}"}</ChemText>
-          </span>
-        </div>
-
-        {/* What the current state is teaching. aria-live so toggling the state is
-            announced rather than being a purely visual change. */}
-        <p
-          aria-live="polite"
-          className={`rounded-lg border p-2.5 text-xs leading-relaxed ${
-            complexed
-              ? "border-[var(--success)]/40 bg-[var(--success-light)]/50 text-[var(--on-surface)]"
-              : "border-[var(--secondary)]/50 bg-[var(--secondary-container)]/15 text-[var(--on-surface)]"
-          }`}
-        >
-          {complexed ? (
-            <>
-              <strong>Dengan EDTA dan asam sitrat:</strong> kedua ion terikat kompleks, potensial
-              deposisi efektifnya mendekat, dan <ChemText>{"Sn^{2+}"}</ChemText> ikut mencapai katoda.
-              Lapisan yang tumbuh adalah paduan Sn-Bi.
-            </>
-          ) : (
-            <>
-              <strong>Tanpa pengompleks:</strong> pada potensial yang cukup mereduksi{" "}
-              <ChemText>{"Bi^{3+}"}</ChemText> (E° = +0,31 V), <ChemText>{"Sn^{2+}"}</ChemText> (E° =
-              −0,14 V) belum tereduksi — ionnya berbalik ke larutan. Lapisan menjadi kaya bismut, bukan
-              paduan.
-            </>
-          )}
-        </p>
-      </div>
+      <CodepositionWorkbench selected={selected} hotspot={hotspot} />
 
       <p className="text-center text-xs text-[var(--on-surface-variant)]">
         Elektron mengalir dari anoda → sumber DC → katoda. Arus konvensional berlawanan arah dengan aliran

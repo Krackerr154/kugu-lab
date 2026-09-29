@@ -101,27 +101,27 @@ export const COMPLEXING_AGENTS: ComplexingAgent[] = [
     name: "PEG400",
     formulaLabel: "HO(CH_{2}CH_{2}O)_{n}H",
     solution: "Ditambahkan setelah A+B+C",
-    kind: "Aditif permukaan (bukan pengompleks)",
+    kind: "Aditif permukaan (model adsorpsi)",
     summary:
-      "Bekerja di permukaan katoda, bukan pada ion di larutan — memperhalus morfologi dan menekan dendrit.",
+      "Memodifikasi pertumbuhan bersama komponen elektrolit lain; dapat membantu menekan dendrit.",
     concentration: "0,20 M akhir",
     workingAmount: "≈ 8,0 g (≈ 7,1 mL) dalam 100 mL",
     hue: "teal",
     icon: "layers",
     mechanism: [
-      "PEG400 adalah polimer rantai panjang, bukan ligan kelat. Perannya bukan mengikat ion di larutan, melainkan teradsorpsi pada permukaan katoda.",
-      "Lapisan teradsorpsi ini menghalangi sebagian situs pertumbuhan. Deposisi dipaksa menyebar ke situs baru alih-alih menumpuk pada tonjolan yang sudah ada.",
-      "Karena tonjolan tumbuh paling cepat (rapat medan listrik tertinggi), justru di sanalah penghambatan paling terasa — hasilnya permukaan yang lebih rata.",
-      "Massa molar 400 g/mol adalah nilai nominal rata-rata sebuah campuran polimer, jadi '0,20 M' bersifat pendekatan, bukan konsentrasi molar sebuah senyawa tunggal.",
+      "PEG400 merupakan campuran rantai polietilena glikol dengan massa molar nominal rata-rata 400 g/mol. Karena itu '0,20 M' memakai nilai rata-rata, bukan massa molar satu senyawa tunggal.",
+      "PEG yang teradsorpsi dapat menutup sebagian situs pertumbuhan. Model di beaker mengilustrasikan penambahan logam yang lebih tersebar; bukan penghentian semua deposisi atau pengikisan dendrit lama.",
+      "Adsorpsi PEG sebagai aditif perata dilaporkan pada deposit Bi (doi 10.1016/j.electacta.2011.06.077). Adaptasi gambar ke Sn–Bi bersifat konseptual; lokasi adsorpsi dan interaksi PEG dengan ion larutan tidak ditentukan oleh skema ini.",
+      "Pada studi Sn–Bi Tsai, Hu & Lin (2007), penghambatan dendrit merupakan hasil gabungan asam sitrat, EDTA, dan PEG. Hasil itu tidak membuktikan efek PEG400 saja, maupun adsorpsi yang selalu memilih ujung dendrit.",
     ],
     effect: [
-      "Menekan pertumbuhan dendrit — struktur bercabang yang membuat lapisan rapuh dan mudah lepas.",
-      "Memperbaiki adhesi dan kilap permukaan deposit.",
-      "Tidak ditulis persamaan kesetimbangan di sini karena adsorpsi permukaan bukan reaksi kompleksasi dengan stoikiometri tunggal.",
+      "Dendrit dapat berkurang, tetapi tidak dijamin hilang; morfologi dan adhesi tetap bergantung pada komposisi larutan serta kondisi deposisi.",
+      "Mengubah aditif juga dapat mengubah komposisi paduan dan perilaku elektrokimia, bukan hanya meratakan permukaan.",
+      "Tidak ditulis persamaan kesetimbangan karena skema ini tidak menetapkan satu stoikiometri adsorpsi atau kompleksasi PEG.",
     ],
     openQuestion:
-      "Tugas pendahuluan #3 secara khusus meminta Anda merujuk doi 10.1149/1.3276678 dan menjelaskan fungsi PEG-400. Uraian di kartu ini adalah kerangka, bukan pengganti bacaan itu.",
+      "Tugas pendahuluan #3 meminta doi 10.1149/1.3276678. Makalah itu membahas Zn–Cr, bukan Sn–Bi: jelaskan temuan dan batas penerapannya ke praktikum ini. Kartu ini tidak menggantikan bacaan tersebut.",
     reference:
-      "Rujukan wajib tugas pendahuluan #3: doi 10.1149/1.3276678; juga Tzevetanka dkk (2010), J. Electrochem. Soc. 157, D159 — Effect of PEG-400 on alloy electrodeposition",
+      "Boiadjieva dkk. (2010), J. Electrochem. Soc. 157, D159 — Effect of PEG 400 on Zn–Cr Alloy Electrodeposition, doi 10.1149/1.3276678. Pembanding Sn–Bi: Tsai, Hu & Lin (2007), Electrochim. Acta 53, 2040–2047",
   },
 ];

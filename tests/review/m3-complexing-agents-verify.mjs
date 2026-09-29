@@ -52,8 +52,8 @@ const cardInfo = await page.evaluate(() => {
 for (const c of cardInfo) console.log(`     - ${c.name}: border ${c.borderColor} ${c.borderWidth}`);
 check(cardInfo.map((c) => c.name).join(",") === "EDTA,Asam Sitrat,PEG400",
   "cards are EDTA, Asam Sitrat, PEG400", cardInfo.map((c) => c.name).join(","));
-check(cardInfo.every((c) => c.gradient), "each card keeps the gradient treatment");
-check(new Set(cardInfo.map((c) => c.borderColor)).size === 3, "three distinct hues");
+check(cardInfo.every((c) => !c.gradient), "cards use flat design-system surfaces (no rainbow gradient)");
+check(new Set(cardInfo.map((c) => c.name)).size === 3, "three agents told apart by name/icon, not hue");
 check(cardInfo.every((c) => c.hasPopup === "dialog"), "cards declare aria-haspopup=dialog");
 check(cardInfo.every((c) => c.expanded === "false"), "aria-expanded starts false");
 

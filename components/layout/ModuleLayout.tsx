@@ -7,11 +7,23 @@ import type { ModuleMeta } from "@/lib/modules";
 interface ModuleLayoutProps {
   module: ModuleMeta;
   children: React.ReactNode;
+  /** Guided pages keep objectives accessible without pushing the journey below the fold. */
+  compactHeader?: boolean;
 }
 
-export function ModuleLayout({ module, children }: ModuleLayoutProps) {
+export function ModuleLayout({ module, children, compactHeader = false }: ModuleLayoutProps) {
+  const objectives = (
+    <ul className="mt-2 space-y-1.5">
+      {module.learningOutcomes.map((o, i) => (
+        <li key={i} className="text-sm text-[var(--text-secondary)] flex items-start gap-2">
+          <span className="text-xs font-semibold text-[var(--primary-container)] bg-[var(--surface-muted)] px-1.5 py-0.5 rounded-md shrink-0 mt-0.5">{i + 1}</span>
+          <span className="flex-1"><ChemText>{o}</ChemText></span>
+        </li>
+      ))}
+    </ul>
+  );
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6 transition-all duration-300">
+    <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6 transition-all duration-300">
       {/* Breadcrumb Bar */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[var(--muted)]">
@@ -33,9 +45,9 @@ export function ModuleLayout({ module, children }: ModuleLayoutProps) {
         {/* Left / Main Column */}
         <div className="xl:col-span-8 2xl:col-span-9 min-w-0 space-y-6">
           {/* Header */}
-          <header className="surface-panel p-5 sm:p-6 shadow-xs">
+          <header className={compactHeader ? "surface-panel p-4 sm:p-5 shadow-xs" : "surface-panel p-5 sm:p-6 shadow-xs"}>
             <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-3xl text-[var(--primary-container)] shadow-xs">
+              <div className={`${compactHeader ? "hidden sm:flex h-11 w-11" : "flex h-14 w-14"} shrink-0 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-3xl text-[var(--primary-container)] shadow-xs`}>
                 <span aria-hidden="true" className="material-symbols-outlined">{module.icon}</span>
               </div>
               <div className="flex-1 min-w-0">
@@ -52,17 +64,20 @@ export function ModuleLayout({ module, children }: ModuleLayoutProps) {
             </div>
 
             {/* Learning outcomes */}
-            <div className="mt-5 border-t border-[var(--border)] pt-4">
-              <h2 className="text-sm font-bold text-[var(--foreground)]">Tujuan Pembelajaran</h2>
-              <ul className="mt-2 space-y-1.5">
-                {module.learningOutcomes.map((o, i) => (
-                  <li key={i} className="text-sm text-[var(--text-secondary)] flex items-start gap-2">
-                    <span className="text-xs font-semibold text-[var(--primary-container)] bg-[var(--surface-muted)] px-1.5 py-0.5 rounded-md shrink-0 mt-0.5">{i + 1}</span>
-                    <span className="flex-1"><ChemText>{o}</ChemText></span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {compactHeader ? (
+              <details className="group mt-4 border-t border-[var(--border)] pt-1">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 rounded-sm text-sm font-semibold text-[var(--primary-container)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)] [&::-webkit-details-marker]:hidden">
+                  <span>Tujuan Pembelajaran ({module.learningOutcomes.length})</span>
+                  <span aria-hidden="true" className="material-symbols-outlined group-open:rotate-180">expand_more</span>
+                </summary>
+                {objectives}
+              </details>
+            ) : (
+              <div className="mt-5 border-t border-[var(--border)] pt-4">
+                <h2 className="text-sm font-bold text-[var(--foreground)]">Tujuan Pembelajaran</h2>
+                {objectives}
+              </div>
+            )}
           </header>
 
           {/* Content sections */}

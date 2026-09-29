@@ -3,7 +3,6 @@
 
 import { useState } from "react";
 import { Equation } from "@/components/shared/Equation";
-import { ElectrochemicalCellExplorer } from "@/components/interactives/ElectrochemicalCellExplorer";
 
 // Faraday constant: 96485 C/mol
 const F = 96485;
@@ -143,15 +142,6 @@ export function ElectrodepositionCalculator() {
 
   return (
     <div className="space-y-4">
-      {/* Interactive cell map, half-reactions, and reduction-potential comparison */}
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-4">
-        <h3 className="text-lg font-bold">Peta Interaktif Sel Elektrokimia</h3>
-        <p className="text-sm text-[var(--muted)] mb-3">
-          Pilih komponen untuk melihat penjelasan, setengah-reaksi, dan potensial reduksinya.
-        </p>
-        <ElectrochemicalCellExplorer />
-      </section>
-
       {/* Current efficiency calculator */}
       <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-4">
         <h3 className="text-lg font-bold">Kalkulator Efisiensi Arus</h3>
