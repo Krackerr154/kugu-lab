@@ -24,15 +24,31 @@ export interface JourneyStage {
   content: ReactNode;
 }
 
-interface ModuleJourneyProps {
-  stages: JourneyStage[];
+/**
+ * Optional externally-controlled navigation request. When `token` changes the
+ * journey jumps INSTANTLY to `stageId` (instant, not smooth, so scroll-tracking
+ * cannot overwrite the requested stage — same reasoning as the mobile picker).
+ * A changing token lets the same stageId be re-applied (e.g. a follower
+ * re-syncing to the presenter's current stage). Undefined = default solo
+ * behavior, so every other module is completely unaffected.
+ */
+export interface JourneyNavRequest {
+  stageId: string;
+  token: number;
 }
 
-export function ModuleJourney({ stages }: ModuleJourneyProps) {
+interface ModuleJourneyProps {
+  stages: JourneyStage[];
+  /** External nav command (guided-presentation follower). Optional/additive. */
+  navRequest?: JourneyNavRequest | null;
+}
+
+export function ModuleJourney({ stages, navRequest }: ModuleJourneyProps) {
   const [activeId, setActiveId] = useState(stages[0]?.id ?? "");
   const rootRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLElement>(null);
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const appliedNavToken = useRef<number | null>(null);
 
   // Use the same measured clearance for anchors and the reading position.
   // Sampling all five headings also handles upward scrolls and large jumps;
@@ -85,6 +101,20 @@ export function ModuleJourney({ stages }: ModuleJourneyProps) {
     setActiveId(id);
     if (focusHeading) node.querySelector<HTMLElement>("h2")?.focus({ preventScroll: true });
   };
+
+  // Apply an externally-controlled nav request (guided-presentation follower).
+  // Jump INSTANTLY and without stealing focus so a remote stage change cannot be
+  // overwritten by the scroll observer and does not yank the follower's caret.
+  // Applying never re-publishes: this component only consumes the request.
+  useEffect(() => {
+    if (!navRequest) return;
+    if (appliedNavToken.current === navRequest.token) return;
+    if (!stages.some((s) => s.id === navRequest.stageId)) return;
+    appliedNavToken.current = navRequest.token;
+    goTo(navRequest.stageId, false, "instant");
+    // goTo is stable enough for this purpose; stageId/token are the real deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navRequest?.token, navRequest?.stageId, stages]);
 
   return (
     <div ref={rootRef}>

@@ -9,6 +9,7 @@ import { CELL_COMPONENTS, type ComponentKey } from "@/lib/m3-cell-components";
 import { BATH_AGENT_LABELS, type BathAgent } from "@/lib/m3-ligands";
 import { BathAgentDetails } from "@/components/interactives/BathAgentDetails";
 import { PegDendriteComparison } from "@/components/interactives/PegDendriteComparison";
+import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
 
 interface CodepositionWorkbenchProps {
   selected: ComponentKey | null;
@@ -31,6 +32,11 @@ export function CodepositionWorkbench({ selected, hotspot }: CodepositionWorkben
   const [reducedMotion, setReducedMotion] = useState(false);
   const [inView, setInView] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
+  // Guided-presentation follower: a controlled request to open a demo agent.
+  // Null outside M3 / when not following, so solo behavior is unchanged.
+  const presentation = useOptionalM3Presentation();
+  const agentRequest = presentation?.agentRequest ?? null;
+  const appliedAgentToken = useRef<number | null>(null);
   const frame = cellFrame(time, complexed);
   const advancing = playing && inView && pageVisible && !reducedMotion;
   const finished = time >= ILLUSTRATION_SECONDS;
@@ -84,6 +90,16 @@ export function CodepositionWorkbench({ selected, hotspot }: CodepositionWorkben
     timeRef.current = clampTime(next);
     setTime(timeRef.current);
   };
+
+  // Apply a follower's demo-agent request: select the agent the presenter is
+  // demonstrating. One-way and idempotent per token; never rebroadcasts and
+  // never alters bath chemistry, playback time, or any private student state.
+  useEffect(() => {
+    if (!agentRequest) return;
+    if (appliedAgentToken.current === agentRequest.token) return;
+    appliedAgentToken.current = agentRequest.token;
+    setActiveAgent(agentRequest.id);
+  }, [agentRequest?.token, agentRequest?.id]);
 
   return (
     <section ref={rootRef} aria-label="Simulasi kodeposisi" className="min-w-0 space-y-4" data-playing={advancing} data-time={time.toFixed(3)} data-focus={focus}>
