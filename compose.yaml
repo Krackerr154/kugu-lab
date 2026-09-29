@@ -1,0 +1,42 @@
+services:
+  kugu-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_M3_RELAY_URL: "${NEXT_PUBLIC_M3_RELAY_URL:-wss://kugu.g-labs.my.id/presentation/ws}"
+    image: kugu-web:${KUGU_VERSION:-phase4}
+    container_name: kugu-web
+    restart: unless-stopped
+    ports:
+      - "10.66.66.5:3034:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  kugu-m3-relay:
+    build:
+      context: .
+      dockerfile: relay/Dockerfile
+    image: kugu-m3-relay:${KUGU_VERSION:-phase4}
+    container_name: kugu-m3-relay
+    restart: unless-stopped
+    ports:
+      - "10.66.66.5:8787:8787"
+    environment:
+      PORT: "8787"
+      HOST: "0.0.0.0"
+      ADMIN_SECRET: "${ADMIN_SECRET}"
+      ALLOWED_ORIGINS: "https://kugu.g-labs.my.id"
+      ROOM_TTL_MS: "${ROOM_TTL_MS:-14400000}"
+      MAX_MSG_BYTES: "${MAX_MSG_BYTES:-8192}"
+      MAX_MSGS_PER_10S: "${MAX_MSGS_PER_10S:-60}"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

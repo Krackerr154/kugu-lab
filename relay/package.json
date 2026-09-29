@@ -1,0 +1,19 @@
+{
+  "name": "kugu-m3-relay",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "KUGU M3 guided-presentation realtime relay (Phase 4). Server-authoritative epoch+sequence, in-memory rooms, snapshot-on-join.",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "admin": "node admin.mjs",
+    "test": "node --test --test-concurrency=1 --test-reporter=tap test/*.test.mjs"
+  },
+  "dependencies": {
+    "ws": "8.22.0"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

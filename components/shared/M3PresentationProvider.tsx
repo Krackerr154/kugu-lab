@@ -1,25 +1,11 @@
 "use client";
 
-// M3 guided-presentation context (Phases 2–3, local-only).
-//
-// One provider serves three roles on the same transport:
-//   - solo:      not connected; solo M3 is completely untouched.
-//   - following: subscribes and APPLIES validated snapshots as one-way,
-//                idempotent-per-token requests (navRequest, agentRequest).
-//                Never publishes. Rejects stale/duplicate seq within an epoch,
-//                and reloads on epoch change. Sends hello on join → gets the
-//                presenter's current snapshot back.
-//   - presenting: owns an epoch + monotonic seq; publishes intentional snapshot
-//                 updates and replies to hello with the current snapshot. Ending
-//                 the session emits `ended`.
-//
-// It NEVER reads or transmits private student state (checklist, notebook,
-// calculator, CER, NIM). Applying a snapshot cannot loop back onto the wire.
-// Phase 4 swaps createLocalTransport for a WSS transport via transportFactory.
-
+// M3 guided-presentation provider. Local BroadcastChannel is retained only when
+// no relay URL is configured; production uses the WSS relay transport.
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   createLocalTransport,
+  createRelayTransport,
   newClientId,
   newEpoch,
   type M3PresentationState,
@@ -27,241 +13,159 @@ import {
   type M3DemoOverlay,
   type PresentationMessage,
   type PresentationTransport,
+  type RelayServerMessage,
 } from "@/lib/m3-presentation";
 import type { JourneyNavRequest } from "@/components/shared/ModuleJourney";
 import type { BathAgent } from "@/lib/m3-ligands";
 
 export type Role = "solo" | "following" | "presenting";
-// Follower-facing connection status (plan §Phase 3 explicit labels).
-export type ConnectionStatus =
-  | "solo"
-  | "connecting"
-  | "following"
-  | "reconnecting"
-  | "disconnected"
-  | "ended"
-  | "presenting";
-
-export interface AgentRequest {
-  id: BathAgent;
-  token: number;
-}
+export type ConnectionStatus = "solo" | "connecting" | "following" | "reconnecting" | "disconnected" | "ended" | "presenting";
+export interface AgentRequest { id: BathAgent; token: number; }
+export interface PresentationTransportConfig { roomId: string; role: "student" | "presenter"; ticket?: string; }
+export type PresentationTransportFactory = (config: PresentationTransportConfig) => PresentationTransport;
 
 interface M3PresentationContextValue {
   role: Role;
   status: ConnectionStatus;
-  /** Latest applied snapshot while following, or the presenter's own state. */
   snapshot: M3PresentationState | null;
   navRequest: JourneyNavRequest | null;
   agentRequest: AgentRequest | null;
-  /** True once a presenter session has ended under the follower. */
   ended: boolean;
-
-  // Follower actions
+  relayMode: boolean;
+  roomId: string;
+  presenterTicket: string;
+  joinError: string | null;
+  setRoomId: (value: string) => void;
+  setPresenterTicket: (value: string) => void;
   follow: () => void;
   unfollow: () => void;
   rejoin: () => void;
-
-  // Presenter actions
   startPresenting: () => void;
   endPresenting: () => void;
   presentStage: (stageId: M3StageId) => void;
   presentDemoOverlay: (overlay: M3DemoOverlay) => void;
 }
 
-const M3PresentationContext = createContext<M3PresentationContextValue | null>(null);
-
+const Context = createContext<M3PresentationContextValue | null>(null);
 const INITIAL_STATE: M3PresentationState = { version: 1, stageId: "brief" };
+const envRelayUrl = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_M3_RELAY_URL ?? "" : "";
 
-export function M3PresentationProvider({
-  children,
-  transportFactory = createLocalTransport,
-}: {
+export function M3PresentationProvider({ children, transportFactory, relayUrl = envRelayUrl }: {
   children: React.ReactNode;
-  transportFactory?: () => PresentationTransport;
+  transportFactory?: PresentationTransportFactory;
+  relayUrl?: string;
 }) {
+  const relayMode = relayUrl.length > 0;
   const [role, setRole] = useState<Role>("solo");
   const [status, setStatus] = useState<ConnectionStatus>("solo");
   const [snapshot, setSnapshot] = useState<M3PresentationState | null>(null);
   const [navRequest, setNavRequest] = useState<JourneyNavRequest | null>(null);
   const [agentRequest, setAgentRequest] = useState<AgentRequest | null>(null);
   const [ended, setEnded] = useState(false);
-
-  const transportRef = useRef<PresentationTransport | null>(null);
-  const clientIdRef = useRef<string>("");
+  const [roomId, setRoomId] = useState("");
+  const [presenterTicket, setPresenterTicket] = useState("");
+  const [joinError, setJoinError] = useState<string | null>(null);
   const tokenRef = useRef(0);
-  // Follower epoch/seq tracking for stale-message rejection.
+  const clientIdRef = useRef("");
   const epochRef = useRef<string | null>(null);
-  const lastSeqRef = useRef<number>(-1);
-  // Presenter authoritative state.
-  const presenterEpochRef = useRef<string>("");
-  const presenterSeqRef = useRef<number>(0);
+  const lastSeqRef = useRef(-1);
+  const presenterEpochRef = useRef("");
+  const presenterSeqRef = useRef(0);
   const presenterStateRef = useRef<M3PresentationState>(INITIAL_STATE);
   const presenterPublishRef = useRef<(() => void) | null>(null);
+
+  const makeTransport = useCallback((config: PresentationTransportConfig) => {
+    if (transportFactory) return transportFactory(config);
+    if (relayMode) return createRelayTransport({ url: relayUrl, ...config });
+    return createLocalTransport();
+  }, [relayMode, relayUrl, transportFactory]);
 
   const applyState = useCallback((state: M3PresentationState) => {
     tokenRef.current += 1;
     const token = tokenRef.current;
     setSnapshot(state);
     setNavRequest({ stageId: state.stageId, token });
-    if (state.demoOverlay && state.demoOverlay.kind === "complexing-agent") {
-      setAgentRequest({ id: state.demoOverlay.id, token });
-    }
+    setAgentRequest(state.demoOverlay?.kind === "complexing-agent" ? { id: state.demoOverlay.id, token } : null);
   }, []);
 
-  // ── Follower subscription ─────────────────────────────────────────────────
+  const acceptState = useCallback((message: PresentationMessage | RelayServerMessage) => {
+    if (message.t === "state") {
+      if (epochRef.current !== message.epoch) { epochRef.current = message.epoch; lastSeqRef.current = -1; }
+      if (message.seq <= lastSeqRef.current) return;
+      lastSeqRef.current = message.seq;
+      setStatus("following");
+      setEnded(false);
+      applyState(message.state);
+    }
+  }, [applyState]);
+
   useEffect(() => {
     if (role !== "following") return;
-    const transport = transportFactory();
-    transportRef.current = transport;
-    setEnded(false);
-    setStatus("connecting");
-    epochRef.current = null;
-    lastSeqRef.current = -1;
-
-    const unsubscribe = transport.subscribe((message: PresentationMessage) => {
-      if (message.t === "state") {
-        // New session instance → reset the sequence gate and take the snapshot.
-        if (epochRef.current !== message.epoch) {
-          epochRef.current = message.epoch;
-          lastSeqRef.current = -1;
-        }
-        // Reject stale / duplicate messages within the same epoch.
-        if (message.seq <= lastSeqRef.current) return;
-        lastSeqRef.current = message.seq;
-        setStatus("following");
-        setEnded(false);
-        applyState(message.state);
-      } else if (message.t === "ended") {
-        if (epochRef.current === null || epochRef.current === message.epoch) {
-          setStatus("ended");
-          setEnded(true);
-        }
-      }
+    const transport = makeTransport({ roomId: roomId.trim(), role: "student" });
+    setEnded(false); setStatus("connecting"); setJoinError(null); epochRef.current = null; lastSeqRef.current = -1;
+    const unsubscribe = transport.subscribe((message) => {
+      if (message.t === "state") acceptState(message);
+      else if (message.t === "ended") { setStatus("ended"); setEnded(true); }
+      else if (message.t === "presence" && !message.connected) setStatus("disconnected");
+      else if (message.t === "error") { setJoinError(message.code); setStatus(message.code === "room-not-found" || message.code === "unauthorized" ? "ended" : "disconnected"); }
     });
-
-    // Announce arrival so the presenter replies with the current snapshot.
-    transport.send({ t: "hello", clientId: clientIdRef.current || (clientIdRef.current = newClientId()) });
-
+    if (transport.mode === "local") transport.send({ t: "hello", clientId: clientIdRef.current || (clientIdRef.current = newClientId()) });
     return () => {
-      // Leave politely; do not delete any personal work.
-      transport.send({ t: "bye", clientId: clientIdRef.current });
-      unsubscribe();
-      transport.close();
-      transportRef.current = null;
+      if (transport.mode === "local") transport.send({ t: "bye", clientId: clientIdRef.current });
+      unsubscribe(); transport.close();
     };
-  }, [role, transportFactory, applyState]);
+  }, [acceptState, makeTransport, role, roomId]);
 
-  // ── Presenter subscription (answer hello with current snapshot) ───────────
   useEffect(() => {
     if (role !== "presenting") return;
-    const transport = transportFactory();
-    transportRef.current = transport;
-    presenterEpochRef.current = newEpoch();
-    presenterSeqRef.current = 0;
-    presenterStateRef.current = INITIAL_STATE;
-    setStatus("presenting");
-    setSnapshot(INITIAL_STATE);
-
+    const transport = makeTransport({ roomId: roomId.trim(), role: "presenter", ticket: presenterTicket.trim() });
+    presenterEpochRef.current = newEpoch(); presenterSeqRef.current = 0; presenterStateRef.current = INITIAL_STATE;
+    setStatus("presenting"); setSnapshot(INITIAL_STATE); setJoinError(null);
     const publish = () => {
       presenterSeqRef.current += 1;
-      transport.send({
-        t: "state",
-        epoch: presenterEpochRef.current,
-        seq: presenterSeqRef.current,
-        state: presenterStateRef.current,
-      });
+      if (transport.mode === "relay") transport.send({ t: "present", state: presenterStateRef.current });
+      else transport.send({ t: "state", epoch: presenterEpochRef.current, seq: presenterSeqRef.current, state: presenterStateRef.current });
     };
-
     const unsubscribe = transport.subscribe((message) => {
-      // A late joiner said hello → send them (everyone) the authoritative state.
-      if (message.t === "hello") publish();
+      if (message.t === "hello" && transport.mode === "local") publish();
+      if (message.t === "error") setJoinError(message.code);
     });
-
-    // Announce the opening snapshot.
+    presenterPublishRef.current = publish;
     publish();
-
-    // Expose publish to the action callbacks via a ref-bound closure.
-    presenterPublishRef.current = () => publish();
-
     return () => {
-      transport.send({ t: "ended", epoch: presenterEpochRef.current });
-      unsubscribe();
-      transport.close();
-      transportRef.current = null;
-      presenterPublishRef.current = null;
+      if (transport.mode === "relay") transport.send({ t: "end" });
+      else transport.send({ t: "ended", epoch: presenterEpochRef.current });
+      unsubscribe(); transport.close(); presenterPublishRef.current = null;
     };
-  }, [role, transportFactory]);
+  }, [makeTransport, presenterTicket, role, roomId]);
 
-  // ── Follower actions ──────────────────────────────────────────────────────
   const follow = useCallback(() => {
-    setEnded(false);
-    setRole("following");
-  }, []);
-  const unfollow = useCallback(() => {
-    setRole("solo");
-    setStatus("solo");
-    setSnapshot(null);
-    setNavRequest(null);
-    setAgentRequest(null);
-    setEnded(false);
-  }, []);
-  const rejoin = useCallback(() => {
-    // Detach and re-subscribe: forces the mount effect to re-run and re-hello.
-    setRole("solo");
-    setStatus("solo");
-    setEnded(false);
-    // Re-enter following on the next tick so the effect cleanup/mount cycle runs.
-    queueMicrotask(() => setRole("following"));
-  }, []);
-
-  // ── Presenter actions ─────────────────────────────────────────────────────
-  const startPresenting = useCallback(() => setRole("presenting"), []);
-  const endPresenting = useCallback(() => {
-    setRole("solo");
-    setStatus("solo");
-    setSnapshot(null);
-  }, []);
+    if (relayMode && !roomId.trim()) { setJoinError("room-required"); return; }
+    setJoinError(null); setEnded(false); setRole("following");
+  }, [relayMode, roomId]);
+  const unfollow = useCallback(() => { setRole("solo"); setStatus("solo"); setSnapshot(null); setNavRequest(null); setAgentRequest(null); setEnded(false); }, []);
+  const rejoin = useCallback(() => { setRole("solo"); setStatus("solo"); setEnded(false); window.setTimeout(() => setRole("following"), 0); }, []);
+  const startPresenting = useCallback(() => {
+    if (relayMode && (!roomId.trim() || !presenterTicket.trim())) { setJoinError("room-and-ticket-required"); return; }
+    setJoinError(null); setRole("presenting");
+  }, [presenterTicket, relayMode, roomId]);
+  const endPresenting = useCallback(() => { setRole("solo"); setStatus("solo"); setSnapshot(null); }, []);
   const presentStage = useCallback((stageId: M3StageId) => {
-    presenterStateRef.current = { ...presenterStateRef.current, stageId };
-    setSnapshot(presenterStateRef.current);
-    presenterPublishRef.current?.();
+    presenterStateRef.current = { version: 1, stageId, ...(stageId === "understand" && presenterStateRef.current.focusId ? { focusId: presenterStateRef.current.focusId } : {}) };
+    setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
   }, []);
   const presentDemoOverlay = useCallback((overlay: M3DemoOverlay) => {
-    presenterStateRef.current = { ...presenterStateRef.current, demoOverlay: overlay };
-    setSnapshot(presenterStateRef.current);
-    presenterPublishRef.current?.();
+    presenterStateRef.current = overlay ? { version: 1, stageId: "understand", focusId: "complexing-agents", demoOverlay: overlay } : { ...presenterStateRef.current, demoOverlay: null };
+    setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
   }, []);
 
-  const value = useMemo<M3PresentationContextValue>(
-    () => ({
-      role,
-      status,
-      snapshot,
-      navRequest,
-      agentRequest,
-      ended,
-      follow,
-      unfollow,
-      rejoin,
-      startPresenting,
-      endPresenting,
-      presentStage,
-      presentDemoOverlay,
-    }),
-    [role, status, snapshot, navRequest, agentRequest, ended, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay],
-  );
-
-  return <M3PresentationContext.Provider value={value}>{children}</M3PresentationContext.Provider>;
+  const value = useMemo(() => ({ role, status, snapshot, navRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay }), [role, status, snapshot, navRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay]);
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 
-export function useM3Presentation(): M3PresentationContextValue {
-  const ctx = useContext(M3PresentationContext);
+export function useM3Presentation() {
+  const ctx = useContext(Context);
   if (!ctx) throw new Error("useM3Presentation must be used within an M3PresentationProvider");
   return ctx;
 }
-
-/** Non-throwing variant for shared interactives that also render outside M3. */
-export function useOptionalM3Presentation(): M3PresentationContextValue | null {
-  return useContext(M3PresentationContext);
-}
+export function useOptionalM3Presentation() { return useContext(Context); }

@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+coverage
+playwright-report
+test-results
+artifacts
+.env
+relay/.env
+.git
+.gitignore
+Dockerfile
+relay/Dockerfile
+README*

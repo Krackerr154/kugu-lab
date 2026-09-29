@@ -37,7 +37,7 @@ export type NimValidation =
 
 /** Validate a self-entered NIM against the confirmed KI3131 cohort format. */
 export function validateNim(raw: string): NimValidation {
-  const value = raw.trim();
+  const value = raw;
   if (!value) return { ok: false, error: "Masukkan NIM Anda atau lanjut sebagai tamu." };
   if (!/^\d+$/.test(value)) return { ok: false, error: "NIM hanya terdiri dari angka." };
   if (!NIM_PATTERN.test(value)) return { ok: false, error: "NIM harus berformat 10524xxx (8 digit)." };

@@ -17,7 +17,10 @@ const route = "/modules/m3-sn-bi-electrodeposition";
 // ── Pure logic (no browser) ────────────────────────────────────────────────
 test("NIM validation enforces the confirmed 10524xxx cohort format", () => {
   expect(validateNim("10524001")).toEqual({ ok: true, value: "10524001" });
-  expect(validateNim("  10524999 ")).toEqual({ ok: true, value: "10524999" });
+  expect(validateNim("10524999")).toEqual({ ok: true, value: "10524999" });
+  for (const raw of ["  10524999 ", "10524001 ", "10524001\n", "\t10524001", "１０５２４００１"]) {
+    expect(validateNim(raw).ok, `raw identifier ${JSON.stringify(raw)} must not be normalized`).toBe(false);
+  }
   expect(validateNim("10521028").ok).toBe(false); // older intake, out of scope
   expect(validateNim("1052400").ok).toBe(false); // too short
   expect(validateNim("105240012").ok).toBe(false); // too long
