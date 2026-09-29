@@ -11,6 +11,8 @@
 
 import { useEffect, useState } from "react";
 import { ChemText } from "@/components/shared/ChemText";
+import { useStudentIdentity } from "@/components/shared/StudentIdentityProvider";
+import { namespacedKey } from "@/lib/m3-identity";
 
 export interface BenchItem {
   id: string;
@@ -40,34 +42,44 @@ interface BenchChecklistProps {
 
 export function BenchChecklist({ title, storageKey, phases, note }: BenchChecklistProps) {
   const allIds = phases.flatMap((p) => p.items.map((it) => it.id));
+  const { identity, ready } = useStudentIdentity();
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
 
-  // Load once on mount. Guarded so SSR and the first client render match, then
-  // hydrate from storage on the next tick.
+  // Namespace saved ticks by identity so a shared browser never mixes two
+  // students' work. Before a choice is made (identity === null) fall back to the
+  // legacy un-namespaced key; a later NIM entry migrates that key forward.
+  const effectiveKey = identity ? namespacedKey(storageKey, identity) : storageKey;
+
+  // Load whenever the effective key changes (mount, or the student switches
+  // identity). Reset first so the previous identity's ticks never linger.
   useEffect(() => {
+    if (!ready) return;
+    setHydrated(false);
+    let next = new Set<string>();
     try {
-      const raw = localStorage.getItem(storageKey);
+      const raw = localStorage.getItem(effectiveKey);
       if (raw) {
         const ids: string[] = JSON.parse(raw);
-        setChecked(new Set(ids.filter((id) => allIds.includes(id))));
+        next = new Set(ids.filter((id) => allIds.includes(id)));
       }
     } catch {
       // ignore malformed storage
     }
+    setChecked(next);
     setHydrated(true);
-    // allIds is derived from static props; storageKey is the real dependency.
+    // allIds is derived from static props; effectiveKey/ready are the real deps.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storageKey]);
+  }, [effectiveKey, ready]);
 
   useEffect(() => {
     if (!hydrated) return;
     try {
-      localStorage.setItem(storageKey, JSON.stringify([...checked]));
+      localStorage.setItem(effectiveKey, JSON.stringify([...checked]));
     } catch {
       // ignore quota / privacy-mode failures
     }
-  }, [checked, hydrated, storageKey]);
+  }, [checked, hydrated, effectiveKey]);
 
   const toggle = (id: string) =>
     setChecked((prev) => {

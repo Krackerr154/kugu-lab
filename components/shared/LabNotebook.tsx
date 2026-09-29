@@ -2,6 +2,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useOptionalStudentIdentity } from "@/components/shared/StudentIdentityProvider";
+import { namespacedKey } from "@/lib/m3-identity";
 
 interface NotebookField {
   id: string;
@@ -23,22 +25,32 @@ export function LabNotebook({ title, fields, storageKey, headingLevel = 3 }: Lab
   const [values, setValues] = useState<Record<string, string>>({});
   const [savedAt, setSavedAt] = useState<string | null>(null);
 
-  const key = storageKey || `notebook-${title}`;
+  const baseKey = storageKey || `notebook-${title}`;
+  // Inside M3 the identity provider is present, so the notebook is namespaced by
+  // student. In other modules the optional hook returns null and the key is
+  // unchanged, preserving their existing saved data and behavior.
+  const identityCtx = useOptionalStudentIdentity();
+  const key = identityCtx?.identity ? namespacedKey(baseKey, identityCtx.identity) : baseKey;
   const Heading = headingLevel === 2 ? "h2" : "h3";
 
+  // Reload whenever the key changes (mount or identity switch); reset first so
+  // the previous student's entries never bleed into the next.
   useEffect(() => {
-    const stored = localStorage.getItem(key);
-    if (stored) {
-      try {
-        setValues(JSON.parse(stored));
-      } catch { /* ignore */ }
-    }
+    let next: Record<string, string> = {};
+    try {
+      const stored = localStorage.getItem(key);
+      if (stored) next = JSON.parse(stored);
+    } catch { /* ignore malformed storage */ }
+    setValues(next);
+    setSavedAt(null);
   }, [key]);
 
   useEffect(() => {
     if (Object.keys(values).length > 0) {
-      localStorage.setItem(key, JSON.stringify(values));
-      setSavedAt(new Date().toLocaleTimeString("id-ID"));
+      try {
+        localStorage.setItem(key, JSON.stringify(values));
+        setSavedAt(new Date().toLocaleTimeString("id-ID"));
+      } catch { /* ignore quota / privacy-mode failures */ }
     }
   }, [values, key]);
 

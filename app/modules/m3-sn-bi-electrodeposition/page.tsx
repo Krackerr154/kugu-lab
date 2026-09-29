@@ -1,5 +1,7 @@
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
 import { ModuleJourney, type JourneyStage } from "@/components/shared/ModuleJourney";
+import { StudentIdentityProvider } from "@/components/shared/StudentIdentityProvider";
+import { StudentIdentityGate } from "@/components/shared/StudentIdentityGate";
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { BenchChecklist } from "@/components/shared/BenchChecklist";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -24,6 +26,7 @@ export default function M3Page() {
       question: "Apa yang akan saya lakukan, dan mengapa?",
       content: (
         <>
+          <StudentIdentityGate />
           <div className="surface-panel p-4 sm:p-5 shadow-xs">
             <p className="max-w-[72ch] text-base leading-7 text-[var(--text-secondary)]">
               Anda membuat <strong className="text-[var(--foreground)]">paduan logam Sn-Bi</strong> dengan
@@ -271,8 +274,10 @@ export default function M3Page() {
   ];
 
   return (
-    <ModuleLayout module={module} compactHeader>
-      <ModuleJourney stages={stages} />
-    </ModuleLayout>
+    <StudentIdentityProvider>
+      <ModuleLayout module={module} compactHeader>
+        <ModuleJourney stages={stages} />
+      </ModuleLayout>
+    </StudentIdentityProvider>
   );
 }
