@@ -3,7 +3,6 @@ import { type JourneyStage } from "@/components/shared/ModuleJourney";
 import { StudentIdentityProvider } from "@/components/shared/StudentIdentityProvider";
 import { StudentIdentityGate } from "@/components/shared/StudentIdentityGate";
 import { M4GuidedAccessGate } from "@/components/shared/M4GuidedAccessGate";
-import { M4PresenterAccess } from "@/components/shared/M4PresenterAccess";
 import { M3PresentationProvider } from "@/components/shared/M3PresentationProvider";
 import { M3Journey, M3FollowControls } from "@/components/shared/M3GuidedJourney";
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
@@ -242,15 +241,7 @@ export default function M3Page() {
       label: "Format Laporan",
       icon: "verified",
       question: "Bagaimana hasil praktikum akan disusun dalam laporan?",
-      content: (
-        <>
-          <ReportFormatGuide />
-
-          {/* Presenter deck lives in the instructor-facing report-format stage so it does
-              not add chrome to the student's arrival. Students never start it. */}
-          <M4PresenterAccess stageLabels={M4_STAGE_LABELS} visibleStageIds={M4_VISIBLE_STAGE_IDS} />
-        </>
-      ),
+      content: <ReportFormatGuide />,
     },
   ];
 

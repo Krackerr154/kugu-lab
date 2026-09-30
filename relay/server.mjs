@@ -13,7 +13,12 @@ const safeId = (bytes) => randomBytes(bytes).toString("base64url");
 const nowIso = (ms) => new Date(ms).toISOString();
 
 function isOriginAllowed(origin, allowed) { return typeof origin === "string" && allowed.includes(origin); }
-function isLoopback(address) { return LOOPBACKS.has(address); }
+function isPrivateOrLoopback(address) {
+  if (!address) return false;
+  if (LOOPBACKS.has(address)) return true;
+  const clean = address.replace(/^::ffff:/, "");
+  return clean === "127.0.0.1" || clean === "localhost" || clean.startsWith("10.") || clean.startsWith("172.") || clean.startsWith("192.168.");
+}
 
 export function createRelay(options = {}) {
   const port = Number(options.port ?? process.env.PORT ?? 8787);
@@ -58,8 +63,14 @@ export function createRelay(options = {}) {
     }
     if (req.method === "POST" && req.url === "/internal/rooms") {
       const auth = req.headers.authorization || "";
-      if (!adminSecret || !isLoopback(req.socket.remoteAddress) || auth !== `Bearer ${adminSecret}`) { res.writeHead(403, { "cache-control": "no-store" }); res.end("forbidden"); return; }
+      if (!adminSecret || !isPrivateOrLoopback(req.socket.remoteAddress) || auth !== `Bearer ${adminSecret}`) { res.writeHead(403, { "cache-control": "no-store" }); res.end("forbidden"); return; }
       const room = issueRoom(); res.writeHead(201, { "content-type": "application/json", "cache-control": "no-store" }); res.end(JSON.stringify(room)); return;
+    }
+    if (req.method === "DELETE" && req.url.startsWith("/internal/rooms")) {
+      const auth = req.headers.authorization || "";
+      if (!adminSecret || !isPrivateOrLoopback(req.socket.remoteAddress) || auth !== `Bearer ${adminSecret}`) { res.writeHead(403, { "cache-control": "no-store" }); res.end("forbidden"); return; }
+      for (const [id, r] of rooms) { endRoom(r, "closed-by-api"); }
+      res.writeHead(200, { "content-type": "application/json", "cache-control": "no-store" }); res.end(JSON.stringify({ ok: true })); return;
     }
     res.writeHead(404, { "content-type": "text/plain" }); res.end("not found");
   });
@@ -77,7 +88,6 @@ export function createRelay(options = {}) {
     const connection = { ws, room: null, role: null, joined: false, closed: false, times: [] };
     const fail = (code) => send(ws, { t: "error", code });
     const rateLimited = () => { const cutoff = Date.now() - 10_000; connection.times = connection.times.filter((x) => x > cutoff); connection.times.push(Date.now()); return connection.times.length > maxMessages; };
-    const joinTimer = setTimeout(() => { if (!connection.joined) ws.close(1008, "join timeout"); }, 5_000); joinTimer.unref?.();
     ws.on("message", (data, isBinary) => {
       if (connection.closed || isBinary || rateLimited() || data.length > maxPayload) return;
       let input; try { input = JSON.parse(data.toString("utf8")); } catch { fail("invalid-message"); return; }
@@ -107,7 +117,7 @@ export function createRelay(options = {}) {
       }
     });
     ws.on("close", () => {
-      connection.closed = true; clearTimeout(joinTimer);
+      connection.closed = true;
       const room = connection.room; if (!room) return;
       room.clients.delete(ws);
       if (room.presenter === ws) { room.presenter = null; broadcast(room, presenceMessage(room, false)); }

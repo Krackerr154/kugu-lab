@@ -35,9 +35,13 @@ interface M3PresentationContextValue {
   roomId: string;
   presenterTicket: string;
   joinError: string | null;
-  setRoomId: (value: string) => void;
-  setPresenterTicket: (value: string) => void;
-  follow: () => void;
+  activeSession: { roomId: string; name: string; stageId: string } | null;
+  createSession: (name?: string) => Promise<{ ok: boolean; error?: string }>;
+  closeSession: () => Promise<void>;
+  refreshActiveSession: () => Promise<void>;
+  setRoomId: (id: string) => void;
+  setPresenterTicket: (ticket: string) => void;
+  follow: (targetRoomId?: string) => void;
   unfollow: () => void;
   rejoin: () => void;
   startPresenting: () => void;
@@ -65,6 +69,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
   const [roomId, setRoomId] = useState("");
   const [presenterTicket, setPresenterTicket] = useState("");
   const [joinError, setJoinError] = useState<string | null>(null);
+  const [activeSession, setActiveSession] = useState<{ roomId: string; name: string; stageId: string } | null>(null);
   const tokenRef = useRef(0);
   const clientIdRef = useRef("");
   const epochRef = useRef<string | null>(null);
@@ -73,6 +78,60 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
   const presenterSeqRef = useRef(0);
   const presenterStateRef = useRef<M3PresentationState>(INITIAL_STATE);
   const presenterPublishRef = useRef<(() => void) | null>(null);
+
+  const refreshActiveSession = useCallback(async () => {
+    try {
+      const res = await fetch("/api/m4-guided/session", { cache: "no-store" });
+      if (res.ok) {
+        const data = (await res.json()) as { active: boolean; session: { roomId: string; name: string; stageId: string } | null };
+        setActiveSession(data.active ? data.session : null);
+      }
+    } catch {
+      // ignore network errors
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshActiveSession();
+    const timer = window.setInterval(() => {
+      void refreshActiveSession();
+    }, 4000);
+    return () => window.clearInterval(timer);
+  }, [refreshActiveSession]);
+
+  const createSession = useCallback(async (name = "Sesi Praktikum KI3131") => {
+    try {
+      const res = await fetch("/api/m4-guided/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      const data = (await res.json()) as { ok: boolean; session?: { roomId: string; presenterTicket: string; name: string; stageId: string }; error?: string };
+      if (data.ok && data.session) {
+        setRoomId(data.session.roomId);
+        setPresenterTicket(data.session.presenterTicket);
+        setActiveSession({ roomId: data.session.roomId, name: data.session.name, stageId: data.session.stageId });
+        setJoinError(null);
+        setRole("presenting");
+        return { ok: true };
+      }
+      return { ok: false, error: data.error || "Gagal membuat sesi." };
+    } catch {
+      return { ok: false, error: "Terjadi kesalahan koneksi." };
+    }
+  }, []);
+
+  const closeSession = useCallback(async () => {
+    try {
+      await fetch("/api/m4-guided/session", { method: "DELETE" });
+    } catch {
+      // ignore
+    }
+    setActiveSession(null);
+    setRole("solo");
+    setStatus("solo");
+    setSnapshot(null);
+  }, []);
 
   const makeTransport = useCallback((config: PresentationTransportConfig) => {
     if (transportFactory) return transportFactory(config);
@@ -139,8 +198,10 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     };
   }, [makeTransport, presenterTicket, role, roomId]);
 
-  const follow = useCallback(() => {
-    if (relayMode && !roomId.trim()) { setJoinError("room-required"); return; }
+  const follow = useCallback((targetRoomId?: string) => {
+    const finalRoomId = (targetRoomId ?? roomId).trim();
+    if (targetRoomId) setRoomId(targetRoomId);
+    if (relayMode && !finalRoomId) { setJoinError("room-required"); return; }
     setJoinError(null); setEnded(false); setRole("following");
   }, [relayMode, roomId]);
   const unfollow = useCallback(() => { setRole("solo"); setStatus("solo"); setSnapshot(null); setNavRequest(null); setAgentRequest(null); setEnded(false); }, []);
@@ -159,7 +220,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
   }, []);
 
-  const value = useMemo(() => ({ role, status, snapshot, navRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay }), [role, status, snapshot, navRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay]);
+  const value = useMemo(() => ({ role, status, snapshot, navRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay }), [role, status, snapshot, navRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

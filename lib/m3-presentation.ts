@@ -121,8 +121,10 @@ export function createRelayTransport(options: RelayTransportOptions): Presentati
   let heartbeatTimer: number | null = null;
   const queue: RelayClientMessage[] = [];
   const emit = (message: TransportMessage) => listeners.forEach((listener) => listener(message));
+  let lastError: string | null = null;
   const connect = () => {
     if (closed) return;
+    lastError = null;
     socket = new WebSocket(options.url);
     socket.addEventListener("open", () => {
       opened = true;
@@ -130,9 +132,32 @@ export function createRelayTransport(options: RelayTransportOptions): Presentati
       for (const message of queue.splice(0)) socket?.send(JSON.stringify(message));
       heartbeatTimer = window.setInterval(() => { if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ t: "ping" })); }, 30_000);
     });
-    socket.addEventListener("message", (event) => { try { const message = coerceRelayServerMessage(JSON.parse(String(event.data))); if (message) emit(message); } catch { emit({ t: "error", code: "invalid-server-message" }); } });
-    socket.addEventListener("error", () => emit({ t: "error", code: "disconnected" }));
-    socket.addEventListener("close", () => { opened = false; if (heartbeatTimer !== null) window.clearInterval(heartbeatTimer); heartbeatTimer = null; if (!closed) { emit({ t: "error", code: "disconnected" }); if (options.reconnect !== false) reconnectTimer = window.setTimeout(connect, 1_000); } });
+    socket.addEventListener("message", (event) => {
+      try {
+        const message = coerceRelayServerMessage(JSON.parse(String(event.data)));
+        if (message) {
+          if (message.t === "error") lastError = message.code;
+          emit(message);
+        }
+      } catch {
+        emit({ t: "error", code: "invalid-server-message" });
+      }
+    });
+    socket.addEventListener("error", () => {
+      if (!lastError) emit({ t: "error", code: "disconnected" });
+    });
+    socket.addEventListener("close", (event) => {
+      opened = false;
+      if (heartbeatTimer !== null) window.clearInterval(heartbeatTimer);
+      heartbeatTimer = null;
+      if (!closed) {
+        const code = lastError || event.reason || "disconnected";
+        emit({ t: "error", code });
+        if (options.reconnect !== false && code !== "room-not-found" && code !== "unauthorized") {
+          reconnectTimer = window.setTimeout(connect, 1_000);
+        }
+      }
+    });
   };
   connect();
   return {

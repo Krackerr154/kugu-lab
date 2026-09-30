@@ -13,6 +13,8 @@ services:
     environment:
       M4_GUIDED_ACCESS_CODE: "${M4_GUIDED_ACCESS_CODE}"
       M4_GUIDED_ORIGIN: "${M4_GUIDED_ORIGIN:-https://kugu.g-labs.my.id}"
+      ADMIN_SECRET: "${ADMIN_SECRET}"
+      RELAY_INTERNAL_URL: "http://kugu-m3-relay:8787"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
       interval: 30s

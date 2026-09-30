@@ -11,6 +11,7 @@ export interface GuidedAccessServiceOptions {
   getOrigin?: (request: Request) => string;
   secureCookies?: boolean;
   now?: () => number;
+  sessions?: Map<string, Session>;
 }
 
 interface Session {
@@ -49,12 +50,14 @@ const serializeCookie = (value: string, secure: boolean, maxAge: number) => [
   ...(secure ? ["Secure"] : []),
 ].join("; ");
 
+const globalSessions = new Map<string, Session>();
+
 export function createGuidedAccessService(options: GuidedAccessServiceOptions = {}) {
   const getCode = options.getCode ?? (() => process.env.M4_GUIDED_ACCESS_CODE ?? "");
   const getOrigin = options.getOrigin ?? ((request: Request) => new URL(request.url).origin);
   const secureCookies = options.secureCookies ?? process.env.NODE_ENV === "production";
   const now = options.now ?? (() => Date.now());
-  const sessions = new Map<string, Session>();
+  const sessions = options.sessions ?? globalSessions;
   let failedAttempts = 0;
   let throttleUntil = 0;
 
@@ -142,3 +145,19 @@ export function createGuidedAccessService(options: GuidedAccessServiceOptions = 
 }
 
 export const guidedAccessCookieName = COOKIE_NAME;
+
+export function isInstructorAuthenticated(
+  request: Request,
+  options: { getCode?: () => string; now?: () => number; sessions?: Map<string, Session> } = {}
+): boolean {
+  const getCode = options.getCode ?? (() => process.env.M4_GUIDED_ACCESS_CODE ?? "");
+  const configuredCode = getCode();
+  if (!configuredCode) return false;
+  const time = (options.now ?? (() => Date.now()))();
+  const token = cookieValue(request);
+  if (!token) return false;
+  const sessions = options.sessions ?? globalSessions;
+  const session = sessions.get(token);
+  if (!session || session.expiresAt <= time || !sameText(session.code, configuredCode)) return false;
+  return true;
+}
