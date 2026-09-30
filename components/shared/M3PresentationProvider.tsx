@@ -101,9 +101,14 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
 
   useEffect(() => {
     if (role === "following" && !activeSession) {
-      unfollow();
+      setRole("solo");
+      setStatus("solo");
+      setSnapshot(null);
+      setNavRequest(null);
+      setAgentRequest(null);
+      setEnded(false);
     }
-  }, [activeSession, role, unfollow]);
+  }, [activeSession, role]);
 
   const createSession = useCallback(async (name = "Sesi Praktikum KI3131") => {
     try {
