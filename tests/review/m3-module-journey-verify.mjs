@@ -1,14 +1,13 @@
-// Verify the M3 module Brief/Understand/Rehearse/Prove/Ready restructure:
-//  (A) five staged sections + sticky rail with scroll-spy and click-to-scroll
-//  (B) Rehearse bench checklist: correct anode (battery graphite) & resin cure,
-//      hold points, and localStorage persistence
+// Verify the M4 module purpose/discussion/data/report restructure:
+//  (A) four staged sections + sticky rail with scroll-spy and click-to-scroll
+//  (B) Data-processing formulas, interpretation, and checklist removal
 //  (C) Ready summary separates digital prep from instructor-only confirmation
 //  (D) no console errors, no horizontal overflow
 import { chromium, expect } from "@playwright/test";
 
-const URL = "http://localhost:3000/modules/m3-sn-bi-electrodeposition";
+const URL = "http://localhost:3000/modules/m4-sn-bi-electrodeposition";
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1200 }, storageState: "tests/e2e/m4-guest-state.json" });
 
 const consoleErrors = [];
 page.on("console", (m) => { if (m.type() === "error") consoleErrors.push(m.text()); });
@@ -24,27 +23,27 @@ const check = (ok, label, detail = "") => {
 };
 
 // ---------- (A) staged journey ----------
-console.log("\n[A] Five-stage journey + rail");
+console.log("\n[A] Four-stage journey + rail");
 const stages = await page.evaluate(() =>
-  ["brief", "understand", "rehearse", "prove", "ready"].map((id) => {
+  ["brief", "understand", "prove", "ready"].map((id) => {
     const el = document.getElementById(id);
     return { id, present: !!el, heading: el?.querySelector("h2")?.innerText.trim() ?? null };
   })
 );
 console.log("   stages:", JSON.stringify(stages.map((s) => `${s.id}:${s.heading}`)));
-check(stages.every((s) => s.present), "all five stage sections render");
+check(stages.every((s) => s.present), "all four stage sections render");
 check(
-  stages.map((s) => s.heading).join(",") === "Tinjauan,Pahami,Latih,Buktikan,Siap",
-  "stage headings are Tinjauan/Pahami/Latih/Buktikan/Siap"
+  stages.map((s) => s.heading).join(",") === "Tujuan Praktikum,Pembahasan,Pengolahan Data,Format Laporan",
+  "stage headings are Tujuan Praktikum/Pembahasan/Pengolahan Data/Format Laporan"
 );
 
 const rail = page.locator('nav[aria-label="Tahap persiapan modul"]');
 check((await rail.count()) === 1, "sticky stage rail present");
 const railBtns = await rail.getByRole("button").count();
-check(railBtns === 5, "rail has five step buttons", `${railBtns}`);
+check(railBtns === 4, "rail has four step buttons", `${railBtns}`);
 
-// Click "Buktikan" -> scrolls prove into view + marks aria-current=step
-await rail.getByRole("button", { name: /buktikan/i }).click();
+// Click "Pengolahan Data" -> scrolls prove into view + marks aria-current=step
+await rail.getByRole("button", { name: /pengolahan data/i }).click();
 await expect.poll(() => page.locator("#prove").evaluate((el) =>
   Math.abs(el.getBoundingClientRect().top - parseFloat(getComputedStyle(el).scrollMarginTop))
 )).toBeLessThanOrEqual(2);
@@ -55,7 +54,7 @@ const afterClick = await page.evaluate(() => {
   return { proveTop: Math.round(prove.top), activeLabel: active?.innerText.replace(/\s+/g, " ").trim() ?? "none" };
 });
 check(afterClick.proveTop < 320 && afterClick.proveTop > -60, "clicking a rail step scrolls that stage into view", `top=${afterClick.proveTop}`);
-check(/BUKTIKAN/.test(afterClick.activeLabel), "clicked step becomes aria-current=step", afterClick.activeLabel);
+check(/PENGOLAHAN DATA/.test(afterClick.activeLabel), "clicked step becomes aria-current=step", afterClick.activeLabel);
 
 // Scroll-spy: jump to Ready, rail should follow
 await page.evaluate(() => document.getElementById("ready").scrollIntoView({ block: "start" }));
@@ -65,48 +64,29 @@ const spy = await page.evaluate(() => {
     .find((b) => b.getAttribute("aria-current") === "step");
   return active?.innerText.replace(/\s+/g, " ").trim() ?? "none";
 });
-check(/SIAP/.test(spy), "scroll-spy activates the Ready step when it enters view", spy);
+check(/FORMAT LAPORAN/.test(spy), "scroll-spy activates the report-format step when it enters view", spy);
 
-// ---------- (B) Rehearse bench checklist ----------
-console.log("\n[B] Rehearse bench checklist — correct facts + persistence");
-const rehearse = page.locator("#rehearse");
-const benchText = await rehearse.innerText();
-check(/grafit/i.test(benchText) && /baterai bekas/i.test(benchText),
-  "anode is battery graphite (not the old 'Sn/Bi atau inert' error)");
-check(/2 . 24 jam|2 × 24 jam|2 x 24 jam/i.test(benchText.replace(/\u00d7/g, "x")),
-  "resin cure 2×24 jam is present (the cross-session fact)");
-check(/CR-06/.test(benchText), "battery disassembly flagged as CR-06 blocker");
-check(/14,5 mA\/cm(²|2)/.test(benchText), "electrodeposition protocol 14,5 mA/cm² present");
-check(/mirror polishing|200 . 500 . 800 . 1000|200|1000 mesh/i.test(benchText), "mesh polishing sequence present");
+// ---------- (B) Data-processing formulas ----------
+console.log("\n[B] Data-processing formulas and interpretation");
+const prove = page.locator("#prove");
+const benchText = await prove.innerText();
+check(await prove.locator("[data-m4-data-formulas]").count() === 1, "formula block is present in Pengolahan Data");
+const equationLabels = await prove.locator("[data-m4-data-formulas] [aria-label]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("aria-label")));
+check(equationLabels.some((label) => /Q = I/.test(label ?? "")), "charge formula is rendered");
+check(equationLabels.some((label) => /m_\{teoretis\}/.test(label ?? "")), "theoretical-mass formula is rendered");
+check(equationLabels.some((label) => /eta|m_\{aktual\}/i.test(label ?? "")), "current-efficiency formula is rendered");
+check(/Mengapa perlu dibandingkan|H\+|H₂|H_2/i.test(benchText), "reason for efficiency comparison is explained");
+check(/Batas asumsi Sn|komposisi Sn:Bi/i.test(benchText), "Sn:Bi assumption boundary is explained");
+check(await prove.locator('input[type="checkbox"]').count() === 0, "bench checklist session is removed from Pengolahan Data");
 
-const holdPoints = await rehearse.evaluate((el) =>
-  [...el.querySelectorAll("*")].filter((n) => /Hold Point/.test(n.textContent) && n.children.length <= 2).length
-);
-check(holdPoints >= 5, "multiple hold points marked", `${holdPoints}`);
-
-// localStorage persistence: tick the first box, reload, it stays.
-const firstBox = rehearse.locator('input[type="checkbox"]').first();
-await firstBox.scrollIntoViewIfNeeded();
-await firstBox.check();
-await page.waitForTimeout(300);
-const stored = await page.evaluate(() => localStorage.getItem("m3-bench-checklist"));
-check(stored && JSON.parse(stored).length >= 1, "checked item written to localStorage", stored || "null");
-await page.reload({ waitUntil: "networkidle" });
-await page.waitForTimeout(600);
-const persisted = await page.locator("#rehearse").locator('input[type="checkbox"]:checked').count();
-check(persisted >= 1, "checked item survives reload", `${persisted} checked`);
-// Clean up so re-runs start fresh.
-await page.evaluate(() => localStorage.removeItem("m3-bench-checklist"));
-
-// ---------- (C) Ready summary ----------
-console.log("\n[C] Ready = honest readiness split");
+// ---------- (C) Ready placeholder ----------
+console.log("\n[C] Ready = report-format placeholder only");
 const ready = page.locator("#ready");
 const readyText = await ready.innerText();
-check(/Persiapan digital/i.test(readyText), "digital-preparation column present");
-check(/Wajib konfirmasi asisten/i.test(readyText), "instructor-confirmation column present");
-check(/persiapan digital.*bukan|bukan.*berwenang|tidak menggantikan SOP/is.test(readyText),
-  "boundary states digital prep is not authorization");
-check(/CR-06|baterai bekas/.test(readyText), "instructor column carries the battery blocker");
+check(await ready.locator("[data-report-format-placeholder]").count() === 1, "report-format placeholder remains");
+check(!/Persiapan digital|Wajib konfirmasi asisten|Log Elektrodeposisi M4|Menyelesaikan tahap-tahap di atas/i.test(readyText),
+  "removed readiness and M4 log content is absent");
+check(!/CR-06|baterai bekas/i.test(readyText), "obsolete battery language remains absent");
 
 // ---------- (D) layout ----------
 console.log("\n[D] Layout");

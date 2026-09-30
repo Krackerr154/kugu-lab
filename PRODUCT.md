@@ -24,7 +24,7 @@ Inferred from the repository: KUGU Lab is a guided pre-lab preparation workspace
 
 ## Operating Context
 
-Inferred from the repository: students use KUGU Lab while preparing for six inorganic chemistry practicum modules. The workflow connects qualitative reaction observations, material synthesis, electrodeposition, zeolite synthesis, XRD, TGA, notebook records, data analysis, and report preparation.
+Inferred from the repository: students use KUGU Lab while preparing for seven inorganic chemistry practicum modules. The revised workflow connects Al-Fum MOF, zeolite FAU, SnO₂, Sn–Bi electrodeposition, XRD, FTIR/TGA, BET, notebook records, data analysis, and report preparation.
 
 The product is used alongside the practicum manual, SOPs, SDS documents, instructor decisions, and physical laboratory work. The application currently stores notebook and preparation state locally in the browser through localStorage.
 
@@ -32,7 +32,7 @@ The product is used alongside the practicum manual, SOPs, SDS documents, instruc
 
 Inferred from the repository:
 
-- Six module routes are available: M1 reactions, M2 Mg2SnO4, M3 Sn-Bi electrodeposition, M4 zeolite FAU, M5 XRD, and M6 TGA.
+- Seven revised module slots are visible: M1 Al-Fum MOF, M2 zeolite FAU, M3 SnO₂, M4 Sn-Bi electrodeposition, M5 XRD, M6 FTIR/TGA, and M7 BET. Legacy M1 reactions and M2 Mg2SnO4 routes remain directly accessible but are hidden from the active catalog.
 - The application provides pre-lab pages, module pages, interactive chemistry workspaces, procedure walkthroughs, structured lab notebooks, report checklists, data-analysis resources, safety/reference material, and an instructor room.
 - Existing chemistry notation, interactive logic, safety boundaries, instructor-review warnings, and routes are durable product behavior to preserve during future UI work.
 - Digital completion is preparation progress only. It must not imply authorization to work independently or replace physical technique, SOPs, SDS documents, or instructor judgment.
@@ -41,7 +41,7 @@ Inferred from the repository:
 
 ## Evidence on Hand
 
-Repository evidence includes the six module routes under `app/modules/`, pre-lab routes under `app/prelab/`, shared interactive and notebook components under `components/`, module and conflict data under `lib/`, and the product direction documented in `UI_REBUILD_PLAN.md`.
+Repository evidence includes the seven visible module slots and legacy compatibility routes under `app/modules/`, pre-lab routes under `app/prelab/`, shared interactive and notebook components under `components/`, module and conflict data under `lib/`, and the product direction documented in `UI_REBUILD_PLAN.md`.
 
 The repository references the Penuntun Praktikum Anorganik KI3131, FMIPA ITB, Semester 1 2025/2026. It also explicitly states that KUGU Lab is not a replacement for SOPs, SDS, instructor decisions, or physical laboratory work.
 

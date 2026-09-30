@@ -13,6 +13,7 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:3000",
     trace: "off",
+    storageState: "tests/e2e/m4-guest-state.json",
   },
   projects: [
     {

@@ -6,7 +6,7 @@ import { chromium } from "@playwright/test";
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-await page.goto("http://localhost:3000/modules/m3-sn-bi-electrodeposition", { waitUntil: "networkidle" });
+await page.goto("http://localhost:3000/modules/m4-sn-bi-electrodeposition", { waitUntil: "networkidle" });
 await page.waitForTimeout(600);
 
 // 1. Default operating point vs the manual's 14.5 mA/cm2.

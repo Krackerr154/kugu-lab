@@ -1,4 +1,4 @@
-// ElectrolytePrepWorksheet — M3 Larutan A/B/C preparation worksheet.
+// ElectrolytePrepWorksheet — M4 Larutan A/B/C preparation worksheet.
 //
 // Three jobs the module page could not do:
 //  1. State the concentration BASIS explicitly. The manual's table is ambiguous
@@ -67,7 +67,7 @@ export function ElectrolytePrepWorksheet() {
         </div>
         <p className="text-sm text-[var(--on-surface-variant)]">
           Tiga larutan (A, B, C) dibuat terpisah lalu digabung dengan urutan tertentu hingga volume
-          akhir {FINAL_VOLUME_ML} mL, pH {TARGET_PH}. Sumber: Penuntun Praktikum KI3131, Modul 3,
+          akhir {FINAL_VOLUME_ML} mL, pH {TARGET_PH}. Sumber: Shared_Modul KUGU, Modul 4,
           halaman 22.
         </p>
       </div>

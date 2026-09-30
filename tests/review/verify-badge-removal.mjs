@@ -7,7 +7,7 @@ const BASE = "http://localhost:3000";
 const ROUTES = [
   "/modules/m1-reactions",
   "/modules/m2-mg2sno4",
-  "/modules/m3-sn-bi-electrodeposition",
+  "/modules/m4-sn-bi-electrodeposition",
   "/modules/m4-zeolite-fau",
   "/modules/m5-xrd",
   "/modules/m6-tga",

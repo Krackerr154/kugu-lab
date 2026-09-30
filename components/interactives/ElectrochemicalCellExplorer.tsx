@@ -8,20 +8,8 @@
 import { useState } from "react";
 import { Equation } from "@/components/shared/Equation";
 import { ChemText } from "@/components/shared/ChemText";
-import { PredictionPrompt } from "@/components/shared/PredictionPrompt";
 import { CodepositionWorkbench } from "@/components/interactives/CodepositionWorkbench";
 import { CELL_COMPONENTS, type ComponentKey } from "@/lib/m3-cell-components";
-
-// Potentials plotted on a shared axis so the ~0,45 V gap is visible, not just stated.
-const POTENTIAL_SCALE = { min: -0.3, max: 0.5 };
-const POTENTIAL_ROWS = [
-  { label: "Bi³⁺/Bi", value: 0.31, tone: "var(--chart-gold)", caption: "Paling mudah tereduksi — mengendap lebih dulu" },
-  { label: "H⁺/H₂", value: 0.0, tone: "var(--outline)", caption: "Reaksi samping yang menggerus efisiensi arus" },
-  { label: "Sn²⁺/Sn", value: -0.14, tone: "var(--chart-navy)", caption: "Perlu potensial lebih negatif" },
-];
-
-const potentialToPercent = (v: number) =>
-  ((v - POTENTIAL_SCALE.min) / (POTENTIAL_SCALE.max - POTENTIAL_SCALE.min)) * 100;
 
 export function ElectrochemicalCellExplorer() {
   const [selected, setSelected] = useState<ComponentKey | null>(null);
@@ -50,15 +38,9 @@ export function ElectrochemicalCellExplorer() {
     <div className="space-y-4">
       <CodepositionWorkbench selected={selected} hotspot={hotspot} />
 
-      <p className="text-center text-xs text-[var(--on-surface-variant)]">
-        Elektron mengalir dari anoda → sumber DC → katoda. Arus konvensional berlawanan arah dengan aliran
-        elektron. Gelembung di katoda adalah <ChemText>{"H_{2}"}</ChemText> — arus yang terpakai tanpa
-        menambah massa deposit. Gunakan Tab lalu Enter untuk memilih komponen tanpa mouse.
-      </p>
-
       {/* Selected component detail */}
       {detail ? (
-        <div className="rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-4">
+        <div key={selected} className="m4-motion-enter rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-4">
           <p className="font-bold text-[var(--primary)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
             {detail.name}
           </p>
@@ -91,65 +73,7 @@ export function ElectrochemicalCellExplorer() {
             </p>
           )}
         </div>
-      ) : (
-        <p className="text-center text-sm text-[var(--on-surface-variant)]">
-          Pilih komponen pada diagram untuk melihat penjelasan dan setengah-reaksinya.
-        </p>
-      )}
-
-      {/* Reduction potential comparison — the core concept of this module */}
-      <section className="rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-4">
-        <h4 className="font-bold text-[var(--primary)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-          Mengapa Kodeposisi Sn-Bi Sulit
-        </h4>
-        <p className="mt-1 text-sm text-[var(--on-surface-variant)]">
-          Bandingkan potensial reduksi standar ketiga reaksi katoda pada satu sumbu yang sama.
-        </p>
-
-        <div className="mt-4 space-y-3">
-          {POTENTIAL_ROWS.map((row) => (
-            <div key={row.label}>
-              <div className="flex items-baseline justify-between text-xs">
-                <span className="font-semibold text-[var(--on-surface)]">{row.label}</span>
-                <span className="font-mono font-bold text-[var(--on-surface)]">
-                  {row.value > 0 ? "+" : ""}{row.value.toFixed(2)} V
-                </span>
-              </div>
-              <div className="mt-1 h-2.5 rounded-full bg-[var(--surface-container-high)]">
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: `${potentialToPercent(row.value)}%`, background: row.tone }}
-                />
-              </div>
-              <p className="mt-1 text-[11px] text-[var(--on-surface-variant)]">{row.caption}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-4 rounded-lg bg-[var(--surface-container-low)] p-3">
-          <p className="text-sm text-[var(--on-surface)]">
-            Selisih <strong>≈ 0,45 V</strong> antara Bi³⁺/Bi dan Sn²⁺/Sn berarti bismut tereduksi jauh lebih dulu.
-            Tanpa intervensi, hasilnya lapisan kaya bismut yang tidak seragam — bukan paduan.
-          </p>
-          <p className="mt-2 text-sm text-[var(--on-surface-variant)]">
-            Karena itu elektrolit memakai agen pengompleks: EDTA dan asam sitrat mengikat ion logam sehingga
-            potensial deposisi efektifnya bergeser dan kedua logam dapat mengendap bersamaan (kodeposisi).
-            PEG400 bekerja pada morfologi permukaan deposit.
-          </p>
-          <p className="mt-2 text-xs italic text-[var(--on-surface-variant)]">
-            Nilai di atas adalah potensial <em>standar</em> (1 M, 25 °C, vs SHE). Potensial deposisi sebenarnya di
-            elektrolit ini bergeser karena kompleksasi dan konsentrasi — justru itulah mekanisme yang dimanfaatkan.
-          </p>
-        </div>
-      </section>
-
-      {/* Predict before reveal */}
-      <PredictionPrompt
-        question="Berdasarkan potensial reduksi standar, logam mana yang akan mengendap lebih dulu di katoda, dan mengapa hal itu menjadi masalah untuk membuat paduan Sn-Bi?"
-        predictionHint="Bandingkan E° Bi^{3+}/Bi dengan E° Sn^{2+}/Sn, lalu pikirkan komposisi lapisan yang terbentuk..."
-        revealText="Bismut mengendap lebih dulu, karena E° Bi^{3+}/Bi = +0,31 V jauh lebih positif daripada E° Sn^{2+}/Sn = −0,14 V."
-        explanation="Spesi dengan potensial reduksi lebih positif lebih mudah menerima elektron. Pada potensial katoda yang cukup untuk mereduksi Bi^{3+}, timah belum tereduksi sama sekali, sehingga deposit awal hampir seluruhnya bismut dan komposisi paduan tidak seragam sepanjang ketebalan lapisan. Agen pengompleks (EDTA, asam sitrat) mengikat ion logam dan menggeser potensial deposisi efektifnya sehingga kedua logam dapat mengendap pada rentang potensial yang berdekatan — inilah yang disebut kodeposisi. Sebagai reaksi samping, H^{+} pada pH ~2 juga dapat tereduksi menjadi gas H_{2}, memakai arus tanpa menambah massa deposit dan menurunkan efisiensi arus."
-      />
+      ) : null}
     </div>
   );
 }

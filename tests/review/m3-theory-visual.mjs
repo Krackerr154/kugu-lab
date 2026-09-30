@@ -5,7 +5,7 @@
 import { chromium } from "@playwright/test";
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1200 }, storageState: "tests/e2e/m4-guest-state.json" });
 
 const consoleErrors = [];
 page.on("console", (m) => { if (m.type() === "error") consoleErrors.push(m.text()); });
@@ -17,7 +17,7 @@ const check = (ok, label, detail = "") => {
   if (!ok) fails++;
 };
 
-await page.goto("http://localhost:3000/modules/m3-sn-bi-electrodeposition", { waitUntil: "networkidle" });
+await page.goto("http://localhost:3000/modules/m4-sn-bi-electrodeposition", { waitUntil: "networkidle" });
 await page.waitForTimeout(700);
 
 const understand = page.locator("#understand");
@@ -48,12 +48,17 @@ check(emoji === 0, "no emoji-as-icon in Understand", `${emoji} found`);
 // ---------- three concept blocks ----------
 console.log("\n[2] Three theory concept blocks");
 const h3s = await understand.evaluate((el) =>
-  [...el.querySelectorAll("h3")].map((h) => h.innerText.replace(/\s+/g, " ").trim())
+  [...el.querySelectorAll("h3, h4, h5")].map((h) => h.innerText.replace(/\s+/g, " ").trim())
 );
-console.log("   h3:", JSON.stringify(h3s));
+console.log("   headings:", JSON.stringify(h3s));
 check(h3s.some((h) => /Mengapa paduan/i.test(h)), "concept: why an alloy + how deposition works");
-check(h3s.some((h) => /Peta sel/i.test(h)), "concept: cell map + potential gap");
-check(h3s.some((h) => /agen pengompleks/i.test(h)), "concept: complexing agents");
+check(h3s.some((h) => /Tantangan Beda Potensial/i.test(h)), "concept: potential-gap challenge");
+check(h3s.some((h) => /agen pengompleks/i.test(h)), "concept: complexing agents integrated");
+
+const potentialDiagram = understand.locator("[data-potential-gap-diagram]");
+check(await potentialDiagram.count() === 1, "potential-gap diagram is present directly in the challenge concept");
+check(/Bi.*0,31.*Sn.*0,14.*0,45.*EDTA.*sitrat/i.test(await potentialDiagram.locator("[role=img]").getAttribute("aria-label") ?? ""),
+  "diagram exposes Sn/Bi potentials, gap, and complexing-agent mechanism");
 
 // ---------- chemistry content preserved ----------
 console.log("\n[3] Chemistry matches the manual");

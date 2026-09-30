@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { modules } from "@/lib/modules";
+import { visibleModules } from "@/lib/modules";
 import { ChemText } from "@/components/shared/ChemText";
 
 export default function PrelabPage() {
@@ -58,7 +58,7 @@ export default function PrelabPage() {
               <span aria-hidden="true" className="material-symbols-outlined text-[var(--success)] text-lg">task_alt</span>
               <p className="font-bold text-sm text-[var(--on-surface)]">Setelah Lab</p>
             </div>
-            <p className="text-sm text-[var(--on-surface-variant)]">Submit laporan pendek hari itu, siapkan laporan penuh bergiliran, gunakan M5/M6 untuk interpretasi data sintesis sebelumnya.</p>
+            <p className="text-sm text-[var(--on-surface-variant)]">Submit laporan pendek hari itu, siapkan laporan penuh bergiliran, gunakan M5–M7 untuk interpretasi data sintesis sebelumnya.</p>
           </div>
         </div>
       </section>
@@ -75,8 +75,8 @@ export default function PrelabPage() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {modules.map((m) => {
-            const hasWalkthrough = m.id === "m1" || m.id === "m2" || m.id === "m3";
+          {visibleModules.map((m) => {
+            const hasWalkthrough = m.hasWalkthrough === true;
             const walkthroughRoute = `/prelab/${m.slug}`;
 
             return (

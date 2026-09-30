@@ -32,9 +32,9 @@ export const CELL_COMPONENTS: Record<ComponentKey, CellComponent> = {
       "Sel ini elektrolitik, bukan galvanik: energi listrik dipasok dari luar, sehingga tanda potensial sel keseluruhan negatif secara termodinamika.",
   },
   anode: {
-    name: "Anoda (+) — grafit",
+    name: "Anoda (+) — elektroda karbon",
     description:
-      "Elektroda tempat oksidasi berlangsung. Modul ini memakai grafit, yaitu elektroda yang relatif inert, sehingga yang teroksidasi adalah spesi dalam larutan, bukan elektrodanya sendiri.",
+      "Elektroda karbon yang disediakan laboratorium, tempat oksidasi berlangsung. Karbon relatif inert sehingga yang teroksidasi adalah spesi dalam larutan, bukan elektrodanya sendiri.",
     halfReactions: [
       {
         tex: "2\\text{H}_2\\text{O}(l) \\rightarrow \\text{O}_2(g) + 4\\text{H}^+(aq) + 4e^-",
@@ -48,7 +48,7 @@ export const CELL_COMPONENTS: Record<ComponentKey, CellComponent> = {
   cathode: {
     name: "Katoda (−) — plat tembaga",
     description:
-      "Elektroda tempat reduksi berlangsung. Ion Sn²⁺ dan Bi³⁺ menerima elektron dan mengendap sebagai logam, sehingga massa katoda bertambah. Substrat tembaga tidak ikut terdeposisi — ia hanya permukaan tempat paduan menempel.",
+      "Elektroda tempat reduksi berlangsung. Ion Sn²⁺ dan Bi³⁺ menerima elektron dan mengendap sebagai logam padat, sehingga massa katoda bertambah. Substrat tembaga tidak ikut mengalami reduksi — tembaga bertindak sebagai konduktor dan permukaan tempat paduan Sn–Bi menempel.",
     halfReactions: [
       {
         tex: "\\text{Bi}^{3+}(aq) + 3e^- \\rightarrow \\text{Bi}(s)",
@@ -67,7 +67,7 @@ export const CELL_COMPONENTS: Record<ComponentKey, CellComponent> = {
       },
     ],
     note:
-      "Evolusi H₂ memakai sebagian arus tanpa menambah massa deposit. Inilah salah satu penyebab utama efisiensi arus < 100% pada kalkulator di bawah.",
+      "Evolusi H₂ mengonsumsi sebagian arus listrik tanpa menghasilkan massa deposit. Hal ini menjadi penyebab utama mengapa efisiensi arus praktikum sering bernilai di bawah 100%.",
   },
   electrolyte: {
     name: "Elektrolit (Larutan A + B + C, pH ~2)",

@@ -9,7 +9,7 @@ import { ChemText } from "@/components/shared/ChemText";
 import { getModule } from "@/lib/modules";
 
 export default function M4Page() {
-  const module = getModule("m4-zeolite-fau")!;
+  const module = getModule("m2-zeolite-fau")!;
 
   return (
       <ModuleLayout module={module}>
@@ -25,7 +25,7 @@ export default function M4Page() {
       </section>
 
       <div className="mt-4">
-        <h2 className="mb-2 text-lg font-bold">Interaktif Modul 4</h2>
+        <h2 className="mb-2 text-lg font-bold">Interaktif Modul 2</h2>
         <ZeoliteWorkspace />
       </div>
 
@@ -44,12 +44,12 @@ export default function M4Page() {
           { id: 5, title: "Observasi Tyndall", detail: "Periksa efek Tyndall untuk indikasi pembentukan partikel/koloid." },
           { id: 6, title: "Isolasi produk", detail: "Filtrasi Büchner, cuci dengan air dan NaOH encer sesuai protokol.", holdPoint: true },
           { id: 7, title: "Pengeringan", detail: "Keringkan pada ~110-125°C selama 4-5 jam. Timbang produk." },
-          { id: 8, title: "Handoff karakterisasi", detail: "Buat ID sampel unik. Siapkan untuk XRD (M5) dan TGA (M6)." },
+          { id: 8, title: "Handoff karakterisasi", detail: "Buat ID sampel unik. Siapkan untuk XRD (M5) dan BET (M7)." },
         ]} />
       </div>
 
       <div className="mt-4">
-        <LabNotebook title="Log Sintesis M4" storageKey="m4-notebook" fields={[
+        <LabNotebook title="Log Sintesis M2" storageKey="m4-notebook" fields={[
           { id: "sample_id", label: "ID Sampel", type: "text" },
           { id: "precursors", label: "Massa/volume prekursor aktual", type: "textarea", placeholder: "NaOH, NaAlO2, SiO2, H2O..." },
           { id: "si_al", label: "Rasio Si/Al", type: "number" },
@@ -64,13 +64,13 @@ export default function M4Page() {
 
       <div className="mt-4">
         <ReportChecklist
-          title="Kisi-Kisi Laporan M4"
+          title="Kisi-Kisi Laporan M2"
           items={[
             { label: "Prinsip sintesis hidrotermal" },
             { label: "Manfaat metode hidrotermal" },
             { label: "Penalaran prekursor ke produk" },
             { label: "Bukti kristalisasi (observasi + XRD)" },
-            { label: "Rencana hasil XRD/TGA" },
+            { label: "Rencana hasil XRD/BET" },
           ]}
         />
       </div>

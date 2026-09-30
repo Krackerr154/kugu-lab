@@ -7,7 +7,7 @@ import {
   type M3PresentationState,
 } from "../../lib/m3-presentation";
 
-const route = "/modules/m3-sn-bi-electrodeposition";
+const route = "/modules/m4-sn-bi-electrodeposition";
 
 // ── Pure contract validation (no browser) ───────────────────────────────────
 test("presentation state validator accepts allowlisted shapes and rejects the rest", () => {
@@ -82,7 +82,7 @@ test("a follower applies presenter stage + demo-agent snapshots; a solo tab is u
 
   await expect.poll(async () => follower.locator("#understand").evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeLessThan(300);
   await expect(follower.getByRole("button", { name: "Sorot agen PEG400", exact: true })).toHaveAttribute("aria-pressed", "true");
-  await expect(follower.getByText("· tahap Pahami")).toBeVisible();
+  await expect(follower.getByText("· tahap Pembahasan")).toBeVisible();
 
   expect(await solo.locator("#brief").evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeGreaterThan(-50);
   await expect(solo.getByRole("button", { name: "Sorot agen PEG400", exact: true })).toHaveAttribute("aria-pressed", "false");
@@ -115,17 +115,14 @@ test("a follower rejects a stale/duplicate sequence and reloads a snapshot on ep
   await page.close();
 });
 
-test("leaving follow mode stops remote navigation and preserves the student's own work", async ({ context }) => {
+test("leaving follow mode stops remote navigation and preserves private local storage", async ({ context }) => {
   const page = await context.newPage();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(route);
 
   await page.getByPlaceholder("10524xxx").fill("10524055");
   await page.getByRole("button", { name: "Simpan", exact: true }).click();
-  const box = page.locator("#rehearse").locator('input[type="checkbox"]').first();
-  await box.scrollIntoViewIfNeeded();
-  await box.check();
-  await expect(box).toBeChecked();
+  await page.evaluate(() => localStorage.setItem("m3-notebook::nim-10524055", JSON.stringify({ sample_id: "M4-follow" })));
 
   await page.getByRole("button", { name: "Ikuti presentasi", exact: true }).click();
   await publishState(page, { epoch: "e1", seq: 1, state: { version: 1, stageId: "ready" } });
@@ -139,8 +136,7 @@ test("leaving follow mode stops remote navigation and preserves the student's ow
   await page.waitForTimeout(400);
   expect(await page.evaluate(() => window.scrollY)).toBeCloseTo(before, -1);
 
-  const stillChecked = await page.locator("#rehearse").locator('input[type="checkbox"]:checked').count();
-  expect(stillChecked).toBeGreaterThanOrEqual(1);
+  expect(await page.evaluate(() => localStorage.getItem("m3-notebook::nim-10524055"))).toBe(JSON.stringify({ sample_id: "M4-follow" }));
   await page.close();
 });
 
@@ -183,7 +179,7 @@ test("presenter deck publishes stage + overlay to a following student and a late
   // Follower opts in AFTER the session started, and publishes to Understand+PEG.
   await follower.getByRole("button", { name: "Ikuti presentasi", exact: true }).click();
   const deck = presenter.locator("[data-presenter-deck]");
-  await deck.getByRole("button", { name: "Pahami", exact: true }).click();
+  await deck.getByRole("button", { name: "Pembahasan", exact: true }).click();
   await deck.getByRole("button", { name: "PEG400", exact: true }).click();
 
   await expect.poll(async () => follower.locator("#understand").evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeLessThan(300);

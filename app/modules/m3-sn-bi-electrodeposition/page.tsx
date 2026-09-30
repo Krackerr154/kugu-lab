@@ -2,43 +2,50 @@ import { ModuleLayout } from "@/components/layout/ModuleLayout";
 import { type JourneyStage } from "@/components/shared/ModuleJourney";
 import { StudentIdentityProvider } from "@/components/shared/StudentIdentityProvider";
 import { StudentIdentityGate } from "@/components/shared/StudentIdentityGate";
+import { M4GuidedAccessGate } from "@/components/shared/M4GuidedAccessGate";
+import { M4PresenterAccess } from "@/components/shared/M4PresenterAccess";
 import { M3PresentationProvider } from "@/components/shared/M3PresentationProvider";
-import { M3Journey, M3FollowControls, M3PresenterDeck } from "@/components/shared/M3GuidedJourney";
+import { M3Journey, M3FollowControls } from "@/components/shared/M3GuidedJourney";
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
-import { BenchChecklist } from "@/components/shared/BenchChecklist";
-import { LabNotebook } from "@/components/shared/LabNotebook";
-import { ReadinessSummary } from "@/components/shared/ReadinessSummary";
 import { ChemText } from "@/components/shared/ChemText";
-import { ClaimEvidenceReasoning } from "@/components/shared/ClaimEvidenceReasoning";
-import { ElectrodepositionCalculator } from "@/components/interactives/ElectrodepositionCalculator";
+import { Equation } from "@/components/shared/Equation";
 import { ElectrochemicalCellExplorer } from "@/components/interactives/ElectrochemicalCellExplorer";
-import { ComplexingAgentExplorer } from "@/components/interactives/ComplexingAgentExplorer";
+import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotentialGapDiagram";
+import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { getModule } from "@/lib/modules";
-import { M3_PROCEDURE } from "@/lib/m3-procedure";
+
+const M4_STAGE_LABELS = {
+  brief: "Tujuan Praktikum",
+  understand: "Pembahasan",
+  rehearse: "Pengolahan Data",
+  prove: "Pengolahan Data",
+  ready: "Format Laporan",
+} as const;
+const M4_VISIBLE_STAGE_IDS = ["brief", "understand", "prove", "ready"] as const;
 
 export default function M3Page() {
-  const module = getModule("m3-sn-bi-electrodeposition")!;
+  const module = getModule("m4-sn-bi-electrodeposition")!;
 
   const stages: JourneyStage[] = [
     // ── BRIEF ────────────────────────────────────────────────────────────
     {
       id: "brief",
-      label: "Tinjauan",
+      label: "Tujuan Praktikum",
       icon: "flag",
-      question: "Apa yang akan saya lakukan, dan mengapa?",
+      question: "Apa tujuan praktikum ini, dan bukti apa yang perlu dihasilkan?",
       content: (
         <>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
-            <div className="min-w-0 flex-1"><StudentIdentityGate /></div>
-            <div className="min-w-0 flex-1"><M3FollowControls /></div>
+            <div className="min-w-0 flex-1"><StudentIdentityGate hidePrompt /></div>
+            <div className="min-w-0 flex-1"><M3FollowControls stageLabels={M4_STAGE_LABELS} /></div>
           </div>
           <div className="surface-panel p-4 sm:p-5 shadow-xs">
             <p className="max-w-[72ch] text-base leading-7 text-[var(--text-secondary)]">
-              Anda membuat <strong className="text-[var(--foreground)]">paduan logam Sn-Bi</strong> dengan
-              melapiskannya pada plat tembaga melalui <strong className="text-[var(--foreground)]">elektrodeposisi</strong>:
-              arus DC mereduksi ion <ChemText>{"Sn^{2+}"}</ChemText> dan <ChemText>{"Bi^{3+}"}</ChemText> dari
-              larutan elektrolit agar mengendap bersamaan (kodeposisi) di katoda. Modul berjalan
-              lintas sesi karena resin katoda perlu mengeras 2 × 24 jam.
+              Praktikum ini bertujuan mensintesis <strong className="text-[var(--foreground)]">paduan logam Sn–Bi</strong> pada
+              substrat plat tembaga melalui metode <strong className="text-[var(--foreground)]">elektrodeposisi</strong>:
+              arus searah (DC) mereduksi kation <ChemText>{"Sn^{2+}"}</ChemText> dan <ChemText>{"Bi^{3+}"}</ChemText> dari
+              larutan elektrolit secara serentak (kodeposisi) di katoda. Percobaan berlangsung
+              lintas sesi karena resin pelindung katoda membutuhkan waktu pengerasan selama 2 × 24 jam.
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -47,8 +54,8 @@ export default function M3Page() {
                   Tindakan fisik
                 </p>
                 <p className="mt-1 text-sm leading-6 text-[var(--foreground)]">
-                  Menyolder & mengecor katoda, menyiapkan anoda grafit, meracik 100 mL elektrolit,
-                  merangkai sel DC, menjalankan deposisi, menimbang, menghitung efisiensi arus.
+                  Menyolder dan mengecor katoda tembaga, menyiapkan elektroda karbon dari laboratorium, meracik 100 mL larutan elektrolit (A + B + C),
+                  merangkai sel elektrokimia DC, menjalankan elektrodeposisi, menimbang massa deposit, serta menghitung efisiensi arus.
                 </p>
               </div>
               <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3">
@@ -56,8 +63,7 @@ export default function M3Page() {
                   Keluaran / bukti
                 </p>
                 <p className="mt-1 text-sm leading-6 text-[var(--foreground)]">
-                  Katoda berlapis Sn-Bi, massa sebelum/sesudah, efisiensi arus, foto permukaan, dan
-                  sampel untuk XRD (Modul 5).
+                  Katoda tembaga berlapis paduan Sn–Bi, data penimbangan massa sebelum dan sesudah deposisi, nilai efisiensi arus, dokumentasi visual permukaan, serta sampel paduan untuk karakterisasi XRD pada Modul 5.
                 </p>
               </div>
             </div>
@@ -69,7 +75,7 @@ export default function M3Page() {
               </div>
               <div>
                 <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Tahap</dt>
-                <dd className="mt-0.5 text-sm font-semibold text-[var(--foreground)]">M3a → M3b</dd>
+                <dd className="mt-0.5 text-sm font-semibold text-[var(--foreground)]">M4a → M4b</dd>
               </div>
               <div>
                 <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Durasi</dt>
@@ -82,14 +88,13 @@ export default function M3Page() {
             </dl>
           </div>
 
-          <SafetyCallout variant="danger" title="Batas Keselamatan Modul 3">
+          <SafetyCallout variant="danger" title="Batas Keselamatan Modul 4">
             <p>
               Modul ini melibatkan HCl pekat, NH<sub>3</sub> pekat, garam logam Sn dan Bi, aseton,
-              etanol, resin/hardener, solder panas, sumber listrik DC, dan grafit dari baterai bekas.
-              Pembongkaran baterai bekas (CR-06) memerlukan penetapan jenis baterai, metode isolasi,
-              penanganan limbah B3, dan pengawasan asisten terlebih dahulu — jangan membongkar
-              baterai secara mandiri. Instruksi penanganan rinci mengikuti SOP/SDS laboratorium yang
-              berlaku dan arahan asisten, bukan halaman ini.
+              resin/hardener, solder panas, sumber listrik DC, dan elektroda karbon yang disediakan
+              laboratorium. Verifikasi identitas, kondisi, dan polaritas elektroda bersama asisten.
+              Instruksi penanganan rinci mengikuti SOP/SDS laboratorium yang berlaku dan arahan
+              asisten, bukan halaman ini.
             </p>
           </SafetyCallout>
         </>
@@ -99,7 +104,7 @@ export default function M3Page() {
     // ── UNDERSTAND ───────────────────────────────────────────────────────
     {
       id: "understand",
-      label: "Pahami",
+      label: "Pembahasan",
       icon: "neurology",
       question: "Teori apa yang menjelaskannya?",
       content: (
@@ -112,22 +117,22 @@ export default function M3Page() {
             <div className="mt-3 grid gap-3 md:grid-cols-2">
               <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3">
                 <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">
-                  Kenapa paduan
+                  Mengapa paduan Sn–Bi?
                 </p>
                 <ul className="mt-2 list-disc space-y-2 pl-4 text-sm leading-6 text-[var(--text-secondary)]">
-                  <li>Sifat mekanik & ketahanan korosi lebih unggul daripada logam murni.</li>
-                  <li>Eutektik <ChemText>Sn-58Bi</ChemText> meleleh ~139 °C — jauh di bawah solder konvensional.</li>
-                  <li>Solder bebas timbal (Pb-free), sesuai regulasi RoHS.</li>
+                  <li>Sifat mekanik dan ketahanan korosi paduan lebih unggul dibandingkan logam murni penyusunnya.</li>
+                  <li>Komposisi eutektik <ChemText>Sn-58Bi</ChemText> meleleh pada suhu ~139 °C, jauh di bawah titik leleh solder konvensional.</li>
+                  <li>Merupakan alternatif solder ramah lingkungan bebas timbal (Pb-free) yang memenuhi regulasi RoHS.</li>
                 </ul>
               </div>
               <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3">
                 <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">
-                  Cara kerja elektrodeposisi
+                  Prinsip kerja elektrodeposisi
                 </p>
                 <ul className="mt-2 list-disc space-y-2 pl-4 text-sm leading-6 text-[var(--text-secondary)]">
-                  <li>Arus DC mereduksi ion logam di katoda; ion menangkap elektron lalu menempel sebagai lapisan.</li>
-                  <li>Berjalan pada suhu rendah, dapat melapisi bentuk kompleks.</li>
-                  <li>Komposisi & ketebalan dikontrol lewat rapat arus, tegangan, pH, konsentrasi ion.</li>
+                  <li>Arus listrik DC mereduksi kation logam di katoda: ion menerima elektron dan mengendap membentuk lapisan paduan padat.</li>
+                  <li>Dapat berlangsung pada suhu ruang serta mampu melapisi substrat dengan geometri permukaan yang rumit.</li>
+                  <li>Ketebalan dan komposisi deposit dapat dikendalikan melalui rapat arus, potensial, pH, dan konsentrasi elektrolit.</li>
                 </ul>
               </div>
             </div>
@@ -136,147 +141,114 @@ export default function M3Page() {
           {/* Concept 2: the interactive cell map + potential gap (the core difficulty) */}
           <div className="surface-panel p-4 sm:p-5 shadow-xs">
             <h3 className="max-w-[50ch] text-lg font-bold text-[var(--foreground)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-              Peta sel & tantangan beda potensial
+              Tantangan Beda Potensial
             </h3>
-            <p className="mt-2 max-w-[72ch] text-base leading-7 text-[var(--text-secondary)]">
-              Bismut jauh lebih mudah tereduksi daripada timah (selisih ≈ 0,45 V), sehingga tanpa
-              intervensi yang terbentuk adalah lapisan kaya bismut, bukan paduan. Pilih tiap komponen
-              sel untuk melihat setengah-reaksi dan potensial reduksinya (tugas pendahuluan #2).
-            </p>
+            <div className="mt-4">
+              <SnBiPotentialGapDiagram />
+            </div>
             <div className="mt-4">
               <ElectrochemicalCellExplorer />
             </div>
           </div>
 
-          {/* Concept 3: how the recipe defeats the gap — interactive agent cards */}
-          <div className="surface-panel p-4 sm:p-5 shadow-xs">
-            <h3 className="max-w-[50ch] text-lg font-bold text-[var(--foreground)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-              Peran agen pengompleks
-            </h3>
-            <p className="mt-2 max-w-[72ch] text-base leading-7 text-[var(--text-secondary)]">
-              EDTA dan asam sitrat mengikat ion logam sehingga potensial deposisi efektifnya bergeser
-              dan mendekat; PEG400 bekerja pada morfologi permukaan. Buka tiap kartu untuk mekanismenya.
-            </p>
-            <div className="mt-4">
-              <ComplexingAgentExplorer />
-            </div>
-          </div>
         </>
       ),
     },
 
-    // ── REHEARSE ─────────────────────────────────────────────────────────
-    {
-      id: "rehearse",
-      label: "Latih",
-      icon: "checklist",
-      question: "Bagaimana saya menjalankan prosedurnya dan mengambil keputusan?",
-      content: (
-        <>
-          <div className="rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-4 text-sm text-[var(--text-secondary)]">
-            Untuk latihan langkah-demi-langkah dengan cek pemahaman, gunakan{" "}
-            <a
-              href="/prelab/m3-sn-bi-electrodeposition"
-              className="font-semibold text-[var(--primary-container)] underline-offset-2 hover:underline"
-            >
-              walkthrough pre-lab M3
-            </a>
-            . Ceklis di bawah adalah versi bench yang bisa Anda centang sambil bekerja — tersimpan di
-            browser Anda.
-          </div>
-
-          <BenchChecklist
-            title="Ceklis Bench M3a → M3b"
-            storageKey="m3-bench-checklist"
-            note="Rencanakan lebih awal: resin katoda mengeras 2 × 24 jam, jadi tahap M3a harus dimulai jauh sebelum sesi elektrodeposisi."
-            phases={M3_PROCEDURE}
-          />
-        </>
-      ),
-    },
-
-    // ── PROVE ────────────────────────────────────────────────────────────
+    // ── DATA PROCESSING ──────────────────────────────────────────────────
     {
       id: "prove",
-      label: "Buktikan",
+      label: "Pengolahan Data",
       icon: "calculate",
-      question: "Bisakah saya menghitung, memprediksi, dan menalar hasilnya?",
+      question: "Bagaimana data praktikum diolah, diperiksa, dan ditafsirkan?",
       content: (
         <>
-          <div className="surface-panel p-4 sm:p-5 shadow-xs">
-            <h3 className="max-w-[50ch] text-lg font-bold text-[var(--foreground)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-              Efisiensi arus dari Hukum Faraday
+          <section
+            aria-labelledby="m4-data-formulas-title"
+            data-m4-data-formulas
+            className="surface-panel p-4 sm:p-5 shadow-xs"
+          >
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--muted)]">Alur pengolahan data</p>
+            <h3 id="m4-data-formulas-title" className="mt-1 text-lg font-bold text-[var(--foreground)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
+              Rumus yang digunakan dan alasannya
             </h3>
-            <p className="mt-2 max-w-[72ch] text-base leading-7 text-[var(--text-secondary)]">
-              Muatan yang mengalir menentukan batas atas massa yang dapat terdeposit. Bandingkan massa
-              nyata di timbangan dengan batas itu. Efisiensi di bawah 100% wajar (sebagian arus
-              mereduksi <ChemText>{"H^{+}"}</ChemText> menjadi <ChemText>{"H_{2}"}</ChemText>); di atas
-              100% menandakan kesalahan pengukuran atau asumsi.
+            <p className="mt-2 max-w-[76ch] text-sm leading-6 text-[var(--text-secondary)]">
+              Gunakan data arus, waktu, dan massa untuk mengubah muatan listrik menjadi perkiraan massa logam yang dapat terdeposit. Urutan ini membuat hasil dapat diperiksa: hitung muatan, hitung massa teoritis, lalu bandingkan dengan massa aktual setelah katoda dibilas dan dikeringkan.
             </p>
-            <div className="mt-4">
-              <ElectrodepositionCalculator />
-            </div>
-          </div>
 
-          <ClaimEvidenceReasoning
-            prompt="Setelah menghitung efisiensi arus, susun klaim-bukti-penalaran: apakah nilai Anda masuk akal untuk paduan Sn-Bi, dan apa asumsi valensi/komposisi yang Anda pakai?"
-            claimPlaceholder="mis. Efisiensi arus percobaan kami sekitar ... %"
-            evidencePlaceholder="Massa sebelum/sesudah, arus, waktu, luas katoda, dan asumsi n & M yang dipakai..."
-            reasoningPlaceholder="Hubungkan bukti dengan Hukum Faraday, reaksi samping H2, dan mengapa komposisi Sn:Bi adalah asumsi yang harus dikonfirmasi..."
-          />
+            <div className="mt-4 grid gap-3 lg:grid-cols-3">
+              <Equation
+                tex={"Q = I \\times t"}
+                label="1 · Muatan yang mengalir"
+                description="Q = muatan (C), I = arus (A), t = waktu (s)."
+                compact
+              />
+              <Equation
+                tex={"m_{teoretis} = \\frac{Q \\times M}{n \\times F} = \\frac{I \\times t \\times M}{n \\times F}"}
+                label="2 · Massa teoritis"
+                description="M = massa molar, n = elektron per ion, F = 96485 C/mol."
+                compact
+              />
+              <Equation
+                tex={"\\eta = \\frac{m_{aktual}}{m_{teoretis}} \\times 100\\%"}
+                label="3 · Efisiensi arus"
+                description="m aktual = massa sesudah − massa sebelum (setelah bilas dan kering)."
+                compact
+              />
+            </div>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3">
+                <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">Mengapa perlu dibandingkan?</p>
+                <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                  Tidak semua arus listrik terpakai untuk membentuk deposit: ion <ChemText>{"H^{+}"}</ChemText> dalam larutan asam dapat mengalami reduksi samping menjadi gas <ChemText>{"H_{2}"}</ChemText> (reaksi evolusi hidrogen). Oleh karena itu, efisiensi arus di bawah 100% merupakan hal yang wajar. Sebaliknya, efisiensi di atas 100% mengindikasikan adanya galat, seperti pencucian atau pengeringan katoda yang kurang sempurna, kesalahan penimbangan, atau ketidaktepatan asumsi stoikiometri.
+                </p>
+              </div>
+              <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3">
+                <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">Batas asumsi Sn–Bi</p>
+                <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                  Deposit yang terbentuk merupakan paduan biner Sn–Bi, sedangkan penuntun praktikum tidak menetapkan rasio stoikiometri keduanya secara pasti. Perhitungan contoh di bawah menggunakan pendekatan Sn²⁺ sebagai ilustrasi; untuk laporan resmi, gunakan asumsi komposisi atau valensi yang telah dikonfirmasi oleh asisten pembimbing.
+                </p>
+              </div>
+            </div>
+
+            <div data-m4-calculation-example className="mt-4 rounded-lg border border-[var(--primary-container)]/30 bg-[var(--surface-container-low)] p-3 sm:p-4">
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">Contoh perhitungan dengan titik kerja protokol</p>
+              <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm leading-6 text-[var(--text-secondary)]">
+                <li><strong className="text-[var(--foreground)]">Q</strong> = 0,058 A × 900 s = 52,20 C.</li>
+                <li><strong className="text-[var(--foreground)]">Mol elektron</strong> = 52,20 / 96485 = 5,4102 × 10⁻⁴ mol.</li>
+                <li>Dengan asumsi sementara Sn²⁺, <strong className="text-[var(--foreground)]">m teoritis</strong> = (5,4102 × 10⁻⁴ / 2) × 118,71 = 0,032112 g.</li>
+                <li>Jika massa aktual = 0,0280 g, maka efisiensi dihitung sebagai berikut:</li>
+              </ol>
+              <div className="mt-3">
+                <Equation
+                  tex={"\\eta = \\frac{0{,}0280}{0{,}032112} \\times 100\\% \\approx 87{,}19\\%"}
+                  label="Hasil contoh"
+                  compact
+                />
+              </div>
+              <p className="mt-2 text-xs italic leading-5 text-[var(--text-secondary)]">
+                Catatan: Nilai ini merupakan contoh ilustratif dengan asumsi reduksi Sn²⁺ (n = 2). Pada laporan praktikum, gunakan data massa aktual hasil penimbangan Anda serta asumsi yang disepakati bersama asisten.
+              </p>
+            </div>
+          </section>
         </>
       ),
     },
 
-    // ── READY ────────────────────────────────────────────────────────────
+    // ── REPORT FORMAT ────────────────────────────────────────────────────
     {
       id: "ready",
-      label: "Siap",
+      label: "Format Laporan",
       icon: "verified",
-      question: "Apa yang sudah selesai, dan apa yang masih perlu konfirmasi instruktur?",
+      question: "Bagaimana hasil praktikum akan disusun dalam laporan?",
       content: (
         <>
-          <ReadinessSummary
-            prepared={[
-              { text: "Teori paduan, elektrodeposisi, dan beda potensial reduksi dibaca.", href: "#understand", linkLabel: "Tinjau" },
-              { text: "Peran EDTA, asam sitrat, dan PEG400 dipahami dari kartu interaktif." },
-              { text: "Prosedur M3a→M3b dilatih pada walkthrough pre-lab.", href: "/prelab/m3-sn-bi-electrodeposition", linkLabel: "Buka walkthrough" },
-              { text: "Ceklis bench ditinjau dan rumus efisiensi arus dicoba di kalkulator." },
-              { text: "Log elektrodeposisi disiapkan untuk mencatat data di bench." },
-            ]}
-            instructorConfirmed={[
-              { text: "Pembongkaran baterai bekas (CR-06): jenis baterai, isolasi, limbah B3, pengawasan." },
-              { text: "Otorisasi sumber listrik DC dan verifikasi polaritas sebelum menyalakan arus." },
-              { text: "Penanganan HCl/NH_{3} pekat, aseton, dan resin sesuai SOP/SDS yang berlaku." },
-              { text: "Asumsi komposisi Sn:Bi untuk perhitungan efisiensi (penuntun tidak menetapkannya)." },
-            ]}
-            boundary={
-              <p>
-                Menyelesaikan tahap-tahap di atas berarti Anda telah melakukan{" "}
-                <strong className="text-[var(--foreground)]">persiapan digital</strong> — bukan bahwa
-                Anda berwenang bekerja mandiri di laboratorium. KUGU tidak menggantikan SOP, SDS,
-                putusan asisten, atau kerja praktikum fisik.
-              </p>
-            }
-          />
+          <ReportFormatGuide />
 
-          <LabNotebook title="Log Elektrodeposisi M3" storageKey="m3-notebook" fields={[
-            { id: "sample_id", label: "ID Sampel", type: "text" },
-            { id: "cathode_material", label: "Material Katoda", type: "text" },
-            { id: "cathode_area", label: "Luas Katoda (cm²)", type: "number", unit: "cm²" },
-            { id: "mass_before", label: "Massa sebelum (g)", type: "number", unit: "g" },
-            { id: "mass_after", label: "Massa sesudah (g)", type: "number", unit: "g" },
-            { id: "electrolyte", label: "Komposisi elektrolit", type: "text", placeholder: "Larutan A/B/C..." },
-            { id: "current", label: "Arus (A)", type: "number", unit: "A" },
-            { id: "voltage", label: "Voltase (V)", type: "number", unit: "V" },
-            { id: "duration", label: "Durasi (s)", type: "number", unit: "s" },
-            { id: "ph", label: "pH elektrolit", type: "number" },
-            { id: "obs", label: "Observasi permukaan", type: "textarea", placeholder: "Warna, kekasaran, adhesi..." },
-          ]} />
-
-          {/* Presenter deck lives in the instructor-facing Ready stage so it does
+          {/* Presenter deck lives in the instructor-facing report-format stage so it does
               not add chrome to the student's arrival. Students never start it. */}
-          <M3PresenterDeck />
+          <M4PresenterAccess stageLabels={M4_STAGE_LABELS} visibleStageIds={M4_VISIBLE_STAGE_IDS} />
         </>
       ),
     },
@@ -285,9 +257,11 @@ export default function M3Page() {
   return (
     <StudentIdentityProvider>
       <M3PresentationProvider>
-        <ModuleLayout module={module} compactHeader>
-          <M3Journey stages={stages} />
-        </ModuleLayout>
+        <M4GuidedAccessGate>
+          <ModuleLayout module={module} compactHeader>
+            <M3Journey stages={stages} legacyStageMap={{ rehearse: "prove" }} />
+          </ModuleLayout>
+        </M4GuidedAccessGate>
       </M3PresentationProvider>
     </StudentIdentityProvider>
   );

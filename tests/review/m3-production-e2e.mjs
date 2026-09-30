@@ -1,6 +1,6 @@
 import { chromium, expect } from "@playwright/test";
 
-const URL = process.env.KUGU_PUBLIC_URL || "https://kugu.g-labs.my.id/modules/m3-sn-bi-electrodeposition";
+const URL = process.env.KUGU_PUBLIC_URL || "https://kugu.g-labs.my.id/modules/m4-sn-bi-electrodeposition";
 const ROOM = process.env.KUGU_ROOM;
 const TICKET = process.env.KUGU_TICKET;
 if (!ROOM || !TICKET) throw new Error("KUGU_ROOM and KUGU_TICKET are required");
@@ -25,7 +25,7 @@ try {
   await student.getByRole("button", { name: "Ikuti presentasi", exact: true }).click();
 
   const presenterDeck = presenter.locator("[data-presenter-deck]");
-  await presenterDeck.getByRole("button", { name: "Pahami", exact: true }).click();
+  await presenterDeck.getByRole("button", { name: "Pembahasan", exact: true }).click();
   await presenterDeck.getByRole("button", { name: "PEG400", exact: true }).click();
   await expect.poll(async () => student.locator("#understand").evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeLessThan(300);
   await expect(student.getByRole("button", { name: "Sorot agen PEG400", exact: true })).toHaveAttribute("aria-pressed", "true");

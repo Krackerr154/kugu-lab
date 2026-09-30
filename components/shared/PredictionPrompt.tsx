@@ -40,7 +40,7 @@ export function PredictionPrompt({
           <button
             onClick={() => setRevealed(true)}
             disabled={!prediction.trim()}
-            className="rounded-lg bg-[var(--primary-container)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-40"
+            className="min-h-11 rounded-lg bg-[var(--primary-container)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             Tampilkan Penjelasan
           </button>

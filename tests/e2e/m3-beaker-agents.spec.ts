@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const route = "/modules/m3-sn-bi-electrodeposition";
+const route = "/modules/m4-sn-bi-electrodeposition";
 
 test("bound ligand symbols remain inside the beaker liquid at reduction", async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 1080 });
@@ -19,7 +19,7 @@ test("bound ligand symbols remain inside the beaker liquid at reduction", async 
   for (const g of geometry) for (const clearance of Object.values(g)) expect(clearance).toBeGreaterThanOrEqual(-1);
 });
 
-test("agent details do not separate playback controls from the beaker on mobile", async ({ page }) => {
+test("agent controls do not separate playback controls from the beaker on mobile", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(route);
   const sim = page.getByRole("region", { name: "Simulasi kodeposisi" });
@@ -29,7 +29,7 @@ test("agent details do not separate playback controls from the beaker on mobile"
   expect(scene!.y + scene!.height - play!.y).toBeLessThan(650);
 });
 
-test("in-beaker agent labels expose grounded details and keep PEG distinct", async ({ page }) => {
+test("in-beaker agent labels remain usable without the removed detail panel", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(route);
   const sim = page.getByRole("region", { name: "Simulasi kodeposisi" });
@@ -39,29 +39,20 @@ test("in-beaker agent labels expose grounded details and keep PEG distinct", asy
   await sim.getByRole("button", { name: "Langkah berikutnya" }).click();
   await citrate.focus();
   await page.keyboard.press("Space");
-  const detail = sim.getByRole("region", { name: "Agen dalam beaker" });
-  await expect(detail).toHaveAttribute("data-agent", "citrate");
-  await expect(detail).toContainText("0,30 M");
-  await expect(detail).toContainText("Larutan C");
+  await expect(sim.getByRole("button", { name: "Sorot agen Sitrat", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(sim.getByRole("region", { name: "Agen dalam beaker" })).toHaveCount(0);
   await expect(beaker.locator('[data-ligand][data-agent="citrate"]').first()).toHaveAttribute("opacity", "1");
   await expect(sim.getByTestId("m3-agents-closeup").locator('[data-agent="edta"]').first()).toHaveAttribute("opacity", "0.5");
 
   await beaker.getByRole("button", { name: "Detail EDTA di beaker", exact: true }).click();
-  await expect(detail).toHaveAttribute("data-agent", "edta");
-  await expect(detail).toContainText("0,05 M");
-  await expect(detail).toContainText("Larutan A");
-  await expect(detail.locator("sub").first()).toHaveText("4");
+  await expect(sim.getByRole("button", { name: "Sorot agen EDTA", exact: true })).toHaveAttribute("aria-pressed", "true");
   await beaker.getByRole("button", { name: "Detail PEG400 di beaker", exact: true }).focus();
   await page.keyboard.press("Enter");
-  await expect(detail).toHaveAttribute("data-agent", "peg400");
-  await expect(detail).toContainText("bukan pengompleks");
-  await expect(detail).toContainText("0,20 M");
-  await expect(detail).toContainText("adsorpsi");
+  await expect(sim.getByRole("button", { name: "Sorot agen PEG400", exact: true })).toHaveAttribute("aria-pressed", "true");
   await expect(sim.getByRole("slider", { name: "Posisi animasi" })).toHaveValue("25");
 
   await sim.getByRole("button", { name: "Dengan pengompleks", exact: true }).click();
   await sim.getByRole("button", { name: "Sorot agen EDTA", exact: true }).click();
-  await expect(detail).toContainText("Tidak hadir pada skenario pembanding");
   await expect(sim.getByRole("button", { name: /^Sorot agen / })).toHaveCount(3);
   await expect(sim).not.toContainText("ligan dan muatan kompleks tidak digambar");
 });

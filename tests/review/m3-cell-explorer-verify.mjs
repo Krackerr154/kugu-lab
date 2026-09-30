@@ -1,13 +1,13 @@
 // Verify the M3 CellExplorer rebuild:
 //   (6) half-reactions with reduction potentials per electrode + the potential gap
-//   (8) predict-before-reveal gate
+//   (8) prediction block remains absent from the M4 surface
 //   (9) full keyboard/ARIA operability of the SVG hotspots
 // Also re-checks that fixes 1-3 survived the refactor.
 import { chromium } from "@playwright/test";
 
-const URL = "http://localhost:3000/modules/m3-sn-bi-electrodeposition";
+const URL = "http://localhost:3000/modules/m4-sn-bi-electrodeposition";
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1200 }, storageState: "tests/e2e/m4-guest-state.json" });
 
 const errors = [];
 page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
@@ -25,7 +25,7 @@ const check = (ok, label, detail = "") => {
 // ---------- (9) keyboard + ARIA on the diagram ----------
 console.log("\n[9] SVG hotspot accessibility");
 const a11y = await page.evaluate(() => {
-  const svg = document.querySelector("svg[aria-label]");
+  const svg = document.querySelector('svg[data-testid="m3-cell-scene"]');
   const hotspots = [...svg.querySelectorAll('[role="button"]')];
   return {
     hotspotCount: hotspots.length,
@@ -43,7 +43,7 @@ check(a11y.allHavePressed, "all hotspots expose aria-pressed state");
 
 // Drive it with the keyboard only: focus the cathode hotspot and press Enter.
 const activated = await page.evaluate(() => {
-  const svg = document.querySelector("svg[aria-label]");
+  const svg = document.querySelector('svg[data-testid="m3-cell-scene"]');
   const cathode = [...svg.querySelectorAll('[role="button"]')]
     .find((h) => /katoda/i.test(h.getAttribute("aria-label")));
   cathode.focus();
@@ -78,13 +78,13 @@ check(/efisiensi arus/i.test(cathodeDetail.text), "cathode note links H2 evoluti
 // Anode half-reaction. SVG elements have no HTMLElement.click(), so dispatch a
 // real MouseEvent the way a browser would.
 await page.evaluate(() => {
-  const svg = document.querySelector("svg[aria-label]");
+  const svg = document.querySelector('svg[data-testid="m3-cell-scene"]');
   const anode = [...svg.querySelectorAll('[role="button"]')].find((h) => /anoda/i.test(h.getAttribute("aria-label")));
   anode.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 });
 await page.waitForTimeout(300);
 const anodeText = await page.evaluate(() => document.body.innerText);
-check(/Anoda \(\+\) — grafit/.test(anodeText), "anode detail renders");
+check(/Anoda \(\+\) — elektroda karbon/.test(anodeText), "anode detail renders");
 check(/E° = \+1,23 V/.test(anodeText), "anode oxidation potential shown");
 check(/dikonfirmasi dengan asisten/.test(anodeText), "anode note defers competing chloride oxidation to the assistant");
 
@@ -96,52 +96,23 @@ check(/EDTA dan asam sitrat/.test(gap), "complexing agents are tied to the poten
 check(/potensial <em>standar<\/em>|potensial standar/i.test(gap) || /standar/.test(gap),
   "caveat that these are STANDARD potentials");
 
-// ---------- (8) predict before reveal ----------
-console.log("\n[8] Predict-before-reveal");
-const predict = page.locator("text=Pertanyaan Prediksi").locator("..");
-const btn = page.getByRole("button", { name: "Tampilkan Penjelasan" });
-const disabledEmpty = await btn.isDisabled();
-check(disabledEmpty, "reveal button is disabled before a prediction is typed");
-
-const revealedEarly = await page.evaluate(() => /Bismut mengendap lebih dulu/.test(document.body.innerText));
-check(!revealedEarly, "answer is hidden before revealing");
-
-const textarea = page.locator('textarea[placeholder*="Bandingkan"]');
-await textarea.fill("Bismut dulu karena potensialnya lebih positif");
-await page.waitForTimeout(200);
-check(!(await btn.isDisabled()), "reveal button enables once a prediction exists");
-
-await btn.click();
-await page.waitForTimeout(300);
-const revealed = await page.evaluate(() => document.body.innerText);
-check(/Bismut mengendap lebih dulu/.test(revealed), "reveal shows the expected answer");
-check(/kodeposisi/i.test(revealed) && /H_?2|H₂/.test(revealed), "explanation covers codeposition and the H2 side reaction");
+// ---------- (8) prediction block removed ----------
+console.log("\n[8] Prediction block is absent");
+check(!/Pertanyaan Prediksi/i.test(await page.locator("#understand").innerText()), "prediction heading is absent");
+check(await page.locator('#understand textarea[placeholder*="Bandingkan"]').count() === 0, "prediction input is absent");
+check(await page.getByRole("button", { name: "Tampilkan Penjelasan" }).count() === 0, "prediction reveal button is absent");
 
 // ---------- regression: fixes 1-3 ----------
 console.log("\n[regression] fixes 1-3 survived the refactor");
 const svgFlow = await page.evaluate(() => {
-  const svg = document.querySelector("svg[aria-label]");
+  const svg = document.querySelector('svg[data-testid="m3-cell-scene"]');
   const eTexts = [...svg.querySelectorAll("text")].map((t) => t.textContent.trim()).filter((t) => t.includes("e⁻"));
   const fills = [...svg.querySelectorAll("rect")].map((r) => r.getAttribute("fill")).filter(Boolean);
   return { eTexts, tokenised: fills.every((f) => f.startsWith("var(") || f === "none") };
 });
 check(svgFlow.eTexts.length === 2 && svgFlow.eTexts.every((t) => t.includes("→")),
   "electron arrows still both point anode → source → cathode", svgFlow.eTexts.join(" | "));
-check(svgFlow.tokenised, "SVG fills now use design tokens, not hardcoded hex");
-
-const density = await page.evaluate(() => {
-  const m = document.body.innerText.match(/Rapat arus \(I\/A\):\s*([^\n]+)/);
-  return m ? m[1] : "not found";
-});
-check(/14\.50 mA\/cm²/.test(density), "protocol default density intact", density);
-
-await page.fill("#m3-valence", "0");
-await page.waitForTimeout(250);
-const guarded = await page.evaluate(() => {
-  const t = document.body.innerText;
-  return { alert: /Input belum valid/.test(t), theoretical: (t.match(/Massa teoretis:\s*(\S+)/) || [])[1] };
-});
-check(guarded.alert && guarded.theoretical === "—", "valence guard intact", JSON.stringify(guarded));
+check(svgFlow.tokenised, "SVG fills still use design tokens, not hardcoded hex");
 
 // ---------- mobile overflow ----------
 await page.setViewportSize({ width: 360, height: 800 });

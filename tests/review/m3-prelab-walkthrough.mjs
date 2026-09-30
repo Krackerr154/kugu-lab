@@ -1,7 +1,7 @@
 // Part B: gated order of addition + full walkthrough pass + mobile overflow.
 import { chromium } from "@playwright/test";
 
-const URL = "http://localhost:3000/prelab/m3-sn-bi-electrodeposition";
+const URL = "http://localhost:3000/prelab/m4-sn-bi-electrodeposition";
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
 

@@ -23,7 +23,7 @@ test("sequence validator rejects imprecise and negative sequence values", () => 
 
 test("student can enter a room without giving a NIM and presenter authority is explicit", async ({ page }) => {
   test.skip(!process.env.NEXT_PUBLIC_M3_RELAY_URL, "relay UI is enabled only in the production relay build");
-  await page.goto("/modules/m3-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
+  await page.goto("/modules/m4-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
   await expect(page.getByLabel("Kode ruang presentasi", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Buka kontrol pengajar", exact: true }).click();
   await expect(page.getByLabel("Tiket pengajar", { exact: true })).toHaveAttribute("type", "password");

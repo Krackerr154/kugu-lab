@@ -3,7 +3,7 @@ import { bathAgentFrame } from "../../lib/m3-ligands";
 import { cellFrame } from "../../lib/m3-simulation";
 import { COMPLEXING_AGENTS } from "../../lib/m3-complexing-agents";
 
-const route = "/modules/m3-sn-bi-electrodeposition";
+const route = "/modules/m4-sn-bi-electrodeposition";
 
 test("shared PEG teaching data qualifies inhibition and identifies the assigned alloy", () => {
   const peg = COMPLEXING_AGENTS.find((agent) => agent.id === "peg400")!;
@@ -25,7 +25,7 @@ test("PEG evidence distinguishes the combined bath from a standalone PEG400 clai
   await expect(lesson).toContainText("Zn–Cr");
   await expect(lesson.getByRole("link", { name: /Sn–Bi.*2007/ })).toHaveAttribute("href", "https://www.sciencedirect.com/science/article/pii/S0013468607010997");
   await expect(lesson.getByRole("link", { name: /Bi.*2011/ })).toHaveAttribute("href", "https://doi.org/10.1016/j.electacta.2011.06.077");
-  await expect(sim.getByRole("region", { name: "Agen dalam beaker" })).toContainText("0,20 M");
+  await expect(sim.getByRole("button", { name: "Sorot agen PEG400", exact: true })).toHaveAttribute("aria-pressed", "true");
 });
 
 test("PEG surface marker ignores growth outside its attachment site", () => {

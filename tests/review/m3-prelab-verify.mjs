@@ -1,11 +1,11 @@
-// Verify the M3 pre-lab walkthrough page: /prelab/m3-sn-bi-electrodeposition
+// Verify the M4 pre-lab walkthrough page: /prelab/m4-sn-bi-electrodeposition
 //  (A) electrolyte worksheet — concentration basis, per-reagent verification
 //      arithmetic, PEG400 derivation, gated order of addition, volume budget
 //  (B) full walkthrough pass: 11 steps, 5 checks, explanation persists, 100%
 //  (C) no console errors, no horizontal overflow at 360px
 import { chromium } from "@playwright/test";
 
-const URL = "http://localhost:3000/prelab/m3-sn-bi-electrodeposition";
+const URL = "http://localhost:3000/prelab/m4-sn-bi-electrodeposition";
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1200 } });
 

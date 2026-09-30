@@ -10,7 +10,7 @@
 import { useState } from "react";
 import { useStudentIdentity } from "@/components/shared/StudentIdentityProvider";
 
-export function StudentIdentityGate() {
+export function StudentIdentityGate({ hidePrompt = false }: { hidePrompt?: boolean }) {
   const { identity, ready, storageOk, setNim, continueAsGuest, changeIdentity } = useStudentIdentity();
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export function StudentIdentityGate() {
         <button
           type="button"
           onClick={() => { setDraft(""); setError(null); changeIdentity(); }}
-          className="ml-auto min-h-9 rounded-lg border border-[var(--outline-variant)] px-3 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)]"
+          className="m4-motion-control ml-auto min-h-11 rounded-lg border border-[var(--outline-variant)] px-3 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)]"
         >
           Ganti NIM
         </button>
@@ -40,6 +40,8 @@ export function StudentIdentityGate() {
   }
 
   // No choice yet → compact prompt row (label + input + two actions, wrapping).
+  if (hidePrompt) return null;
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(setNim(draft));
@@ -65,14 +67,14 @@ export function StudentIdentityGate() {
         />
         <button
           type="submit"
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-[var(--primary-container)] px-3 text-sm font-semibold text-[var(--on-primary)] hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)]"
+          className="m4-motion-control inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-[var(--primary-container)] px-3 text-sm font-semibold text-[var(--on-primary)] hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)]"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-lg">check</span>Simpan
         </button>
         <button
           type="button"
           onClick={continueAsGuest}
-          className="inline-flex min-h-11 items-center rounded-lg border border-[var(--outline-variant)] px-3 text-sm font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)]"
+          className="m4-motion-control inline-flex min-h-11 items-center rounded-lg border border-[var(--outline-variant)] px-3 text-sm font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)]"
         >
           Lanjut sebagai tamu
         </button>

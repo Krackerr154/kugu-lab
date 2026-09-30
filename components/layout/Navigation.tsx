@@ -169,7 +169,7 @@ export function Navigation() {
         <button
           ref={menuButtonRef}
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="rounded-lg p-2 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary-container)]"
+          className="flex h-11 w-11 items-center justify-center rounded-lg p-2 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--secondary-container)]"
           aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
           aria-expanded={mobileOpen}
           aria-controls="mobile-navigation"

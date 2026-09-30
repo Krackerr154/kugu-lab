@@ -5,7 +5,7 @@ export default function AnalisisPage() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
       <h1 className="text-2xl font-bold">Analisis Data</h1>
       <p className="mt-1 text-sm text-[var(--muted)]">
-        Workspace analisis data XRD dan TGA. Mulai dari Modul 5 atau 6.
+        Workspace analisis data XRD, FTIR, TGA, dan BET. Mulai dari Modul 5, 6, atau 7.
       </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -23,16 +23,29 @@ export default function AnalisisPage() {
         </Link>
 
         <Link
-          href="/modules/m6-tga"
+          href="/modules/m6-ftir-tga"
           className="surface-panel group p-6 transition-colors hover:border-[var(--primary-container)] hover:bg-[var(--surface-muted)]"
         >
           <div aria-hidden="true" className="material-symbols-outlined text-4xl text-[var(--primary-container)]">thermostat</div>
-          <h2 className="mt-2 text-lg font-bold">TGA / DTG Interpretasi</h2>
+          <h2 className="mt-2 text-lg font-bold">FTIR / TGA Interpretasi</h2>
           <p className="text-sm text-[var(--muted)]">Modul 6</p>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
-            Termogram/DTG, anotasi kehilangan massa, worksheet teoretis vs eksperimental.
+            Spektrum FTIR placeholder dan termogram/DTG, anotasi kehilangan massa, worksheet teoretis vs eksperimental.
           </p>
-          <p className="mt-3 text-sm font-medium text-[var(--primary-container)] group-hover:underline">Buka workspace TGA →</p>
+          <p className="mt-3 text-sm font-medium text-[var(--primary-container)] group-hover:underline">Buka workspace FTIR/TGA →</p>
+        </Link>
+
+        <Link
+          href="/modules/m7-bet"
+          className="surface-panel group p-6 transition-colors hover:border-[var(--primary-container)] hover:bg-[var(--surface-muted)]"
+        >
+          <div aria-hidden="true" className="material-symbols-outlined text-4xl text-[var(--primary-container)]">show_chart</div>
+          <h2 className="mt-2 text-lg font-bold">BET Interpretasi</h2>
+          <p className="text-sm text-[var(--muted)]">Modul 7 · Placeholder</p>
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+            Workspace isoterm N₂, regresi BET, dan luas permukaan spesifik akan ditambahkan setelah konten diverifikasi.
+          </p>
+          <p className="mt-3 text-sm font-medium text-[var(--primary-container)] group-hover:underline">Buka placeholder BET →</p>
         </Link>
       </div>
 

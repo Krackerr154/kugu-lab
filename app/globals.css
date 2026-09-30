@@ -92,6 +92,14 @@
   --success: #16a34a;
   --success-light: #dcfce7;
   --muted: #43474e;
+
+  /* Motion contract — explicit, low-cost properties only. */
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --motion-ease-exit: cubic-bezier(0.3, 0, 1, 1);
+  --motion-duration-micro: 150ms;
+  --motion-duration-utility: 220ms;
+  --motion-duration-content: 320ms;
 }
 
 @theme inline {
@@ -343,6 +351,58 @@ h1, h2, h3, h4, h5, h6 {
   flex-shrink: 0;
 }
 
+/* M4 motion primitives. Keep layout properties out of ordinary state changes. */
+.m4-motion-color {
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
+  transition-duration: var(--motion-duration-utility);
+  transition-timing-function: var(--motion-ease-standard);
+}
+
+.m4-motion-control {
+  transition-property: color, background-color, border-color, opacity, transform, box-shadow;
+  transition-duration: var(--motion-duration-utility);
+  transition-timing-function: var(--motion-ease-standard);
+}
+
+@keyframes m4-content-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.m4-motion-enter {
+  animation: m4-content-enter var(--motion-duration-content) var(--motion-ease-enter) both;
+}
+
+@keyframes m4-access-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes m4-access-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.m4-access-backdrop {
+  animation: m4-access-backdrop-enter var(--motion-duration-utility) var(--motion-ease-enter) both;
+}
+
+.m4-access-dialog {
+  animation: m4-access-dialog-enter var(--motion-duration-content) var(--motion-ease-enter) both;
+}
+
 /* ── View Transitions (module navigation) ─────────────────────────
    `TransitionLink` puts `nav-forward` / `nav-back` on <html> for the
    duration of the transition, so the direction is selectable here.
@@ -508,5 +568,11 @@ h1, h2, h3, h4, h5, h6 {
   .rehearsal-ripple,
   .rehearsal-steam {
     display: none !important;
+  }
+
+  .m4-motion-enter,
+  .m4-access-backdrop,
+  .m4-access-dialog {
+    animation: none !important;
   }
 }

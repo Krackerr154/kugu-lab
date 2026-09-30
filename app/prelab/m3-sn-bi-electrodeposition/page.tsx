@@ -15,15 +15,14 @@ import {
 } from "@/lib/m3-electrolyte";
 
 // Procedure content is transcribed from Penuntun Praktikum Kimia Golongan Utama
-// KI3131, Modul 3 "Sintesis Paduan Logam Tin-Bismuth dengan Metode
-// Elektrodeposisi", manual pages 20-24: stage M3a (cathode and anode
-// fabrication) and stage M3b (electrolyte preparation and electrodeposition).
+// KI3131, revised curriculum Module 4 "Sintesis Paduan Logam Tin-Bismuth dengan Metode
+// Elektrodeposisi": stage M4a (cathode and anode fabrication) and stage M4b (electrolyte preparation and electrodeposition).
 // Quantities, mesh sizes, temperatures and durations are the manual's values —
 // do not round or "improve" them; they are protocol variables approved by the
 // course team.
 
 export default function M3PrelabPage() {
-  const module = getModule("m3-sn-bi-electrodeposition")!;
+  const module = getModule("m4-sn-bi-electrodeposition")!;
 
   // Indonesian decimal comma — the manual writes "14,5 mA/cm2", and step titles
   // are plain strings so they cannot use toLocaleString at render time.
@@ -34,7 +33,7 @@ export default function M3PrelabPage() {
       id: 1,
       title: "Siapkan Jurnal Pre-lab & Tugas Pendahuluan",
       detail:
-        "Tulis tujuan, dasar teori (paduan logam, elektrodeposisi, peran agen pengompleks, rapat arus, efisiensi arus), diagram alir M3a-M3b, tabel data pengamatan massa katoda/anoda, dan rumus efisiensi arus. Kerjakan 5 tugas pendahuluan modul — dua di antaranya menuntut Anda merujuk makalah jurnal.",
+        "Tulis tujuan, dasar teori (paduan logam, elektrodeposisi, peran agen pengompleks, rapat arus, efisiensi arus), diagram alir M4a-M4b, tabel data pengamatan massa katoda/anoda, dan rumus efisiensi arus. Kerjakan 5 tugas pendahuluan modul — dua di antaranya menuntut Anda merujuk makalah jurnal.",
       rationale:
         "Tugas pendahuluan #2 meminta reaksi anoda dan katoda beserta potensial reduksinya, dan #3 serta #5 mewajibkan pembacaan makalah. Keduanya tidak bisa dikerjakan mendadak di lab, dan modul ini berjalan lintas sesi karena resin katoda perlu 2 × 24 jam untuk mengeras.",
       equipment: ["Jurnal pre-lab", "Kalkulator", "Tabel potensial reduksi standar"],
@@ -42,7 +41,7 @@ export default function M3PrelabPage() {
     },
     {
       id: 2,
-      title: "Pembuatan Katoda: Plat Tembaga & Sambungan Listrik (M3a)",
+      title: "Pembuatan Katoda: Plat Tembaga & Sambungan Listrik (M4a)",
       detail:
         "Siapkan satu buah plat tembaga. Buat goresan-goresan pada salah satu sisi plat. Sambungkan sisi tersebut dengan kawat tembaga sepanjang 15 cm menggunakan solder dan kawat timah, lalu tunggu hingga sambungan mengeras. Cek dengan Ampere meter apakah kabel dan tembaga benar-benar tersambung.",
       rationale:
@@ -78,29 +77,26 @@ export default function M3PrelabPage() {
     },
     {
       id: 4,
-      title: "Pembuatan Anoda: Grafit dari Baterai Bekas",
+      title: "Penyiapan Anoda: Elektroda Karbon dari Laboratorium",
       detail:
-        "Siapkan anoda grafit dengan membuka baterai yang sudah tidak terpakai. Rendam grafit di dalam etanol, lanjutkan dengan aqua DM, masing-masing dengan sonikasi sekitar 5 menit. Keringkan grafit di atas hotplate yang dilapisi aluminium foil — dalam proses ini pengotor dari dalam grafit akan keluar.",
+        "Ambil elektroda karbon yang disediakan laboratorium. Periksa label, kondisi fisik, dan area kontaknya bersama asisten sebelum dipasang pada rangkaian. Jangan membongkar, memodifikasi, atau mengganti elektroda yang disediakan.",
       rationale:
-        "Grafit baterai jenuh dengan elektrolit dan pasta karbon dari sel aslinya. Etanol mengangkat pengotor organik, aqua DM mengangkat garam yang larut air, dan pemanasan mengeluarkan sisa yang terperangkap di pori. Pengotor yang tertinggal akan larut ke elektrolit dan ikut terdeposit di katoda.",
+        "Anoda karbon telah disediakan laboratorium. Pemeriksaan identitas, kondisi, dan area kontak memastikan anoda yang dipasang sesuai SOP dan siap digunakan.",
       equipment: [
-        "Baterai bekas (jenis disetujui asisten)",
-        "Batang grafit",
-        "Etanol",
-        "Aqua DM",
-        "Ultrasonic bath",
-        "Hotplate + aluminium foil",
+        "Elektroda karbon yang disediakan laboratorium",
+        "Kabel/penghubung sesuai SOP",
+        "Multimeter",
       ],
       safetyNote:
-        "Pembongkaran baterai bekas adalah blocker keselamatan CR-06: jenis baterai, metode isolasi, penanganan limbah B3, dan pengawasan harus ditetapkan asisten terlebih dahulu. Jangan membongkar baterai secara mandiri. Etanol mudah terbakar — jauhkan dari hotplate yang menyala.",
+        "Gunakan hanya elektroda karbon yang disediakan laboratorium. Pastikan power supply mati saat memeriksa sambungan dan ikuti SOP/asisten untuk verifikasi polaritas.",
       holdPoint: true,
       expectedObservation:
-        "Air bilasan mula-mula keruh/berwarna lalu menjadi bening pada sonikasi berikutnya.",
-      estimatedTime: "30 min",
+        "Elektroda karbon berlabel, utuh, dan siap dipasang; identitas serta kondisi anoda telah dikonfirmasi bersama asisten.",
+      estimatedTime: "10 min",
     },
     {
       id: 5,
-      title: "Penyiapan 100 mL Larutan Elektrolit (M3b)",
+      title: "Penyiapan 100 mL Larutan Elektrolit (M4b)",
       detail:
         "Buat tiga larutan terpisah (A, B, C) sesuai tabel komposisi, lalu gabungkan dengan urutan: pipet A sedikit demi sedikit ke dalam B, tuangkan (A+B) ke dalam C secara perlahan, tambahkan PEG400 hingga konsentrasi akhir 0,20 M, tambahkan NH_{3} pekat 0,5 mL, dan tambahkan air hingga volume akhir 100 mL. Cek pH larutan — target pH ~2. Gunakan worksheet elektrolit di halaman ini untuk memverifikasi setiap massa dan menurunkan angka PEG400.",
       rationale:
@@ -211,10 +207,10 @@ export default function M3PrelabPage() {
       id: 11,
       title: "Hitung Efisiensi Arus dan Handoff XRD",
       detail:
-        "Hitung efisiensi arus = (pertambahan massa aktual / pertambahan massa teoretis) × 100%. Gunakan kalkulator efisiensi arus pada halaman modul M3, dan catat secara eksplisit asumsi valensi serta stoikiometri yang Anda pakai. Serahkan sampel untuk karakterisasi XRD — analisisnya dikerjakan pada Modul 5.",
+        "Hitung efisiensi arus = (pertambahan massa aktual / pertambahan massa teoretis) × 100%. Gunakan kalkulator efisiensi arus pada halaman modul M4, dan catat secara eksplisit asumsi valensi serta stoikiometri yang Anda pakai. Serahkan sampel untuk karakterisasi XRD — analisisnya dikerjakan pada Modul 5.",
       rationale:
         "Deposit ini adalah paduan Sn-Bi, sedangkan Hukum Faraday dalam bentuk sederhana hanya berlaku untuk satu logam dengan satu nilai n dan M. Karena penuntun tidak menetapkan target komposisi, asumsi apa pun yang Anda pakai harus dituliskan dan dikonfirmasi asisten — bukan diam-diam diasumsikan sebagai Sn murni.",
-      equipment: ["Kalkulator efisiensi arus (halaman modul M3)", "Data massa dan arus"],
+      equipment: ["Kalkulator efisiensi arus (halaman modul M4)", "Data massa dan arus"],
       expectedObservation:
         "Efisiensi arus di bawah 100% adalah hasil yang wajar; sebagian muatan terpakai untuk reduksi H^{+} menjadi H_{2}. Nilai di atas 100% menandakan kesalahan pengukuran atau asumsi.",
       estimatedTime: "30 min",
@@ -312,7 +308,7 @@ export default function M3PrelabPage() {
         </Link>
         <span className="mx-1">/</span>
         <span aria-current="page" className="text-[var(--on-surface)]">
-          M3 — <ChemText>{module.titleShort}</ChemText>
+          M4 — <ChemText>{module.titleShort}</ChemText>
         </span>
       </nav>
 
@@ -335,8 +331,8 @@ export default function M3PrelabPage() {
               <ChemText>{module.title}</ChemText>
             </p>
             <p className="text-xs text-[var(--on-surface-variant)] mt-2">
-              Modul berjalan lintas sesi: M3a pembuatan katoda dan anoda (resin perlu 2 × 24 jam),
-              M3b penyiapan elektrolit dan elektrodeposisi. Sumber: penuntun halaman 20-24.
+              Modul berjalan lintas sesi: M4a pembuatan katoda dan anoda (resin perlu 2 × 24 jam),
+              M4b penyiapan elektrolit dan elektrodeposisi. Sumber: Shared_Modul KUGU, Modul 4.
             </p>
           </div>
         </div>
@@ -378,31 +374,31 @@ export default function M3PrelabPage() {
             className="text-lg font-bold text-[var(--primary)]"
             style={{ fontFamily: "Montserrat, sans-serif" }}
           >
-            Linimasa Tahap M3
+            Linimasa Tahap M4
           </h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {[
             {
-              tag: "M3a-1",
+              tag: "M4a-1",
               label: "Katoda",
               detail:
                 "Plat tembaga digores, disolder ke kawat 15 cm, dicek Ampere meter, dicor resin 3:1 — mengeras 2 × 24 jam",
             },
             {
-              tag: "M3a-2",
+              tag: "M4a-2",
               label: "Anoda",
               detail:
-                "Grafit baterai bekas, sonikasi etanol lalu aqua DM masing-masing ~5 menit, dikeringkan di hotplate",
+                "Elektroda karbon disediakan laboratorium, diperiksa, lalu dipasang sesuai SOP",
             },
             {
-              tag: "M3b-1",
+              tag: "M4b-1",
               label: "Elektrolit",
               detail:
                 "Larutan A/B/C, A ke B lalu (A+B) ke C, PEG400 0,20 M, NH₃ 0,5 mL, encerkan ke 100 mL, pH ~2",
             },
             {
-              tag: "M3b-2",
+              tag: "M4b-2",
               label: "Deposisi",
               detail:
                 "Amplas 200→1000 mesh, ukur luas, sonikasi aseton ≥10 menit, timbang, 14,5 mA/cm² selama 15 menit, timbang ulang",
@@ -423,7 +419,7 @@ export default function M3PrelabPage() {
           ))}
         </div>
         <p className="mt-3 text-xs text-[var(--on-surface-variant)]">
-          Rencanakan jadwal lebih awal: resin katoda mengeras 2 × 24 jam, jadi tahap M3a harus dimulai
+          Rencanakan jadwal lebih awal: resin katoda mengeras 2 × 24 jam, jadi tahap M4a harus dimulai
           jauh sebelum sesi elektrodeposisi.
         </p>
       </section>
@@ -456,7 +452,7 @@ export default function M3PrelabPage() {
             className="text-lg font-bold text-[var(--on-surface)]"
             style={{ fontFamily: "Montserrat, sans-serif" }}
           >
-            Tugas Pendahuluan M3
+            Tugas Pendahuluan M4
           </h2>
         </div>
         <ol className="space-y-2 text-sm text-[var(--on-surface)] list-decimal list-inside">
@@ -468,19 +464,19 @@ export default function M3PrelabPage() {
         </ol>
         <p className="mt-3 text-xs text-[var(--on-surface-variant)]">
           Tugas #2 (reaksi anoda/katoda beserta potensial reduksi) dibahas pada peta sel elektrokimia
-          di halaman modul M3. Tugas #3 dan #5 menuntut pembacaan makalah — kerjakan sebelum sesi lab.
+          di halaman modul M4. Tugas #3 dan #5 menuntut pembacaan makalah — kerjakan sebelum sesi lab.
         </p>
       </section>
 
       {/* Safety boundary */}
       <div className="mb-6">
-        <SafetyCallout variant="danger" title="Batas Keselamatan Modul 3">
+        <SafetyCallout variant="danger" title="Batas Keselamatan Modul 4">
           <p>
             Modul ini melibatkan HCl pekat, NH<sub>3</sub> pekat, garam logam Sn dan Bi, aseton,
-            etanol, resin/hardener, solder panas, sumber listrik DC, dan grafit dari baterai bekas.
-            Pembongkaran baterai bekas (CR-06) memerlukan penetapan jenis baterai, metode isolasi,
-            penanganan limbah B3, dan pengawasan asisten terlebih dahulu. Instruksi penanganan rinci
-            mengikuti SOP/SDS laboratorium yang berlaku dan arahan asisten — bukan halaman ini.
+            resin/hardener, solder panas, sumber listrik DC, dan elektroda karbon yang disediakan
+            laboratorium. Verifikasi identitas, kondisi, dan polaritas elektroda bersama asisten.
+            Instruksi penanganan rinci mengikuti SOP/SDS laboratorium yang berlaku dan arahan
+            asisten — bukan halaman ini.
           </p>
         </SafetyCallout>
       </div>
@@ -492,8 +488,8 @@ export default function M3PrelabPage() {
 
       {/* Interactive procedure walkthrough */}
       <ProcedureWalkthrough
-        title="Walkthrough Prosedur M3"
-        intro="Ikuti langkah demi langkah M3a sampai M3b. Cek pemahaman muncul pada langkah tertentu — Anda harus menjawab sebelum melanjutkan."
+        title="Walkthrough Prosedur M4"
+        intro="Ikuti langkah demi langkah M4a sampai M4b. Cek pemahaman muncul pada langkah tertentu — Anda harus menjawab sebelum melanjutkan."
         steps={steps}
         checks={checks}
       />
@@ -510,13 +506,13 @@ export default function M3PrelabPage() {
           Lanjutkan ke peta sel elektrokimia, kalkulator efisiensi arus, dan log elektrodeposisi.
         </p>
         <Link
-          href="/modules/m3-sn-bi-electrodeposition"
+          href="/modules/m4-sn-bi-electrodeposition"
           className="inline-flex items-center gap-2 rounded-lg bg-[var(--secondary-container)] px-6 py-3 font-bold text-[var(--primary)] hover:opacity-90 transition-opacity"
         >
           <span aria-hidden="true" className="material-symbols-outlined">
             menu_book
           </span>
-          Buka Modul M3 Interaktif
+          Buka Modul M4 Interaktif
         </Link>
       </section>
     </div>

@@ -76,9 +76,9 @@ test.describe("module navigation transitions", () => {
       await page.evaluate(() => typeof document.startViewTransition === "function")
     ).toBe(true);
 
-    await page.locator('a[href="/modules/m1-reactions"]').first().click();
-    await page.waitForURL("**/modules/m1-reactions");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Reaksi");
+    await page.locator('a[href="/modules/m1-alfum-mof"]').first().click();
+    await page.waitForURL("**/modules/m1-alfum-mof");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Al-Fum");
 
     await expect.poll(async () => (await readVt(page)).finished).toBeGreaterThan(0);
     const vt = await readVt(page);
@@ -103,7 +103,7 @@ test.describe("module navigation transitions", () => {
 
   test("M1 breadcrumb → module list slides back", async ({ page }) => {
     await instrumentViewTransitions(page);
-    await page.goto("/modules/m1-reactions");
+    await page.goto("/modules/m1-alfum-mof");
 
     await page
       .getByRole("navigation", { name: "Breadcrumb" })
@@ -122,10 +122,10 @@ test.describe("module navigation transitions", () => {
 
   test("next-module button slides forward", async ({ page }) => {
     await instrumentViewTransitions(page);
-    await page.goto("/modules/m1-reactions");
+    await page.goto("/modules/m1-alfum-mof");
 
     await page.getByRole("link", { name: /^M2/ }).first().click();
-    await page.waitForURL("**/modules/m2-mg2sno4");
+    await page.waitForURL("**/modules/m2-zeolite-fau");
 
     await expect.poll(async () => (await readVt(page)).finished).toBeGreaterThan(0);
     const vt = await readVt(page);
@@ -140,7 +140,7 @@ test.describe("module navigation transitions", () => {
     // The probe dispatches a raw click below; wait for React's handler binding,
     // not merely the server-rendered link, before intercepting the transition.
     await page.waitForFunction(() => {
-      const link = document.querySelector('a[href="/modules/m1-reactions"]');
+      const link = document.querySelector('a[href="/modules/m1-alfum-mof"]');
       return link && Object.keys(link).some((key) => key.startsWith("__reactProps$"));
     });
 
@@ -170,7 +170,7 @@ test.describe("module navigation transitions", () => {
       }) as typeof document.startViewTransition;
 
       (
-        document.querySelector('a[href="/modules/m1-reactions"]') as HTMLElement | null
+        document.querySelector('a[href="/modules/m1-alfum-mof"]') as HTMLElement | null
       )?.click();
       // Rendering a destination can exceed 400ms under parallel test load.
       // Resolve only after the real transition's animation geometry is sampled.
@@ -207,8 +207,8 @@ test.describe("module navigation transitions", () => {
     await instrumentViewTransitions(page);
     await page.goto("/");
 
-    await page.locator('a[href="/modules/m1-reactions"]').first().click();
-    await page.waitForURL("**/modules/m1-reactions");
+    await page.locator('a[href="/modules/m1-alfum-mof"]').first().click();
+    await page.waitForURL("**/modules/m1-alfum-mof");
 
     await expect.poll(async () => (await readVt(page)).finished).toBeGreaterThan(0);
     const vt = await readVt(page);

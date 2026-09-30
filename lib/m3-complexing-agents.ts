@@ -1,13 +1,13 @@
 // M3 complexing-agent reference data.
 //
-// Sources: Penuntun Praktikum KI3131 Modul 3 (pages 20-24) for the recipe roles
+// Sources: Shared_Modul KUGU Module 4 for the recipe roles
 // and quantities, and the manual's own reading list for the mechanism — Tsai &
 // Hu (J. Electrochem. Soc. 156, D490, 2009) on the interactive effects of citric
 // acid, EDTA and PEG on Sn-Bi composition, and the PEG-400 paper the manual
 // assigns as tugas pendahuluan #3 (doi 10.1149/1.3276678).
 //
 // Where the manual does not state a mechanism, this data says so instead of
-// inventing one: `openQuestion` carries what the student must still resolve.
+// inventing one.
 
 export interface ComplexingAgent {
   id: "edta" | "citrate" | "peg400";
@@ -32,8 +32,6 @@ export interface ComplexingAgent {
   mechanism: string[];
   /** What changes in the deposit because of it. */
   effect: string[];
-  /** What the manual leaves for the student/assistant to settle. */
-  openQuestion: string;
   /** Reference pointer from the manual's own list. */
   reference: string;
 }
@@ -54,7 +52,7 @@ export const COMPLEXING_AGENTS: ComplexingAgent[] = [
     tex: "M^{n+} + \\text{EDTA}^{4-} \\rightleftharpoons [M(\\text{EDTA})]^{(n-4)}",
     texLabel: "Kesetimbangan pembentukan kompleks",
     mechanism: [
-      "EDTA adalah ligan heksadentat: satu molekul mencengkeram satu ion logam melalui enam titik ikat (empat karboksilat, dua nitrogen), membentuk kompleks kelat yang sangat stabil.",
+      "EDTA merupakan ligan heksadentat: satu molekul mengikat kuat satu ion logam melalui enam atom donor (empat gugus karboksilat dan dua atom nitrogen), membentuk cincin kelat yang sangat stabil.",
       "Ion logam yang terikat kompleks tidak lagi bebas di larutan. Aktivitas ion bebasnya turun drastis, dan menurut persamaan Nernst potensial reduksi efektifnya bergeser ke arah lebih negatif.",
       "Karena tetapan kestabilan kompleks Bi-EDTA dan Sn-EDTA berbeda, pergeseran yang dialami kedua ion tidak sama besar — di sinilah jarak 0,45 V dapat dipersempit.",
       "EDTA dilarutkan lebih dahulu dalam NH_{3} pekat (Larutan A) karena bentuk asamnya sukar larut; deprotonasi diperlukan agar gugus karboksilat siap mengikat logam.",
@@ -63,8 +61,6 @@ export const COMPLEXING_AGENTS: ComplexingAgent[] = [
       "Tanpa EDTA, Bi^{3+} tereduksi jauh lebih dulu dan menghasilkan lapisan kaya bismut yang tidak seragam.",
       "Dengan EDTA, kedua logam dapat mengendap dalam rentang potensial yang berdekatan — inilah kodeposisi yang dituju modul ini.",
     ],
-    openQuestion:
-      "Berapa besar pergeseran potensial yang sebenarnya terjadi pada kondisi elektrolit ini? Penuntun tidak memberi angkanya. Nilai yang dipakai di laporan harus dari literatur yang Anda rujuk atau dari arahan asisten, bukan diperkirakan sendiri.",
     reference:
       "Tsai & Hu (2009), J. Electrochem. Soc. 156, D490 — Composition Control of Sn-Bi Deposits",
   },
@@ -83,7 +79,7 @@ export const COMPLEXING_AGENTS: ComplexingAgent[] = [
     tex: "M^{n+} + \\text{Cit}^{3-} \\rightleftharpoons [M(\\text{Cit})]^{(n-3)}",
     texLabel: "Kesetimbangan sitrat-logam",
     mechanism: [
-      "Sitrat punya tiga gugus karboksilat dan satu hidroksil, sehingga dapat mengikat logam sebagai ligan poli-dentat — lebih lemah daripada EDTA, tetapi hadir pada konsentrasi enam kali lebih besar (0,30 M vs 0,05 M).",
+      "Asam sitrat memiliki tiga gugus karboksilat dan satu gugus hidroksil yang dapat mengikat ion logam sebagai ligan polidentat. Kekuatan ikatannya lebih lemah dibandingkan EDTA, namun hadir dengan konsentrasi enam kali lebih tinggi (0,30 M vs 0,05 M).",
       "Kombinasi ligan kuat berkonsentrasi rendah (EDTA) dengan ligan lemah berkonsentrasi tinggi memberi kendali yang lebih halus atas spesiasi kedua logam daripada satu ligan saja.",
       "Sitrat juga berfungsi sebagai buffer lemah pada media asam, membantu menahan pH elektrolit di sekitar 2 selama deposisi berlangsung.",
     ],
@@ -91,8 +87,6 @@ export const COMPLEXING_AGENTS: ComplexingAgent[] = [
       "Rasio Sn:Bi dalam deposit bergantung pada kesetimbangan gabungan EDTA dan sitrat — inilah 'interactive effects' yang menjadi judul literatur Tsai & Hu.",
       "Perubahan konsentrasi sitrat menggeser komposisi deposit tanpa harus mengubah rapat arus.",
     ],
-    openQuestion:
-      "Fungsi rinci masing-masing larutan A, B, dan C adalah pertanyaan kisi-kisi laporan B.2. Jawaban Anda harus menjelaskan mengapa sitrat dan EDTA dipakai bersamaan, bukan hanya menyebut keduanya pengompleks.",
     reference:
       "Tsai, Hu & Lin (2007), Electrochim. Acta 53, 2040 — Effects of complex agents on composition, adhesion, and dendrite formation",
   },
@@ -119,8 +113,6 @@ export const COMPLEXING_AGENTS: ComplexingAgent[] = [
       "Mengubah aditif juga dapat mengubah komposisi paduan dan perilaku elektrokimia, bukan hanya meratakan permukaan.",
       "Tidak ditulis persamaan kesetimbangan karena skema ini tidak menetapkan satu stoikiometri adsorpsi atau kompleksasi PEG.",
     ],
-    openQuestion:
-      "Tugas pendahuluan #3 meminta doi 10.1149/1.3276678. Makalah itu membahas Zn–Cr, bukan Sn–Bi: jelaskan temuan dan batas penerapannya ke praktikum ini. Kartu ini tidak menggantikan bacaan tersebut.",
     reference:
       "Boiadjieva dkk. (2010), J. Electrochem. Soc. 157, D159 — Effect of PEG 400 on Zn–Cr Alloy Electrodeposition, doi 10.1149/1.3276678. Pembanding Sn–Bi: Tsai, Hu & Lin (2007), Electrochim. Acta 53, 2040–2047",
   },

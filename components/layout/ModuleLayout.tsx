@@ -1,7 +1,7 @@
 // ModuleLayout — shared template for all module pages
 import { TransitionLink } from "@/components/layout/TransitionLink";
 import { ChemText } from "@/components/shared/ChemText";
-import { modules } from "@/lib/modules";
+import { visibleModules } from "@/lib/modules";
 import type { ModuleMeta } from "@/lib/modules";
 
 interface ModuleLayoutProps {
@@ -23,7 +23,7 @@ export function ModuleLayout({ module, children, compactHeader = false }: Module
     </ul>
   );
   return (
-    <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6 transition-all duration-300">
+    <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 py-6">
       {/* Breadcrumb Bar */}
       <div className="mb-4 flex items-center justify-between gap-3">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[var(--muted)]">
@@ -89,9 +89,9 @@ export function ModuleLayout({ module, children, compactHeader = false }: Module
           <nav aria-label="Navigasi antar-modul" className="mt-8 flex items-center justify-between border-t border-[var(--border)] pt-5 text-sm gap-2 flex-wrap">
             {module.number > 1 ? (
               <TransitionLink
-                href={modules[module.number - 2].route}
+                href={visibleModules[module.number - 2].route}
                 direction="nav-back"
-                className="min-h-10 rounded-lg border border-[var(--outline)] px-4 py-2 hover:bg-[var(--surface-muted)] hover:border-[var(--primary-container)] active:scale-[0.98] transition-all flex items-center gap-1.5 font-medium"
+                className="min-h-10 rounded-lg border border-[var(--outline)] px-4 py-2 hover:bg-[var(--surface-muted)] hover:border-[var(--primary-container)] active:scale-[0.98] m4-motion-control flex items-center gap-1.5 font-medium"
               >
                 <span>←</span>
                 <span>M{module.number - 1}</span>
@@ -100,7 +100,7 @@ export function ModuleLayout({ module, children, compactHeader = false }: Module
               <TransitionLink
                 href="/modules"
                 direction="nav-back"
-                className="min-h-10 rounded-lg border border-[var(--outline)] px-4 py-2 hover:bg-[var(--surface-muted)] hover:border-[var(--primary-container)] active:scale-[0.98] transition-all flex items-center gap-1.5 font-medium"
+                className="min-h-10 rounded-lg border border-[var(--outline)] px-4 py-2 hover:bg-[var(--surface-muted)] hover:border-[var(--primary-container)] active:scale-[0.98] m4-motion-control flex items-center gap-1.5 font-medium"
               >
                 <span>←</span>
                 <span>Daftar Modul</span>
@@ -110,17 +110,17 @@ export function ModuleLayout({ module, children, compactHeader = false }: Module
             <TransitionLink
               href="/"
               direction="nav-back"
-              className="min-h-10 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] px-4 py-2 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container-lowest)] hover:border-[var(--primary-container)] active:scale-[0.98] transition-all flex items-center gap-1.5"
+              className="min-h-10 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] px-4 py-2 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container-lowest)] hover:border-[var(--primary-container)] active:scale-[0.98] m4-motion-control flex items-center gap-1.5"
             >
               <span aria-hidden="true" className="material-symbols-outlined text-sm">home</span>
               <span>Beranda</span>
             </TransitionLink>
 
-            {module.number < 6 ? (
+            {module.number < visibleModules.length ? (
               <TransitionLink
-                href={modules[module.number].route}
+                href={visibleModules[module.number].route}
                 direction="nav-forward"
-                className="min-h-10 rounded-lg bg-[var(--primary)] px-5 py-2 text-white hover:bg-[var(--primary-dark)] active:scale-[0.98] shadow-xs transition-all flex items-center gap-1.5 font-medium"
+                className="min-h-10 rounded-lg bg-[var(--primary)] px-5 py-2 text-white hover:bg-[var(--primary-dark)] active:scale-[0.98] shadow-xs m4-motion-control flex items-center gap-1.5 font-medium"
               >
                 <span>M{module.number + 1}</span>
                 <span>→</span>
@@ -129,7 +129,7 @@ export function ModuleLayout({ module, children, compactHeader = false }: Module
               <TransitionLink
                 href="/laporan"
                 direction="nav-forward"
-                className="min-h-10 rounded-lg bg-[var(--primary)] px-5 py-2 text-white hover:bg-[var(--primary-dark)] active:scale-[0.98] shadow-xs transition-all flex items-center gap-1.5 font-medium"
+                className="min-h-10 rounded-lg bg-[var(--primary)] px-5 py-2 text-white hover:bg-[var(--primary-dark)] active:scale-[0.98] shadow-xs m4-motion-control flex items-center gap-1.5 font-medium"
               >
                 <span>Laporan</span>
                 <span>→</span>
@@ -165,19 +165,19 @@ export function ModuleLayout({ module, children, compactHeader = false }: Module
             </h3>
             <div className="flex flex-col gap-2 text-xs font-medium">
               <TransitionLink
-                href={`/prelab/${module.slug}`}
-                className="flex items-center justify-between p-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)] transition-all"
+                href={module.hasWalkthrough ? `/prelab/${module.slug}` : module.route}
+                className="flex items-center justify-between p-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)] m4-motion-control"
               >
                 <div className="flex items-center gap-2">
                   <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary-container)]">assignment_turned_in</span>
-                  <span>Pre-Lab Rehearsal</span>
+                  <span>{module.hasWalkthrough ? "Pre-Lab Rehearsal" : "Buka modul"}</span>
                 </div>
                 <span className="text-[var(--muted)]">→</span>
               </TransitionLink>
 
               <TransitionLink
                 href="/notebook"
-                className="flex items-center justify-between p-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)] transition-all"
+                className="flex items-center justify-between p-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)] m4-motion-control"
               >
                 <div className="flex items-center gap-2">
                   <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary-container)]">edit_note</span>
@@ -188,7 +188,7 @@ export function ModuleLayout({ module, children, compactHeader = false }: Module
 
               <TransitionLink
                 href="/analisis"
-                className="flex items-center justify-between p-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)] transition-all"
+                className="flex items-center justify-between p-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)] m4-motion-control"
               >
                 <div className="flex items-center gap-2">
                   <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary-container)]">query_stats</span>
@@ -199,7 +199,7 @@ export function ModuleLayout({ module, children, compactHeader = false }: Module
 
               <TransitionLink
                 href="/referensi"
-                className="flex items-center justify-between p-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)] transition-all"
+                className="flex items-center justify-between p-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] hover:border-[var(--primary-container)] hover:bg-[var(--surface-container)] m4-motion-control"
               >
                 <div className="flex items-center gap-2">
                   <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary-container)]">menu_book</span>

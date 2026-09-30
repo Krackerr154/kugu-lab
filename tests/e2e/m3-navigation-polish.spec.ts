@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-const route = "/modules/m3-sn-bi-electrodeposition";
-const stageIds = ["brief", "understand", "rehearse", "prove", "ready"];
+const route = "/modules/m4-sn-bi-electrodeposition";
+const stageIds = ["brief", "understand", "prove", "ready"];
 
 test("M3 keeps the arrival compact while retaining all objectives in a keyboard disclosure", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -74,10 +74,10 @@ test("rapid keyboard stage selections survive normal-motion scrolling", async ({
   await page.keyboard.press("ArrowDown");
   await page.waitForTimeout(200); // Deliberately issue the next selection mid-animation.
   await page.keyboard.press("ArrowDown");
-  await expect.poll(() => page.locator("#rehearse").evaluate((el) =>
+  await expect.poll(() => page.locator("#prove").evaluate((el) =>
     Math.abs(el.getBoundingClientRect().top - parseFloat(getComputedStyle(el).scrollMarginTop))
   )).toBeLessThanOrEqual(2);
-  await expect(picker).toHaveValue("rehearse");
+  await expect(picker).toHaveValue("prove");
   await expect(picker).toBeFocused();
   // After programmatic navigation settles, ordinary reading still updates location.
   await page.evaluate(() => document.getElementById("understand")!.scrollIntoView({ behavior: "instant" }));
@@ -91,7 +91,7 @@ test("mobile stage navigation keeps every stage reachable without hiding its hea
   const rail = page.getByRole("navigation", { name: "Tahap persiapan modul" });
   const picker = rail.getByRole("combobox", { name: "Pilih tahap persiapan" });
   await expect(picker).toBeVisible();
-  await expect(picker.locator("option")).toHaveCount(5);
+  await expect(picker.locator("option")).toHaveCount(4);
 
   for (const id of [...stageIds, "understand", "brief"]) {
     await picker.selectOption(id);
@@ -127,8 +127,8 @@ test("mobile stage navigation keeps every stage reachable without hiding its hea
   // Real scrolling, not just click state: moving back up updates the selector.
   await picker.selectOption("ready");
   await expect(rail.getByRole("button", { name: "Tahap berikutnya" })).toBeDisabled();
-  await page.evaluate(() => document.getElementById("rehearse")!.scrollIntoView());
-  await expect(picker).toHaveValue("rehearse");
+  await page.evaluate(() => document.getElementById("prove")!.scrollIntoView());
+  await expect(picker).toHaveValue("prove");
   await page.evaluate(() => window.scrollTo(0, 0));
   await expect(picker).toHaveValue("brief");
 });

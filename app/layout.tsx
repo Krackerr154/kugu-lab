@@ -26,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full bg-[var(--background)] text-[var(--on-surface)] flex flex-col lg:flex-row">
         <TransitionWatcher />
         <Navigation />
-        <div className="app-shell min-w-0 flex-1 flex flex-col min-h-screen transition-all duration-300 ease-out">
+        <div className="app-shell min-w-0 flex-1 flex flex-col min-h-screen">
           <AppHeader />
           <main className="flex-1">{children}</main>
           <footer className="no-print border-t border-[var(--outline-variant)] bg-[var(--surface)] py-4 px-6 text-center text-xs text-[var(--on-surface-variant)]">

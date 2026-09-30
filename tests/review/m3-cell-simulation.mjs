@@ -36,7 +36,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, reducedMotion: "no-preference" });
   page.on("pageerror", (error) => report.errors.push(error.message));
   page.on("console", (message) => { if (message.type() === "error") report.errors.push(message.text()); });
-  await page.goto("http://localhost:3000/modules/m3-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
+  await page.goto("http://localhost:3000/modules/m4-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
   const sim = page.getByRole("region", { name: "Simulasi kodeposisi" });
   const timeline = sim.getByRole("slider", { name: "Posisi animasi" });
   await sim.getByRole("button", { name: "Jalankan Sel", exact: true }).click();

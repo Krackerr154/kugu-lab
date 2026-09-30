@@ -1,18 +1,18 @@
 import { TransitionLink } from "@/components/layout/TransitionLink";
 import Link from "next/link";
-import { modules } from "@/lib/modules";
+import { visibleModules } from "@/lib/modules";
 import { contentConflicts } from "@/lib/conflicts";
 import { ChemText } from "@/components/shared/ChemText";
 
 export default function HomePage() {
-  const unresolvedConflicts = contentConflicts.filter((c) => c.status === "unresolved");
+  const unresolvedConflicts = contentConflicts.filter((c) => c.status === "unresolved" && c.visible !== false);
 
   // Map module status to schedule-like items
-  const scheduleItems = modules.slice(0, 4).map((m, i) => ({
+  const scheduleItems = visibleModules.slice(0, 4).map((m) => ({
     module: m,
     label: m.titleShort,
-    status: i === 0 ? "Aktif" : i === 1 ? " Mendatang" : "Terjadwal",
-    statusColor: i === 0 ? "secondary" : "outline",
+    status: m.number === 4 ? "Aktif" : m.contentState === "placeholder" ? "Disiapkan" : "Tersedia",
+    statusColor: m.number === 4 ? "secondary" : "outline",
   }));
 
   return (
@@ -51,7 +51,7 @@ export default function HomePage() {
 
               {/* Module cards grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
-                {modules.map((m) => (
+                {visibleModules.map((m) => (
                   <TransitionLink
                     key={m.id}
                     href={m.route}
@@ -153,10 +153,10 @@ export default function HomePage() {
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { stage: "Tahap 1", title: "Amati & Jelaskan", desc: "Modul 1 — Reaksi golongan utama", tone: "navy" },
-                { stage: "Tahap 2", title: "Sintesis Material", desc: "Modul 2-4 — Mg2SnO4, Sn-Bi, Zeolit", tone: "gold" },
-                { stage: "Tahap 3", title: "Karakterisasi & Interpretasi", desc: "Modul 5-6 — XRD dan TGA", tone: "navy" },
-                { stage: "Tahap 4", title: "Integrasi Bukti", desc: "Lintas modul — Sintesis → karakterisasi", tone: "gold" },
+                { stage: "Tahap 1", title: "Sintesis Material", desc: "Modul 1-4 — Al-Fum, Zeolit, SnO₂, Sn-Bi", tone: "navy" },
+                { stage: "Tahap 2", title: "Karakterisasi Struktur", desc: "Modul 5 — XRD", tone: "gold" },
+                { stage: "Tahap 3", title: "Karakterisasi Gugus & Termal", desc: "Modul 6 — FTIR dan TGA", tone: "navy" },
+                { stage: "Tahap 4", title: "Porositas & Integrasi Bukti", desc: "Modul 7 — BET dan lintas modul", tone: "gold" },
               ].map((step) => (
                 <div
                   key={step.stage}
@@ -175,7 +175,7 @@ export default function HomePage() {
               <p className="font-semibold text-[var(--on-surface)]">Alur Sampel:</p>
               <p className="mt-1 leading-relaxed break-words">
                 <ChemText>
-                  M1: observasi reaksi │ M2: sintesis Mg2SnO4 → kalsinasi → pelet/band-gap → fotokatalisis → XRD │ M3: elektrodeposisi Sn-Bi → XRD │ M4: sintesis zeolit FAU → XRD + TGA │ M5/M6: integrasi bukti dari sintesis sebelumnya
+                  M1: Al-Fum MOF → XRD + FTIR │ M2: zeolit FAU → XRD + BET │ M3: SnO₂ → XRD │ M4: elektrodeposisi Sn-Bi → XRD │ M5-M7: karakterisasi dan integrasi bukti
                 </ChemText>
               </p>
             </div>

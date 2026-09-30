@@ -6,7 +6,7 @@ const ROUTES = [
   "/modules/m2-mg2sno4",
   "/modules/m5-xrd",
   "/modules/m6-tga",
-  "/modules/m3-sn-bi-electrodeposition",
+  "/modules/m4-sn-bi-electrodeposition",
 ];
 
 const browser = await chromium.launch();

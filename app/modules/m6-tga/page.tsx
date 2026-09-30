@@ -9,10 +9,17 @@ import { TGAWorkspace } from "@/components/interactives/TGAWorkspace";
 import { getModule } from "@/lib/modules";
 
 export default function M6Page() {
-  const module = getModule("m6-tga")!;
+  const module = getModule("m6-ftir-tga")!;
 
   return (
       <ModuleLayout module={module}>
+      <section className="rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-4" data-content-state="partial">
+        <p className="text-sm font-semibold text-[var(--foreground)]">FTIR sedang disiapkan</p>
+        <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+          Workspace TGA/DTG yang sudah ada tetap tersedia. Materi, contoh spektrum, dan worksheet FTIR akan ditambahkan
+          setelah konten Modul 6 diverifikasi terhadap penuntun.
+        </p>
+      </section>
       <section className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold">Teori Singkat</h2>
         <div className="mt-2 space-y-2 text-sm text-[var(--text-secondary)]">

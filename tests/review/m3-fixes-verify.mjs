@@ -5,7 +5,7 @@
 //      "hitung arus dari luas katoda" button recomputes I from the measured area
 import { chromium } from "@playwright/test";
 
-const URL = "http://localhost:3000/modules/m3-sn-bi-electrodeposition";
+const URL = "http://localhost:3000/modules/m4-sn-bi-electrodeposition";
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
 

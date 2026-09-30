@@ -1,5 +1,5 @@
 import { TransitionLink } from "@/components/layout/TransitionLink";
-import { modules } from "@/lib/modules";
+import { visibleModules } from "@/lib/modules";
 import { ChemText } from "@/components/shared/ChemText";
 
 export default function ModulesPage() {
@@ -7,14 +7,17 @@ export default function ModulesPage() {
       <div className="mx-auto max-w-7xl px-4 py-6">
       <h1 className="text-2xl font-bold">Modul Praktikum</h1>
       <p className="mt-1 text-sm text-[var(--muted)]">
-        Enam unit pembelajaran dengan alur: tujuan → peta konsep → keselamatan → pre-lab → prosedur → observasi → analisis → laporan.
+        Tujuh unit pembelajaran dengan alur: tujuan → peta konsep → keselamatan → pre-lab → prosedur → observasi → analisis → laporan.
       </p>
 
       <div className="mt-6 space-y-4">
-        {modules.map((m) => (
+        {visibleModules.map((m) => (
           <TransitionLink
             key={m.id}
             href={m.route}
+            data-module-card
+            data-module-number={m.number}
+            data-module-state={m.contentState ?? "active"}
             direction="nav-forward"
             className="surface-panel group block p-5 border border-[var(--outline-variant)]/50 hover:border-[var(--primary-container)] hover:bg-[var(--surface-container-lowest)] hover:shadow-md hover:-translate-y-0.5 active:scale-[0.99] transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
           >
@@ -25,6 +28,12 @@ export default function ModulesPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h2 className="text-lg font-bold">M{m.number} — <ChemText>{m.titleShort}</ChemText></h2>
+                  {m.contentState === "placeholder" && (
+                    <span className="rounded-full bg-[var(--surface-variant)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--on-surface-variant)]">Placeholder</span>
+                  )}
+                  {m.contentState === "partial" && (
+                    <span className="rounded-full bg-[var(--secondary)]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--on-secondary-container)]">Sebagian tersedia</span>
+                  )}
                 </div>
                 <p className="text-xs text-[var(--muted)] mt-0.5"><ChemText>{m.title}</ChemText></p>
                 <div className="mt-2 grid gap-2 sm:grid-cols-2">

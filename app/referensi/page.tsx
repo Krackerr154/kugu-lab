@@ -45,7 +45,7 @@ export default function ReferensiPage() {
       <section className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold"><span aria-hidden="true" className="material-symbols-outlined align-middle text-base">menu_book</span> Glosarium</h2>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          {glossaryTerms.map((term, i) => (
+          {glossaryTerms.filter((term) => term.visible !== false).map((term, i) => (
             <div key={i} className="rounded-lg border border-[var(--outline-variant)] p-2">
               <p className="text-sm font-semibold">
                 {term.term}
@@ -73,7 +73,7 @@ export default function ReferensiPage() {
               </tr>
             </thead>
             <tbody>
-              {contentConflicts.map((c) => (
+              {contentConflicts.filter((c) => c.visible !== false).map((c) => (
                 <tr key={c.id} className="border-b border-[var(--secondary)]/40">
                   <td className="py-1.5 pr-3 font-mono font-bold">{c.id}</td>
                   <td className="py-1.5 pr-3">{c.module}</td>

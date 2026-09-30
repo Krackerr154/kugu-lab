@@ -10,6 +10,9 @@ services:
     restart: unless-stopped
     ports:
       - "10.66.66.5:3034:3000"
+    environment:
+      M4_GUIDED_ACCESS_CODE: "${M4_GUIDED_ACCESS_CODE}"
+      M4_GUIDED_ORIGIN: "${M4_GUIDED_ORIGIN:-https://kugu.g-labs.my.id}"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/"]
       interval: 30s

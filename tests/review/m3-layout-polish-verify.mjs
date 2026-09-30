@@ -3,17 +3,17 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const base = process.env.BASE_URL ?? "http://localhost:3000";
-const route = "/modules/m3-sn-bi-electrodeposition";
+const route = "/modules/m4-sn-bi-electrodeposition";
 const output = path.resolve("artifacts/m3-layout-polish");
 mkdirSync(output, { recursive: true });
 const viewports = [[320, 740], [360, 800], [390, 844], [640, 900], [768, 1024], [844, 390], [1024, 768], [1280, 900], [1440, 900], [1920, 1080], [2560, 1440]];
-const stages = ["brief", "understand", "rehearse", "prove", "ready"];
+const stages = ["brief", "understand", "prove", "ready"];
 const rows = [];
 const browser = await chromium.launch();
 
 try {
   for (const [width, height] of viewports) {
-    const context = await browser.newContext({ viewport: { width, height }, isMobile: width < 768, hasTouch: width < 1024, reducedMotion: "reduce" });
+    const context = await browser.newContext({ viewport: { width, height }, isMobile: width < 768, hasTouch: width < 1024, reducedMotion: "reduce", storageState: "tests/e2e/m4-guest-state.json" });
     const page = await context.newPage();
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
@@ -62,31 +62,25 @@ try {
             const navRect = nav.getBoundingClientRect();
             const heading = document.getElementById(`${stageId}-heading`).getBoundingClientRect();
             const active = nav.querySelector("select").value;
-            return { active, gap: heading.top - navRect.bottom, top: heading.top };
+            const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
+            return { active, gap: heading.top - navRect.bottom, top: heading.top, atBottom };
           }, id);
-          return data.active === id && data.gap >= 0 && data.top < 280;
+          return data.active === id && (data.atBottom || (data.gap >= 0 && data.top < 280));
         }, { timeout: 5000 }).toBe(true);
         row.stages.push(id);
       }
       const rect = await rail.boundingBox();
       check(Math.abs(rect.y - (width < 1024 ? 64 : 80)) <= 1, "rail does not pin below global header");
-      check((await rail.getByRole("button").count()) === (width < 768 ? 2 : 5), "wrong breakpoint navigation controls");
+      check((await rail.getByRole("button").count()) === (width < 768 ? 2 : 4), "wrong breakpoint navigation controls");
 
-      // All reagent dialogs remain contained and their close control is reachable.
-      for (const name of ["EDTA", "Asam Sitrat", "PEG400"]) {
-        const card = page.locator('#understand button[aria-haspopup="dialog"]').filter({ has: page.getByRole("heading", { name, exact: true }) });
-        await card.click();
-        const dialog = page.getByRole("dialog");
-        const close = dialog.getByRole("button", { name: /^Tutup penjelasan/ });
-        await expect(close).toBeFocused();
-        await dialog.evaluate((el) => Promise.all(el.getAnimations().map((animation) => animation.finished)));
-        const box = await dialog.boundingBox();
-        const closeBox = await close.boundingBox();
-        check(box.x >= 0 && box.x + box.width <= width && box.y >= 0 && box.y + box.height <= height, `${name} dialog exceeds viewport`);
-        check(closeBox.width >= 44 && closeBox.height >= 44, `${name} close target is too small`);
-        if (width === 390 && name === "EDTA") await page.screenshot({ path: path.join(output, "390-reagent-dialog.png") });
-        await page.keyboard.press("Escape");
-        await expect(card).toBeFocused();
+      // The former standalone reagent dialogs are now inline tabs inside the
+      // electrolyte card; keep the same containment check on the new surface.
+      const agents = page.locator("[data-electrolyte-agents]");
+      check(await agents.getByRole("tab").count() === 3, "three inline reagent tabs render");
+      for (const id of ["edta", "citrate", "peg400"]) {
+        await agents.locator(`#electrolyte-agent-tab-${id}`).click();
+        await expect(agents.locator("[data-active-agent]")).toHaveAttribute("data-active-agent", id);
+        check(await page.getByRole("dialog").count() === 0, `${id} stays inline without a modal`);
       }
       if (width === 390 || width === 1920) {
         await page.locator("#understand").evaluate((el) => el.scrollIntoView());

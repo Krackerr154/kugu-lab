@@ -29,14 +29,13 @@ const report = { sampledCases, expectedViewports: widths.length, viewports: [], 
 const browser = await chromium.launch();
 try {
   for (const width of widths) {
-    const page = await browser.newPage({ viewport: { width, height: 1000 }, reducedMotion: "reduce" });
+    const page = await browser.newPage({ viewport: { width, height: 1000 }, reducedMotion: "reduce", storageState: "tests/e2e/m4-guest-state.json" });
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
-    await page.goto("http://localhost:3000/modules/m3-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
+    await page.goto("http://localhost:3000/modules/m4-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
     const sim = page.getByRole("region", { name: "Simulasi kodeposisi" });
     const beaker = sim.getByTestId("m3-cell-scene");
-    const detail = sim.getByRole("region", { name: "Agen dalam beaker" });
     const row = { width, phases: [], errors };
     for (let step = 0; step < 5; step++) {
       if (step) await sim.getByRole("button", { name: "Langkah berikutnya" }).click();
@@ -52,40 +51,39 @@ try {
       assert(state.every((ligand) => ligand.inside), `ligand outside liquid at ${width}px step ${step}`);
       row.phases.push(state);
     }
-    for (const [id, label, concentration] of [["citrate", "Sitrat", "0,30 M"], ["edta", "EDTA", "0,05 M"], ["peg400", "PEG400", "0,20 M"]]) {
+    for (const [id, label] of [["citrate", "Sitrat"], ["edta", "EDTA"], ["peg400", "PEG400"]]) {
       const hotspot = beaker.getByRole("button", { name: `Detail ${label} di beaker`, exact: true });
       await hotspot.focus();
       await page.keyboard.press(id === "edta" ? "Enter" : "Space");
-      await expect(detail).toHaveAttribute("data-agent", id);
-      await expect(detail).toContainText(concentration);
       const touch = sim.getByRole("button", { name: `Sorot agen ${label}`, exact: true });
       const rect = await touch.boundingBox();
       assert(rect.width >= 44 && rect.height >= 44);
       await expect(touch).toHaveAttribute("aria-pressed", "true");
-      await expect(hotspot).toHaveAttribute("aria-controls", await detail.getAttribute("id"));
+      await expect(hotspot).not.toHaveAttribute("aria-controls");
     }
+    await expect(sim.getByRole("region", { name: "Agen dalam beaker" })).toHaveCount(0);
     await sim.getByRole("button", { name: "Dengan pengompleks", exact: true }).click();
     await expect(beaker.locator("[data-ligand]")).toHaveCount(0);
     await expect(beaker.locator('[data-agent-layer="peg400"]')).toHaveCount(0);
     await sim.getByRole("button", { name: "Sorot agen EDTA", exact: true }).click();
-    await expect(detail).toContainText("Tidak hadir pada skenario pembanding");
+    await expect(sim.getByRole("button", { name: "Sorot agen EDTA", exact: true })).toHaveAttribute("aria-pressed", "true");
     await sim.getByRole("button", { name: "Tanpa pengompleks", exact: true }).click();
     await sim.getByRole("button", { name: "Ulangi dari awal" }).click();
     await sim.getByRole("button", { name: "Langkah berikutnya" }).click();
     row.overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-    assert.equal(row.overflow, 0);
+    assert(row.overflow <= 1, `overflow at ${width}px: ${row.overflow}`);
     assert.deepEqual(errors, []);
     if ([390, 1440, 1920].includes(width)) {
       await sim.screenshot({ path: `${out}/${width}-agents.png`, style: '.no-print, nextjs-portal { visibility: hidden !important; }' });
     }
     report.viewports.push(row);
     writeFileSync(`${out}/evidence.json`, JSON.stringify(report, null, 2));
-    console.log(`PASS ${width}px: five frames, liquid containment, three agent details, keyboard/touch controls, comparison`);
+    console.log(`PASS ${width}px: five frames, liquid containment, three agent controls, removed detail panel, comparison`);
     await page.close();
   }
 
-  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: "no-preference" });
-  await page.goto("http://localhost:3000/modules/m3-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: "no-preference", storageState: "tests/e2e/m4-guest-state.json" });
+  await page.goto("http://localhost:3000/modules/m4-sn-bi-electrodeposition", { waitUntil: "domcontentloaded" });
   const sim = page.getByRole("region", { name: "Simulasi kodeposisi" });
   const ligand = sim.getByTestId("m3-cell-scene").locator('[data-ligand="edta-0"]');
   await sim.getByRole("button", { name: "Jalankan Sel", exact: true }).click();

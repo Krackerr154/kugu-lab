@@ -1,4 +1,4 @@
-// M3 Electrodeposition Calculator — current efficiency, cell explorer
+// M4 Electrodeposition Calculator — current efficiency, cell explorer
 "use client";
 
 import { useState } from "react";
@@ -7,7 +7,7 @@ import { Equation } from "@/components/shared/Equation";
 // Faraday constant: 96485 C/mol
 const F = 96485;
 
-// Protocol operating point from Penuntun Praktikum KI3131, Modul 3 (p. 19-20):
+// Protocol operating point from Shared_Modul KUGU, Modul 4:
 // "mengalirkan arus listrik sebesar 14,5 mA/cm² selama 15 menit".
 const PROTOCOL_CURRENT_DENSITY_MA = 14.5; // mA/cm²
 const PROTOCOL_DURATION_S = 900; // 15 minutes
@@ -27,7 +27,7 @@ export function ElectrodepositionCalculator() {
 
   // Alloy mode (audit item 4). The manual deposits Sn AND Bi together but gives
   // no target composition, and states the efficiency formula with no
-  // stoichiometry. content.md M3.5 requires instructor-provided valence
+  // stoichiometry. Module 4 requires instructor-provided valence
   // assumptions when mixed deposition makes a single calculation inadequate, so
   // the composition is an input the student sets and must have signed off —
   // never a hardcoded default that would look authoritative.
@@ -163,7 +163,7 @@ export function ElectrodepositionCalculator() {
                 Titik kerja protokol
               </p>
               <p className="mt-0.5 text-sm text-[var(--text-primary)]">
-                14,5 mA/cm² selama 15 menit (900 s) — Modul 3, prosedur elektrodeposisi.
+                14,5 mA/cm² selama 15 menit (900 s) — Modul 4, prosedur elektrodeposisi.
               </p>
             </div>
             <button

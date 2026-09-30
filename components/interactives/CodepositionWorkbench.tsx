@@ -2,12 +2,11 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { ChemText } from "@/components/shared/ChemText";
-import { Equation } from "@/components/shared/Equation";
 import { CellSimulation, CathodeCloseUp } from "@/components/interactives/CellSimulation";
 import { CHECKPOINTS, ILLUSTRATION_SECONDS, cellFrame, clampTime, type ReactionFocus } from "@/lib/m3-simulation";
-import { CELL_COMPONENTS, type ComponentKey } from "@/lib/m3-cell-components";
+import type { ComponentKey } from "@/lib/m3-cell-components";
 import { BATH_AGENT_LABELS, type BathAgent } from "@/lib/m3-ligands";
-import { BathAgentDetails } from "@/components/interactives/BathAgentDetails";
+import { ElectrolyteFunctionCard } from "@/components/interactives/ElectrolyteFunctionCard";
 import { PegDendriteComparison } from "@/components/interactives/PegDendriteComparison";
 import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
 
@@ -16,7 +15,7 @@ interface CodepositionWorkbenchProps {
   hotspot: (key: ComponentKey, label: string) => Record<string, unknown>;
 }
 
-const control = "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-control)] px-3 text-sm font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)] disabled:cursor-not-allowed disabled:opacity-40";
+const control = "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-control)] px-3 text-sm font-semibold text-[var(--primary-container)] m4-motion-control hover:bg-[var(--surface-container)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)] disabled:cursor-not-allowed disabled:opacity-40";
 
 export function CodepositionWorkbench({ selected, hotspot }: CodepositionWorkbenchProps) {
   const rootRef = useRef<HTMLElement>(null);
@@ -26,7 +25,6 @@ export function CodepositionWorkbench({ selected, hotspot }: CodepositionWorkben
   const [complexed, setComplexed] = useState(true);
   const [focus, setFocus] = useState<ReactionFocus>("all");
   const [activeAgent, setActiveAgent] = useState<BathAgent>("edta");
-  const agentDetailsId = useId();
   const pegComparisonId = useId();
   const [speed, setSpeed] = useState(1);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -41,7 +39,7 @@ export function CodepositionWorkbench({ selected, hotspot }: CodepositionWorkben
   const advancing = playing && inView && pageVisible && !reducedMotion;
   const finished = time >= ILLUSTRATION_SECONDS;
   const percent = Math.round(time / ILLUSTRATION_SECONDS * 100);
-  const reaction = focus === "all" ? null : CELL_COMPONENTS.cathode.halfReactions![focus === "bi" ? 0 : focus === "sn" ? 1 : 2];
+
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -166,11 +164,11 @@ export function CodepositionWorkbench({ selected, hotspot }: CodepositionWorkben
         <figure className="min-w-0 rounded-lg bg-[var(--surface-container-low)] p-3">
           <figcaption className="mb-2 text-sm font-semibold text-[var(--primary-container)]">Sel elektrodeposisi</figcaption>
           <CellSimulation frame={frame} running={advancing} focus={focus} selected={selected} hotspot={hotspot}
-            activeAgent={activeAgent} onAgentSelect={setActiveAgent} agentDetailsId={agentDetailsId} />
+            activeAgent={activeAgent} onAgentSelect={setActiveAgent} />
           <div role="group" aria-label="Sorot agen dalam beaker" className="mt-2 flex flex-wrap gap-2">
             {(["edta", "citrate", "peg400"] as const).map((agent) => (
               <button key={agent} type="button" aria-label={`Sorot agen ${BATH_AGENT_LABELS[agent]}`}
-                aria-pressed={activeAgent === agent} aria-controls={agentDetailsId} onClick={() => setActiveAgent(agent)}
+                aria-pressed={activeAgent === agent} onClick={() => setActiveAgent(agent)}
                 className={`${control} aria-pressed:border-[var(--primary-container)] aria-pressed:bg-[var(--surface-selected)]`}>
                 {BATH_AGENT_LABELS[agent]}
               </button>
@@ -189,43 +187,12 @@ export function CodepositionWorkbench({ selected, hotspot }: CodepositionWorkben
           <figcaption className="mb-2 text-sm font-semibold text-[var(--primary-container)]">{activeAgent === "peg400" ? "PEG400: model penghambatan dendrit" : "Dekat permukaan katoda"}</figcaption>
           {activeAgent === "peg400" ? <PegDendriteComparison frame={frame} onSeek={seek} id={pegComparisonId} /> : <>
             <CathodeCloseUp frame={frame} focus={focus} activeAgent={activeAgent} />
-            <p className="text-xs leading-5 text-[var(--text-secondary)]">Garis putus: spesi dalam larutan. Bentuk terisi: logam yang sudah terdeposit.</p>
+            <p className="text-xs leading-5 text-[var(--text-secondary)]">Garis putus-putus: kation logam dalam larutan. Bentuk padat: atom logam yang telah terdeposit di katoda.</p>
           </>}
         </figure>
       </div>
 
-      <BathAgentDetails agentId={activeAgent} complexed={complexed} id={agentDetailsId} />
-
-      <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-[var(--text-secondary)]" aria-label="Legenda partikel">
-        <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-3 w-3 rounded-full bg-[var(--chart-gold)]" />Bi</span>
-        <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-3 w-3 rounded-sm bg-[var(--chart-navy)]" />Sn</span>
-        <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-3 w-3 rounded-full border border-[var(--outline)]" /><ChemText>{"H_{2}"}</ChemText></span>
-      </div>
-
-      <section aria-label="Reaksi yang diamati" className="min-w-0 rounded-lg bg-[var(--surface-container-low)] p-4">
-        <h5 className="text-sm font-bold text-[var(--primary)]">
-          {focus === "sn" ? "Reduksi timah" : focus === "bi" ? "Reduksi bismut" : focus === "h2" ? "Reaksi samping hidrogen" : "Dari spesi larutan menjadi lapisan logam"}
-        </h5>
-        {reaction && <div className="my-2"><Equation tex={reaction.tex} compact /></div>}
-        <p className="mt-1 max-w-[72ch] text-sm leading-6 text-[var(--text-secondary)]">
-          {focus === "sn"
-            ? complexed
-              ? "Ikuti bentuk persegi Sn: spesi menerima dua elektron, lalu menjadi logam pada katoda. Pada skenario kodeposisi ini, Sn ikut membangun lapisan bersama Bi."
-              : "Sn tetap dapat mendekati permukaan, tetapi belum ikut tereduksi pada jendela potensial ilustrasi ini. Transpor menuju katoda tidak otomatis berarti deposisi."
-            : focus === "bi"
-              ? "Ikuti lingkaran Bi: spesi menerima tiga elektron dan menjadi logam. Tanpa pengompleks, Bi lebih mudah tereduksi dibandingkan Sn; pada skenario kodeposisi keduanya membentuk deposit."
-              : focus === "h2"
-                ? "Reduksi ion hidrogen memakai elektron untuk membentuk gas, tanpa menambah massa deposit. Karena itu tidak seluruh muatan harus menjadi Sn atau Bi; jumlah gelembung di animasi bukan nilai efisiensi arus."
-                : "Spesi logam bergerak di larutan, menerima elektron di permukaan, lalu bertahan sebagai deposit. Pilih Bi, Sn, atau H2 untuk mengikuti satu proses; penggeser dan tombol langkah menahan adegan agar dapat diperiksa."}
-        </p>
-      </section>
-
-      <p aria-live="polite" className="max-w-[72ch] text-sm leading-6 text-[var(--on-surface)]">
-        {complexed ? <><strong>Dengan EDTA dan asam sitrat:</strong> ilustrasi memperlihatkan Sn dan Bi ikut tereduksi dan membangun lapisan. Pengompleks menggeser potensial deposisi efektif; hasil nyata tetap bergantung pada kondisi elektrolit dan operasi.</> : <><strong>Tanpa pengompleks:</strong> pada jendela potensial ilustrasi ini, Bi tereduksi lebih dahulu (E° = +0,31 V; Sn E° = −0,14 V). Sn tetap dapat mendekati katoda, tetapi belum ikut tereduksi. Lapisan yang diperlihatkan kaya bismut.</>}
-      </p>
-      <p className="max-w-[80ch] text-xs leading-5 text-[var(--text-secondary)]">
-        Skema konseptual, bukan prediksi komposisi, massa, efisiensi, waktu praktikum, atau kisi kristal. Penanda ligan bersifat simbolik: protonasi, muatan, struktur kompleks, dan jalur elementer reaksi tidak dimodelkan. Transpor, reduksi, dan pertumbuhan berlangsung bersamaan di sel nyata. Dasar: penuntun hlm. 20–24.
-      </p>
+      <ElectrolyteFunctionCard />
     </section>
   );
 }

@@ -11,7 +11,7 @@ test("deposits grow outward from copper with no unsupported gaps in either bath"
   }
 });
 
-const route = "/modules/m3-sn-bi-electrodeposition";
+const route = "/modules/m4-sn-bi-electrodeposition";
 
 test("reaction focus connects particle identity to reduction and compares baths without rewinding", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });

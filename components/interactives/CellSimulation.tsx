@@ -16,7 +16,6 @@ interface CellSimulationProps {
   hotspot: (key: ComponentKey, label: string) => Record<string, unknown>;
   activeAgent: BathAgent;
   onAgentSelect: (agent: BathAgent) => void;
-  agentDetailsId: string;
 }
 
 const metalTone = (species: "bi" | "sn") => species === "bi" ? "var(--chart-gold)" : "var(--chart-navy)";
@@ -32,14 +31,14 @@ const ELECTRONS = [
   { id: "e-down-2", segment: "down", offset: 0.8 },
 ];
 
-export function CellSimulation({ frame, running, focus, selected, hotspot, activeAgent, onAgentSelect, agentDetailsId }: CellSimulationProps) {
+export function CellSimulation({ frame, running, focus, selected, hotspot, activeAgent, onAgentSelect }: CellSimulationProps) {
   const clipId = useId();
   return (
     <svg
       viewBox="0 0 300 225"
       className={`w-full ${running ? "" : "m3-sim-paused"}`}
       data-testid="m3-cell-scene"
-      aria-label="Diagram sel elektrodeposisi: sumber DC dengan terminal positif ke anoda grafit dan terminal negatif ke katoda tembaga; elektron mengalir dari anoda melalui sumber DC menuju katoda. Setiap komponen dapat dipilih untuk penjelasan."
+      aria-label="Diagram sel elektrodeposisi: sumber DC dengan terminal positif ke elektroda karbon dan terminal negatif ke katoda tembaga; elektron mengalir dari anoda melalui sumber DC menuju katoda. Setiap komponen dapat dipilih untuk penjelasan."
     >
       <defs><clipPath id={clipId}><rect x="71" y="75" width="158" height="69" /></clipPath></defs>
       <rect x="120" y="10" width="60" height="30" rx="4"
@@ -76,7 +75,7 @@ export function CellSimulation({ frame, running, focus, selected, hotspot, activ
       <BathAgentLayer frame={frame} view="cell" focus={focus} activeAgent={activeAgent} />
       <rect x="50" y="70" width="20" height="60" rx="2"
         fill={selected === "anode" ? "var(--secondary-container)" : "var(--outline)"}
-        stroke="var(--primary-container)" strokeWidth="1.5" {...hotspot("anode", "Anoda positif, elektroda grafit")} />
+        stroke="var(--primary-container)" strokeWidth="1.5" {...hotspot("anode", "Anoda positif, elektroda karbon")} />
       <text x="60" y="194" textAnchor="middle" fontSize="9" fill="var(--primary)" fontWeight="bold" pointerEvents="none">Anoda (+)</text>
       <rect x="230" y="70" width="20" height="60" rx="2"
         fill={selected === "cathode" ? "var(--secondary-container)" : "var(--surface-variant)"}
@@ -96,7 +95,7 @@ export function CellSimulation({ frame, running, focus, selected, hotspot, activ
       {(["edta", "citrate", "peg400"] as const).map((agent, index) => (
         <g key={agent} data-agent-hotspot={agent} role="button" tabIndex={0}
           aria-label={`Detail ${BATH_AGENT_LABELS[agent]} di beaker`} aria-pressed={activeAgent === agent}
-          aria-controls={agentDetailsId} transform={`translate(${74 + index * 54} 155)`}
+          transform={`translate(${74 + index * 54} 155)`}
           onClick={() => onAgentSelect(agent)}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onAgentSelect(agent); }

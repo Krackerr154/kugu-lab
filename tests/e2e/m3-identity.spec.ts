@@ -12,7 +12,7 @@ import {
   type StudentIdentity,
 } from "../../lib/m3-identity";
 
-const route = "/modules/m3-sn-bi-electrodeposition";
+const route = "/modules/m4-sn-bi-electrodeposition";
 
 // ── Pure logic (no browser) ────────────────────────────────────────────────
 test("NIM validation enforces the confirmed 10524xxx cohort format", () => {
@@ -111,39 +111,25 @@ test("first visit prompts, saving a NIM persists across reload, guest path works
   expect(JSON.parse((await page.evaluate((k) => localStorage.getItem(k), IDENTITY_KEY))!)).toMatchObject({ mode: "guest" });
 });
 
-test("switching NIM does not reveal the previous student's checklist", async ({ page }) => {
+test("switching NIM keeps private storage namespaced after the M4 log is removed", async ({ page }) => {
   await page.addInitScript(() => localStorage.clear());
   await page.goto(route);
 
-  // Student A enters NIM and ticks the first bench item.
+  // Student A enters NIM and has private local work under the legacy key.
   await page.getByPlaceholder("10524xxx").fill("10524111");
   await page.getByRole("button", { name: "Simpan", exact: true }).click();
-  const firstBox = page.locator("#rehearse").locator('input[type="checkbox"]').first();
-  await firstBox.scrollIntoViewIfNeeded();
-  await firstBox.check();
-  await expect(firstBox).toBeChecked();
+  await page.evaluate(() => localStorage.setItem("m3-notebook::nim-10524111", JSON.stringify({ sample_id: "M4-A" })));
 
   // Switch to student B.
   await page.getByRole("button", { name: "Ganti NIM" }).click();
   await page.getByPlaceholder("10524xxx").fill("10524222");
   await page.getByRole("button", { name: "Simpan", exact: true }).click();
 
-  // Student B sees an empty checklist — A's tick is not visible.
-  const bFirst = page.locator("#rehearse").locator('input[type="checkbox"]').first();
-  await bFirst.scrollIntoViewIfNeeded();
-  await expect(bFirst).not.toBeChecked();
-  const bChecked = await page.locator("#rehearse").locator('input[type="checkbox"]:checked').count();
-  expect(bChecked).toBe(0);
+  // The removed M4 log is not rendered, and Student A's private key remains untouched.
+  await expect(page.locator("#sample_id")).toHaveCount(0);
+  await expect(page.getByText("Log Elektrodeposisi M4", { exact: true })).toHaveCount(0);
 
   // A's data still exists under its own namespaced key (not deleted).
-  const aStored = await page.evaluate((k) => localStorage.getItem(k), namespacedKey("m3-bench-checklist", { version: 1, mode: "nim", nim: "10524111" }));
-  expect(JSON.parse(aStored!).length).toBeGreaterThanOrEqual(1);
-
-  // Switch back to A — the tick returns.
-  await page.getByRole("button", { name: "Ganti NIM" }).click();
-  await page.getByPlaceholder("10524xxx").fill("10524111");
-  await page.getByRole("button", { name: "Simpan", exact: true }).click();
-  const aFirst = page.locator("#rehearse").locator('input[type="checkbox"]').first();
-  await aFirst.scrollIntoViewIfNeeded();
-  await expect(aFirst).toBeChecked();
+  const aStored = await page.evaluate((k) => localStorage.getItem(k), namespacedKey("m3-notebook", { version: 1, mode: "nim", nim: "10524111" }));
+  expect(JSON.parse(aStored!).sample_id).toBe("M4-A");
 });

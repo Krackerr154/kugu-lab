@@ -7,6 +7,7 @@ export interface ContentConflict {
   conflict: string;
   requiredDecision: string;
   status: "unresolved" | "resolved";
+  visible?: boolean;
 }
 
 export const contentConflicts: ContentConflict[] = [
@@ -16,6 +17,7 @@ export const contentConflicts: ContentConflict[] = [
     conflict: "Materials list Al(NO_{3})_{2}; prosedur menggunakan Al(NO_{3})_{3}.",
     requiredDecision: "Koreksi senyawa/rumus dan konsentrasi.",
     status: "unresolved",
+    visible: false,
   },
   {
     id: "CR-02",
@@ -23,6 +25,7 @@ export const contentConflicts: ContentConflict[] = [
     conflict: "Materials list Na_{2}CrO_{4}; prosedur menggunakan K_{2}CrO_{4}.",
     requiredDecision: "Koreksi garam/pereaksi dan perlakuan limbah.",
     status: "unresolved",
+    visible: false,
   },
   {
     id: "CR-03",
@@ -30,6 +33,7 @@ export const contentConflicts: ContentConflict[] = [
     conflict: "Prosedur gas menyebut natrium bikarbonat; materials list Na_{2}CO_{3}.",
     requiredDecision: "Koreksi pereaksi dan observasi/persamaan yang diharapkan.",
     status: "unresolved",
+    visible: false,
   },
   {
     id: "CR-04",
@@ -37,19 +41,20 @@ export const contentConflicts: ContentConflict[] = [
     conflict: "Tabel observasi mencantumkan Na^{+}; prosedur menonjolkan KNO_{3}.",
     requiredDecision: "Konfirmasi matriks kation/pereaksi yang dimaksud.",
     status: "unresolved",
+    visible: false,
   },
   {
     id: "CR-05",
-    module: "M4",
+    module: "M2",
     conflict: "Naratif hydrothermal/tekanan tinggi vs prosedur botol PP yang dipanaskan.",
     requiredDecision: "Rating wadah, penutup, fraksi pengisian, proses kontrol suhu/tekanan.",
     status: "unresolved",
   },
   {
     id: "CR-06",
-    module: "M3",
-    conflict: "Grafit diperoleh dari baterai bekas.",
-    requiredDecision: "Jenis baterai yang disetujui, metode isolasi, supervise, dan jalur e-waste.",
+    module: "M4",
+    conflict: "Elektroda karbon disediakan oleh laboratorium.",
+    requiredDecision: "Konfirmasi identitas, kondisi, dan polaritas elektroda sebelum penggunaan.",
     status: "unresolved",
   },
   {

@@ -8,7 +8,7 @@ export function ZeoliteWorkspace() {
 
   return (
     <div className="space-y-4">
-      <div role="group" aria-label="Worksheet Modul 4" className="flex gap-1 rounded-lg bg-[var(--surface-muted)] p-1">
+      <div role="group" aria-label="Worksheet Modul 2" className="flex gap-1 rounded-lg bg-[var(--surface-muted)] p-1">
         {[
           { id: "stoichiometry", label: "Stoikiometri Prekursor" },
           { id: "conditions", label: "Penjelajah Kondisi" },

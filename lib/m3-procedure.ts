@@ -1,19 +1,19 @@
-// M3 bench procedure, transcribed from Penuntun Praktikum KI3131 Modul 3,
-// pages 18-20: stage M3a (cathode + anode fabrication) and stage M3b
+// Sn-Bi bench procedure, transcribed from Shared_Modul KUGU, Module 4:
+// stage M4a (cathode + anode fabrication) and stage M4b
 // (electrolyte preparation + electrodeposition). Phase tags follow the manual's
-// own M3a/M3b split. Hold points mark the manual's irreversible gates (Ampere-
+// own M4a/M4b split. Hold points mark the manual's irreversible gates (Ampere-
 // meter continuity check before resin cast, the 2×24 h cure, mass weigh-ins,
 // polarity verification). Quantities, mesh sizes, temperatures and durations
 // are the manual's values — they are protocol variables, not to be rounded.
 //
 // This is the checkable bench version of the interactive ProcedureWalkthrough on
-// /prelab/m3-sn-bi-electrodeposition; the two are kept factually in sync.
+// /prelab/m4-sn-bi-electrodeposition; the two are kept factually in sync.
 
 import type { BenchPhase } from "@/components/shared/BenchChecklist";
 
 export const M3_PROCEDURE: BenchPhase[] = [
   {
-    tag: "M3a-1",
+    tag: "M4a-1",
     label: "Pembuatan Katoda",
     icon: "bolt",
     items: [
@@ -46,30 +46,21 @@ export const M3_PROCEDURE: BenchPhase[] = [
     ],
   },
   {
-    tag: "M3a-2",
-    label: "Pembuatan Anoda (grafit)",
-    icon: "battery_horiz_050",
+    tag: "M4a-2",
+    label: "Penyiapan Anoda (elektroda karbon lab)",
+    icon: "electrical_services",
     items: [
       {
         id: "anode-graphite",
-        text: "Ambil batang grafit dari baterai bekas.",
+        text: "Ambil elektroda karbon yang disediakan laboratorium dan periksa label, kondisi, serta area kontaknya bersama asisten.",
         holdPoint: true,
         safety:
-          "Pembongkaran baterai bekas (blocker CR-06): jenis baterai, metode isolasi, limbah B3, dan pengawasan ditetapkan asisten lebih dulu — jangan membongkar sendiri.",
-      },
-      {
-        id: "anode-sonicate",
-        text: "Rendam grafit di etanol lalu aqua DM, sonikasi masing-masing ~5 menit.",
-        safety: "Etanol mudah terbakar — jauhkan dari sumber panas.",
-      },
-      {
-        id: "anode-dry",
-        text: "Keringkan grafit di atas hotplate berlapis aluminium foil hingga pengotor keluar.",
+          "Gunakan hanya elektroda karbon yang disediakan laboratorium. Pastikan power supply mati saat memeriksa sambungan dan ikuti SOP/asisten untuk verifikasi polaritas.",
       },
     ],
   },
   {
-    tag: "M3b-1",
+    tag: "M4b-1",
     label: "Penyiapan Elektrolit (100 mL)",
     icon: "science",
     items: [
@@ -95,7 +86,7 @@ export const M3_PROCEDURE: BenchPhase[] = [
     ],
   },
   {
-    tag: "M3b-2",
+    tag: "M4b-2",
     label: "Elektrodeposisi & Penimbangan",
     icon: "instant_mix",
     items: [

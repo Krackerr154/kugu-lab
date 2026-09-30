@@ -61,9 +61,13 @@ export function ModuleJourney({ stages, navRequest }: ModuleJourneyProps) {
     const update = () => {
       frame = 0;
       let current = stages[0]?.id ?? "";
+      const isBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 32;
       for (const stage of stages) {
         const node = sectionRefs.current.get(stage.id);
         if (node && node.getBoundingClientRect().top <= clearance + 1) current = stage.id;
+      }
+      if (isBottom && stages.length > 0) {
+        current = stages[stages.length - 1].id;
       }
       setActiveId(current);
     };
@@ -155,7 +159,10 @@ export function ModuleJourney({ stages, navRequest }: ModuleJourneyProps) {
             <span aria-hidden="true" className="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
-        <ol className="hidden grid-cols-5 gap-2 md:grid">
+        <ol
+          className="hidden gap-2 md:grid"
+          style={{ gridTemplateColumns: `repeat(${stages.length}, minmax(0, 1fr))` }}
+        >
           {stages.map((stage, i) => {
             const active = stage.id === activeId;
             return (
@@ -164,7 +171,7 @@ export function ModuleJourney({ stages, navRequest }: ModuleJourneyProps) {
                   type="button"
                   onClick={() => goTo(stage.id)}
                   aria-current={active ? "step" : undefined}
-                  className={`group flex min-h-11 w-full items-center gap-2 rounded-lg border px-2 py-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)] ${
+                  className={`group flex min-h-11 w-full items-center gap-2 rounded-lg border px-2 py-2 text-left m4-motion-color focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)] ${
                     active
                       ? "border-[var(--primary-container)] bg-[var(--primary-container)] text-[var(--on-primary)]"
                       : "border-[var(--outline-variant)] bg-[var(--surface-container-low)] text-[var(--muted)] hover:border-[var(--primary-container)]"
@@ -182,7 +189,7 @@ export function ModuleJourney({ stages, navRequest }: ModuleJourneyProps) {
                     {i + 1}
                   </span>
                   <span
-                    className="truncate text-xs font-bold uppercase tracking-wide"
+                    className="min-w-0 text-[11px] font-bold uppercase leading-tight tracking-wide"
                     style={{ fontFamily: "Montserrat, sans-serif" }}
                   >
                     {stage.label}

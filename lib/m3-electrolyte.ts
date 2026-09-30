@@ -1,5 +1,5 @@
-// M3 electrolyte composition — transcribed from Penuntun Praktikum KI3131,
-// Modul 3, "Penyiapan 100 mL Larutan Elektrolit" (manual page 22).
+// Sn-Bi electrolyte composition — transcribed from Shared_Modul KUGU,
+// Module 4, "Penyiapan 100 mL Larutan Elektrolit".
 //
 // IMPORTANT BASIS NOTE. The manual's table prints the target concentration and
 // the weighed mass in one column ("SnCl2·2H2O — 0,15 M (3,3846 g)") directly

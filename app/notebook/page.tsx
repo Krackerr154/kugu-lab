@@ -15,7 +15,7 @@ export default function NotebookPage() {
           storageKey="general-notebook"
           fields={[
             { id: "date", label: "Tanggal praktikum", type: "text", placeholder: "YYYY-MM-DD" },
-            { id: "module", label: "Modul", type: "select", options: ["M1", "M2", "M3", "M4", "M5", "M6"] },
+            { id: "module", label: "Modul", type: "select", options: ["M1", "M2", "M3", "M4", "M5", "M6", "M7"] },
             { id: "sample_id", label: "ID Sampel", type: "text" },
             { id: "observations", label: "Observasi umum", type: "textarea" },
             { id: "raw_data", label: "Data mentah", type: "textarea" },

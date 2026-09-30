@@ -22,7 +22,7 @@ The previous relay checkout `/home/arya/kugu-m3-relay` is retained separately.
     curl http://10.66.66.5:3034/
     curl http://10.66.66.5:8787/healthz
 
-`.env` is mode 600 and must contain `ADMIN_SECRET`, `NEXT_PUBLIC_M3_RELAY_URL`, and the bounded room/rate settings. Never commit it or put the presenter ticket in a URL/browser storage.
+`.env` is mode 600 and must contain `ADMIN_SECRET`, `NEXT_PUBLIC_M3_RELAY_URL`, `M4_GUIDED_ACCESS_CODE`, `M4_GUIDED_ORIGIN`, and the bounded room/rate settings. Set `M4_GUIDED_ACCESS_CODE=1920` only in the Forge secret environment; never commit it or put the presenter ticket in a URL/browser storage.
 
 ## Issue a presentation room
 
@@ -31,7 +31,7 @@ Run on Forge (the command prints the room credential once):
     cd /home/arya/kugu
     docker exec kugu-m3-relay node /app/relay/admin.mjs
 
-The presenter enters `roomId` and `presenterTicket` in the M3 Ready-stage presenter deck. Students enter only the room ID. NIM remains local browser personalization and is not a room credential.
+The presenter enters `roomId` and `presenterTicket` in the M4 Format Laporan presenter deck after the M4 instructor unlock. Students enter only the room ID. NIM remains local browser personalization and is not a room credential. The M4 unlock reveals browser controls; it does not start Docker or issue rooms.
 
 ## Gateway route
 
@@ -39,7 +39,7 @@ Existing NPM proxy host ID 19 for `kugu.g-labs.my.id` is retained. Its HTTPS cer
 
 ## Verification
 
-    curl -4 -I https://kugu.g-labs.my.id/modules/m3-sn-bi-electrodeposition
+    curl -4 -I https://kugu.g-labs.my.id/modules/m4-sn-bi-electrodeposition
     curl -4 -I https://g-labs.my.id/   # separate legacy apex; may have its own incident
     docker compose ps
 
