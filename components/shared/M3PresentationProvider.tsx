@@ -99,6 +99,12 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     return () => window.clearInterval(timer);
   }, [refreshActiveSession]);
 
+  useEffect(() => {
+    if (role === "following" && !activeSession) {
+      unfollow();
+    }
+  }, [activeSession, role, unfollow]);
+
   const createSession = useCallback(async (name = "Sesi Praktikum KI3131") => {
     try {
       const res = await fetch("/api/m4-guided/session", {
