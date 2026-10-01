@@ -83,6 +83,7 @@ export function ElectrolyteFunctionCard() {
     <section
       aria-labelledby="electrolyte-function-title"
       data-electrolyte-function-card
+      data-review-anchor="review-electrolyte"
       className="surface-panel min-w-0 space-y-4 p-4 sm:p-5"
     >
       <div>

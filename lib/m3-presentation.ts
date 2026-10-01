@@ -1,44 +1,42 @@
-// M3 guided-presentation shared contract (Phases 2–4).
+// M3 guided-presentation shared contract (Phases 2–4; review-session fields Phase 1).
 // Semantic teaching context only: no pixels, private student data, or credentials.
-import type { BathAgent } from "@/lib/m3-ligands";
+//
+// SINGLE SOURCE OF TRUTH: the validator and its allowlists live in
+// ../shared/m3-contract.mjs, which the relay imports directly (pure JS, no TS
+// build). This module RE-EXPORTS them so the browser and the relay run the exact
+// same coercePresentationState — a second copy here could drift and make the app
+// accept a state the relay rejects. The parity test in relay/test/contract.test.mjs
+// locks the two together. Only browser-specific types and the transport layer are
+// defined here.
+export {
+  coercePresentationState,
+  M3_STAGE_IDS,
+  M3_FOCUS_IDS,
+  M3_DEMO_AGENT_IDS,
+  M3_PRESENTATION_VERSION,
+  REVIEW_SLIDE_CHAPTER,
+  REVIEW_SLIDE_IDS,
+  REVIEW_PHASES,
+} from "../shared/m3-contract.mjs";
+export type {
+  M3StageId,
+  M3FocusId,
+  M3DemoAgentId,
+  M3DemoOverlay,
+  M3PresentationState,
+  ReviewSlideId,
+  ReviewPhase,
+} from "../shared/m3-contract.mjs";
 
-export type M3StageId = "brief" | "understand" | "rehearse" | "prove" | "ready";
-export const M3_STAGE_IDS: readonly M3StageId[] = ["brief", "understand", "rehearse", "prove", "ready"] as const;
-export type M3FocusId = "cell-map" | "complexing-agents" | "calculator";
-export const M3_FOCUS_IDS: readonly M3FocusId[] = ["cell-map", "complexing-agents", "calculator"] as const;
-export const M3_DEMO_AGENT_IDS: readonly BathAgent[] = ["edta", "citrate", "peg400"] as const;
-export type M3DemoOverlay = { kind: "complexing-agent"; id: BathAgent } | null;
-export interface M3PresentationState { version: 1; stageId: M3StageId; focusId?: M3FocusId; demoOverlay?: M3DemoOverlay; }
-export const M3_PRESENTATION_VERSION = 1 as const;
+import {
+  coercePresentationState,
+  M3_PRESENTATION_VERSION,
+} from "../shared/m3-contract.mjs";
+import type { M3PresentationState } from "../shared/m3-contract.mjs";
 
-function isStageId(x: unknown): x is M3StageId { return typeof x === "string" && (M3_STAGE_IDS as readonly string[]).includes(x); }
-function isFocusId(x: unknown): x is M3FocusId { return typeof x === "string" && (M3_FOCUS_IDS as readonly string[]).includes(x); }
-function isFocusAllowed(stageId: M3StageId, focusId: M3FocusId): boolean {
-  return stageId === "understand" ? focusId === "cell-map" || focusId === "complexing-agents" : stageId === "prove" ? focusId === "calculator" : false;
+export function isPresentationState(input: unknown): input is M3PresentationState {
+  return coercePresentationState(input) !== null;
 }
-function normalizeDemoOverlay(x: unknown): M3DemoOverlay {
-  if (x === null || x === undefined) return null;
-  if (typeof x !== "object") return null;
-  const o = x as Record<string, unknown>;
-  if (o.kind !== "complexing-agent" || !(M3_DEMO_AGENT_IDS as readonly unknown[]).includes(o.id)) return null;
-  return { kind: "complexing-agent", id: o.id as BathAgent };
-}
-
-export function coercePresentationState(input: unknown): M3PresentationState | null {
-  if (typeof input !== "object" || input === null) return null;
-  const o = input as Record<string, unknown>;
-  if (o.version !== M3_PRESENTATION_VERSION || !isStageId(o.stageId)) return null;
-  if (o.focusId !== undefined && (!isFocusId(o.focusId) || !isFocusAllowed(o.stageId, o.focusId))) return null;
-  if (o.demoOverlay !== undefined && o.demoOverlay !== null && o.stageId !== "understand") return null;
-  const demoOverlay = normalizeDemoOverlay(o.demoOverlay);
-  if (o.demoOverlay !== undefined && o.demoOverlay !== null && !demoOverlay) return null;
-  const state: M3PresentationState = { version: M3_PRESENTATION_VERSION, stageId: o.stageId };
-  if (isFocusId(o.focusId)) state.focusId = o.focusId;
-  if (o.demoOverlay === null) state.demoOverlay = null;
-  else if (demoOverlay) state.demoOverlay = demoOverlay;
-  return state;
-}
-export function isPresentationState(input: unknown): input is M3PresentationState { return coercePresentationState(input) !== null; }
 
 export type PresentationMessage =
   | { t: "state"; epoch: string; seq: number; state: M3PresentationState }

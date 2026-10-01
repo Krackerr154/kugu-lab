@@ -6,6 +6,7 @@ export function ReportFormatGuide() {
       aria-labelledby="report-format-title"
       data-report-format
       data-report-format-placeholder
+      data-review-anchor="review-report-format"
       className="m4-motion-enter surface-panel space-y-5 p-4 sm:p-6 shadow-xs"
     >
       {/* Header */}

@@ -38,7 +38,7 @@ export default function M3Page() {
             <div className="min-w-0 flex-1"><StudentIdentityGate hidePrompt /></div>
             <div className="min-w-0 flex-1"><M3FollowControls stageLabels={M4_STAGE_LABELS} /></div>
           </div>
-          <div className="surface-panel p-4 sm:p-5 shadow-xs">
+          <div className="surface-panel p-4 sm:p-5 shadow-xs" data-review-anchor="review-brief-intro">
             <p className="max-w-[72ch] text-base leading-7 text-[var(--text-secondary)]">
               Praktikum ini bertujuan mensintesis <strong className="text-[var(--foreground)]">paduan logam Sn–Bi</strong> pada
               substrat plat tembaga melalui metode <strong className="text-[var(--foreground)]">elektrodeposisi</strong>:
@@ -47,7 +47,7 @@ export default function M3Page() {
               lintas sesi karena resin pelindung katoda membutuhkan waktu pengerasan selama 2 × 24 jam.
             </p>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2" data-review-anchor="review-brief-actions">
               <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3">
                 <p className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                   Tindakan fisik
@@ -67,7 +67,7 @@ export default function M3Page() {
               </div>
             </div>
 
-            <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-[var(--border)] pt-4 sm:grid-cols-4">
+            <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-[var(--border)] pt-4 sm:grid-cols-4" data-review-anchor="review-brief-meta">
               <div>
                 <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Penuntun</dt>
                 <dd className="mt-0.5 text-sm font-semibold text-[var(--foreground)]">Halaman {module.manualPages}</dd>
@@ -109,7 +109,7 @@ export default function M3Page() {
       content: (
         <>
           {/* Concept 1: why an alloy, how deposition builds it */}
-          <div className="surface-panel p-4 sm:p-5 shadow-xs">
+          <div className="surface-panel p-4 sm:p-5 shadow-xs" data-review-anchor="review-why-alloy">
             <h3 className="max-w-[50ch] text-lg font-bold text-[var(--foreground)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
               Mengapa paduan Sn-Bi, dan bagaimana elektrodeposisi membangunnya
             </h3>
@@ -138,14 +138,14 @@ export default function M3Page() {
           </div>
 
           {/* Concept 2: the interactive cell map + potential gap (the core difficulty) */}
-          <div className="surface-panel p-4 sm:p-5 shadow-xs">
+          <div className="surface-panel p-4 sm:p-5 shadow-xs" data-review-anchor="review-potential-gap">
             <h3 className="max-w-[50ch] text-lg font-bold text-[var(--foreground)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
               Tantangan Beda Potensial
             </h3>
             <div className="mt-4">
               <SnBiPotentialGapDiagram />
             </div>
-            <div className="mt-4">
+            <div className="mt-4" data-review-anchor="review-cell">
               <ElectrochemicalCellExplorer />
             </div>
           </div>
@@ -165,6 +165,7 @@ export default function M3Page() {
           <section
             aria-labelledby="m4-data-formulas-title"
             data-m4-data-formulas
+            data-review-anchor="review-formulas"
             className="surface-panel p-4 sm:p-5 shadow-xs"
           >
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--muted)]">Alur pengolahan data</p>
@@ -197,13 +198,13 @@ export default function M3Page() {
             </div>
 
             <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3">
+              <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3" data-review-anchor="review-efficiency-notes">
                 <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">Mengapa perlu dibandingkan?</p>
                 <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
                   Tidak semua arus listrik terpakai untuk membentuk deposit: ion <ChemText>{"H^{+}"}</ChemText> dalam larutan asam dapat mengalami reduksi samping menjadi gas <ChemText>{"H_{2}"}</ChemText> (reaksi evolusi hidrogen). Oleh karena itu, efisiensi arus di bawah 100% merupakan hal yang wajar. Sebaliknya, efisiensi di atas 100% mengindikasikan adanya galat, seperti pencucian atau pengeringan katoda yang kurang sempurna, kesalahan penimbangan, atau ketidaktepatan asumsi stoikiometri.
                 </p>
               </div>
-              <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3">
+              <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-3" data-review-anchor="review-assumptions">
                 <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">Batas asumsi Sn–Bi</p>
                 <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
                   Deposit yang terbentuk merupakan paduan biner Sn–Bi, sedangkan penuntun praktikum tidak menetapkan rasio stoikiometri keduanya secara pasti. Perhitungan contoh di bawah menggunakan pendekatan Sn²⁺ sebagai ilustrasi; untuk laporan resmi, gunakan asumsi komposisi atau valensi yang telah dikonfirmasi oleh asisten pembimbing.
