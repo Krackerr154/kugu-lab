@@ -19,6 +19,10 @@ export function useM4GuidedAccess() {
   return context;
 }
 
+export function useOptionalM4GuidedAccess() {
+  return useContext(Context);
+}
+
 export function M4GuidedAccessGate({ children }: { children: React.ReactNode }) {
   const { identity, ready, storageOk, setNim, continueAsGuest } = useStudentIdentity();
   const [draft, setDraft] = useState("");
@@ -157,20 +161,25 @@ export function M4GuidedAccessGate({ children }: { children: React.ReactNode }) 
                 className="mt-5 space-y-3"
                 onSubmit={async (event) => {
                   event.preventDefault();
-                  if (draft.length === 8 || draft.length === 0) {
-                    const error = setNim(draft);
+                  const trimmed = draft.trim();
+                  if (/^10524\d{3}$/.test(trimmed)) {
+                    const error = setNim(trimmed);
                     setNimError(error);
                     if (!error) setDraft("");
                     return;
                   }
                   setAccessBusy(true);
                   setNimError(null);
-                  const unlock = await unlockInstructor(draft);
+                  const unlock = await unlockInstructor(trimmed);
                   if (unlock.ok) {
                     continueAsGuest();
                     setDraft("");
                   } else {
-                    setNimError("Masukkan NIM berformat 10524xxx atau kode pengajar yang valid.");
+                    if (trimmed.length === 0) {
+                      setNimError("Masukkan NIM berformat 10524xxx atau kode asisten.");
+                    } else {
+                      setNimError("NIM tidak valid (format 10524xxx) atau kode asisten salah.");
+                    }
                   }
                   setAccessBusy(false);
                 }}
