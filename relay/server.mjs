@@ -69,7 +69,18 @@ export function createRelay(options = {}) {
     if (req.method === "DELETE" && req.url.startsWith("/internal/rooms")) {
       const auth = req.headers.authorization || "";
       if (!adminSecret || !isPrivateOrLoopback(req.socket.remoteAddress) || auth !== `Bearer ${adminSecret}`) { res.writeHead(403, { "cache-control": "no-store" }); res.end("forbidden"); return; }
-      for (const [id, r] of rooms) { endRoom(r, "closed-by-api"); }
+      // DELETE /internal/rooms/<roomId> closes ONLY that room. The bare
+      // DELETE /internal/rooms (no id) is rejected: closing every room at once
+      // was a footgun that let one asprak's "Tutup Sesi" kill every other
+      // active room. Callers must name the room they own.
+      const path = new URL(req.url, "http://relay").pathname;
+      const roomId = decodeURIComponent(path.slice("/internal/rooms/".length));
+      if (!roomId || path === "/internal/rooms" || path === "/internal/rooms/") {
+        res.writeHead(400, { "content-type": "application/json", "cache-control": "no-store" }); res.end(JSON.stringify({ ok: false, error: "room-id-required" })); return;
+      }
+      const room = rooms.get(roomId);
+      if (!room) { res.writeHead(404, { "content-type": "application/json", "cache-control": "no-store" }); res.end(JSON.stringify({ ok: false, error: "room-not-found" })); return; }
+      endRoom(room, "closed-by-api");
       res.writeHead(200, { "content-type": "application/json", "cache-control": "no-store" }); res.end(JSON.stringify({ ok: true })); return;
     }
     res.writeHead(404, { "content-type": "text/plain" }); res.end("not found");

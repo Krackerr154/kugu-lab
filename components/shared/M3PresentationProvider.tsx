@@ -134,7 +134,13 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
 
   const closeSession = useCallback(async () => {
     try {
-      await fetch("/api/m4-guided/session", { method: "DELETE" });
+      // Close exactly this asprak's room, never a blanket close. roomId is held
+      // in provider state from createSession; omit only if somehow unset.
+      const target = roomId.trim();
+      const url = target
+        ? `/api/m4-guided/session?roomId=${encodeURIComponent(target)}`
+        : "/api/m4-guided/session";
+      await fetch(url, { method: "DELETE" });
     } catch {
       // ignore
     }
@@ -142,7 +148,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     setRole("solo");
     setStatus("solo");
     setSnapshot(null);
-  }, []);
+  }, [roomId]);
 
   const makeTransport = useCallback((config: PresentationTransportConfig) => {
     if (transportFactory) return transportFactory(config);
