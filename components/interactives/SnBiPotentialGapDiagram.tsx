@@ -29,15 +29,15 @@ export function SnBiPotentialGapDiagram() {
         <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--on-surface-variant)]">
           Potensial reduksi standar
         </p>
-        <div className="relative mt-2 h-28" aria-hidden="true">
+        <div className="relative mt-2 h-32" aria-hidden="true">
           <div className="absolute left-[8%] right-[8%] top-12 h-1 rounded-full bg-[var(--outline-variant)]" />
 
           <div className="absolute left-[8%] top-10 h-5 w-px bg-[var(--outline)]" />
-          <div className="absolute left-[8%] top-[4.35rem] -translate-x-1/2 text-[10px] text-[var(--on-surface-variant)]">−0,30</div>
+          <div className="absolute left-[8%] top-[4.15rem] -translate-x-1/2 text-[10px] text-[var(--on-surface-variant)]">−0,30</div>
           <div className="absolute left-1/2 top-10 h-5 w-px bg-[var(--outline)]" />
-          <div className="absolute left-1/2 top-[4.35rem] -translate-x-1/2 text-[10px] text-[var(--on-surface-variant)]">0,00</div>
+          <div className="absolute left-1/2 top-[4.15rem] -translate-x-1/2 text-[10px] font-semibold text-[var(--on-surface-variant)]">0,00</div>
           <div className="absolute right-[8%] top-10 h-5 w-px bg-[var(--outline)]" />
-          <div className="absolute right-[8%] top-[4.35rem] translate-x-1/2 text-[10px] text-[var(--on-surface-variant)]">+0,50 V</div>
+          <div className="absolute right-[8%] top-[4.15rem] translate-x-1/2 text-[10px] text-[var(--on-surface-variant)]">+0,50 V</div>
 
           <div className="absolute left-[25%] top-1 -translate-x-1/2 text-center">
             <p className="text-xs font-bold text-[var(--chart-navy)]">Sn²⁺/Sn</p>
@@ -50,13 +50,14 @@ export function SnBiPotentialGapDiagram() {
             <span className="mx-auto mt-1 block h-4 w-4 rounded-full border-2 border-[var(--on-surface)] bg-[var(--chart-gold)]" />
           </div>
 
-          <div className="absolute left-[25%] right-[28%] top-20 border-t-2 border-[var(--secondary)]">
-            <span className="absolute left-1/2 -top-5 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold text-[var(--secondary)]">
+          {/* Potential gap bracket and label positioned cleanly below the ticks */}
+          <div className="absolute left-[25%] right-[28%] top-[5.6rem] border-t-2 border-[var(--secondary)]">
+            <span className="absolute left-1/2 top-1 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold text-[var(--secondary)]">
               ΔE° ≈ 0,45 V
             </span>
           </div>
         </div>
-        <div className="flex justify-between px-[8%] text-[10px] text-[var(--on-surface-variant)]">
+        <div className="flex justify-between px-[8%] text-[10px] text-[var(--on-surface-variant)] mt-1">
           <span>lebih sulit direduksi</span>
           <span>lebih mudah direduksi</span>
         </div>
