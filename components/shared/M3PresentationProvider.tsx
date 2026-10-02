@@ -8,9 +8,11 @@ import {
   createRelayTransport,
   newClientId,
   newEpoch,
+  REVIEW_SLIDE_CHAPTER,
   type M3PresentationState,
   type M3StageId,
   type M3DemoOverlay,
+  type ReviewSlideId,
   type PresentationMessage,
   type PresentationTransport,
   type RelayServerMessage,
@@ -21,6 +23,10 @@ import type { BathAgent } from "@/lib/m3-ligands";
 export type Role = "solo" | "following" | "presenting";
 export type ConnectionStatus = "solo" | "connecting" | "following" | "reconnecting" | "disconnected" | "ended" | "presenting";
 export interface AgentRequest { id: BathAgent; token: number; }
+// A one-way, idempotent-per-token nudge to scroll the follower to a review slide.
+// Same pattern as JourneyNavRequest: the consumer applies at most once per token
+// and never re-broadcasts, so there is no scroll-spy feedback loop.
+export interface SlideRequest { slideId: ReviewSlideId; token: number; }
 export interface PresentationTransportConfig { roomId: string; role: "student" | "presenter"; ticket?: string; }
 export type PresentationTransportFactory = (config: PresentationTransportConfig) => PresentationTransport;
 
@@ -29,6 +35,7 @@ interface M3PresentationContextValue {
   status: ConnectionStatus;
   snapshot: M3PresentationState | null;
   navRequest: JourneyNavRequest | null;
+  slideRequest: SlideRequest | null;
   agentRequest: AgentRequest | null;
   ended: boolean;
   relayMode: boolean;
@@ -47,6 +54,7 @@ interface M3PresentationContextValue {
   startPresenting: () => void;
   endPresenting: () => void;
   presentStage: (stageId: M3StageId) => void;
+  presentSlide: (slideId: ReviewSlideId) => void;
   presentDemoOverlay: (overlay: M3DemoOverlay) => void;
 }
 
@@ -64,6 +72,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
   const [status, setStatus] = useState<ConnectionStatus>("solo");
   const [snapshot, setSnapshot] = useState<M3PresentationState | null>(null);
   const [navRequest, setNavRequest] = useState<JourneyNavRequest | null>(null);
+  const [slideRequest, setSlideRequest] = useState<SlideRequest | null>(null);
   const [agentRequest, setAgentRequest] = useState<AgentRequest | null>(null);
   const [ended, setEnded] = useState(false);
   const [roomId, setRoomId] = useState("");
@@ -161,6 +170,10 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     const token = tokenRef.current;
     setSnapshot(state);
     setNavRequest({ stageId: state.stageId, token });
+    // A slide broadcast carries both the stage (coarse) and the slide (fine).
+    // Followers in slide view consume slideRequest; the stage nav keeps the
+    // rail/scroll correct for anyone still in scroll view.
+    setSlideRequest(state.slideId ? { slideId: state.slideId, token } : null);
     setAgentRequest(state.demoOverlay?.kind === "complexing-agent" ? { id: state.demoOverlay.id, token } : null);
   }, []);
 
@@ -221,7 +234,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     if (relayMode && !finalRoomId) { setJoinError("room-required"); return; }
     setJoinError(null); setEnded(false); setRole("following");
   }, [relayMode, roomId]);
-  const unfollow = useCallback(() => { setRole("solo"); setStatus("solo"); setSnapshot(null); setNavRequest(null); setAgentRequest(null); setEnded(false); }, []);
+  const unfollow = useCallback(() => { setRole("solo"); setStatus("solo"); setSnapshot(null); setNavRequest(null); setSlideRequest(null); setAgentRequest(null); setEnded(false); }, []);
   const rejoin = useCallback(() => { setRole("solo"); setStatus("solo"); setEnded(false); window.setTimeout(() => setRole("following"), 0); }, []);
   const startPresenting = useCallback(() => {
     if (relayMode && (!roomId.trim() || !presenterTicket.trim())) { setJoinError("room-and-ticket-required"); return; }
@@ -229,7 +242,17 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
   }, [presenterTicket, relayMode, roomId]);
   const endPresenting = useCallback(() => { setRole("solo"); setStatus("solo"); setSnapshot(null); }, []);
   const presentStage = useCallback((stageId: M3StageId) => {
+    // Changing stage clears any slide pin: the stage buttons are the coarse
+    // control, slides are the fine one, and a stale slideId on a new stage
+    // would be rejected by the contract (slideId<->stageId consistency) anyway.
     presenterStateRef.current = { version: 1, stageId, ...(stageId === "understand" && presenterStateRef.current.focusId ? { focusId: presenterStateRef.current.focusId } : {}) };
+    setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
+  }, []);
+  const presentSlide = useCallback((slideId: ReviewSlideId) => {
+    // A slide implies its chapter; publish both so scroll-view followers still
+    // land on the right stage and slide-view followers get the fine position.
+    const stageId = REVIEW_SLIDE_CHAPTER[slideId] as M3StageId;
+    presenterStateRef.current = { version: 1, stageId, slideId };
     setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
   }, []);
   const presentDemoOverlay = useCallback((overlay: M3DemoOverlay) => {
@@ -237,7 +260,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
   }, []);
 
-  const value = useMemo(() => ({ role, status, snapshot, navRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay }), [role, status, snapshot, navRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentDemoOverlay]);
+  const value = useMemo(() => ({ role, status, snapshot, navRequest, slideRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDemoOverlay }), [role, status, snapshot, navRequest, slideRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDemoOverlay]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 
