@@ -36,6 +36,8 @@ test.describe("M4 Guided Presenter Content Visibility", () => {
       return rect.top >= 0 && rect.top <= window.innerHeight;
     });
     expect(isIntersecting).toBeTruthy();
+
+    await page.screenshot({ path: "artifacts/presenter-review/slide1-presenter.png" });
   });
 
   test("presenter navigation advances slides, updates dock, and reframes anchors", async ({ page }) => {
@@ -69,6 +71,8 @@ test.describe("M4 Guided Presenter Content Visibility", () => {
     const refocusedTop = await content7.evaluate((el) => el.getBoundingClientRect().top);
     expect(refocusedTop).toBeGreaterThanOrEqual(-50);
     expect(refocusedTop).toBeLessThan(400);
+
+    await page.screenshot({ path: "artifacts/presenter-review/slide7-presenter.png" });
   });
 
   test("p13 and p14 render data entry and published chart preview", async ({ page }) => {
