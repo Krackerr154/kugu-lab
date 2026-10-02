@@ -39,6 +39,12 @@ export function createRelay(options = {}) {
   const broadcast = (room, message) => { for (const client of room.clients) send(client, message); };
   const stateMessage = (room) => ({ t: "state", roomId: room.roomId, epoch: room.epoch, seq: room.seq, state: room.state, presenterConnected: room.presenter !== null, expiresAt: nowIso(room.expiresAt) });
   const presenceMessage = (room, connected) => ({ t: "presence", roomId: room.roomId, epoch: room.epoch, connected });
+  // Audience = joined students only (exclude the presenter socket). Broadcast on
+  // every join/leave so the asprak deck shows a live follower count. No seq bump:
+  // this is out-of-band presence, not presentation state, so it never perturbs
+  // the state/epoch replay machinery the followers rely on.
+  const audienceCount = (room) => room.clients.size - (room.presenter ? 1 : 0);
+  const audienceMessage = (room) => ({ t: "audience", roomId: room.roomId, epoch: room.epoch, count: audienceCount(room) });
   const endRoom = (room, reason) => {
     if (!rooms.has(room.roomId)) return;
     broadcast(room, { t: "ended", roomId: room.roomId, epoch: room.epoch, reason });
@@ -112,6 +118,9 @@ export function createRelay(options = {}) {
         connection.room = room; connection.role = message.role; connection.joined = true; room.clients.add(ws);
         if (message.role === "presenter") { room.presenter = ws; broadcast(room, presenceMessage(room, true)); }
         send(ws, stateMessage(room));
+        // Tell the presenter (and everyone) the current audience size. A joining
+        // student also receives it, so the count is correct on every screen.
+        broadcast(room, audienceMessage(room));
         return;
       }
       const room = connection.room;
@@ -132,6 +141,8 @@ export function createRelay(options = {}) {
       const room = connection.room; if (!room) return;
       room.clients.delete(ws);
       if (room.presenter === ws) { room.presenter = null; broadcast(room, presenceMessage(room, false)); }
+      // A leaving student (or presenter) changes the audience size; tell the rest.
+      if (rooms.has(room.roomId)) broadcast(room, audienceMessage(room));
     });
     ws.on("error", () => {});
   });

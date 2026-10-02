@@ -37,6 +37,7 @@ interface M3PresentationContextValue {
   navRequest: JourneyNavRequest | null;
   slideRequest: SlideRequest | null;
   agentRequest: AgentRequest | null;
+  audienceCount: number;
   ended: boolean;
   relayMode: boolean;
   roomId: string;
@@ -74,6 +75,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
   const [navRequest, setNavRequest] = useState<JourneyNavRequest | null>(null);
   const [slideRequest, setSlideRequest] = useState<SlideRequest | null>(null);
   const [agentRequest, setAgentRequest] = useState<AgentRequest | null>(null);
+  const [audienceCount, setAudienceCount] = useState(0);
   const [ended, setEnded] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [presenterTicket, setPresenterTicket] = useState("");
@@ -87,6 +89,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
   const presenterSeqRef = useRef(0);
   const presenterStateRef = useRef<M3PresentationState>(INITIAL_STATE);
   const presenterPublishRef = useRef<(() => void) | null>(null);
+  const localAudienceRef = useRef<Set<string>>(new Set());
 
   const refreshActiveSession = useCallback(async () => {
     try {
@@ -210,14 +213,26 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     const transport = makeTransport({ roomId: roomId.trim(), role: "presenter", ticket: presenterTicket.trim() });
     presenterEpochRef.current = newEpoch(); presenterSeqRef.current = 0; presenterStateRef.current = INITIAL_STATE;
     setStatus("presenting"); setSnapshot(INITIAL_STATE); setJoinError(null);
+    localAudienceRef.current = new Set(); setAudienceCount(0);
     const publish = () => {
       presenterSeqRef.current += 1;
       if (transport.mode === "relay") transport.send({ t: "present", state: presenterStateRef.current });
       else transport.send({ t: "state", epoch: presenterEpochRef.current, seq: presenterSeqRef.current, state: presenterStateRef.current });
     };
     const unsubscribe = transport.subscribe((message) => {
-      if (message.t === "hello" && transport.mode === "local") publish();
+      if (message.t === "hello" && transport.mode === "local") {
+        // Local (single-browser dev) audience: track unique client ids from the
+        // BroadcastChannel handshake. Relay mode uses the server's audience count.
+        localAudienceRef.current.add(message.clientId);
+        setAudienceCount(localAudienceRef.current.size);
+        publish();
+      }
+      if (message.t === "bye" && transport.mode === "local") {
+        localAudienceRef.current.delete(message.clientId);
+        setAudienceCount(localAudienceRef.current.size);
+      }
       if (message.t === "error") setJoinError(message.code);
+      if (message.t === "audience") setAudienceCount(message.count);
     });
     presenterPublishRef.current = publish;
     publish();
@@ -225,6 +240,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
       if (transport.mode === "relay") transport.send({ t: "end" });
       else transport.send({ t: "ended", epoch: presenterEpochRef.current });
       unsubscribe(); transport.close(); presenterPublishRef.current = null;
+      setAudienceCount(0);
     };
   }, [makeTransport, presenterTicket, role, roomId]);
 
@@ -260,7 +276,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
   }, []);
 
-  const value = useMemo(() => ({ role, status, snapshot, navRequest, slideRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDemoOverlay }), [role, status, snapshot, navRequest, slideRequest, agentRequest, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDemoOverlay]);
+  const value = useMemo(() => ({ role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDemoOverlay }), [role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDemoOverlay]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

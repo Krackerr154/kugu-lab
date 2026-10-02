@@ -72,6 +72,7 @@ export type RelayClientMessage =
 export type RelayServerMessage =
   | { t: "state"; roomId: string; epoch: string; seq: number; state: M3PresentationState; presenterConnected: boolean; expiresAt: string }
   | { t: "presence"; roomId: string; epoch: string; connected: boolean }
+  | { t: "audience"; roomId: string; epoch: string; count: number }
   | { t: "ended"; roomId: string; epoch: string; reason: string }
   | { t: "error"; code: string }
   | { t: "pong" };
@@ -88,6 +89,7 @@ export function coerceRelayServerMessage(input: unknown): RelayServerMessage | n
     return state ? { t: "state", roomId: o.roomId, epoch: o.epoch, seq: o.seq as number, state, presenterConnected: o.presenterConnected === true, expiresAt: o.expiresAt } : null;
   }
   if (o.t === "presence") return typeof o.roomId === "string" && typeof o.epoch === "string" && typeof o.connected === "boolean" ? { t: "presence", roomId: o.roomId, epoch: o.epoch, connected: o.connected } : null;
+  if (o.t === "audience") return typeof o.roomId === "string" && typeof o.epoch === "string" && Number.isSafeInteger(o.count) && (o.count as number) >= 0 ? { t: "audience", roomId: o.roomId, epoch: o.epoch, count: o.count as number } : null;
   if (o.t === "ended") return typeof o.roomId === "string" && typeof o.epoch === "string" && typeof o.reason === "string" ? { t: "ended", roomId: o.roomId, epoch: o.epoch, reason: o.reason } : null;
   if (o.t === "error") return typeof o.code === "string" ? { t: "error", code: o.code } : null;
   if (o.t === "pong") return { t: "pong" };

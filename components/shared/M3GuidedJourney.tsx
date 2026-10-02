@@ -128,6 +128,7 @@ export function M3FollowControls({
   const {
     role,
     snapshot,
+    audienceCount,
     activeSession,
     createSession,
     closeSession,
@@ -157,6 +158,14 @@ export function M3FollowControls({
               </span>
               <span className="rounded-full bg-[var(--surface-selected)] px-2 py-0.5 text-[10px] font-bold text-[var(--primary-container)] shrink-0">
                 Live
+              </span>
+              <span
+                className="inline-flex items-center gap-1 rounded-full bg-[var(--surface-selected)] px-2 py-0.5 text-[10px] font-bold text-[var(--primary-container)] shrink-0 tabular-nums"
+                title={`${audienceCount} praktikan mengikuti sesi ini`}
+                data-audience-count
+              >
+                <span aria-hidden="true" className="material-symbols-outlined text-[13px] leading-none">group</span>
+                {audienceCount}
               </span>
             </div>
             <button
