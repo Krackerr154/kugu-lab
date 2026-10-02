@@ -5,6 +5,7 @@ import { StudentIdentityGate } from "@/components/shared/StudentIdentityGate";
 import { M4GuidedAccessGate } from "@/components/shared/M4GuidedAccessGate";
 import { M3PresentationProvider } from "@/components/shared/M3PresentationProvider";
 import { M3Journey, M3FollowControls } from "@/components/shared/M3GuidedJourney";
+import { PresenterReviewDock } from "@/components/shared/PresenterReviewDock";
 import { ReviewSlideView } from "@/components/shared/ReviewSlideView";
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { ChemText } from "@/components/shared/ChemText";
@@ -254,6 +255,7 @@ export default function M3Page() {
           <ModuleLayout module={module} compactHeader>
             <M3Journey stages={stages} legacyStageMap={{ rehearse: "prove" }} />
           </ModuleLayout>
+          <PresenterReviewDock />
           <ReviewSlideView />
         </M4GuidedAccessGate>
       </M3PresentationProvider>

@@ -17,6 +17,7 @@ import {
   type PresentationTransport,
   type RelayServerMessage,
 } from "@/lib/m3-presentation";
+import { REVIEW_CHAPTERS } from "@/lib/m4-review-slides";
 import type { JourneyNavRequest } from "@/components/shared/ModuleJourney";
 import type { BathAgent } from "@/lib/m3-ligands";
 
@@ -61,7 +62,7 @@ interface M3PresentationContextValue {
 }
 
 const Context = createContext<M3PresentationContextValue | null>(null);
-const INITIAL_STATE: M3PresentationState = { version: 1, stageId: "brief" };
+const INITIAL_STATE: M3PresentationState = { version: 1, stageId: "brief", slideId: "p1" };
 const envRelayUrl = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_M3_RELAY_URL ?? "" : "";
 
 export function M3PresentationProvider({ children, transportFactory, relayUrl = envRelayUrl }: {
@@ -118,6 +119,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
       setStatus("solo");
       setSnapshot(null);
       setNavRequest(null);
+      setSlideRequest(null);
       setAgentRequest(null);
       setEnded(false);
     }
@@ -136,6 +138,12 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
         setPresenterTicket(data.session.presenterTicket);
         setActiveSession({ roomId: data.session.roomId, name: data.session.name, stageId: data.session.stageId });
         setJoinError(null);
+        tokenRef.current += 1;
+        const initialPresenterState: M3PresentationState = { version: 1, stageId: "brief", slideId: "p1" };
+        presenterStateRef.current = initialPresenterState;
+        setSnapshot(initialPresenterState);
+        setSlideRequest({ slideId: "p1", token: tokenRef.current });
+        setNavRequest({ stageId: "brief", token: tokenRef.current });
         setRole("presenting");
         return { ok: true };
       }
@@ -161,6 +169,9 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     setRole("solo");
     setStatus("solo");
     setSnapshot(null);
+    setNavRequest(null);
+    setSlideRequest(null);
+    setAgentRequest(null);
   }, [roomId]);
 
   const makeTransport = useCallback((config: PresentationTransportConfig) => {
@@ -212,9 +223,21 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
   useEffect(() => {
     if (role !== "presenting") return;
     const transport = makeTransport({ roomId: roomId.trim(), role: "presenter", ticket: presenterTicket.trim() });
-    presenterEpochRef.current = newEpoch(); presenterSeqRef.current = 0; presenterStateRef.current = INITIAL_STATE;
-    setStatus("presenting"); setSnapshot(INITIAL_STATE); setJoinError(null);
-    localAudienceRef.current = new Set(); setAudienceCount(0);
+    presenterEpochRef.current = newEpoch();
+    presenterSeqRef.current = 0;
+    const initialPresenterState: M3PresentationState = presenterStateRef.current.slideId
+      ? presenterStateRef.current
+      : { version: 1, stageId: "brief", slideId: "p1" };
+    presenterStateRef.current = initialPresenterState;
+    setStatus("presenting");
+    setSnapshot(initialPresenterState);
+    if (initialPresenterState.slideId) {
+      if (!tokenRef.current) tokenRef.current = 1;
+      setSlideRequest({ slideId: initialPresenterState.slideId, token: tokenRef.current });
+    }
+    setJoinError(null);
+    localAudienceRef.current = new Set();
+    setAudienceCount(0);
     const publish = () => {
       presenterSeqRef.current += 1;
       if (transport.mode === "relay") transport.send({ t: "present", state: presenterStateRef.current });
@@ -251,26 +274,62 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     if (relayMode && !finalRoomId) { setJoinError("room-required"); return; }
     setJoinError(null); setEnded(false); setRole("following");
   }, [relayMode, roomId]);
-  const unfollow = useCallback(() => { setRole("solo"); setStatus("solo"); setSnapshot(null); setNavRequest(null); setSlideRequest(null); setAgentRequest(null); setEnded(false); }, []);
+  const unfollow = useCallback(() => {
+    setRole("solo");
+    setStatus("solo");
+    setSnapshot(null);
+    setNavRequest(null);
+    setSlideRequest(null);
+    setAgentRequest(null);
+    setEnded(false);
+  }, []);
   const rejoin = useCallback(() => { setRole("solo"); setStatus("solo"); setEnded(false); window.setTimeout(() => setRole("following"), 0); }, []);
   const startPresenting = useCallback(() => {
     if (relayMode && (!roomId.trim() || !presenterTicket.trim())) { setJoinError("room-and-ticket-required"); return; }
     setJoinError(null); setRole("presenting");
   }, [presenterTicket, relayMode, roomId]);
-  const endPresenting = useCallback(() => { setRole("solo"); setStatus("solo"); setSnapshot(null); }, []);
+  const endPresenting = useCallback(() => {
+    setRole("solo");
+    setStatus("solo");
+    setSnapshot(null);
+    setNavRequest(null);
+    setSlideRequest(null);
+    setAgentRequest(null);
+  }, []);
   const presentStage = useCallback((stageId: M3StageId) => {
-    // Changing stage clears any slide pin: the stage buttons are the coarse
-    // control, slides are the fine one, and a stale slideId on a new stage
-    // would be rejected by the contract (slideId<->stageId consistency) anyway.
-    presenterStateRef.current = { version: 1, stageId, ...(stageId === "understand" && presenterStateRef.current.focusId ? { focusId: presenterStateRef.current.focusId } : {}) };
-    setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
+    // When presenter clicks a chapter, map to its first slide if in review deck
+    const chapter = REVIEW_CHAPTERS.find((c) => c.chapter === stageId);
+    const targetSlideId = chapter?.slides[0]?.id;
+    if (targetSlideId) {
+      const targetStage = REVIEW_SLIDE_CHAPTER[targetSlideId] as M3StageId;
+      presenterStateRef.current = { version: 1, stageId: targetStage, slideId: targetSlideId };
+      tokenRef.current += 1;
+      const token = tokenRef.current;
+      setSnapshot(presenterStateRef.current);
+      setSlideRequest({ slideId: targetSlideId, token });
+      setNavRequest({ stageId: targetStage, token });
+      presenterPublishRef.current?.();
+    } else {
+      presenterStateRef.current = { version: 1, stageId, ...(stageId === "understand" && presenterStateRef.current.focusId ? { focusId: presenterStateRef.current.focusId } : {}) };
+      tokenRef.current += 1;
+      const token = tokenRef.current;
+      setSnapshot(presenterStateRef.current);
+      setSlideRequest(null);
+      setNavRequest({ stageId, token });
+      presenterPublishRef.current?.();
+    }
   }, []);
   const presentSlide = useCallback((slideId: ReviewSlideId) => {
     // A slide implies its chapter; publish both so scroll-view followers still
     // land on the right stage and slide-view followers get the fine position.
     const stageId = REVIEW_SLIDE_CHAPTER[slideId] as M3StageId;
     presenterStateRef.current = { version: 1, stageId, slideId };
-    setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
+    tokenRef.current += 1;
+    const token = tokenRef.current;
+    setSnapshot(presenterStateRef.current);
+    setSlideRequest({ slideId, token });
+    setNavRequest({ stageId, token });
+    presenterPublishRef.current?.();
   }, []);
   const presentDataSet = useCallback((dataSetId: string) => {
     // Pin the published dataset id onto the CURRENT slide's state so data-slide
@@ -279,11 +338,13 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     // contract's slideId<->stageId check still passes.
     const current = presenterStateRef.current;
     presenterStateRef.current = { ...current, dataSetId };
-    setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
+    setSnapshot(presenterStateRef.current);
+    presenterPublishRef.current?.();
   }, []);
   const presentDemoOverlay = useCallback((overlay: M3DemoOverlay) => {
     presenterStateRef.current = overlay ? { version: 1, stageId: "understand", focusId: "complexing-agents", demoOverlay: overlay } : { ...presenterStateRef.current, demoOverlay: null };
-    setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
+    setSnapshot(presenterStateRef.current);
+    presenterPublishRef.current?.();
   }, []);
 
   const value = useMemo(() => ({ role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDataSet, presentDemoOverlay }), [role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDataSet, presentDemoOverlay]);

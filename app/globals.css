@@ -576,3 +576,17 @@ h1, h2, h3, h4, h5, h6 {
     animation: none !important;
   }
 }
+
+/* Presenter review dock and active content frame */
+[data-presenter-slide-content] {
+  outline: 2px solid var(--primary-container) !important;
+  outline-offset: 6px !important;
+  border-radius: 0.75rem !important;
+}
+
+@media print {
+  [data-presenter-dock],
+  [data-presenter-deck] {
+    display: none !important;
+  }
+}

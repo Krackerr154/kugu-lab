@@ -46,7 +46,9 @@ function frameAnchor(anchor: string) {
   if (typeof document === "undefined") return;
   const el = document.querySelector<HTMLElement>(`[data-review-anchor="${anchor}"]`);
   if (!el) return;
-  const top = el.getBoundingClientRect().top + window.scrollY - 96;
+  const computed = getComputedStyle(el);
+  const journeyOffset = parseFloat(computed.getPropertyValue("--journey-offset")) || 150;
+  const top = el.getBoundingClientRect().top + window.scrollY - (journeyOffset + 16);
   window.scrollTo({ top: Math.max(0, top), behavior: "auto" });
 }
 
