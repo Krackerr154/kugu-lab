@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ModuleJourney, type JourneyStage } from "@/components/shared/ModuleJourney";
 import { useM3Presentation } from "@/components/shared/M3PresentationProvider";
 import { useM4GuidedAccess } from "@/components/shared/M4GuidedAccessGate";
@@ -85,9 +86,19 @@ export function M3FollowControls({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[11px] text-[var(--text-secondary)] hidden md:inline">
-              Kontrol slide aktif di panel bawah
-            </span>
+            <Link
+              href="/modules/m4-sn-bi-electrodeposition/presenter"
+              target="_blank"
+              rel="noreferrer"
+              className="m4-motion-control inline-flex min-h-7 items-center gap-1 rounded border border-[var(--primary-container)] bg-[var(--primary-container)] px-2 text-[11px] font-bold text-[var(--on-primary)] hover:opacity-90"
+              title="Buka konsol presentasi asisten di tab baru"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-[13px]">
+                open_in_new
+              </span>
+              <span>Konsol Presenter</span>
+            </Link>
+
             <button
               type="button"
               onClick={closeSession}
@@ -116,25 +127,40 @@ export function M3FollowControls({
               Mode Pemandu Asisten
             </span>
             <span className="text-[11px] text-[var(--text-secondary)] truncate block">
-              Buka ruang presentasi untuk praktikan
+              Buka ruang presentasi review untuk praktikan
             </span>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={async () => {
-            setCreating(true);
-            await createSession("Sesi Praktikum KI3131");
-            setCreating(false);
-          }}
-          disabled={creating}
-          className="m4-motion-control inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg bg-[var(--primary-container)] px-3.5 text-xs font-bold text-[var(--on-primary)] hover:opacity-90 disabled:opacity-50"
-        >
-          <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
-            podium
-          </span>
-          {creating ? "Membuka…" : "Buka Sesi"}
-        </button>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Link
+            href="/modules/m4-sn-bi-electrodeposition/presenter"
+            target="_blank"
+            rel="noreferrer"
+            className="m4-motion-control inline-flex min-h-9 items-center gap-1 rounded-lg border border-[var(--outline-variant)] px-3 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-sm">
+              dashboard
+            </span>
+            <span className="hidden sm:inline">Buka Konsol</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={async () => {
+              setCreating(true);
+              await createSession("Sesi Praktikum KI3131");
+              setCreating(false);
+            }}
+            disabled={creating}
+            className="m4-motion-control inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-[var(--primary-container)] px-3.5 text-xs font-bold text-[var(--on-primary)] hover:opacity-90 disabled:opacity-50"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
+              podium
+            </span>
+            {creating ? "Membuka…" : "Buka Sesi"}
+          </button>
+        </div>
       </section>
     );
   }
@@ -163,13 +189,26 @@ export function M3FollowControls({
             </span>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={unfollow}
-          className="m4-motion-control min-h-9 shrink-0 rounded-lg border border-[var(--outline-variant)] px-3 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
-        >
-          Jelajahi Mandiri
-        </button>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Link
+            href="/modules/m4-sn-bi-electrodeposition/presentation"
+            className="m4-motion-control inline-flex min-h-9 items-center gap-1 rounded-lg border border-[var(--primary-container)] bg-[var(--primary-container)] px-3 text-xs font-bold text-[var(--on-primary)] hover:opacity-90"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[15px]">
+              slideshow
+            </span>
+            <span className="hidden sm:inline">Layar Slide</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={unfollow}
+            className="m4-motion-control min-h-9 rounded-lg border border-[var(--outline-variant)] px-3 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
+          >
+            Jelajahi Mandiri
+          </button>
+        </div>
       </div>
     );
   }
@@ -197,16 +236,29 @@ export function M3FollowControls({
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => follow(activeSession.roomId)}
-          className="m4-motion-control inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg bg-[var(--primary-container)] px-3 text-xs font-bold text-[var(--on-primary)] shadow-xs hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)]"
-        >
-          <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
-            login
-          </span>
-          Ikuti Asisten
-        </button>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Link
+            href="/modules/m4-sn-bi-electrodeposition/presentation"
+            className="m4-motion-control inline-flex min-h-9 items-center gap-1 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface)] px-3 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[15px]">
+              slideshow
+            </span>
+            <span className="hidden sm:inline">Layar Slide</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => follow(activeSession.roomId)}
+            className="m4-motion-control inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg bg-[var(--primary-container)] px-3 text-xs font-bold text-[var(--on-primary)] shadow-xs hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-container)]"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">
+              login
+            </span>
+            Ikuti Asisten
+          </button>
+        </div>
       </section>
     );
   }
