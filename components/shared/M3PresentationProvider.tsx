@@ -56,6 +56,7 @@ interface M3PresentationContextValue {
   endPresenting: () => void;
   presentStage: (stageId: M3StageId) => void;
   presentSlide: (slideId: ReviewSlideId) => void;
+  presentDataSet: (dataSetId: string) => void;
   presentDemoOverlay: (overlay: M3DemoOverlay) => void;
 }
 
@@ -271,12 +272,21 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     presenterStateRef.current = { version: 1, stageId, slideId };
     setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
   }, []);
+  const presentDataSet = useCallback((dataSetId: string) => {
+    // Pin the published dataset id onto the CURRENT slide's state so data-slide
+    // followers fetch the computed results by id. Only the id travels in the
+    // broadcast — never the raw numbers. Keep the existing slide/stage so the
+    // contract's slideId<->stageId check still passes.
+    const current = presenterStateRef.current;
+    presenterStateRef.current = { ...current, dataSetId };
+    setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
+  }, []);
   const presentDemoOverlay = useCallback((overlay: M3DemoOverlay) => {
     presenterStateRef.current = overlay ? { version: 1, stageId: "understand", focusId: "complexing-agents", demoOverlay: overlay } : { ...presenterStateRef.current, demoOverlay: null };
     setSnapshot(presenterStateRef.current); presenterPublishRef.current?.();
   }, []);
 
-  const value = useMemo(() => ({ role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDemoOverlay }), [role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDemoOverlay]);
+  const value = useMemo(() => ({ role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDataSet, presentDemoOverlay }), [role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDataSet, presentDemoOverlay]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

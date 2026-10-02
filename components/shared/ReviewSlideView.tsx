@@ -26,6 +26,7 @@ import {
   TOTAL_REVIEW_SLIDES,
   slideIndex,
 } from "@/lib/m4-review-slides";
+import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
 import {
   useOptionalM3Presentation,
   type ConnectionStatus,
@@ -65,6 +66,7 @@ export function ReviewSlideView() {
   const status = presentation?.status ?? "solo";
   const slideRequest = presentation?.slideRequest ?? null;
   const presenterSlideId = slideRequest?.slideId ?? null;
+  const dataSetId = presentation?.snapshot?.dataSetId ?? null;
 
   const showAnchor = useCallback((id: ReviewSlideId) => {
     setViewingId(id);
@@ -121,6 +123,7 @@ export function ReviewSlideView() {
   const presenterIdx = presenterSlideId ? slideIndex(presenterSlideId) : idx;
   const drifted = presenterSlideId !== null && presenterSlideId !== viewingId;
   const statusCopy = STATUS_COPY[status];
+  const isDataSlide = slide.kind === "data";
 
   // Read-back is bounded to already-shown slides.
   const canBack = idx > 0;
@@ -203,6 +206,16 @@ export function ReviewSlideView() {
         <p className="mx-auto max-w-5xl px-3 pt-1 text-[11px]" style={{ color: statusCopy.tone }}>
           {statusCopy.label}
         </p>
+      )}
+
+      {/* Data slides have no module anchor; the computed class chart is rendered
+          here in the chrome once the asprak publishes a dataSetId. */}
+      {isDataSlide && (
+        <div className="mx-auto max-w-5xl px-3 pb-1" data-review-data-panel>
+          {dataSetId
+            ? <ReviewDataChart dataSetId={dataSetId} />
+            : <p className="text-xs text-[var(--muted)]">Menunggu asisten memasukkan data kelompok…</p>}
+        </div>
       )}
 
       {/* Progress rail — INDICATOR of the asprak's position; dots up to the

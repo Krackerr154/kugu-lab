@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ModuleJourney, type JourneyStage } from "@/components/shared/ModuleJourney";
 import { useM3Presentation } from "@/components/shared/M3PresentationProvider";
 import { useM4GuidedAccess } from "@/components/shared/M4GuidedAccessGate";
+import { AsprakDataEntry } from "@/components/shared/AsprakDataEntry";
 import { M3_STAGE_IDS, type M3StageId } from "@/lib/m3-presentation";
 import {
   REVIEW_SLIDES,
@@ -46,11 +47,15 @@ export function M3Journey({ stages, legacyStageMap = {} }: { stages: JourneyStag
 // both the slide and its chapter, so a scroll-view follower still lands on the
 // right stage and a slide-view follower gets the exact position.
 function PresenterSlideDeck() {
-  const { snapshot, presentSlide } = useM3Presentation();
+  const { snapshot, presentSlide, presentDataSet } = useM3Presentation();
   const currentSlideId = snapshot?.slideId ?? null;
   const currentIndex = currentSlideId ? slideIndex(currentSlideId) : -1;
   const atStart = currentIndex <= 0;
   const atEnd = currentIndex === TOTAL_REVIEW_SLIDES - 1;
+  // Data slides (kind "data": p13/p14) get the asprak data-entry panel.
+  const currentSlide = currentSlideId ? REVIEW_SLIDE_BY_ID[currentSlideId] : null;
+  const isDataSlide = currentSlide?.kind === "data";
+  const publishedDataSetId = snapshot?.dataSetId ?? null;
 
   const go = (target: number) => {
     const clamped = Math.max(0, Math.min(TOTAL_REVIEW_SLIDES - 1, target));
@@ -114,6 +119,21 @@ function PresenterSlideDeck() {
           </div>
         ))}
       </div>
+
+      {/* Data slides: inline asprak data entry → publishes a dataSetId. */}
+      {isDataSlide && (
+        <div className="border-t border-[var(--outline-variant)] pt-1.5">
+          <AsprakDataEntry
+            onPublished={(dataSetId) => presentDataSet(dataSetId)}
+          />
+          {publishedDataSetId && (
+            <p className="mt-1 text-[10px] text-[var(--primary-container)]" data-published-dataset>
+              <span aria-hidden="true" className="material-symbols-outlined align-middle text-[12px]">check_circle</span>{" "}
+              Data dipublikasikan — praktikan melihat grafik.
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
