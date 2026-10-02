@@ -27,6 +27,7 @@ import {
   slideIndex,
 } from "@/lib/m4-review-slides";
 import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
+import { ReviewGames } from "@/components/shared/ReviewGames";
 import {
   useOptionalM3Presentation,
   type ConnectionStatus,
@@ -67,6 +68,7 @@ export function ReviewSlideView() {
   const slideRequest = presentation?.slideRequest ?? null;
   const presenterSlideId = slideRequest?.slideId ?? null;
   const dataSetId = presentation?.snapshot?.dataSetId ?? null;
+  const roomId = presentation?.roomId ?? "";
 
   const showAnchor = useCallback((id: ReviewSlideId) => {
     setViewingId(id);
@@ -124,6 +126,7 @@ export function ReviewSlideView() {
   const drifted = presenterSlideId !== null && presenterSlideId !== viewingId;
   const statusCopy = STATUS_COPY[status];
   const isDataSlide = slide.kind === "data";
+  const isClosingSlide = slide.kind === "closing";
 
   // Read-back is bounded to already-shown slides.
   const canBack = idx > 0;
@@ -215,6 +218,14 @@ export function ReviewSlideView() {
           {dataSetId
             ? <ReviewDataChart dataSetId={dataSetId} />
             : <p className="text-xs text-[var(--muted)]">Menunggu asisten memasukkan data kelompok…</p>}
+        </div>
+      )}
+
+      {/* Closing slide: the Games phase for students. The slide view scrolls so
+          the card is reachable; it manages its own join/answer/reveal state. */}
+      {isClosingSlide && roomId && (
+        <div className="mx-auto max-h-[46vh] max-w-5xl overflow-y-auto px-3 pb-1" data-review-games-panel>
+          <ReviewGames roomId={roomId} />
         </div>
       )}
 
