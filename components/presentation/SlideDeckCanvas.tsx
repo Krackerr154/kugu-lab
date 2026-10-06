@@ -16,6 +16,7 @@ import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
 import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { ReviewGames } from "@/components/shared/ReviewGames";
 import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
+import { OrientationNudge } from "@/components/shared/OrientationNudge";
 import type { ReviewSlideId } from "@/lib/m3-presentation";
 
 interface SlideDeckCanvasProps {
@@ -363,6 +364,11 @@ export function SlideDeckCanvas({
           </div>
         </div>
       </footer>
+
+      {/* Landscape suggestion — advisory only, never blocks the deck.
+          Mounted here (student canvas) rather than in PresenterConsole, so only
+          students following on a phone see it. */}
+      <OrientationNudge />
     </div>
   );
 }
