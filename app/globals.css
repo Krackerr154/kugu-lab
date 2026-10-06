@@ -100,6 +100,9 @@
   --motion-duration-micro: 150ms;
   --motion-duration-utility: 220ms;
   --motion-duration-content: 320ms;
+  /* Slide swaps are a larger travel than a control hover, so they get their own
+     step between utility and content rather than borrowing either. */
+  --motion-duration-slide: 260ms;
 }
 
 @theme inline {
@@ -377,6 +380,50 @@ h1, h2, h3, h4, h5, h6 {
 
 .m4-motion-enter {
   animation: m4-content-enter var(--motion-duration-content) var(--motion-ease-enter) both;
+}
+
+/* ── Slide swap transitions ─────────────────────────────────────────────────
+   Directional so moving forward reads differently from stepping back, which is
+   what stops a slide change from feeling like an abrupt cut. Travel is small
+   (1.25rem) and fade-led: enough to signal direction without drawing attention
+   away from the content, and cheap enough to stay on the compositor.
+
+   Only opacity and transform are animated — no layout properties — so a swap
+   cannot trigger reflow of the deck below it. */
+@keyframes m4-slide-in-from-right {
+  from { opacity: 0; transform: translate3d(1.25rem, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes m4-slide-in-from-left {
+  from { opacity: 0; transform: translate3d(-1.25rem, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.m4-slide-enter-forward {
+  animation: m4-slide-in-from-right var(--motion-duration-slide)
+    var(--motion-ease-enter) both;
+}
+
+.m4-slide-enter-back {
+  animation: m4-slide-in-from-left var(--motion-duration-slide)
+    var(--motion-ease-enter) both;
+}
+
+/* Reduced motion: never remove the animation entirely, or the element stays at
+   the `from` keyframe (opacity 0) while `both` fill holds it. Collapse the
+   duration to near-zero and drop the travel instead. */
+@media (prefers-reduced-motion: reduce) {
+  .m4-slide-enter-forward,
+  .m4-slide-enter-back {
+    animation-duration: 0.01ms;
+    animation-name: m4-slide-fade-only;
+  }
+}
+
+@keyframes m4-slide-fade-only {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
 }
 
 @keyframes m4-access-backdrop-enter {

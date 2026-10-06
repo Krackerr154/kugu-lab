@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   REVIEW_DECK_SLIDES,
@@ -17,6 +17,7 @@ import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { ReviewGames } from "@/components/shared/ReviewGames";
 import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
 import { OrientationNudge } from "@/components/shared/OrientationNudge";
+import { useReducedMotion } from "@/components/shared/useReducedMotion";
 import type { ReviewSlideId } from "@/lib/m3-presentation";
 
 interface SlideDeckCanvasProps {
@@ -43,18 +44,45 @@ export function SlideDeckCanvas({
 
   const [viewingId, setViewingId] = useState<ReviewSlideId>(presenterSlideId ?? initialSlideId);
   const [lastToken, setLastToken] = useState<number | null>(null);
+  // Direction of the last slide change, so the transition can travel the same
+  // way the user moved. Paired with `swapKey` to force the animation to replay.
+  const [swapDirection, setSwapDirection] = useState<"forward" | "back">("forward");
+  const [swapKey, setSwapKey] = useState(0);
+  const reducedMotion = useReducedMotion();
+  const slideBodyRef = useRef<HTMLDivElement>(null);
 
   // Automatically snap to presenter position when a new broadcast token arrives
   useEffect(() => {
     if (slideRequest && slideRequest.token !== lastToken) {
       setLastToken(slideRequest.token);
-      setViewingId(slideRequest.slideId);
+      setViewingId((current) => {
+        // Presenter-driven: compare where we are against where they went.
+        const next = deckSlideIndex(slideRequest.slideId);
+        setSwapDirection(next < deckSlideIndex(current) ? "back" : "forward");
+        return slideRequest.slideId;
+      });
+      setSwapKey((k) => k + 1);
     }
   }, [slideRequest, lastToken]);
 
   const viewingIdx = deckSlideIndex(viewingId);
   const presenterIdx = presenterSlideId ? deckSlideIndex(presenterSlideId) : viewingIdx;
   const isDrifted = presenterSlideId !== null && presenterSlideId !== viewingId;
+
+  // Restart the enter animation on every swap. React reuses the same DOM node
+  // across slides, so swapping the class alone would not replay it; and we
+  // cannot remount via `key` without resetting the embedded interactive panels.
+  // Detach -> reflow -> reattach is the standard imperative replay.
+  useEffect(() => {
+    const node = slideBodyRef.current;
+    if (!node || reducedMotion) return;
+    const className = swapDirection === "back" ? "m4-slide-enter-back" : "m4-slide-enter-forward";
+    node.classList.remove("m4-slide-enter-back", "m4-slide-enter-forward");
+    // Reading offsetWidth forces the browser to apply the removal before the
+    // class goes back on; without it the two changes collapse into no-op.
+    void node.offsetWidth;
+    node.classList.add(className);
+  }, [swapKey, swapDirection, reducedMotion]);
 
   // Bounded read-back logic
   const canGoBack = viewingIdx > 0;
@@ -65,19 +93,24 @@ export function SlideDeckCanvas({
       const clamped = Math.max(0, Math.min(presenterIdx, targetIdx));
       const targetSlide = REVIEW_DECK_SLIDES[clamped];
       if (targetSlide) {
+        setSwapDirection(clamped < viewingIdx ? "back" : "forward");
+        setSwapKey((k) => k + 1);
         setViewingId(targetSlide.id);
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        // Respect the OS setting: a smooth scroll is motion too.
+        window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
       }
     },
-    [presenterIdx]
+    [presenterIdx, viewingIdx, reducedMotion]
   );
 
   const returnToPresenter = useCallback(() => {
     if (presenterSlideId) {
+      setSwapDirection(deckSlideIndex(presenterSlideId) < viewingIdx ? "back" : "forward");
+      setSwapKey((k) => k + 1);
       setViewingId(presenterSlideId);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
     }
-  }, [presenterSlideId]);
+  }, [presenterSlideId, viewingIdx, reducedMotion]);
 
   // Keyboard navigation: Arrow keys & Space (bounded read-back)
   useEffect(() => {
@@ -282,7 +315,16 @@ export function SlideDeckCanvas({
 
       {/* ── MAIN SLIDE CANVAS ────────────────────────────────────────────── */}
       <main className="flex-1 px-3 py-5 sm:px-4 md:py-8 pb-28 min-w-0 overflow-x-hidden">
-        <div className="mx-auto max-w-4xl space-y-5 sm:space-y-6 min-w-0">
+        {/* Animation restarts imperatively (see useIsomorphicLayoutEffect below)
+            rather than via a changing `key`, because remounting this subtree
+            would reset the embedded interactive panels mid-session. */}
+        <div
+          ref={slideBodyRef}
+          className={`mx-auto max-w-4xl space-y-5 sm:space-y-6 min-w-0 ${
+            reducedMotion ? "" : swapDirection === "back" ? "m4-slide-enter-back" : "m4-slide-enter-forward"
+          }`}
+          data-slide-direction={swapDirection}
+        >
           {/* Slide Header Card */}
           <div className="space-y-1.5 border-b border-[var(--outline-variant)] pb-3 sm:pb-4 min-w-0">
             <div className="flex items-center gap-2">
