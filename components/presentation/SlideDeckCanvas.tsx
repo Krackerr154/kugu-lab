@@ -37,6 +37,9 @@ export function SlideDeckCanvas({
   const presenterSlideId = (slideRequest?.slideId ?? presentation?.snapshot?.slideId ?? null) as ReviewSlideId | null;
   const dataSetId = presentation?.snapshot?.dataSetId ?? null;
   const roomId = presentation?.roomId ?? "";
+  const status = presentation?.status ?? "solo";
+  const joinError = presentation?.joinError ?? null;
+  const relayMode = presentation?.relayMode ?? false;
 
   const [viewingId, setViewingId] = useState<ReviewSlideId>(presenterSlideId ?? initialSlideId);
   const [lastToken, setLastToken] = useState<number | null>(null);
@@ -109,7 +112,38 @@ export function SlideDeckCanvas({
       <header className="sticky top-0 z-30 border-b border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-2">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="flex h-2.5 w-2.5 rounded-full bg-[var(--primary-container)] animate-pulse shrink-0" />
+            <span
+              data-connection-dot
+              data-connection-state={
+                role === "presenting" || status === "presenting"
+                  ? "presenting"
+                  : status === "following"
+                  ? "following"
+                  : status === "connecting" || status === "reconnecting"
+                  ? "connecting"
+                  : status === "disconnected" || status === "ended" || joinError
+                  ? "disconnected"
+                  : "solo"
+              }
+              className={`flex h-2.5 w-2.5 rounded-full shrink-0 ${
+                status === "following"
+                  ? "bg-[var(--primary-container)] animate-pulse"
+                  : status === "connecting" || status === "reconnecting"
+                  ? "bg-[var(--muted)] animate-pulse"
+                  : status === "disconnected" || status === "ended" || joinError
+                  ? "bg-[var(--warning-ink)]"
+                  : "bg-[var(--primary-container)] animate-pulse"
+              }`}
+              title={
+                status === "following"
+                  ? "Terhubung ke asisten"
+                  : status === "connecting" || status === "reconnecting"
+                  ? "Menyambungkan…"
+                  : status === "disconnected" || status === "ended" || joinError
+                  ? "Tidak terhubung"
+                  : "Mode mandiri"
+              }
+            />
             <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)] truncate">
               KUGU Live Review · Modul 4
             </span>
@@ -156,6 +190,72 @@ export function SlideDeckCanvas({
             )}
           </div>
         </div>
+
+        {/* Connection state. Without this, a student whose transport cannot reach the
+            presenter (e.g. local BroadcastChannel mode across a different browser,
+            incognito window, or another device) just sees a silently frozen deck
+            with no explanation. */}
+        {role !== "presenting" && (status === "connecting" || status === "reconnecting") && (
+          <div
+            data-connection-banner
+            data-connection-state="connecting"
+            className="mx-auto mt-2 flex max-w-5xl items-center gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)] px-3 py-1.5 text-xs min-w-0"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined shrink-0 text-sm text-[var(--muted)]">
+              sync
+            </span>
+            <span className="truncate text-[var(--text-secondary)]">
+              Menyambungkan ke sesi asisten…
+            </span>
+          </div>
+        )}
+
+        {role !== "presenting" && (status === "disconnected" || status === "ended" || joinError) && (
+          <div
+            data-connection-banner
+            data-connection-state={status === "ended" ? "ended" : "disconnected"}
+            className="mx-auto mt-2 flex max-w-5xl items-center justify-between gap-2 rounded-lg border border-[var(--warning-ink)] bg-[var(--surface-selected)] px-3 py-1.5 text-xs min-w-0"
+          >
+            <span className="text-[var(--warning-ink)] font-medium truncate">
+              {status === "ended"
+                ? "Sesi asisten telah berakhir."
+                : joinError === "room-not-found"
+                ? "Ruang sesi tidak ditemukan."
+                : joinError === "unauthorized"
+                ? "Tidak memiliki akses ke sesi ini."
+                : "Tidak terhubung ke asisten — slide tidak akan mengikuti."}
+            </span>
+            <button
+              type="button"
+              onClick={() => presentation?.rejoin?.()}
+              className="m4-motion-control inline-flex min-h-7 shrink-0 items-center gap-1 rounded border border-[var(--warning-ink)] px-2 text-[11px] font-bold text-[var(--warning-ink)] hover:bg-[var(--warning-light)]"
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-xs">
+                refresh
+              </span>
+              <span>Coba lagi</span>
+            </button>
+          </div>
+        )}
+
+        {/* Local dev transport: BroadcastChannel is scoped to ONE browser context, so a
+            student in a different browser / incognito window / device can never receive
+            the presenter's slides. Say so explicitly instead of showing a stale deck. */}
+        {!relayMode && role === "solo" && status === "solo" && (
+          <div
+            data-connection-banner
+            data-connection-state="local-only"
+            className="mx-auto mt-2 flex max-w-5xl items-start gap-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)] px-3 py-1.5 text-xs min-w-0"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined shrink-0 text-sm text-[var(--muted)]">
+              lan
+            </span>
+            <span className="min-w-0 text-[var(--text-secondary)]">
+              Mode lokal: sinkronisasi hanya berjalan di tab/jendela browser yang sama. Untuk
+              praktikan di perangkat lain, jalankan sesi lewat relay (WSS).
+            </span>
+          </div>
+        )}
 
         {/* Drift alert banner if student browsed back */}
         {isDrifted && (
