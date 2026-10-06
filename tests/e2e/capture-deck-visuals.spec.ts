@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { mkdirSync } from "node:fs";
 
 const presenterRoute = "/modules/m4-sn-bi-electrodeposition/presenter";
@@ -97,6 +97,6 @@ test.describe("Visual QA Capture for Slide Deck & Presenter Console", () => {
   });
 });
 
-async function pageWait(page, ms) {
+async function pageWait(page: Page, ms: number) {
   await page.waitForTimeout(ms);
 }
