@@ -36,8 +36,19 @@
   button.on { background: var(--accent); color: #001f3f; border-color: var(--accent); font-weight: 700; }
   #stage { display: flex; flex-wrap: wrap; gap: 28px; padding: 24px; align-items: flex-start; }
   .device { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .caption { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .caption { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 6px; }
   .caption b { color: var(--text); font-weight: 600; }
+  .caption .rotate {
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 1px 7px; font: inherit; font-size: 10px; line-height: 1.5; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .caption .rotate:hover { border-color: var(--accent); }
+  .caption .rotate.on { background: var(--accent); color: #001f3f; border-color: var(--accent); font-weight: 700; }
+  .caption .rotate[disabled] { opacity: .35; cursor: default; }
+  .caption .rotate[disabled]:hover { border-color: var(--line); }
+  .caption .orient { color: var(--accent); font-weight: 600; }
   .shell {
     background: #1b2436; border: 1px solid var(--line); border-radius: 34px; padding: 10px;
     box-shadow: 0 18px 50px rgba(0,0,0,.55); position: relative;
@@ -49,6 +60,11 @@
     width: 84px; height: 20px; background: #0b1220; border-radius: 12px; z-index: 2; pointer-events: none;
   }
   .shell.tablet .notch, .shell.desktop .notch { display: none; }
+  /* Landscape: the notch moves to the side edge, as on a real rotated handset. */
+  .shell.phone.landscape .notch {
+    top: 50%; left: 14px; transform: translateY(-50%);
+    width: 20px; height: 84px;
+  }
   .screen { background: #fff; border-radius: 26px; overflow: hidden; position: relative; }
   .shell.tablet .screen { border-radius: 12px; }
   .shell.desktop .screen { border-radius: 4px; }
@@ -72,7 +88,7 @@
       <option value="0.5">50%</option>
     </select>
   </label>
-  <button id="rotate">Rotate</button>
+  <button id="rotate">Rotate all</button>
   <button id="reload">Reload all</button>
   <span style="flex:1"></span>
   <span id="presets"></span>
@@ -85,6 +101,11 @@
   <p><b>Accurate here:</b> real viewport width, so every <code>@media</code> query and Tailwind
   breakpoint (<code>sm:640</code>, <code>md:768</code>, <code>lg:1024</code>) fires exactly as on a
   real device. Horizontal overflow, uncollapsed grids and clipped text are genuine.</p>
+  <p><b>Orientation:</b> each phone/tablet has its own <code>Landscape</code> /
+  <code>Portrait</code> toggle in its caption; the header button flips all of them at once.
+  Rotation swaps width and height, so the iframe really does get e.g. <code>852x393</code> —
+  every <code>@media</code> query and Tailwind breakpoint fires exactly as on a rotated handset.
+  Laptop/desktop is fixed: a rotated laptop is not a viewport anyone ships.</p>
   <p><b>NOT emulated:</b> touch events, <code>hover</code> vs <code>:active</code> on touch devices,
   device pixel ratio (font sharpness), mobile user-agent, iOS safe-area insets. For those use
   Chrome DevTools device toolbar (<code>Ctrl+Shift+M</code>) or a real phone on your LAN.</p>
@@ -107,7 +128,14 @@ const SHELL_PAD = { phone: 10, tablet: 14, desktop: 8 };
 const SHELL_BORDER = 1;
 
 const active = new Set(["iPhone SE", "iPhone 14 Pro", "Pixel 7", "iPad mini"]);
-let landscape = false;
+
+// Orientation is tracked PER DEVICE (keyed by device name). A rotated laptop is not a
+// meaningful viewport to test, so desktop shells are excluded from rotation entirely.
+// The header "Rotate all" button is a bulk shortcut that flips every rotatable device.
+const orientation = new Map(); // name -> "portrait" | "landscape"
+const canRotate = (d) => d.kind !== "desktop";
+const isLandscape = (d) => canRotate(d) && orientation.get(d.name) === "landscape";
+const box = (d) => (isLandscape(d) ? { w: d.h, h: d.w } : { w: d.w, h: d.h });
 
 const ROUTES = ["/", "/analisis", "/laporan", "/modules", "/notebook", "/pengajar", "/prelab", "/referensi", "/modules/m1-alfum-mof", "/modules/m2-zeolite-fau", "/modules/m3-sno2-precipitation", "/modules/m4-sn-bi-electrodeposition", "/modules/m5-xrd", "/modules/m6-ftir-tga", "/modules/m7-bet", "/prelab/m4-sn-bi-electrodeposition"];
 
@@ -144,18 +172,25 @@ function render() {
   stage.innerHTML = "";
 
   DEVICES.filter((d) => active.has(d.name)).forEach((d) => {
-    const w = landscape && d.kind !== "desktop" ? d.h : d.w;
-    const h = landscape && d.kind !== "desktop" ? d.w : d.h;
+    const { w, h } = box(d);
+    const land = isLandscape(d);
+    const pad = SHELL_PAD[d.kind];
 
     const wrap = document.createElement("div");
     wrap.className = "device";
 
     const shell = document.createElement("div");
-    shell.className = "shell " + d.kind;
+    shell.className = "shell " + d.kind + (land ? " landscape" : "");
     // Scale the SHELL, never the iframe width: a narrower iframe would change the
     // viewport and fire the wrong breakpoint, defeating the whole purpose.
+    //
+    // transform-origin MUST be "top left". With "top center" the scaled shell is
+    // centred on its own unscaled box, which shifts it right by (unscaledW * (1-zoom) / 2)
+    // — at 75% that is ~50px in portrait and ~86px in landscape, wider than the 28px
+    // stage gap, so neighbouring devices visibly collide. "top left" makes the scaled
+    // shell occupy exactly 0..(unscaledW * zoom) == the spacer box computed below.
     shell.style.transform = `scale(${zoom})`;
-    shell.style.transformOrigin = "top center";
+    shell.style.transformOrigin = "top left";
 
     const notch = document.createElement("div");
     notch.className = "notch";
@@ -178,10 +213,39 @@ function render() {
 
     const cap = document.createElement("div");
     cap.className = "caption";
+    // Shells are now top-left anchored inside their spacer, so centre the caption
+    // to match the shell's visual centre rather than the spacer's.
+    cap.style.maxWidth = (w + pad * 2 + SHELL_BORDER * 2) * zoom + "px";
+    cap.style.justifyContent = "center";
     cap.innerHTML = `<b>${d.name}</b> — ${w}x${h} @ ${Math.round(zoom * 100)}%`;
 
+    if (canRotate(d)) {
+      cap.innerHTML += land ? ` <span class="orient">landscape</span>` : "";
+      const rot = document.createElement("button");
+      rot.className = "rotate" + (land ? " on" : "");
+      rot.type = "button";
+      rot.textContent = land ? "Portrait" : "Landscape";
+      // The button label is the ACTION, the .orient tag is the current STATE.
+      rot.title = `Rotate ${d.name} to ${land ? "portrait" : "landscape"} (${d.h}x${d.w})`;
+      rot.setAttribute("aria-label", rot.title);
+      rot.setAttribute("data-rotate-device", d.name);
+      rot.onclick = () => {
+        orientation.set(d.name, land ? "portrait" : "landscape");
+        render();
+      };
+      cap.appendChild(rot);
+    } else {
+      // Desktop/laptop: rotation is not a real device state worth previewing.
+      const rot = document.createElement("button");
+      rot.className = "rotate";
+      rot.type = "button";
+      rot.disabled = true;
+      rot.textContent = "Fixed";
+      rot.title = "Laptop/desktop orientation is fixed";
+      cap.appendChild(rot);
+    }
+
     // transform:scale() does not affect layout, so reserve space with a spacer.
-    const pad = SHELL_PAD[d.kind];
     const spacer = document.createElement("div");
     spacer.style.height = (h + pad * 2 + SHELL_BORDER * 2) * zoom + "px";
     spacer.style.width = (w + pad * 2 + SHELL_BORDER * 2) * zoom + "px";
@@ -194,18 +258,38 @@ function render() {
     wrap.appendChild(cap);
     stage.appendChild(wrap);
   });
+
+  syncRotateAll();
 }
 
 routeSel.onchange = () => { custom.value = ""; render(); };
 custom.onchange = render;
 custom.onkeydown = (e) => { if (e.key === "Enter") render(); };
 zoomSel.onchange = render;
-$("rotate").onclick = (e) => {
-  landscape = !landscape;
-  e.target.className = landscape ? "on" : "";
+$("rotate").onclick = () => {
+  // Bulk action: flip every rotatable device. If any is already landscape, this
+  // returns them all to portrait (so the button always does something visible).
+  const rotatable = DEVICES.filter((d) => active.has(d.name) && canRotate(d));
+  const anyLandscape = rotatable.some(isLandscape);
+  rotatable.forEach((d) => orientation.set(d.name, anyLandscape ? "portrait" : "landscape"));
+  syncRotateAll();
   render();
 };
 $("reload").onclick = render;
+
+// Keep the header button label/highlight truthful after per-device toggles.
+function syncRotateAll() {
+  const btn = $("rotate");
+  const rotatable = DEVICES.filter((d) => active.has(d.name) && canRotate(d));
+  const allLandscape = rotatable.length > 0 && rotatable.every(isLandscape);
+  btn.className = allLandscape ? "on" : "";
+  btn.textContent = allLandscape ? "All portrait" : "Rotate all";
+  btn.disabled = rotatable.length === 0;
+  btn.title = rotatable.length
+    ? `Flip ${rotatable.length} rotatable device(s) between portrait and landscape`
+    : "No rotatable devices selected";
+}
+syncRotateAll();
 
 render();
 </script>
