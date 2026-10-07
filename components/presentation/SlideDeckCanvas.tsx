@@ -140,7 +140,7 @@ export function SlideDeckCanvas({
   return (
     <div
       data-student-slide-deck
-      className="m4-deck-fit m4-deck-compact min-h-screen bg-[var(--surface-container-lowest)] text-[var(--foreground)] flex flex-col justify-between overflow-x-hidden relative"
+      className="m4-deck-fit m4-deck-compact bg-[var(--surface-container-lowest)] text-[var(--foreground)] flex flex-col justify-between"
     >
       {/* ── TOP BAR / HEADER ──────────────────────────────────────────────── */}
       <header className="m4-deck-topbar sticky top-0 z-30 border-b border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-2">

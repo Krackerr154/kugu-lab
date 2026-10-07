@@ -440,6 +440,25 @@ h1, h2, h3, h4, h5, h6 {
    The cap is a viewport-relative budget, not a fixed px height, so it adapts
    across phone sizes instead of being tuned to one device. */
 .m4-deck-fit {
+  /* The deck is a slide, not a page: pin it to the viewport and scroll nothing
+     at the document level. The app shell still renders its own site footer
+     below, which is what forced a page scroll even when the slide itself fit
+     (measured 161px of overflow from a 97px global footer). A fixed frame
+     sized to the *visual* viewport takes the deck out of that flow entirely.
+
+     100dvh so mobile browser URL bars shrinking/growing do not leave a gap or
+     cause a jump; 100vh is kept as the fallback for browsers without dvh. */
+  position: fixed;
+  inset: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  z-index: 20;
+
+  /* The deck now fills the frame, so its own min-height must come from the
+     frame (above), not from screen units that reintroduce outer scroll. */
+  min-height: 0;
+
   /* Budget the panel from the space that actually remains. Portrait phones
      stack the heading, then bullets, then the panel — so the panel only gets
      what is left after those. Measured on a 393x852 phone: chrome 117px,
@@ -447,6 +466,19 @@ h1, h2, h3, h4, h5, h6 {
      carry a fifth bullet. Expressed in vh so it tracks the device rather than
      being tuned to one screen size. */
   --deck-fit-max: calc(100vh - 39rem);
+}
+
+/* While a deck is mounted, the surrounding app chrome (global site footer,
+   page main) would otherwise still reserve height below the fixed deck and
+   reintroduce a page scroll. Hide it for the duration of the presentation —
+   the deck is a full-screen mode, and the site footer is not part of a slide.
+   :has() keeps this scoped to routes that actually mount a deck. */
+body:has(.m4-deck-fit) > .app-shell > footer.no-print,
+body:has(.m4-deck-fit) .app-shell > footer.no-print {
+  display: none;
+}
+body:has(.m4-deck-fit) .app-shell {
+  min-height: 0;
 }
 
 /* Tighten the text block on short/narrow screens so the panel below it keeps
