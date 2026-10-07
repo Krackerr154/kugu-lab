@@ -17,6 +17,7 @@ import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { ReviewGames } from "@/components/shared/ReviewGames";
 import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
 import { OrientationNudge } from "@/components/shared/OrientationNudge";
+import { DeckActionDial } from "@/components/presentation/DeckActionDial";
 import { useReducedMotion } from "@/components/shared/useReducedMotion";
 import type { ReviewSlideId } from "@/lib/m3-presentation";
 
@@ -199,28 +200,10 @@ export function SlideDeckCanvas({
               </span>
             )}
 
-            {onExit ? (
-              <button
-                type="button"
-                onClick={onExit}
-                className="m4-motion-control inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-[var(--outline-variant)] px-2.5 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
-              >
-                <span aria-hidden="true" className="material-symbols-outlined text-sm">
-                  close
-                </span>
-                <span>Keluar ke Modul</span>
-              </button>
-            ) : (
-              <Link
-                href={exitHref}
-                className="m4-motion-control inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-[var(--outline-variant)] px-2.5 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
-              >
-                <span aria-hidden="true" className="material-symbols-outlined text-sm">
-                  close
-                </span>
-                <span>Keluar ke Modul</span>
-              </Link>
-            )}
+            {/* Exit lives in the bottom-right speed dial, not here: the deck is
+                height-starved on phones and this row was permanent chrome for an
+                action that is used once. The rubric badge stays — it is
+                reference info for the current slide, not an action. */}
           </div>
         </div>
 
@@ -290,27 +273,9 @@ export function SlideDeckCanvas({
           </div>
         )}
 
-        {/* Drift alert banner if student browsed back */}
-        {isDrifted && (
-          <div
-            data-slide-drift-banner
-            className="mx-auto mt-2 flex max-w-5xl items-center justify-between gap-2 rounded-lg border border-[var(--warning-ink)] bg-[var(--surface-selected)] px-3 py-1.5 text-xs min-w-0"
-          >
-            <span className="text-[var(--warning-ink)] font-medium truncate">
-              Slide {viewingIdx + 1} (Asisten di Slide {presenterIdx + 1})
-            </span>
-            <button
-              type="button"
-              onClick={returnToPresenter}
-              className="m4-motion-control inline-flex min-h-7 shrink-0 items-center gap-1 rounded border border-[var(--warning-ink)] px-2 text-[11px] font-bold text-[var(--warning-ink)] hover:bg-[var(--warning-light)]"
-            >
-              <span aria-hidden="true" className="material-symbols-outlined text-xs">
-                my_location
-              </span>
-              <span>Kembali</span>
-            </button>
-          </div>
-        )}
+        {/* Drift is surfaced in the speed dial's "Kembali ke Asisten" item
+            instead of a header banner, so it costs no vertical space until the
+            student opens the menu. */}
       </header>
 
       {/* ── MAIN SLIDE CANVAS ────────────────────────────────────────────── */}
@@ -527,6 +492,25 @@ export function SlideDeckCanvas({
           Mounted here (student canvas) rather than in PresenterConsole, so only
           students following on a phone see it. */}
       <OrientationNudge />
+
+      {/* Deck actions (return to assistant, exit) live in a bottom-right speed
+          dial rather than the header, to keep the header chrome minimal on a
+          height-starved phone viewport. */}
+      <DeckActionDial
+        onReturnToPresenter={returnToPresenter}
+        canReturnToPresenter={isDrifted}
+        driftLabel={
+          presenterSlideId ? `Slide ${viewingIdx + 1} (Asisten di Slide ${presenterIdx + 1})` : undefined
+        }
+        onExit={
+          onExit ??
+          (exitHref
+            ? () => {
+                window.location.href = exitHref;
+              }
+            : undefined)
+        }
+      />
     </div>
   );
 }
