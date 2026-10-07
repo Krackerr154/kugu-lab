@@ -30,25 +30,28 @@ interface SlideDeckCanvasProps {
 function formatBulletText(text: string) {
   const colonIdx = text.indexOf(":");
   if (colonIdx > 0 && colonIdx <= 25) {
-    const prefix = text.slice(0, colonIdx + 1);
-    const rest = text.slice(colonIdx + 1);
+    const prefix = text.slice(0, colonIdx).trim();
+    const rest = text.slice(colonIdx + 1).trim();
     return (
-      <>
-        <span className="font-semibold text-[var(--foreground)]">{prefix}</span>
-        {rest}
-      </>
+      <div className="flex items-start gap-1.5 sm:gap-2 min-w-0 flex-1">
+        <span className="inline-flex items-baseline justify-between w-20 sm:w-24 shrink-0 font-semibold text-[var(--foreground)]">
+          <span>{prefix}</span>
+          <span className="text-[var(--muted)]">:</span>
+        </span>
+        <span className="min-w-0 flex-1 break-words">{rest}</span>
+      </div>
     );
   }
   const numberMatch = text.match(/^(\d+\.\s*)(.*)$/);
   if (numberMatch) {
     return (
-      <>
-        <span className="font-semibold text-[var(--foreground)]">{numberMatch[1]}</span>
-        {numberMatch[2]}
-      </>
+      <div className="flex items-start gap-1.5 sm:gap-2 min-w-0 flex-1">
+        <span className="w-5 sm:w-6 shrink-0 font-semibold text-[var(--foreground)]">{numberMatch[1]}</span>
+        <span className="min-w-0 flex-1 break-words">{numberMatch[2]}</span>
+      </div>
     );
   }
-  return text;
+  return <span className="min-w-0 flex-1 break-words">{text}</span>;
 }
 
 export function SlideDeckCanvas({
@@ -374,14 +377,14 @@ export function SlideDeckCanvas({
             </h2>
             <ul className="space-y-2">
               {currentSlide.bullets.map((bullet, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)]">
+                <li key={idx} className="flex items-start gap-2.5 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)] min-w-0">
                   <span
                     aria-hidden="true"
                     className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--primary-container)]/10 text-xs font-bold text-[var(--primary-container)] mt-0.5"
                   >
                     ✓
                   </span>
-                  <span className="min-w-0 break-words">{formatBulletText(bullet)}</span>
+                  {formatBulletText(bullet)}
                 </li>
               ))}
             </ul>

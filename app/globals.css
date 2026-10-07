@@ -706,11 +706,11 @@ body:has(.m4-deck-fit) .app-shell {
   }
 
   /* Landscape phones are ~390px tall; with 3 takeaway bullets on Slide 1
-     and full-height framing, scale the type to ~14px (clamp up to 0.9375rem / 15px)
+     and full-height framing, scale the type to ~15px (clamp up to 0.9375rem)
      so the text comfortably fills the card and is easy to read from a distance. */
   .m4-deck-compact .m4-deck-bullets li {
-    font-size: clamp(0.8125rem, 3.6vh, 0.9375rem);
-    line-height: 1.42;
+    font-size: clamp(0.84375rem, 3.8vh, 0.9375rem);
+    line-height: 1.4;
   }
   .m4-deck-compact .m4-deck-bullets h2 {
     font-size: 0.6875rem;
