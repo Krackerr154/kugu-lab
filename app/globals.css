@@ -691,9 +691,14 @@ body:has(.m4-deck-fit) .app-shell {
   .m4-deck-compact .m4-deck-bullets ul {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    gap: 0.5rem;
     flex: 1;
     min-height: 0;
+  }
+  .m4-deck-compact .m4-deck-bullets ul > li {
+    margin-top: 0;
+    margin-bottom: 0;
   }
   /* The heading stays visible — it is the slide's identity, not scrollable. */
   .m4-deck-compact .m4-deck-heading {
@@ -705,13 +710,22 @@ body:has(.m4-deck-fit) .app-shell {
     padding-bottom: 0.125rem;
   }
 
-  /* Landscape phones are ~390px tall; with 3 takeaway bullets on Slide 1
-     and full-height framing, scale the type to ~15px (clamp up to 0.9375rem)
-     so the text comfortably fills the card and is easy to read from a distance. */
-  .m4-deck-compact .m4-deck-bullets li {
+  /* Landscape phones are ~390px tall. Text-only slides use full width and
+     can comfortably scale typography to ~15px with a tight 0.5rem gap so
+     takeaways feel connected and unified while filling the card. */
+  .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets li {
     font-size: clamp(0.84375rem, 3.8vh, 0.9375rem);
     line-height: 1.4;
   }
+
+  /* Two-column slides share width with an embedded interactive panel:
+     scale bullets to ~12px with tighter line-height so they fit beside the
+     simulation without scrolling. */
+  .m4-deck-compact .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets li {
+    font-size: clamp(0.6875rem, 2.8vh, 0.75rem);
+    line-height: 1.32;
+  }
+
   .m4-deck-compact .m4-deck-bullets h2 {
     font-size: 0.6875rem;
     letter-spacing: 0.05em;
