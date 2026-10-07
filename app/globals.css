@@ -533,9 +533,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Two columns when short and wide: bullets left, panel right. Uses the space
-   landscape actually has (width) instead of the space it lacks (height). */
+   landscape actually has (width) instead of the space it lacks (height).
+
+   Only applied when the slide actually carries a panel (:has). A text-only
+   slide has nothing to put in a second column — splitting it just squeezes
+   the bullets into half the width, which makes them taller and forces a
+   scroll that would not otherwise be needed. Those spread full width. */
 @media (orientation: landscape) and (min-width: 640px) and (max-height: 500px) {
-  .m4-deck-split {
+  .m4-deck-split:has(.m4-deck-panel) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
     gap: 0.75rem;
@@ -543,6 +548,11 @@ h1, h2, h3, h4, h5, h6 {
   }
   .m4-deck-split > .m4-deck-panel {
     max-height: 100%;
+  }
+  /* Text-only slide: let the bullets use the whole width. Wider bullets wrap
+     onto fewer lines, so the block is shorter and fits without scrolling. */
+  .m4-deck-split:not(:has(.m4-deck-panel)) {
+    display: block;
   }
 }
 
