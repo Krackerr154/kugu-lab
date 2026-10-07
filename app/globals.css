@@ -491,15 +491,22 @@ body:has(.m4-deck-fit) .app-shell {
   min-height: 0;
 }
 
-/* The global mobile nav bar is sticky at top: 0 with z-50, which is ABOVE the
-   deck's own header (z-30). Both sat at top 0, so the global bar covered the
-   deck header and its contents — including the rubric badge — appeared to
-   vanish. A full-screen deck owns the whole viewport, so the app nav is
-   hidden for the duration. */
-body:has(.m4-deck-fit) .app-shell > header.no-print,
-body:has(.m4-deck-fit) header.no-print.lg\:hidden,
-body:has(.m4-deck-fit) .app-shell nav[aria-label="Navigasi utama mobile"] {
-  display: none;
+/* The deck used to be hidden behind the global mobile nav bar (sticky top: 0,
+   z-50) because the deck frame also started at top: 0. Rather than hiding the
+   app nav — which costs the student their way out of the deck — inset the deck
+   frame below it. The nav is 4rem tall on mobile and 5rem from lg up. */
+.m4-deck-fit {
+  top: 4rem;
+  height: calc(100vh - 4rem);
+  height: calc(100dvh - 4rem);
+}
+
+@media (min-width: 1024px) {
+  .m4-deck-fit {
+    top: 5rem;
+    height: calc(100vh - 5rem);
+    height: calc(100dvh - 5rem);
+  }
 }
 
 /* Tighten the text block on short/narrow screens so the panel below it keeps
@@ -636,15 +643,15 @@ body:has(.m4-deck-fit) .app-shell nav[aria-label="Navigasi utama mobile"] {
    dimension — portrait and larger landscape keep the normal flow. */
 @media (orientation: landscape) and (max-height: 500px) {
   .m4-deck-compact .m4-deck-split {
-    /* 100vh minus deck chrome in landscape: header ~19px, footer ~57px, slide
-       body padding 8px top/bottom, chapter heading ~58px. Re-tuned after the
-       global app nav was hidden for deck routes — it used to eat 64px here.
+    /* 100vh minus: global app nav 4rem, deck header ~25px, deck footer ~57px,
+       slide body padding, chapter heading. Re-tuned after the app nav was
+       restored above the deck instead of hidden.
 
        height (not just max-height) so the card fills the frame instead of
        stopping wherever its text ends and leaving an empty band above the
        footer. */
-    height: calc(100vh - 9.625rem);
-    max-height: calc(100vh - 9.625rem);
+    height: calc(100vh - 13.625rem);
+    max-height: calc(100vh - 13.625rem);
     overflow: hidden;
     /* Two columns sit side by side here, so the stacked gap is dead height. */
     gap: 0.375rem;
@@ -657,18 +664,25 @@ body:has(.m4-deck-fit) .app-shell nav[aria-label="Navigasi utama mobile"] {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
   }
-  /* Text-only slide: the card should occupy the whole frame. */
+  /* A text-only card that still exceeds the frame must scroll inside itself
+     rather than clip its last bullet: the slide stays one screen, but no
+     content becomes unreachable. */
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) > .m4-deck-bullets {
-    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
   }
-  .m4-deck-compact .m4-deck-bullets ul {
-    /* Distribute bullets across the card so a short slide reads as composed
-       rather than half-empty. */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    flex: 1;
-    min-height: 0;
+  /* Text-only slide: let the card size to its content, but never past the
+     frame. Forcing height:100% stretched a short slide into an empty box;
+     unconstrained height let a long one run past the footer. */
+  .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) {
+    height: auto;
+  }
+  /* Cap the CARD, not just the wrapper: the wrapper's max-height was not
+     binding on an auto-height child, so long slides ran up to 25px past the
+     footer. Capping the card itself makes it scroll internally instead. */
+  .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) > .m4-deck-bullets {
+    max-height: calc(100vh - 13.625rem);
   }
   /* The heading stays visible — it is the slide's identity, not scrollable. */
   .m4-deck-compact .m4-deck-heading {
@@ -678,21 +692,22 @@ body:has(.m4-deck-fit) .app-shell nav[aria-label="Navigasi utama mobile"] {
     padding-bottom: 0.125rem;
   }
 
-  /* Landscape phones have ~250px for the whole slide body. Rather than clip
-     the bullet list, compress its type: smaller text with tighter line-height
-     costs no information and lets a 4-bullet slide fit where 16px type could
-     not. Scoped to the bullets so the heading keeps its hierarchy. */
-  .m4-deck-compact .m4-deck-bullets {
-    padding: 0.625rem;
-    gap: 0.25rem;
-  }
+  /* Landscape phones are ~390px tall; after chrome and the restored app nav
+     there is ~150px for the card. Rather than clip the bullets or leave them
+     stranded in a too-tall card, scale the type to the space actually
+     available: clamp against vh so the text grows on taller phones and shrinks
+     on shorter ones. Costs no content. */
   .m4-deck-compact .m4-deck-bullets li {
-    font-size: 0.75rem;
-    line-height: 1.35;
+    font-size: clamp(0.8125rem, 4vh, 1.125rem);
+    line-height: 1.5;
   }
   .m4-deck-compact .m4-deck-bullets h2 {
-    font-size: 0.625rem;
+    font-size: clamp(0.5625rem, 1.6vh, 0.6875rem);
     margin-bottom: 0.25rem;
+  }
+  .m4-deck-compact .m4-deck-bullets {
+    padding: clamp(0.5rem, 1.2vh, 0.75rem);
+    gap: 0.25rem;
   }
   .m4-deck-compact .m4-deck-bullets li > span:first-child {
     /* Bullet marker shrinks with the text. */
