@@ -281,17 +281,9 @@ export function SlideDeckCanvas({
               <span className="text-xs font-semibold tabular-nums text-[var(--muted)]">
                 Slide {viewingIdx + 1} dari {TOTAL_REVIEW_DECK_SLIDES}
               </span>
-            </div>
-            <div className="flex items-start gap-2 min-w-0">
-              <h1
-                className="m4-deck-heading text-xl sm:text-2xl md:text-3xl font-bold text-[var(--primary)] leading-tight break-words min-w-0 flex-1"
-                style={{ fontFamily: "Montserrat, sans-serif" }}
-              >
-                {currentSlide.title}
-              </h1>
-              {/* Rubric point sits beside the title rather than in the deck
-                  header: it belongs to this slide's content, and the header row
-                  is the first thing hidden when height gets tight. */}
+              {/* Rubric point sits on the chapter metadata row, right after
+                  "Slide N dari 17", not beside the title: the title is long
+                  and wrapping it around a badge reads poorly. */}
               {currentSlide.rubric && (
                 <span
                   data-slide-rubric-badge
@@ -303,12 +295,18 @@ export function SlideDeckCanvas({
                   </span>
                   <span>Poin {currentSlide.rubric.code}</span>
                   {currentSlide.rubric.points && (
-                    <span className="text-[10px] opacity-80 hidden sm:inline">
-                      ({currentSlide.rubric.points} pt)
-                    </span>
+                    <span className="text-[10px] opacity-80">({currentSlide.rubric.points} pt)</span>
                   )}
                 </span>
               )}
+            </div>
+            <div className="flex items-start gap-2 min-w-0">
+              <h1
+                className="m4-deck-heading text-xl sm:text-2xl md:text-3xl font-bold text-[var(--primary)] leading-tight break-words min-w-0 flex-1"
+                style={{ fontFamily: "Montserrat, sans-serif" }}
+              >
+                {currentSlide.title}
+              </h1>
             </div>
           </div>
 

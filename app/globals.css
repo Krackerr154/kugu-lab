@@ -541,22 +541,26 @@ body:has(.m4-deck-fit) .app-shell nav[aria-label="Navigasi utama mobile"] {
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
   }
+  /* Keep the brand — it tells the student which session they are in. Truncate
+     it instead of hiding it: hiding left the header looking empty and made the
+     slide content ride up under it. */
   .m4-deck-topbar .m4-deck-brand {
-    display: none;
+    font-size: 0.625rem;
+    letter-spacing: 0.02em;
   }
   .m4-deck-footer {
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
   }
-  /* Slide body and chapter: strip the vertical padding/rhythm that assumes a
-     tall viewport. */
+  /* Slide body keeps real top padding so the card does not ride up against
+     the header; only the bottom tightens, where the footer already sits. */
   .m4-deck-slidebody {
-    padding-top: 0.5rem;
+    padding-top: 0.75rem;
     padding-bottom: 0.5rem;
   }
   .m4-deck-compact .m4-deck-chapter {
-    padding-bottom: 0.125rem;
-    margin-bottom: 0.125rem;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.25rem;
   }
   .m4-deck-compact [data-slide-direction] > * + * {
     margin-top: 0.25rem;
