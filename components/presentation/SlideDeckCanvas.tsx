@@ -34,7 +34,7 @@ function formatBulletText(text: string) {
     const rest = text.slice(colonIdx + 1).trim();
     return (
       <div className="flex items-start gap-1.5 sm:gap-2 min-w-0 flex-1">
-        <span className="inline-flex items-baseline justify-between w-20 sm:w-24 shrink-0 font-semibold text-[var(--foreground)]">
+        <span className="inline-flex items-baseline justify-between w-28 sm:w-32 shrink-0 font-semibold text-[var(--foreground)]">
           <span>{prefix}</span>
           <span className="text-[var(--muted)]">:</span>
         </span>
@@ -376,17 +376,29 @@ export function SlideDeckCanvas({
             className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 bg-[var(--surface)] shadow-xs min-w-0"
           >
             <ul className="space-y-2">
-              {currentSlide.bullets.map((bullet, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)] min-w-0">
-                  <span
-                    aria-hidden="true"
-                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--primary-container)]/10 text-xs font-bold text-[var(--primary-container)] mt-0.5"
+              {currentSlide.bullets.map((bullet, idx) => {
+                const isStepList = currentSlide.id === "p2";
+                return (
+                  <li
+                    key={idx}
+                    className="relative flex items-start gap-2.5 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)] min-w-0"
                   >
-                    ✓
-                  </span>
-                  {formatBulletText(bullet)}
-                </li>
-              ))}
+                    {isStepList && idx < currentSlide.bullets.length - 1 && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute left-2.5 top-5 bottom-0 w-px bg-[var(--outline-variant)] -mb-2"
+                      />
+                    )}
+                    <span
+                      aria-hidden="true"
+                      className="m4-deck-bullet-badge relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--primary-container)]/10 text-xs font-bold text-[var(--primary-container)] mt-0.5 tabular-nums"
+                    >
+                      {isStepList ? idx + 1 : "✓"}
+                    </span>
+                    {formatBulletText(bullet)}
+                  </li>
+                );
+              })}
             </ul>
           </section>
 

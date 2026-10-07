@@ -62,11 +62,11 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     title: "Apa Saja yang Tadi Dikerjakan",
     kind: "content",
     bullets: [
-      "1. Penggoresan & penyolderan kawat 15 cm pada plat Cu.",
-      "2. Uji kontinuitas sambungan dengan multimeter/amperemeter.",
-      "3. Pengecoran resin pelindung & pengeringan 2 × 24 jam.",
-      "4. Penyiapan anoda karbon & peracikan 100 mL larutan elektrolit (A + B + C).",
-      "5. Rangkaian sel DC, elektrodeposisi, pencucian, pengeringan, dan penimbangan massa.",
+      "Penyolderan: Penggoresan & penyolderan kawat 15 cm pada plat Cu.",
+      "Uji Kontinuitas: Uji sambungan kawat dengan multimeter/amperemeter.",
+      "Proteksi Resin: Pengecoran resin pelindung katoda & pengeringan 2 × 24 jam.",
+      "Preparasi Larutan: Penyiapan anoda karbon & peracikan 100 mL elektrolit (A + B + C).",
+      "Elektrodeposisi: Rangkaian sel DC, kodeposisi, pencucian, pengeringan, & penimbangan.",
     ],
     script:
       "Kita urutkan kembali alur kerja fisik tadi agar kalian dapat menuliskannya secara runtut di laporan. Titik kritis yang sering luput adalah uji kontinuitas setelah penyolderan sebelum pengecoran resin.",
