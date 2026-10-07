@@ -74,15 +74,39 @@ export function SlideDeckCanvas({
   // across slides, so swapping the class alone would not replay it; and we
   // cannot remount via `key` without resetting the embedded interactive panels.
   // Detach -> reflow -> reattach is the standard imperative replay.
+  //
+  // The class is removed again once the animation finishes. Leaving it on means
+  // the animation object stays attached to the node; if it is ever left pending
+  // at currentTime 0, its fill mode pins the slide at the `from` keyframe and
+  // the whole slide body sits 20px off-centre permanently.
   useEffect(() => {
     const node = slideBodyRef.current;
-    if (!node || reducedMotion) return;
+    if (!node) return;
+    if (reducedMotion) {
+      node.classList.remove("m4-slide-enter-back", "m4-slide-enter-forward");
+      return;
+    }
     const className = swapDirection === "back" ? "m4-slide-enter-back" : "m4-slide-enter-forward";
     node.classList.remove("m4-slide-enter-back", "m4-slide-enter-forward");
     // Reading offsetWidth forces the browser to apply the removal before the
     // class goes back on; without it the two changes collapse into no-op.
     void node.offsetWidth;
     node.classList.add(className);
+
+    const onEnd = (e: AnimationEvent) => {
+      if (e.target !== node) return;
+      node.classList.remove("m4-slide-enter-back", "m4-slide-enter-forward");
+    };
+    node.addEventListener("animationend", onEnd);
+    // Fallback in case animationend never fires (e.g. the tab was hidden when
+    // the animation was due to run).
+    const timer = window.setTimeout(() => {
+      node.classList.remove("m4-slide-enter-back", "m4-slide-enter-forward");
+    }, 600);
+    return () => {
+      node.removeEventListener("animationend", onEnd);
+      window.clearTimeout(timer);
+    };
   }, [swapKey, swapDirection, reducedMotion]);
 
   // Bounded read-back logic

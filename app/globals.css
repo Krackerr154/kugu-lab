@@ -402,12 +402,22 @@ h1, h2, h3, h4, h5, h6 {
 
 .m4-slide-enter-forward {
   animation: m4-slide-in-from-right var(--motion-duration-slide)
-    var(--motion-ease-enter) both;
+    var(--motion-ease-enter) backwards;
 }
 
 .m4-slide-enter-back {
   animation: m4-slide-in-from-left var(--motion-duration-slide)
-    var(--motion-ease-enter) both;
+    var(--motion-ease-enter) backwards;
+}
+
+/* Safety net: the enter animation must never park the slide body on an
+   offset. `fill: both` holds the `from` keyframe (translate3d(±1.25rem)) if
+   the animation is ever left pending at currentTime 0 — which left the whole
+   slide sitting 20px off-centre. `backwards` covers the pre-start delay
+   without pinning the end state, and this rule guarantees a settled slide
+   has no residual transform even if the class outlives the animation. */
+[data-slide-direction]:not(.m4-slide-enter-forward):not(.m4-slide-enter-back) {
+  transform: none;
 }
 
 /* Reduced motion: never remove the animation entirely, or the element stays at
@@ -549,14 +559,26 @@ body:has(.m4-deck-fit) .app-shell nav[aria-label="Navigasi utama mobile"] {
     letter-spacing: 0.02em;
   }
   .m4-deck-footer {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+  }
+  /* The stacked footer (dots row + arrows row) is taller than the old single
+     row. Tighten its internal gap so it does not reclaim the height the
+     removed app chrome just freed. */
+  .m4-deck-footer > div {
+    gap: 0.125rem;
   }
   /* Slide body keeps real top padding so the card does not ride up against
      the header; only the bottom tightens, where the footer already sits. */
   .m4-deck-slidebody {
     padding-top: 0.75rem;
     padding-bottom: 0.5rem;
+  }
+  /* Don't leave a band of dead space between the card and the footer: the
+     slide body is a flex child, so let it fill the frame and let its content
+     sit naturally rather than centring in leftover height. */
+  .m4-deck-slidebody > [data-slide-direction] {
+    min-height: 0;
   }
   .m4-deck-compact .m4-deck-chapter {
     padding-bottom: 0.25rem;
