@@ -31,7 +31,7 @@ test.describe("Visual QA Capture for Slide Deck & Presenter Console", () => {
     const slide7Btn = page.locator("button").filter({ hasText: /^7$/ });
     await expect(slide7Btn).toBeVisible();
     await slide7Btn.click();
-    await expect(consoleEl).toContainText("Slide 7 dari 19");
+    await expect(consoleEl).toContainText("Slide 7 dari 17");
     await page.waitForTimeout(600);
 
     await page.screenshot({ path: "artifacts/deck-review/desktop-presenter-slide7.png" });
@@ -55,7 +55,7 @@ test.describe("Visual QA Capture for Slide Deck & Presenter Console", () => {
 
     const studentDeck = studentPage.locator("[data-student-slide-deck]");
     await expect(studentDeck).toBeVisible({ timeout: 15000 });
-    await expect(studentDeck).toContainText("Slide 7 dari 19");
+    await expect(studentDeck).toContainText("Slide 7 dari 17");
     await pageWait(studentPage, 600);
 
     await studentPage.screenshot({ path: "artifacts/deck-review/desktop-student-slide7.png" });
@@ -81,7 +81,7 @@ test.describe("Visual QA Capture for Slide Deck & Presenter Console", () => {
 
     const studentDeck = studentPage.locator("[data-student-slide-deck]");
     await expect(studentDeck).toBeVisible({ timeout: 15000 });
-    await expect(studentDeck).toContainText("Slide 7 dari 19");
+    await expect(studentDeck).toContainText("Slide 7 dari 17");
     await pageWait(studentPage, 600);
 
     // Verify zero horizontal overflow
