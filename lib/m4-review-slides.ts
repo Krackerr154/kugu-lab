@@ -33,7 +33,7 @@ export interface ReviewSlide {
 
 export const REVIEW_SLIDES: readonly ReviewSlide[] = [
   // ── PEMBUKA ────────────────────────────────────────────────────────────
-  { id: "p1", chapter: "brief", label: "Pembuka & Tujuan", title: "Tujuan & Keluaran Praktikum", kind: "content", anchor: "review-brief-intro", rubric: "c" },
+  { id: "p1", chapter: "brief", label: "Pembuka & Tujuan", title: "Tujuan & Output Praktikum", kind: "content", anchor: "review-brief-intro", rubric: "c" },
   { id: "p2", chapter: "brief", label: "Urutan kerja", title: "Apa Saja yang Tadi Dikerjakan", kind: "content", anchor: "review-brief-actions", rubric: "f.1" },
 
   // ── PEMBAHASAN ───────────────────────────────────────────────────────────

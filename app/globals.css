@@ -650,8 +650,8 @@ body:has(.m4-deck-fit) .app-shell {
        height (not just max-height) so the card fills the frame instead of
        stopping wherever its text ends and leaving an empty band above the
        footer. */
-    height: calc(100vh - 13.625rem);
-    max-height: calc(100vh - 13.625rem);
+    height: calc(100vh - 13.875rem);
+    max-height: calc(100vh - 13.875rem);
     overflow: hidden;
     /* Two columns sit side by side here, so the stacked gap is dead height. */
     gap: 0.375rem;
@@ -672,17 +672,28 @@ body:has(.m4-deck-fit) .app-shell {
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
   }
-  /* Text-only slide: let the card size to its content, but never past the
-     frame. Forcing height:100% stretched a short slide into an empty box;
-     unconstrained height let a long one run past the footer. */
+  /* Text-only slide: fill the available frame down to the footer line
+     so the slide looks composed and grounded rather than floating with an
+     awkward dead band above the footer. */
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) {
-    height: auto;
+    height: calc(100vh - 13.875rem);
+    max-height: calc(100vh - 13.875rem);
   }
-  /* Cap the CARD, not just the wrapper: the wrapper's max-height was not
-     binding on an auto-height child, so long slides ran up to 25px past the
-     footer. Capping the card itself makes it scroll internally instead. */
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) > .m4-deck-bullets {
-    max-height: calc(100vh - 13.625rem);
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .m4-deck-compact .m4-deck-bullets ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    flex: 1;
+    min-height: 0;
   }
   /* The heading stays visible — it is the slide's identity, not scrollable. */
   .m4-deck-compact .m4-deck-heading {

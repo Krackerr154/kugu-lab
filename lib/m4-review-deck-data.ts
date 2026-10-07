@@ -37,18 +37,17 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     chapter: "brief",
     chapterLabel: "Tujuan Praktikum",
     label: "Pembuka & Tujuan",
-    title: "Tujuan & Keluaran Praktikum",
+    title: "Tujuan & Output Praktikum",
     kind: "content",
     bullets: [
       "Tujuan: mensintesis paduan biner Sn–Bi pada katoda plat Cu secara kodeposisi serentak dari elektrolit asam.",
-      "Keluaran 1: katoda plat tembaga berlapis deposit paduan Sn–Bi yang kompak dan merata.",
-      "Keluaran 2: data penimbangan massa sebelum dan sesudah deposisi beserta nilai efisiensi arus.",
-      "Keluaran 3: sampel paduan padat untuk analisis kristalinitas XRD pada Modul 5 berikutnya.",
+      "Output 1: katoda plat tembaga berlapis deposit paduan Sn–Bi yang kompak dan merata.",
+      "Output 2: data penimbangan massa sebelum dan sesudah deposisi beserta nilai efisiensi arus.",
     ],
     script:
-      "Selamat datang di sesi review. Kita sudah selesai praktikum di laboratorium, sekarang kita bahas apa yang tadi dikerjakan — dari tujuan, teori elektrokimia, data angka kalian, sampai cara menulisnya terstruktur di laporan resmi. Ingat, produk akhir kalian hari ini bukan cuma pelat tembaga yang berubah warna — tetapi juga angka efisiensi arus hasil penimbangan dan sampel paduan untuk uji difraksi sinar-X di Modul 5.",
+      "Selamat datang di sesi review. Kita sudah selesai praktikum di laboratorium, sekarang kita bahas apa yang tadi dikerjakan — dari tujuan, teori elektrokimia, data angka kalian, sampai cara menulisnya terstruktur di laporan resmi. Ingat, produk akhir kalian hari ini bukan cuma pelat tembaga yang berubah warna — tetapi juga angka efisiensi arus hasil penimbangan.",
     pedagogicalNotes:
-      "Slide ini menetapkan kontrak sesi sekaligus tujuan. Pastikan praktikan memahami bahwa keluaran akhir dari sesi ini adalah kesiapan menulis laporan praktikum.",
+      "Slide ini menetapkan kontrak sesi sekaligus tujuan. Pastikan praktikan memahami bahwa output akhir dari sesi ini adalah kesiapan menulis laporan praktikum.",
     rubric: {
       code: "c",
       label: "Tujuan Praktikum",
