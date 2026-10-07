@@ -373,11 +373,8 @@ export function SlideDeckCanvas({
           {/* Core Slide Takeaway Bullets Card */}
           <section
             aria-label="Poin utama materi"
-            className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 space-y-3 bg-[var(--surface)] shadow-xs min-w-0"
+            className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 bg-[var(--surface)] shadow-xs min-w-0"
           >
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-              Poin Penting untuk Pemahaman &amp; Laporan
-            </h2>
             <ul className="space-y-2">
               {currentSlide.bullets.map((bullet, idx) => (
                 <li key={idx} className="flex items-start gap-2.5 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)] min-w-0">
