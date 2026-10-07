@@ -382,7 +382,7 @@ h1, h2, h3, h4, h5, h6 {
   animation: m4-content-enter var(--motion-duration-content) var(--motion-ease-enter) both;
 }
 
-/* ── Slide swap transitions ─────────────────────────────────────────────────
+/* Slide swap transitions ─────────────────────────────────────────────────
    Directional so moving forward reads differently from stepping back, which is
    what stops a slide change from feeling like an abrupt cut. Travel is small
    (1.25rem) and fade-led: enough to signal direction without drawing attention
@@ -424,6 +424,157 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes m4-slide-fade-only {
   from { opacity: 0; transform: none; }
   to   { opacity: 1; transform: none; }
+}
+
+/* ── Deck fit: one screen per slide ───────────────────────────────────────────
+   The student deck is meant to be a slide, not a page: no scrolling. Two
+   problems stop that on a phone:
+
+   1. Landscape phones are very short (852x393 leaves ~276px after chrome), so
+      even a short slide overflows. Fixed by shrinking chrome and tightening
+      rhythm when (orientation: landscape) and (max-height: 500px).
+   2. Embedded interactive panels are far taller than any phone viewport
+      (measured up to ~5,000px). Fixed by capping them and letting them scroll
+      INSIDE themselves, so the slide as a whole still fits.
+
+   The cap is a viewport-relative budget, not a fixed px height, so it adapts
+   across phone sizes instead of being tuned to one device. */
+.m4-deck-fit {
+  /* Budget the panel from the space that actually remains. Portrait phones
+     stack the heading, then bullets, then the panel — so the panel only gets
+     what is left after those. Measured on a 393x852 phone: chrome 117px,
+     heading ~88px, bullets ~310px, gaps ~48px, plus slack for the slides that
+     carry a fifth bullet. Expressed in vh so it tracks the device rather than
+     being tuned to one screen size. */
+  --deck-fit-max: calc(100vh - 39rem);
+}
+
+/* Tighten the text block on short/narrow screens so the panel below it keeps
+   a usable share of the viewport. Bullets are the most compressible part of a
+   slide: line-height and padding cost height without adding information. */
+@media (max-width: 600px) {
+  .m4-deck-compact .m4-deck-bullets {
+    padding: 0.875rem;
+    gap: 0.375rem;
+  }
+  .m4-deck-compact .m4-deck-bullets li {
+    line-height: 1.45;
+  }
+}
+
+/* Short-and-wide (landscape phone): reclaim chrome height. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .m4-deck-fit {
+    --deck-fit-max: 46vh;
+  }
+  .m4-deck-compact .m4-deck-heading {
+    font-size: 1.125rem;
+    line-height: 1.2;
+  }
+  .m4-deck-compact .m4-deck-bullets {
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+  }
+  .m4-deck-compact .m4-deck-chapter {
+    padding-bottom: 0.125rem;
+    margin-bottom: 0.25rem;
+  }
+}
+
+/* Very short viewports (landscape small phones): give the panel more room by
+   dropping the vertical rhythm further. */
+@media (max-height: 430px) {
+  .m4-deck-fit {
+    --deck-fit-max: 42vh;
+  }
+}
+
+/* Landscape phone: the sticky header and footer are fixed chrome that eats the
+   little height available. Collapse them to a single tight row. The footer
+   stays fully usable — 44px touch targets are preserved — but stops padding
+   itself as if there were room to spare. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .m4-deck-topbar {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  .m4-deck-topbar .m4-deck-brand {
+    display: none;
+  }
+  .m4-deck-footer {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+  /* Slide body and chapter: strip the vertical padding/rhythm that assumes a
+     tall viewport. */
+  .m4-deck-slidebody {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .m4-deck-compact .m4-deck-chapter {
+    padding-bottom: 0.125rem;
+    margin-bottom: 0.125rem;
+  }
+  .m4-deck-compact [data-slide-direction] > * + * {
+    margin-top: 0.25rem;
+  }
+}
+
+/* Any embedded panel gets a bounded height and scrolls internally rather than
+   pushing the slide past the viewport. min-height keeps very short panels from
+   collapsing into an unusable sliver. */
+.m4-deck-panel {
+  max-height: var(--deck-fit-max);
+  min-height: 8rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Two columns when short and wide: bullets left, panel right. Uses the space
+   landscape actually has (width) instead of the space it lacks (height). */
+@media (orientation: landscape) and (min-width: 640px) and (max-height: 500px) {
+  .m4-deck-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 0.75rem;
+    align-items: start;
+  }
+  .m4-deck-split > .m4-deck-panel {
+    max-height: 100%;
+  }
+}
+
+/* Landscape phones are ~390px tall; after chrome there is ~260px. Even a
+   two-column layout cannot stack a heading, 4 bullets and a panel in that.
+   Below a hard height floor, let each column scroll inside itself so the slide
+   still occupies exactly one screen. This is the fallback for the smallest
+   dimension — portrait and larger landscape keep the normal flow. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .m4-deck-compact .m4-deck-split {
+    /* 100vh minus deck chrome in landscape: header ~37px, footer ~45px, slide
+       body padding 8px top/bottom, chapter heading ~42px. */
+    max-height: calc(100vh - 11.5rem);
+    overflow: hidden;
+    /* Two columns sit side by side here, so the stacked gap is dead height. */
+    gap: 0.375rem;
+    margin-top: 0;
+  }
+  .m4-deck-compact .m4-deck-split > * {
+    max-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  /* The heading stays visible — it is the slide's identity, not scrollable. */
+  .m4-deck-compact .m4-deck-heading {
+    font-size: 1rem;
+  }
+  .m4-deck-compact .m4-deck-chapter {
+    padding-bottom: 0.125rem;
+  }
 }
 
 @keyframes m4-access-backdrop-enter {

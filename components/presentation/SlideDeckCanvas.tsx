@@ -139,10 +139,10 @@ export function SlideDeckCanvas({
   return (
     <div
       data-student-slide-deck
-      className="min-h-screen bg-[var(--surface-container-lowest)] text-[var(--foreground)] flex flex-col justify-between overflow-x-hidden relative"
+      className="m4-deck-fit m4-deck-compact min-h-screen bg-[var(--surface-container-lowest)] text-[var(--foreground)] flex flex-col justify-between overflow-x-hidden relative"
     >
       {/* ── TOP BAR / HEADER ──────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 border-b border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-2">
+      <header className="m4-deck-topbar sticky top-0 z-30 border-b border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-2">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
             <span
@@ -177,7 +177,7 @@ export function SlideDeckCanvas({
                   : "Mode mandiri"
               }
             />
-            <span className="text-xs font-bold uppercase tracking-wider text-[var(--primary-container)] truncate">
+            <span className="m4-deck-brand text-xs font-bold uppercase tracking-wider text-[var(--primary-container)] truncate">
               KUGU Live Review · Modul 4
             </span>
           </div>
@@ -314,7 +314,7 @@ export function SlideDeckCanvas({
       </header>
 
       {/* ── MAIN SLIDE CANVAS ────────────────────────────────────────────── */}
-      <main className="flex-1 px-3 py-5 sm:px-4 md:py-8 pb-28 min-w-0 overflow-x-hidden">
+      <main className="m4-deck-slidebody flex-1 px-3 py-5 sm:px-4 md:py-8 pb-16 min-w-0 overflow-x-hidden">
         {/* Animation restarts imperatively (see useIsomorphicLayoutEffect below)
             rather than via a changing `key`, because remounting this subtree
             would reset the embedded interactive panels mid-session. */}
@@ -326,7 +326,7 @@ export function SlideDeckCanvas({
           data-slide-direction={swapDirection}
         >
           {/* Slide Header Card */}
-          <div className="space-y-1.5 border-b border-[var(--outline-variant)] pb-3 sm:pb-4 min-w-0">
+          <div className="m4-deck-chapter space-y-1.5 border-b border-[var(--outline-variant)] pb-3 sm:pb-4 min-w-0">
             <div className="flex items-center gap-2">
               <span className="rounded bg-[var(--primary-container)]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--primary-container)]">
                 {currentSlide.chapterLabel}
@@ -336,17 +336,21 @@ export function SlideDeckCanvas({
               </span>
             </div>
             <h1
-              className="text-xl sm:text-2xl md:text-3xl font-bold text-[var(--primary)] leading-tight break-words"
+              className="m4-deck-heading text-xl sm:text-2xl md:text-3xl font-bold text-[var(--primary)] leading-tight break-words"
               style={{ fontFamily: "Montserrat, sans-serif" }}
             >
               {currentSlide.title}
             </h1>
           </div>
 
+          {/* In landscape a phone has width to spare and almost no height, so
+              bullets and panel sit side by side. Portrait keeps the single
+              column. The wrapper is always present; CSS decides the layout. */}
+          <div className="m4-deck-split space-y-5 sm:space-y-6 min-w-0">
           {/* Core Slide Takeaway Bullets Card */}
           <section
             aria-label="Poin utama materi"
-            className="surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 space-y-3 bg-[var(--surface)] shadow-xs min-w-0"
+            className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 space-y-3 bg-[var(--surface)] shadow-xs min-w-0"
           >
             <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
               Poin Penting untuk Pemahaman &amp; Laporan
@@ -366,13 +370,18 @@ export function SlideDeckCanvas({
             </ul>
           </section>
 
-          {/* Embedded Interactive Simulations / Panels based on active slide */}
+          {/* Embedded Interactive Simulations / Panels based on active slide.
+              Each is wrapped in .m4-deck-panel so it scrolls inside itself
+              instead of pushing the slide past the viewport — the deck stays
+              one screen tall while the panel keeps all of its content. */}
           {currentSlide.embeddedComponent === "potential-gap" && (
             <div className="space-y-2 min-w-0">
               <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                 Diagram Interaktif Beda Potensial
               </h2>
-              <SnBiPotentialGapDiagram />
+              <div className="m4-deck-panel">
+                <SnBiPotentialGapDiagram />
+              </div>
             </div>
           )}
 
@@ -381,7 +390,9 @@ export function SlideDeckCanvas({
               <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                 Eksplorasi Komponen &amp; Urutan Elektrolit
               </h2>
-              <ElectrolyteFunctionCard />
+              <div className="m4-deck-panel">
+                <ElectrolyteFunctionCard />
+              </div>
             </div>
           )}
 
@@ -390,7 +401,9 @@ export function SlideDeckCanvas({
               <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                 Rangkaian Sel Elektrokimia Kodeposisi
               </h2>
-              <ElectrochemicalCellExplorer />
+              <div className="m4-deck-panel">
+                <ElectrochemicalCellExplorer />
+              </div>
             </div>
           )}
 
@@ -428,20 +441,23 @@ export function SlideDeckCanvas({
               <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
                 Rubrik Penilaian Laporan Lengkap
               </h2>
-              <ReportFormatGuide />
+              <div className="m4-deck-panel">
+                <ReportFormatGuide />
+              </div>
             </div>
           )}
 
           {currentSlide.embeddedComponent === "games" && roomId && (
-            <div className="rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-3 sm:p-5 shadow-xs min-w-0">
+            <div className="m4-deck-panel rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-3 sm:p-5 shadow-xs min-w-0">
               <ReviewGames roomId={roomId} />
             </div>
           )}
+          </div>
         </div>
       </main>
 
       {/* ── FOOTER / SLIDE NAVIGATION RAIL (ALWAYS PINNED TO SCREEN BOTTOM) ───────────────── */}
-      <footer className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-2.5 min-w-0 shadow-lg">
+      <footer className="m4-deck-footer fixed inset-x-0 bottom-0 z-30 border-t border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-2.5 min-w-0 shadow-lg">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 min-w-0">
           <button
             type="button"
