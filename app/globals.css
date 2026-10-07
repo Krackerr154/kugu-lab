@@ -686,23 +686,26 @@ body:has(.m4-deck-fit) .app-shell {
   }
   /* The heading stays visible — it is the slide's identity, not scrollable. */
   .m4-deck-compact .m4-deck-heading {
-    font-size: 1rem;
+    font-size: 1.125rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
   }
   .m4-deck-compact .m4-deck-chapter {
     padding-bottom: 0.125rem;
   }
 
   /* Landscape phones are ~390px tall; after chrome and the restored app nav
-     there is ~150px for the card. Rather than clip the bullets or leave them
-     stranded in a too-tall card, scale the type to the space actually
-     available: clamp against vh so the text grows on taller phones and shrinks
-     on shorter ones. Costs no content. */
+     there is ~150px for the card. Scale typography proportionally:
+     title at 18px (1.125rem), card eyebrow at 11px (0.6875rem), bullets at ~13px
+     with balanced line-height so the 4 bullets fit cleanly without triggering
+     a vertical scrollbar or crowding borders. */
   .m4-deck-compact .m4-deck-bullets li {
-    font-size: clamp(0.8125rem, 4vh, 1.125rem);
-    line-height: 1.5;
+    font-size: clamp(0.75rem, 3.2vh, 0.84375rem);
+    line-height: 1.4;
   }
   .m4-deck-compact .m4-deck-bullets h2 {
-    font-size: clamp(0.5625rem, 1.6vh, 0.6875rem);
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
   }
   .m4-deck-compact .m4-deck-bullets {
@@ -714,6 +717,20 @@ body:has(.m4-deck-fit) .app-shell {
     height: 1rem;
     width: 1rem;
     font-size: 0.625rem;
+    margin-top: 0.125rem;
+  }
+
+  /* Compact FAB speed dial in landscape phone so it does not collide with the card text */
+  [data-deck-action-dial] {
+    bottom: 3.75rem;
+    right: 0.75rem;
+  }
+  [data-deck-action-dial] > button[aria-haspopup="menu"] {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  [data-deck-action-dial] > button[aria-haspopup="menu"] span {
+    font-size: 1.25rem;
   }
 }
 

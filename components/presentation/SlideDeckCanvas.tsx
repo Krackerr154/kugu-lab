@@ -27,6 +27,30 @@ interface SlideDeckCanvasProps {
   onExit?: () => void;
 }
 
+function formatBulletText(text: string) {
+  const colonIdx = text.indexOf(":");
+  if (colonIdx > 0 && colonIdx <= 25) {
+    const prefix = text.slice(0, colonIdx + 1);
+    const rest = text.slice(colonIdx + 1);
+    return (
+      <>
+        <span className="font-semibold text-[var(--foreground)]">{prefix}</span>
+        {rest}
+      </>
+    );
+  }
+  const numberMatch = text.match(/^(\d+\.\s*)(.*)$/);
+  if (numberMatch) {
+    return (
+      <>
+        <span className="font-semibold text-[var(--foreground)]">{numberMatch[1]}</span>
+        {numberMatch[2]}
+      </>
+    );
+  }
+  return text;
+}
+
 export function SlideDeckCanvas({
   initialSlideId = "p1",
   exitHref = "/modules/m4-sn-bi-electrodeposition",
@@ -297,24 +321,26 @@ export function SlideDeckCanvas({
           data-slide-direction={swapDirection}
         >
           {/* Slide Header Card */}
-          <div className="m4-deck-chapter space-y-1.5 border-b border-[var(--outline-variant)] pb-3 sm:pb-4 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="rounded bg-[var(--primary-container)]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--primary-container)]">
-                {currentSlide.chapterLabel}
-              </span>
-              <span className="text-xs font-semibold tabular-nums text-[var(--muted)]">
-                Slide {viewingIdx + 1} dari {TOTAL_REVIEW_DECK_SLIDES}
-              </span>
-              {/* Rubric point sits on the chapter metadata row, right after
-                  "Slide N dari 17", not beside the title: the title is long
-                  and wrapping it around a badge reads poorly. */}
+          <div className="m4-deck-chapter space-y-1 sm:space-y-1.5 border-b border-[var(--outline-variant)] pb-2 sm:pb-4 min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-2 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="rounded bg-[var(--primary-container)]/10 px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">
+                  {currentSlide.chapterLabel}
+                </span>
+                <span className="m4-deck-counter text-xs font-semibold tabular-nums text-[var(--muted)]">
+                  Slide {viewingIdx + 1} dari {TOTAL_REVIEW_DECK_SLIDES}
+                </span>
+              </div>
+              {/* Rubric point sits on the chapter metadata row, right-aligned,
+                  not beside the title: the title is long and wrapping it around
+                  a badge reads poorly. */}
               {currentSlide.rubric && (
                 <span
                   data-slide-rubric-badge
                   className="m4-deck-rubric inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--secondary-container)]/70 px-2.5 py-0.5 text-xs font-bold text-[var(--on-secondary-container)]"
                   title={`Target Rubrik Laporan: ${currentSlide.rubric.label}`}
                 >
-                  <span aria-hidden="true" className="material-symbols-outlined text-sm">
+                  <span aria-hidden="true" className="material-symbols-outlined text-xs sm:text-sm">
                     assignment
                   </span>
                   <span>Poin {currentSlide.rubric.code}</span>
@@ -326,7 +352,7 @@ export function SlideDeckCanvas({
             </div>
             <div className="flex items-start gap-2 min-w-0">
               <h1
-                className="m4-deck-heading text-xl sm:text-2xl md:text-3xl font-bold text-[var(--primary)] leading-tight break-words min-w-0 flex-1"
+                className="m4-deck-heading text-lg sm:text-2xl md:text-3xl font-bold text-[var(--primary)] leading-tight break-words min-w-0 flex-1"
                 style={{ fontFamily: "Montserrat, sans-serif" }}
               >
                 {currentSlide.title}
@@ -355,7 +381,7 @@ export function SlideDeckCanvas({
                   >
                     ✓
                   </span>
-                  <span className="min-w-0 break-words">{bullet}</span>
+                  <span className="min-w-0 break-words">{formatBulletText(bullet)}</span>
                 </li>
               ))}
             </ul>
