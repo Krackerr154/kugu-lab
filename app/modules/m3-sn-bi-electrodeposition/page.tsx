@@ -45,8 +45,7 @@ export default function M3Page() {
               Praktikum ini bertujuan mensintesis <strong className="text-[var(--foreground)]">paduan logam Sn–Bi</strong> pada
               substrat plat tembaga melalui metode <strong className="text-[var(--foreground)]">elektrodeposisi</strong>:
               arus searah (DC) mereduksi kation <ChemText>{"Sn^{2+}"}</ChemText> dan <ChemText>{"Bi^{3+}"}</ChemText> dari
-              larutan elektrolit secara serentak (kodeposisi) di katoda. Percobaan berlangsung
-              lintas sesi karena resin pelindung katoda membutuhkan waktu pengerasan selama 2 × 24 jam.
+              larutan elektrolit secara serentak (kodeposisi) di katoda.
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2" data-review-anchor="review-brief-actions">
@@ -77,10 +76,6 @@ export default function M3Page() {
               <div>
                 <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Tahap</dt>
                 <dd className="mt-0.5 text-sm font-semibold text-[var(--foreground)]">M4a → M4b</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Durasi</dt>
-                <dd className="mt-0.5 text-sm font-semibold text-[var(--foreground)]">Lintas sesi (resin 2×24 jam)</dd>
               </div>
               <div>
                 <dt className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">Alur sampel</dt>

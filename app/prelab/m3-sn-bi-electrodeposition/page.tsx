@@ -35,7 +35,7 @@ export default function M3PrelabPage() {
       detail:
         "Tulis tujuan, dasar teori (paduan logam, elektrodeposisi, peran agen pengompleks, rapat arus, efisiensi arus), diagram alir M4a-M4b, tabel data pengamatan massa katoda/anoda, dan rumus efisiensi arus. Kerjakan 5 tugas pendahuluan modul — dua di antaranya menuntut Anda merujuk makalah jurnal.",
       rationale:
-        "Tugas pendahuluan #2 meminta reaksi anoda dan katoda beserta potensial reduksinya, dan #3 serta #5 mewajibkan pembacaan makalah. Keduanya tidak bisa dikerjakan mendadak di lab, dan modul ini berjalan lintas sesi karena resin katoda perlu 2 × 24 jam untuk mengeras.",
+        "Tugas pendahuluan #2 meminta reaksi anoda dan katoda beserta potensial reduksinya, dan #3 serta #5 mewajibkan pembacaan makalah. Keduanya tidak bisa dikerjakan mendadak di lab.",
       equipment: ["Jurnal pre-lab", "Kalkulator", "Tabel potensial reduksi standar"],
       estimatedTime: "60-90 min",
     },
@@ -331,7 +331,7 @@ export default function M3PrelabPage() {
               <ChemText>{module.title}</ChemText>
             </p>
             <p className="text-xs text-[var(--on-surface-variant)] mt-2">
-              Modul berjalan lintas sesi: M4a pembuatan katoda dan anoda (resin perlu 2 × 24 jam),
+              Tahapan modul: M4a pembuatan katoda dan anoda,
               M4b penyiapan elektrolit dan elektrodeposisi. Sumber: Shared_Modul KUGU, Modul 4.
             </p>
           </div>

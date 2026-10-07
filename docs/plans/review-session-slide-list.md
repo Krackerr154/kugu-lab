@@ -57,16 +57,7 @@ dan bahwa output-nya adalah laporan.
 | **Asprak** | "Ingat, produk akhir kalian bukan cuma pelatnya — tapi juga angka efisiensi dan sampel untuk Modul 5." |
 | **Untuk laporan** | Poin **c. Tujuan Praktikum** (10 poin) |
 
-### Slide 3 — Rentang waktu 2×24 jam
-
-| | |
-|---|---|
-| **Judul** | Mengapa Praktikum Ini Lintas Sesi |
-| **Isi** | Alur M4a → M4b. Resin pelindung katoda mengeras 2 × 24 jam |
-| **Asprak** | "Ini sebabnya kalian tidak bisa menyelesaikan semuanya hari ini, dan kenapa penimbangan akhir dilakukan di sesi berikutnya." |
-| **Untuk laporan** | Poin **c** + konteks **d** |
-
-### Slide 4 — Urutan kerja
+### Slide 3 — Urutan kerja
 
 | | |
 |---|---|
@@ -85,7 +76,7 @@ kegagalan ini baru terlihat saat deposisi tidak menghasilkan apa-apa.
 
 Bab terpanjang. Membawa tiga poin rubrik (f.1, f.2, f.3).
 
-### Slide 5 — Mengapa paduan Sn–Bi
+### Slide 4 — Mengapa paduan Sn–Bi
 
 | | |
 |---|---|
@@ -94,7 +85,7 @@ Bab terpanjang. Membawa tiga poin rubrik (f.1, f.2, f.3).
 | **Asprak** | "Ini alasan kenapa kita bikin paduan, bukan lapisan timah atau bismut saja." |
 | **Untuk laporan** | Poin **f.1** — latar belakang |
 
-### Slide 6 — Prinsip elektrodeposisi
+### Slide 5 — Prinsip elektrodeposisi
 
 | | |
 |---|---|
@@ -103,7 +94,7 @@ Bab terpanjang. Membawa tiga poin rubrik (f.1, f.2, f.3).
 | **Asprak** | "Yang mengontrol hasil kalian bukan sulap — tapi rapat arus, pH, dan konsentrasi." |
 | **Untuk laporan** | Poin **f.1** |
 
-### Slide 7 — Tantangan beda potensial ⭐
+### Slide 6 — Tantangan beda potensial ⭐
 
 | | |
 |---|---|
@@ -114,7 +105,7 @@ Bab terpanjang. Membawa tiga poin rubrik (f.1, f.2, f.3).
 
 **Catatan:** Ini slide terpenting di bab ini. Beri waktu. Jangan buru-buru.
 
-### Slide 8 — Peran agen pengompleks
+### Slide 7 — Peran agen pengompleks
 
 | | |
 |---|---|
@@ -123,7 +114,7 @@ Bab terpanjang. Membawa tiga poin rubrik (f.1, f.2, f.3).
 | **Asprak** | "Agen pengompleks menarik potensial kedua ion jadi lebih berdekatan." |
 | **Untuk laporan** | Poin **f.2** — penghubung ke fungsi larutan |
 
-### Slide 9 — Fungsi larutan A, B, C ⭐
+### Slide 8 — Fungsi larutan A, B, C ⭐
 
 | | |
 |---|---|
@@ -138,7 +129,7 @@ Bab terpanjang. Membawa tiga poin rubrik (f.1, f.2, f.3).
 > rubrik f.2 **tidak ada di permukaan review saat ini**. Slide ini memerlukan
 > komponen tersebut dipasang di halaman modul M4.
 
-### Slide 10 — Urutan pencampuran
+### Slide 9 — Urutan pencampuran
 
 | | |
 |---|---|
@@ -149,7 +140,7 @@ Bab terpanjang. Membawa tiga poin rubrik (f.1, f.2, f.3).
 
 **Catatan:** NH₃ sebelum EDTA adalah jebakan klasik. Pastikan disebut.
 
-### Slide 11 — Peta sel elektrokimia
+### Slide 10 — Peta sel elektrokimia
 
 | | |
 |---|---|
@@ -167,7 +158,7 @@ menginstruksikan pembongkaran baterai bekas.
 
 Bab dengan data kelas yang nyata. Ini pembeda sesi ini dari belajar mandiri.
 
-### Slide 12 — Rumus dan alasannya
+### Slide 11 — Rumus dan alasannya
 
 | | |
 |---|---|
@@ -176,7 +167,7 @@ Bab dengan data kelas yang nyata. Ini pembeda sesi ini dari belajar mandiri.
 | **Asprak** | "Urutannya penting: hitung muatan dulu, baru massa teoritis, baru bandingkan dengan massa aktual." |
 | **Untuk laporan** | Poin **e. Pengolahan Data** (15 poin) |
 
-### Slide 13 — Data kelas ⭐
+### Slide 12 — Data kelas ⭐
 
 | | |
 |---|---|
@@ -188,7 +179,7 @@ Bab dengan data kelas yang nyata. Ini pembeda sesi ini dari belajar mandiri.
 **Catatan:** Asprak mengetik 12 angka total (3 kelompok × 4). Cukup untuk
 menunjukkan sebaran tanpa merepotkan sesi.
 
-### Slide 14 — Perbandingan efisiensi ⭐
+### Slide 13 — Perbandingan efisiensi ⭐
 
 | | |
 |---|---|
@@ -206,7 +197,7 @@ menunjukkan sebaran tanpa merepotkan sesi.
 
 Kedua kemungkinan memberi momen pengajaran nyata. Ini tanda slide yang dirancang baik.
 
-### Slide 15 — Mengapa efisiensi di bawah 100%
+### Slide 14 — Mengapa efisiensi di bawah 100%
 
 | | |
 |---|---|
@@ -215,7 +206,7 @@ Kedua kemungkinan memberi momen pengajaran nyata. Ini tanda slide yang dirancang
 | **Asprak** | "Jadi kalau hasil kalian 87%, itu bukan berarti kalian salah. Itu memang sifat sistemnya." |
 | **Untuk laporan** | Poin **f.4** |
 
-### Slide 16 — Mengapa bisa di atas 100%
+### Slide 15 — Mengapa bisa di atas 100%
 
 | | |
 |---|---|
@@ -228,7 +219,7 @@ Kedua kemungkinan memberi momen pengajaran nyata. Ini tanda slide yang dirancang
 sering mengira dirinya salah. Framing yang benar: >100% adalah **diagnostik**,
 bukan kegagalan.
 
-### Slide 17 — Batas asumsi Sn–Bi
+### Slide 16 — Batas asumsi Sn–Bi
 
 | | |
 |---|---|
@@ -245,7 +236,7 @@ bila massa aktual 0,0280 g.
 
 ## BAB 4 — FORMAT LAPORAN (3 min)
 
-### Slide 18 — Rubrik dan cara menulisnya
+### Slide 17 — Rubrik dan cara menulisnya
 
 | | |
 |---|---|
@@ -261,7 +252,7 @@ bagian Pembahasan yang berbobot 35 poin.
 
 ## PENUTUP
 
-### Slide 19 — Penutup & Games
+### Slide 18 — Penutup & Games
 
 | | |
 |---|---|

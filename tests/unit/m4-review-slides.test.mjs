@@ -55,18 +55,18 @@ test("content slides carry an anchor; data/closing slides do not", () => {
   }
 });
 
-test("there are 19 slides and the chapter grouping covers all of them in order", () => {
-  assert.equal(TOTAL_REVIEW_SLIDES, 19);
+test("there are 18 slides and the chapter grouping covers all of them in order", () => {
+  assert.equal(TOTAL_REVIEW_SLIDES, 18);
   const flattened = REVIEW_CHAPTERS.flatMap((c) => c.slides.map((s) => s.id));
   assert.deepEqual(flattened, REVIEW_SLIDES.map((s) => s.id), "chapter grouping must preserve global order");
 });
 
 test("next/prev/index navigation is correct at the ends and middle", () => {
   assert.equal(prevSlideId("p1"), null);
-  assert.equal(nextSlideId("p19"), null);
+  assert.equal(nextSlideId("p18"), null);
   assert.equal(nextSlideId("p1"), "p2");
-  assert.equal(prevSlideId("p19"), "p18");
+  assert.equal(prevSlideId("p18"), "p17");
   assert.equal(slideIndex("p1"), 0);
-  assert.equal(slideIndex("p19"), 18);
-  assert.equal(REVIEW_SLIDE_BY_ID.p7.title, "Selisih Potensial Menghambat Kodeposisi");
+  assert.equal(slideIndex("p18"), 17);
+  assert.equal(REVIEW_SLIDE_BY_ID.p6.title, "Selisih Potensial Menghambat Kodeposisi");
 });

@@ -7,9 +7,9 @@ import {
 } from "../../lib/m4-review-deck-data.ts";
 import { REVIEW_SLIDE_IDS, REVIEW_SLIDE_CHAPTER } from "../../shared/m3-contract.mjs";
 
-test("review deck contains exactly 19 slides matching contract allowlist", () => {
-  assert.equal(TOTAL_REVIEW_DECK_SLIDES, 19);
-  assert.equal(REVIEW_DECK_SLIDES.length, 19);
+test("review deck contains exactly 18 slides matching contract allowlist", () => {
+  assert.equal(TOTAL_REVIEW_DECK_SLIDES, 18);
+  assert.equal(REVIEW_DECK_SLIDES.length, 18);
 
   const ids = REVIEW_DECK_SLIDES.map((s) => s.id);
   assert.deepEqual(ids, [...REVIEW_SLIDE_IDS]);
@@ -32,29 +32,29 @@ test("each slide has valid metadata, non-empty script, and structured bullets", 
 });
 
 test("designated interactive components are correctly mapped to slides", () => {
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.embeddedComponent, "potential-gap");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.rubric?.code, "f.1");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p6.embeddedComponent, "potential-gap");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p6.rubric?.code, "f.1");
+
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.embeddedComponent, "electrolyte-function");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.initialView, "solutions");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.rubric?.code, "f.2");
 
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.embeddedComponent, "electrolyte-function");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.initialView, "solutions");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.rubric?.code, "f.2");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.initialView, "sequence");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.embeddedComponent, "electrolyte-function");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.initialView, "sequence");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.embeddedComponent, "cell-explorer");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.rubric?.code, "f.1 & f.3");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p11.embeddedComponent, "cell-explorer");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p11.rubric?.code, "f.1 & f.3");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p12.kind, "data");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p12.embeddedComponent, "data-entry");
 
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p13.kind, "data");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p13.embeddedComponent, "data-entry");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p13.embeddedComponent, "data-chart");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p13.rubric?.code, "f.4");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p14.kind, "data");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p14.embeddedComponent, "data-chart");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p14.rubric?.code, "f.4");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p17.embeddedComponent, "report-format");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p17.rubric?.code, "seluruh");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p18.embeddedComponent, "report-format");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p18.rubric?.code, "seluruh");
-
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p19.kind, "closing");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p19.embeddedComponent, "games");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p18.kind, "closing");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p18.embeddedComponent, "games");
 });

@@ -21,7 +21,7 @@ export default function M2PrelabPage() {
       detail:
         "Tulis tujuan, dasar teori (fotokatalisis, pasangan elektron-hole, ROS, band gap, kavitasi akustik), diagram alir M2a-M2d, tabel data pengamatan, dan rumus pengolahan data. Kerjakan 6 tugas pendahuluan modul.",
       rationale:
-        "Jurnal dan tugas pendahuluan dikumpulkan sebelum tes awal. Modul ini berjalan lintas sesi (M2A-B lalu M2C-D), jadi rencana kerja harus sudah utuh sejak awal.",
+        "Jurnal dan tugas pendahuluan dikumpulkan sebelum tes awal, jadi rencana kerja harus sudah utuh sejak awal.",
       equipment: ["Jurnal pre-lab", "Kalkulator", "Tabel massa molar"],
       estimatedTime: "45-60 min",
     },
@@ -277,7 +277,7 @@ export default function M2PrelabPage() {
               <ChemText>{module.title}</ChemText>
             </p>
             <p className="text-xs text-[var(--on-surface-variant)] mt-2">
-              Modul berjalan lintas sesi: M2a sintesis, M2b kalsinasi, M2c pengukuran band gap, M2d uji fotokatalisis.
+              Tahapan modul: M2a sintesis, M2b kalsinasi, M2c pengukuran band gap, M2d uji fotokatalisis.
             </p>
           </div>
         </div>

@@ -17,11 +17,11 @@ export const M3_PRESENTATION_VERSION = 1;
 // This map is the authoritative slide list; the UI layer (lib/m4-review-slides)
 // adds titles/anchors on top of it rather than inventing its own id set.
 export const REVIEW_SLIDE_CHAPTER = Object.freeze({
-  p1: 'brief', p2: 'brief', p3: 'brief', p4: 'brief',
-  p5: 'understand', p6: 'understand', p7: 'understand', p8: 'understand',
-  p9: 'understand', p10: 'understand', p11: 'understand',
-  p12: 'prove', p13: 'prove', p14: 'prove', p15: 'prove', p16: 'prove', p17: 'prove',
-  p18: 'ready', p19: 'ready',
+  p1: 'brief', p2: 'brief', p3: 'brief',
+  p4: 'understand', p5: 'understand', p6: 'understand', p7: 'understand',
+  p8: 'understand', p9: 'understand', p10: 'understand',
+  p11: 'prove', p12: 'prove', p13: 'prove', p14: 'prove', p15: 'prove', p16: 'prove',
+  p17: 'ready', p18: 'ready',
 });
 export const REVIEW_SLIDE_IDS = Object.freeze(Object.keys(REVIEW_SLIDE_CHAPTER));
 export const REVIEW_PHASES = Object.freeze(['review', 'games']);

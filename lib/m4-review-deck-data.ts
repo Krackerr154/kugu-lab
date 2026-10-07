@@ -42,7 +42,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     bullets: [
       "Sintesis paduan biner Sn–Bi pada substrat plat tembaga.",
       "Metode elektrodeposisi arus searah (DC) dari rendaman elektrolit asam.",
-      "Praktikum bersifat lintas sesi karena proses pengerasan resin pelindung memerlukan waktu 2 × 24 jam.",
+      "Penimbangan massa sebelum dan sesudah deposisi menjadi dasar perhitungan efisiensi arus.",
     ],
     script:
       "Kita sudah selesai praktikum di laboratorium. Sekarang kita masuk ke sesi review untuk membahas apa yang tadi dikerjakan — dari tujuan, teori elektrokimia, data angka kalian, sampai cara menulisnya secara terstruktur di laporan resmi.",
@@ -74,26 +74,6 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     id: "p3",
     chapter: "brief",
     chapterLabel: "Tujuan Praktikum",
-    label: "Lintas sesi",
-    title: "Mengapa Praktikum Ini Lintas Sesi",
-    kind: "content",
-    bullets: [
-      "Alur praktikum terbagi menjadi dua tahap: M4a (penyiapan) dan M4b (deposisi & analisis).",
-      "Resin epoksi pelindung katoda membutuhkan waktu curing selama 2 × 24 jam agar isolasi listrik sempurna.",
-      "Penimbangan massa akhir dan pelaporan dilakukan setelah resin benar-benar kering dan stabil.",
-    ],
-    script:
-      "Ini alasan mendasar mengapa modul ini dibagi menjadi M4a dan M4b. Resin pelindung katoda membutuhkan waktu pengerasan penuh 2 kali 24 jam agar hanya permukaan aktif 1,5 cm² yang terlapisi logam.",
-    rubric: {
-      code: "c",
-      label: "Tujuan Praktikum & Alur Kerja",
-      points: 10,
-    },
-  },
-  {
-    id: "p4",
-    chapter: "brief",
-    chapterLabel: "Tujuan Praktikum",
     label: "Urutan kerja",
     title: "Apa Saja yang Tadi Dikerjakan",
     kind: "content",
@@ -117,7 +97,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
 
   // ── BAB 2: PEMBAHASAN ──────────────────────────────────────────────────────
   {
-    id: "p5",
+    id: "p4",
     chapter: "understand",
     chapterLabel: "Pembahasan",
     label: "Mengapa paduan",
@@ -137,7 +117,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p6",
+    id: "p5",
     chapter: "understand",
     chapterLabel: "Pembahasan",
     label: "Prinsip deposisi",
@@ -157,7 +137,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p7",
+    id: "p6",
     chapter: "understand",
     chapterLabel: "Pembahasan",
     label: "Selisih potensial",
@@ -181,7 +161,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p8",
+    id: "p7",
     chapter: "understand",
     chapterLabel: "Pembahasan",
     label: "Pengompleks",
@@ -202,7 +182,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p9",
+    id: "p8",
     chapter: "understand",
     chapterLabel: "Pembahasan",
     label: "Larutan A/B/C",
@@ -224,7 +204,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p10",
+    id: "p9",
     chapter: "understand",
     chapterLabel: "Pembahasan",
     label: "Pencampuran",
@@ -249,7 +229,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p11",
+    id: "p10",
     chapter: "understand",
     chapterLabel: "Pembahasan",
     label: "Sel elektrokimia",
@@ -275,7 +255,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
 
   // ── BAB 3: PENGOLAHAN DATA ─────────────────────────────────────────────────
   {
-    id: "p12",
+    id: "p11",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "Rumus",
@@ -296,7 +276,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p13",
+    id: "p12",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "Data kelompok",
@@ -317,7 +297,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p14",
+    id: "p13",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "Efisiensi kelas",
@@ -340,7 +320,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p15",
+    id: "p14",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "H₂ samping",
@@ -361,7 +341,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p16",
+    id: "p15",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: ">100%",
@@ -384,7 +364,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p17",
+    id: "p16",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "Asumsi Sn–Bi",
@@ -408,7 +388,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
 
   // ── BAB 4: FORMAT LAPORAN & PENUTUP ────────────────────────────────────────
   {
-    id: "p18",
+    id: "p17",
     chapter: "ready",
     chapterLabel: "Format Laporan",
     label: "Format laporan",
@@ -429,7 +409,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p19",
+    id: "p18",
     chapter: "ready",
     chapterLabel: "Format Laporan",
     label: "Penutup",
