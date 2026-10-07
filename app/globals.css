@@ -570,12 +570,6 @@ body:has(.m4-deck-fit) .app-shell {
     padding-top: 0.125rem;
     padding-bottom: 0.125rem;
   }
-  /* The stacked footer (dots row + arrows row) is taller than the old single
-     row. Tighten its internal gap so it does not reclaim the height the
-     removed app chrome just freed. */
-  .m4-deck-footer > div {
-    gap: 0.125rem;
-  }
   /* Slide body keeps real top padding so the card does not ride up against
      the header; only the bottom tightens, where the footer already sits. */
   .m4-deck-slidebody {
@@ -643,15 +637,15 @@ body:has(.m4-deck-fit) .app-shell {
    dimension — portrait and larger landscape keep the normal flow. */
 @media (orientation: landscape) and (max-height: 500px) {
   .m4-deck-compact .m4-deck-split {
-    /* 100vh minus: global app nav 4rem, deck header ~25px, deck footer ~57px,
-       slide body padding, chapter heading. Re-tuned after the app nav was
-       restored above the deck instead of hidden.
+    /* 100vh minus: global app nav 4rem, deck header ~25px, slim deck footer ~37px,
+       slide body padding, chapter heading. Re-tuned after the footer was unified
+       into a single row (saving 20px).
 
        height (not just max-height) so the card fills the frame instead of
        stopping wherever its text ends and leaving an empty band above the
        footer. */
-    height: calc(100vh - 13.875rem);
-    max-height: calc(100vh - 13.875rem);
+    height: calc(100vh - 12.625rem);
+    max-height: calc(100vh - 12.625rem);
     overflow: hidden;
     /* Two columns sit side by side here, so the stacked gap is dead height. */
     gap: 0.375rem;
@@ -676,8 +670,8 @@ body:has(.m4-deck-fit) .app-shell {
      so the slide looks composed and grounded rather than floating with an
      awkward dead band above the footer. */
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) {
-    height: calc(100vh - 13.875rem);
-    max-height: calc(100vh - 13.875rem);
+    height: calc(100vh - 12.625rem);
+    max-height: calc(100vh - 12.625rem);
   }
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) > .m4-deck-bullets {
     height: 100%;
@@ -745,7 +739,7 @@ body:has(.m4-deck-fit) .app-shell {
 
   /* Compact FAB speed dial in landscape phone so it does not collide with the card text */
   [data-deck-action-dial] {
-    bottom: 3.75rem;
+    bottom: 2.75rem;
     right: 0.75rem;
   }
   [data-deck-action-dial] > button[aria-haspopup="menu"] {

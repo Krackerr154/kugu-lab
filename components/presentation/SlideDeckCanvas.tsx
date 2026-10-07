@@ -477,12 +477,21 @@ export function SlideDeckCanvas({
       </main>
 
       {/* ── FOOTER / SLIDE NAVIGATION RAIL (ALWAYS PINNED TO SCREEN BOTTOM) ───────────────── */}
-      <footer className="m4-deck-footer fixed inset-x-0 bottom-0 z-30 border-t border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-2.5 min-w-0 shadow-lg">
-        {/* Footer is two rows: the slide dots get their own full-width row
-            ABOVE the arrow controls. In one row the dots had to share width
-            with both arrows and the counter, which squeezed 17 of them into a
-            cramped strip; stacked, they have the whole width and stay tappable. */}
-        <div className="mx-auto flex max-w-5xl flex-col gap-1.5 min-w-0">
+      <footer className="m4-deck-footer fixed inset-x-0 bottom-0 z-30 border-t border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-1.5 min-w-0 shadow-lg">
+        {/* Single row: left arrow on left, progress dots centered, counter + right arrow on right. */}
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 min-w-0">
+          <button
+            type="button"
+            onClick={() => goToSlide(viewingIdx - 1)}
+            disabled={!canGoBack}
+            aria-label="Slide sebelumnya"
+            className="m4-motion-control inline-flex min-h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--outline-variant)] text-[var(--primary-container)] hover:bg-[var(--surface-container)] disabled:opacity-30"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-base">
+              chevron_left
+            </span>
+          </button>
+
           {/* Interactive Slide Progress Dots (Bounded read-back) */}
           <div
             role="progressbar"
@@ -490,7 +499,7 @@ export function SlideDeckCanvas({
             aria-valuemax={TOTAL_REVIEW_DECK_SLIDES}
             aria-valuenow={viewingIdx + 1}
             aria-label={`Slide ${viewingIdx + 1} dari ${TOTAL_REVIEW_DECK_SLIDES}`}
-            className="flex items-center justify-center gap-1 overflow-x-auto min-w-0 py-1 px-1"
+            className="flex flex-1 items-center justify-center gap-1 overflow-x-auto min-w-0 py-0.5 px-1"
           >
             {REVIEW_DECK_SLIDES.map((s, i) => {
               const isViewed = i <= presenterIdx;
@@ -515,20 +524,7 @@ export function SlideDeckCanvas({
             })}
           </div>
 
-          <div className="flex items-center justify-between gap-2 min-w-0">
-            <button
-              type="button"
-              onClick={() => goToSlide(viewingIdx - 1)}
-              disabled={!canGoBack}
-              aria-label="Slide sebelumnya"
-              className="m4-motion-control inline-flex min-h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--outline-variant)] text-[var(--primary-container)] hover:bg-[var(--surface-container)] disabled:opacity-30"
-            >
-              <span aria-hidden="true" className="material-symbols-outlined text-base">
-                chevron_left
-              </span>
-            </button>
-
-            <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-[11px] sm:text-xs font-bold tabular-nums text-[var(--muted)]">
               {viewingIdx + 1}/{TOTAL_REVIEW_DECK_SLIDES}
             </span>
@@ -544,7 +540,6 @@ export function SlideDeckCanvas({
                 chevron_right
               </span>
             </button>
-            </div>
           </div>
         </div>
       </footer>
