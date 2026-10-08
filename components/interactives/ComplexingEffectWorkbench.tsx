@@ -11,7 +11,7 @@ export function ComplexingEffectWorkbench() {
   const timeRef = useRef(6);
   const [playing, setPlaying] = useState(false);
   const [complexed, setComplexed] = useState(true);
-  const [view, setView] = useState<"closeup" | "cell">("closeup");
+  const [view, setView] = useState<"closeup" | "cell">("cell");
   const reducedMotion = useReducedMotion();
 
   const frame = cellFrame(time, complexed);

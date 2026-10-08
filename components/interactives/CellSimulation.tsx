@@ -121,18 +121,18 @@ export function CathodeCloseUp({ frame, focus, activeAgent, className = "w-full"
     <svg viewBox="0 0 300 240" className={className} role="img" aria-label="Pembesaran katoda: spesi logam mendekati permukaan, menerima elektron, lalu tertinggal sebagai partikel logam. Skema bukan kisi kristal.">
       <rect x="10" y="30" width="230" height="190" rx="4" fill="var(--surface-container)" />
       <rect x="240" y="30" width="48" height="190" fill="var(--surface-variant)" stroke="var(--outline)" />
-      <text x="25" y="20" fontSize="11" fill="var(--on-surface-variant)">Larutan</text>
-      <text x="264" y="110" textAnchor="middle" fontSize="18" fontWeight="bold" fill="var(--primary-container)">Cu</text>
-      <text x="264" y="128" textAnchor="middle" fontSize="8" fill="var(--on-surface-variant)">substrat</text>
+      <text x="25" y="20" fontSize="10" fill="var(--on-surface-variant)">Larutan</text>
+      <text x="264" y="108" textAnchor="middle" fontSize="15" fontWeight="bold" fill="var(--primary-container)">Cu</text>
+      <text x="264" y="124" textAnchor="middle" fontSize="8" fill="var(--on-surface-variant)">substrat</text>
       {frame.ions.filter((ion) => !ion.deposited).map((ion) => {
         const x = ion.zoomX;
         const y = ion.zoomY;
         return (
           <g key={ion.id} opacity={emphasis(focus, ion.species)} data-zoom-ion={ion.id} data-state={ion.state}>
-            <circle cx={x} cy={y} r="10" fill="var(--surface-control)" stroke={metalTone(ion.species)} strokeWidth="1.5" strokeDasharray="2 2" />
-            <text x={x} y={y + 3} textAnchor="middle" fontSize="8" fontWeight="bold" fill={metalTone(ion.species)}>{ion.species === "bi" ? "Bi" : "Sn"}</text>
+            <circle cx={x} cy={y} r="8" fill="var(--surface-control)" stroke={metalTone(ion.species)} strokeWidth="1.2" strokeDasharray="2 2" />
+            <text x={x} y={y + 2.5} textAnchor="middle" fontSize="7" fontWeight="bold" fill={metalTone(ion.species)}>{ion.species === "bi" ? "Bi" : "Sn"}</text>
             {ion.reducing && Array.from({ length: ion.species === "bi" ? 3 : 2 }, (_, i) => (
-              <circle key={i} data-transfer-electron cx={x + 12 + i * 6} cy={y - 10} r="2" fill="var(--secondary)" />
+              <circle key={i} data-transfer-electron cx={x + 10 + i * 5} cy={y - 8} r="1.8" fill="var(--secondary)" />
             ))}
           </g>
         );
@@ -143,8 +143,8 @@ export function CathodeCloseUp({ frame, focus, activeAgent, className = "w-full"
           const y = 48 + atom.row * 24;
           return (
             <g key={atom.id} data-deposited-atom={atom.id} data-species={atom.species} opacity={emphasis(focus, atom.species)}>
-              {atom.species === "bi" ? <circle cx={x} cy={y} r="9" fill={metalTone(atom.species)} /> : <rect x={x - 9} y={y - 9} width="18" height="18" rx="3" fill={metalTone(atom.species)} />}
-              <text x={x} y={y + 3} textAnchor="middle" fontSize="8" fontWeight="bold" fill="var(--on-primary)">{atom.species === "bi" ? "Bi" : "Sn"}</text>
+              {atom.species === "bi" ? <circle cx={x} cy={y} r="7.5" fill={metalTone(atom.species)} /> : <rect x={x - 7.5} y={y - 7.5} width="15" height="15" rx="2" fill={metalTone(atom.species)} />}
+              <text x={x} y={y + 2.5} textAnchor="middle" fontSize="7" fontWeight="bold" fill="var(--on-primary)">{atom.species === "bi" ? "Bi" : "Sn"}</text>
             </g>
           );
         })}
