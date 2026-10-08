@@ -42,22 +42,20 @@ export const REVIEW_SLIDES: readonly ReviewSlide[] = [
   { id: "p5", chapter: "understand", label: "Selisih potensial", title: "Selisih Potensial Menghambat Kodeposisi", kind: "content", anchor: "review-potential-gap", rubric: "f.1" },
   { id: "p6", chapter: "understand", label: "Pengompleks", title: "Mengapa Perlu Agen Pengompleks", kind: "content", anchor: "review-potential-gap", rubric: "f.2" },
   { id: "p7", chapter: "understand", label: "Larutan A/B/C", title: "Fungsi Larutan A, B, dan C", kind: "content", anchor: "review-electrolyte", rubric: "f.2" },
-  { id: "p8", chapter: "understand", label: "Pencampuran", title: "Urutan Pencampuran A + B + C", kind: "content", anchor: "review-electrolyte", rubric: "f.1, f.2" },
-  { id: "p9", chapter: "understand", label: "Sel elektrokimia", title: "Sel Elektrokimia yang Kalian Rangkai", kind: "content", anchor: "review-cell", rubric: "f.1, f.3" },
 
   // ── PENGOLAHAN DATA ──────────────────────────────────────────────────────
-  { id: "p10", chapter: "prove", label: "Rumus", title: "Dari Arus ke Massa ke Efisiensi", kind: "content", anchor: "review-formulas", rubric: "e" },
-  { id: "p11", chapter: "prove", label: "Data kelompok", title: "Data Kelompok", kind: "data", rubric: "d" },
-  { id: "p12", chapter: "prove", label: "Efisiensi kelas", title: "Efisiensi Arus Kelompok", kind: "data", rubric: "f.4" },
-  { id: "p13", chapter: "prove", label: "H₂ samping", title: "Reaksi Samping Hidrogen", kind: "content", anchor: "review-efficiency-notes", rubric: "f.4" },
-  { id: "p14", chapter: "prove", label: ">100%", title: "Bila Hasil Melebihi 100%", kind: "content", anchor: "review-efficiency-notes", rubric: "f.4, h" },
-  { id: "p15", chapter: "prove", label: "Asumsi Sn–Bi", title: "Asumsi yang Harus Dikonfirmasi", kind: "content", anchor: "review-assumptions", rubric: "f.4, h" },
+  { id: "p8", chapter: "prove", label: "Rumus", title: "Dari Arus ke Massa ke Efisiensi", kind: "content", anchor: "review-formulas", rubric: "e" },
+  { id: "p9", chapter: "prove", label: "Data kelompok", title: "Data Kelompok", kind: "data", rubric: "d" },
+  { id: "p10", chapter: "prove", label: "Efisiensi kelas", title: "Efisiensi Arus Kelompok", kind: "data", rubric: "f.4" },
+  { id: "p11", chapter: "prove", label: "H₂ samping", title: "Reaksi Samping Hidrogen", kind: "content", anchor: "review-efficiency-notes", rubric: "f.4" },
+  { id: "p12", chapter: "prove", label: ">100%", title: "Bila Hasil Melebihi 100%", kind: "content", anchor: "review-efficiency-notes", rubric: "f.4, h" },
+  { id: "p13", chapter: "prove", label: "Asumsi Sn–Bi", title: "Asumsi yang Harus Dikonfirmasi", kind: "content", anchor: "review-assumptions", rubric: "f.4, h" },
 
   // ── FORMAT LAPORAN ───────────────────────────────────────────────────────
-  { id: "p16", chapter: "ready", label: "Format laporan", title: "Format & Rubrik Laporan (100 Poin)", kind: "content", anchor: "review-report-format", rubric: "seluruh" },
+  { id: "p14", chapter: "ready", label: "Format laporan", title: "Format & Rubrik Laporan (100 Poin)", kind: "content", anchor: "review-report-format", rubric: "seluruh" },
 
   // ── PENUTUP ──────────────────────────────────────────────────────────────
-  { id: "p17", chapter: "ready", label: "Penutup", title: "Selesai Review — Lanjut Games", kind: "closing" },
+  { id: "p15", chapter: "ready", label: "Penutup", title: "Selesai Review — Lanjut Games", kind: "closing" },
 ] as const;
 
 export const REVIEW_SLIDE_BY_ID: Readonly<Record<ReviewSlideId, ReviewSlide>> =

@@ -5,8 +5,6 @@ export type EmbeddedComponentType =
   | "potential-gap"
   | "complexing-effect"
   | "electrolyte-solutions"
-  | "electrolyte-function"
-  | "cell-explorer"
   | "data-entry"
   | "data-chart"
   | "report-format"
@@ -194,59 +192,10 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
       points: 35,
     },
   },
-  {
-    id: "p8",
-    chapter: "understand",
-    chapterLabel: "Pembahasan",
-    label: "Pencampuran",
-    title: "Urutan Pencampuran A + B + C",
-    kind: "content",
-    bullets: [
-      "Urutan pencampuran baku: Larutan A dituangkan perlahan ke Larutan B, lalu campuran (A+B) dimasukkan ke Larutan C.",
-      "Penambahan PEG400 sebagai aditif surfaktan perata morfologi dan pencegah dendrit.",
-      "Penambahan 0,5 mL NH₃ pekat untuk menyesuaikan pH larutan menuju target pH ~2 sebelum pengenceran akhir 100 mL.",
-      "Aturan kritis: NH₃ pekat pada larutan A harus ditambahkan sebelum EDTA agar deprotonasi terjadi.",
-    ],
-    script:
-      "Urutan pencampuran tidak boleh ditukar sembarangan. Ingat aturan penting: NH₃ pekat harus ditambahkan sebelum EDTA agar ligan terdeprotonasi dan dapat melarut sempurna.",
-    pedagogicalNotes:
-      "Jebakan klasik: melarutkan EDTA dalam air murni tanpa NH₃ akan gagal larut karena EDTA membutuhkan suasana basa untuk melepaskan protonnya.",
-    embeddedComponent: "electrolyte-function",
-    initialView: "sequence",
-    rubric: {
-      code: "f.1 & f.2",
-      label: "Prosedur Peracikan Elektrolit",
-      points: 35,
-    },
-  },
-  {
-    id: "p9",
-    chapter: "understand",
-    chapterLabel: "Pembahasan",
-    label: "Sel elektrokimia",
-    title: "Sel Elektrokimia yang Kalian Rangkai",
-    kind: "content",
-    bullets: [
-      "Anoda: Batang karbon laboratorium (inert, tidak larut selama elektrolisis berlangsung).",
-      "Katoda: Plat tembaga aktif yang telah dibatasi resin epoksi (~1,5 cm² luas efektif).",
-      "Elektrolit: 100 mL campuran larutan Sn-Bi dengan agen pengompleks pada pH ~2.",
-      "Sumber arus: Power supply GW Instek beroperasi pada mode arus konstan (Constant Current).",
-    ],
-    script:
-      "Perhatikan kembali sel dua elektroda yang tadi kalian rangkai. Anoda karbon berasal dari laboratorium sebagai elektroda inert, bukan membongkar baterai bekas. Katoda plat tembaga adalah tempat paduan tumbuh.",
-    pedagogicalNotes:
-      "Tegaskan bahwa bahan karbon disediakan resmi oleh laboratorium demi keselamatan SDS.",
-    embeddedComponent: "cell-explorer",
-    rubric: {
-      code: "f.1 & f.3",
-      label: "Rangkaian Sel & Fenomena Katoda",
-      points: 35,
-    },
-  },
 
   // ── BAB 3: PENGOLAHAN DATA ─────────────────────────────────────────────────
   {
-    id: "p10",
+    id: "p8",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "Rumus",
@@ -267,7 +216,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p11",
+    id: "p9",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "Data kelompok",
@@ -288,7 +237,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p12",
+    id: "p10",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "Efisiensi kelas",
@@ -311,7 +260,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p13",
+    id: "p11",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "H₂ samping",
@@ -332,7 +281,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p14",
+    id: "p12",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: ">100%",
@@ -355,7 +304,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p15",
+    id: "p13",
     chapter: "prove",
     chapterLabel: "Pengolahan Data",
     label: "Asumsi Sn–Bi",
@@ -379,7 +328,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
 
   // ── BAB 4: FORMAT LAPORAN & PENUTUP ────────────────────────────────────────
   {
-    id: "p16",
+    id: "p14",
     chapter: "ready",
     chapterLabel: "Format Laporan",
     label: "Format laporan",
@@ -400,7 +349,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p17",
+    id: "p15",
     chapter: "ready",
     chapterLabel: "Format Laporan",
     label: "Penutup",

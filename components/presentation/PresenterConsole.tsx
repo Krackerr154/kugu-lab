@@ -14,8 +14,6 @@ import { ElectrodepositionDiagram } from "@/components/interactives/Electrodepos
 import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotentialGapDiagram";
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
 import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
-import { ElectrolyteFunctionCard } from "@/components/interactives/ElectrolyteFunctionCard";
-import { ElectrochemicalCellExplorer } from "@/components/interactives/ElectrochemicalCellExplorer";
 import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
 import { AsprakDataEntry } from "@/components/shared/AsprakDataEntry";
@@ -254,24 +252,6 @@ export function PresenterConsole() {
             {currentSlide.embeddedComponent === "electrolyte-solutions" && (
               <div className="min-w-0">
                 <ElectrolyteSolutionsCards />
-              </div>
-            )}
-
-            {currentSlide.embeddedComponent === "electrolyte-function" && (
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-                  Fungsi &amp; Urutan Komponen Elektrolit
-                </h3>
-                <ElectrolyteFunctionCard />
-              </div>
-            )}
-
-            {currentSlide.embeddedComponent === "cell-explorer" && (
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-                  Sel Elektrokimia
-                </h3>
-                <ElectrochemicalCellExplorer />
               </div>
             )}
 

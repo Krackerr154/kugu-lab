@@ -13,8 +13,6 @@ import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotential
 import { ElectrodepositionDiagram } from "@/components/interactives/ElectrodepositionDiagram";
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
 import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
-import { ElectrolyteFunctionCard } from "@/components/interactives/ElectrolyteFunctionCard";
-import { ElectrochemicalCellExplorer } from "@/components/interactives/ElectrochemicalCellExplorer";
 import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
 import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { ReviewGames } from "@/components/shared/ReviewGames";
@@ -469,28 +467,6 @@ export function SlideDeckCanvas({
           {currentSlide.embeddedComponent === "electrolyte-solutions" && (
             <div className="m4-deck-panel min-w-0 h-full w-full">
               <ElectrolyteSolutionsCards />
-            </div>
-          )}
-
-          {currentSlide.embeddedComponent === "electrolyte-function" && (
-            <div className="space-y-2 min-w-0">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-                Eksplorasi Komponen &amp; Urutan Elektrolit
-              </h2>
-              <div className="m4-deck-panel">
-                <ElectrolyteFunctionCard />
-              </div>
-            </div>
-          )}
-
-          {currentSlide.embeddedComponent === "cell-explorer" && (
-            <div className="space-y-2 min-w-0">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-                Rangkaian Sel Elektrokimia Kodeposisi
-              </h2>
-              <div className="m4-deck-panel">
-                <ElectrochemicalCellExplorer />
-              </div>
             </div>
           )}
 

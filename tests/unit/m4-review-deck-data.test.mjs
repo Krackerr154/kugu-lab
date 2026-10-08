@@ -7,9 +7,9 @@ import {
 } from "../../lib/m4-review-deck-data.ts";
 import { REVIEW_SLIDE_IDS, REVIEW_SLIDE_CHAPTER } from "../../shared/m3-contract.mjs";
 
-test("review deck contains exactly 17 slides matching contract allowlist", () => {
-  assert.equal(TOTAL_REVIEW_DECK_SLIDES, 17);
-  assert.equal(REVIEW_DECK_SLIDES.length, 17);
+test("review deck contains exactly 15 slides matching contract allowlist", () => {
+  assert.equal(TOTAL_REVIEW_DECK_SLIDES, 15);
+  assert.equal(REVIEW_DECK_SLIDES.length, 15);
 
   const ids = REVIEW_DECK_SLIDES.map((s) => s.id);
   assert.deepEqual(ids, [...REVIEW_SLIDE_IDS]);
@@ -45,22 +45,16 @@ test("designated interactive components are correctly mapped to slides", () => {
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.initialView, "solutions");
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.rubric?.code, "f.2");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.embeddedComponent, "electrolyte-function");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.initialView, "sequence");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.kind, "data");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.embeddedComponent, "data-entry");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.embeddedComponent, "cell-explorer");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.rubric?.code, "f.1 & f.3");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.kind, "data");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.embeddedComponent, "data-chart");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.rubric?.code, "f.4");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p11.kind, "data");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p11.embeddedComponent, "data-entry");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p14.embeddedComponent, "report-format");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p14.rubric?.code, "seluruh");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p12.kind, "data");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p12.embeddedComponent, "data-chart");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p12.rubric?.code, "f.4");
-
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p16.embeddedComponent, "report-format");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p16.rubric?.code, "seluruh");
-
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p17.kind, "closing");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p17.embeddedComponent, "games");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p15.kind, "closing");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p15.embeddedComponent, "games");
 });

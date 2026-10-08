@@ -26,12 +26,12 @@ export function calculateDrift(viewingId, presenterId) {
   };
 }
 
-test("clampSlideIndex bounds index to 0..16", () => {
+test("clampSlideIndex bounds index to 0..14", () => {
   assert.equal(clampSlideIndex(-10), 0);
   assert.equal(clampSlideIndex(0), 0);
   assert.equal(clampSlideIndex(7), 7);
-  assert.equal(clampSlideIndex(16), 16);
-  assert.equal(clampSlideIndex(99), 16);
+  assert.equal(clampSlideIndex(14), 14);
+  assert.equal(clampSlideIndex(99), 14);
 });
 
 test("canStudentReadBack allows only slides already shown by presenter", () => {

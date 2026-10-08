@@ -45,6 +45,6 @@ test('new optional fields are stripped when absent and preserved when valid', ()
   assert.equal('phase' in minimal, false);
   assert.equal('dataSetId' in minimal, false);
 
-  const full = appCoerce({ version: 1, stageId: 'prove', slideId: 'p14', phase: 'review', dataSetId: 'DS_123456' });
-  assert.deepEqual(full, { version: 1, stageId: 'prove', slideId: 'p14', phase: 'review', dataSetId: 'DS_123456' });
+  const full = appCoerce({ version: 1, stageId: 'prove', slideId: 'p12', phase: 'review', dataSetId: 'DS_123456' });
+  assert.deepEqual(full, { version: 1, stageId: 'prove', slideId: 'p12', phase: 'review', dataSetId: 'DS_123456' });
 });
