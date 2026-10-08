@@ -13,6 +13,7 @@ import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotential
 import { ElectrodepositionDiagram } from "@/components/interactives/ElectrodepositionDiagram";
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
 import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
+import { FaradayCalculationCards } from "@/components/interactives/FaradayCalculationCards";
 import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
 import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { ReviewGames } from "@/components/shared/ReviewGames";
@@ -374,7 +375,8 @@ export function SlideDeckCanvas({
           {/* Core Slide Takeaway Bullets Card (Omitted on dedicated full-diagram slides) */}
           {currentSlide.embeddedComponent !== "potential-gap" &&
            currentSlide.embeddedComponent !== "complexing-effect" &&
-           currentSlide.embeddedComponent !== "electrolyte-solutions" && (
+           currentSlide.embeddedComponent !== "electrolyte-solutions" &&
+           currentSlide.embeddedComponent !== "faraday-calculation" && (
           <section
             aria-label="Poin utama materi"
             className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 bg-[var(--surface)] shadow-xs min-w-0"
@@ -467,6 +469,12 @@ export function SlideDeckCanvas({
           {currentSlide.embeddedComponent === "electrolyte-solutions" && (
             <div className="m4-deck-panel min-w-0 h-full w-full">
               <ElectrolyteSolutionsCards />
+            </div>
+          )}
+
+          {currentSlide.embeddedComponent === "faraday-calculation" && (
+            <div className="m4-deck-panel min-w-0 h-full w-full">
+              <FaradayCalculationCards />
             </div>
           )}
 

@@ -45,6 +45,9 @@ test("designated interactive components are correctly mapped to slides", () => {
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.initialView, "solutions");
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.rubric?.code, "f.2");
 
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.embeddedComponent, "faraday-calculation");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.rubric?.code, "e");
+
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.kind, "data");
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.embeddedComponent, "data-entry");
 

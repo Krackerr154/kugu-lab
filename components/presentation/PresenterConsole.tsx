@@ -14,6 +14,7 @@ import { ElectrodepositionDiagram } from "@/components/interactives/Electrodepos
 import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotentialGapDiagram";
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
 import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
+import { FaradayCalculationCards } from "@/components/interactives/FaradayCalculationCards";
 import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
 import { AsprakDataEntry } from "@/components/shared/AsprakDataEntry";
@@ -252,6 +253,12 @@ export function PresenterConsole() {
             {currentSlide.embeddedComponent === "electrolyte-solutions" && (
               <div className="min-w-0">
                 <ElectrolyteSolutionsCards />
+              </div>
+            )}
+
+            {currentSlide.embeddedComponent === "faraday-calculation" && (
+              <div className="min-w-0">
+                <FaradayCalculationCards />
               </div>
             )}
 

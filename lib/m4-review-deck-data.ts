@@ -5,6 +5,7 @@ export type EmbeddedComponentType =
   | "potential-gap"
   | "complexing-effect"
   | "electrolyte-solutions"
+  | "faraday-calculation"
   | "data-entry"
   | "data-chart"
   | "report-format"
@@ -205,10 +206,10 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
       "Langkah 1: Hitung total muatan listrik yang mengalir: Q = I × t (Coulomb).",
       "Langkah 2: Hitung massa teoritis hukum Faraday: m_teoretis = (Q × M) / (n × F).",
       "Langkah 3: Hitung efisiensi arus: η = (m_aktual / m_teoretis) × 100%.",
-      "Ketelitian konversi: 1 A = 1 C/s, F = 96485 C/mol elektron.",
     ],
     script:
       "Alur matematis pengolahan data harus runtut di laporan: hitung total muatan Q terlebih dahulu, tentukan massa teoritis berdasarkan hukum Faraday, baru kemudian bandingkan dengan massa aktual hasil timbangan.",
+    embeddedComponent: "faraday-calculation",
     rubric: {
       code: "e",
       label: "Pengolahan Data & Rumus Perhitungan",
