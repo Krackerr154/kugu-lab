@@ -10,6 +10,7 @@ import {
   type ReviewDeckSlide,
 } from "@/lib/m4-review-deck-data";
 import { REVIEW_CHAPTERS } from "@/lib/m4-review-slides";
+import { ElectrodepositionDiagram } from "@/components/interactives/ElectrodepositionDiagram";
 import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotentialGapDiagram";
 import { ElectrolyteFunctionCard } from "@/components/interactives/ElectrolyteFunctionCard";
 import { ElectrochemicalCellExplorer } from "@/components/interactives/ElectrochemicalCellExplorer";
@@ -230,6 +231,12 @@ export function PresenterConsole() {
             </div>
 
             {/* Embedded Active Diagram Preview */}
+            {currentSlide.embeddedComponent === "electrodeposition-diagram" && (
+              <div className="min-w-0">
+                <ElectrodepositionDiagram />
+              </div>
+            )}
+
             {currentSlide.embeddedComponent === "potential-gap" && (
               <div className="space-y-2">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">

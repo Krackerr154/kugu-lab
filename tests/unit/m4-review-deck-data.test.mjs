@@ -32,7 +32,7 @@ test("each slide has valid metadata, non-empty script, and structured bullets", 
 });
 
 test("designated interactive components are correctly mapped to slides", () => {
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p4.embeddedComponent, undefined);
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p4.embeddedComponent, "electrodeposition-diagram");
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p4.rubric?.code, "f.1");
 
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p5.embeddedComponent, "potential-gap");

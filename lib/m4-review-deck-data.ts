@@ -117,6 +117,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
       "Elektrodeposisi pada dasarnya adalah proses pelapisan material secara elektrokimia. Arus searah (DC) menyuplai elektron ke katoda plat Cu kalian, sehingga kation timah dan bismut di larutan tereduksi dari fasa cair menjadi lapisan paduan padat di permukaan elektroda.",
     pedagogicalNotes:
       "Menekankan bahwa elektrodeposisi membutuhkan 4 komponen serentak: katoda (tempat reduksi), anoda (tempat oksidasi), larutan elektrolit (penghantar ionik), dan sirkuit eksternal DC (penyedia elektron).",
+    embeddedComponent: "electrodeposition-diagram",
     rubric: {
       code: "f.1",
       label: "Prinsip Elektrodeposisi",

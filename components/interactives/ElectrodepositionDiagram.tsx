@@ -4,7 +4,7 @@ export function ElectrodepositionDiagram() {
   return (
     <div
       data-electrodeposition-diagram
-      className="m4-motion-enter rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-1.5 sm:p-2 text-xs flex flex-col justify-between h-full max-h-[165px]"
+      className="m4-motion-enter rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-2 sm:p-2.5 text-xs flex flex-col justify-between h-full"
     >
       <div
         role="img"
@@ -13,7 +13,7 @@ export function ElectrodepositionDiagram() {
       >
         <svg
           viewBox="0 0 380 152"
-          className="w-full h-auto max-h-[122px] select-none"
+          className="w-full h-auto max-h-[135px] select-none"
           aria-hidden="true"
         >
           <defs>
