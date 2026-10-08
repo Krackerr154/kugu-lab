@@ -95,21 +95,24 @@ export function ElectrolyteSolutionsCards() {
               </span>
             </div>
 
-            <p className="text-[9px] sm:text-[9.5px] text-[var(--text-secondary)] leading-tight">
+            <p
+              className="text-[9.5px] sm:text-[10px] text-[var(--text-secondary)] leading-snug text-justify"
+              style={{ textAlign: "justify", textJustify: "inter-word" }}
+            >
               <ChemText>{sol.functionText}</ChemText>
             </p>
           </div>
 
-          {/* Mini Cards for Component Names */}
-          <div className="mt-1 pt-1 border-t border-[var(--outline-variant)]/40 min-w-0">
-            <div className="text-[8px] font-bold uppercase tracking-wider text-[var(--muted)] mb-0.5">
+          {/* Mini Cards for Component Names (Expanded to fill card space) */}
+          <div className="mt-auto pt-1 border-t border-[var(--outline-variant)]/40 min-w-0">
+            <div className="text-[8px] font-bold uppercase tracking-wider text-[var(--muted)] mb-1">
               Komponen:
             </div>
-            <div className="grid grid-cols-2 gap-1 min-w-0">
+            <div className="grid grid-cols-2 gap-1.5 min-w-0">
               {sol.components.map((comp, cIdx) => (
                 <div
                   key={cIdx}
-                  className={`rounded-lg border border-[var(--outline-variant)]/60 bg-[var(--surface-container-low)] px-1.5 py-0.5 flex items-center gap-1 min-w-0 shadow-2xs ${
+                  className={`rounded-lg border border-[var(--outline-variant)]/60 bg-[var(--surface-container-low)] px-2 py-1 flex items-center gap-1.5 min-w-0 shadow-2xs ${
                     sol.components.length === 3 && cIdx === 2 ? "col-span-2" : ""
                   }`}
                 >
@@ -118,7 +121,7 @@ export function ElectrolyteSolutionsCards() {
                     className="h-1.5 w-1.5 rounded-full shrink-0"
                     style={{ backgroundColor: comp.dotColor }}
                   />
-                  <span className="font-semibold text-[8.5px] sm:text-[9px] text-[var(--foreground)] truncate">
+                  <span className="font-bold text-[9.5px] sm:text-[10px] text-[var(--foreground)] truncate">
                     <ChemText>{comp.name}</ChemText>
                   </span>
                 </div>
