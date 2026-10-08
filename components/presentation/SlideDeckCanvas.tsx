@@ -10,6 +10,7 @@ import {
   type ReviewDeckSlide,
 } from "@/lib/m4-review-deck-data";
 import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotentialGapDiagram";
+import { ElectrodepositionDiagram } from "@/components/interactives/ElectrodepositionDiagram";
 import { ElectrolyteFunctionCard } from "@/components/interactives/ElectrolyteFunctionCard";
 import { ElectrochemicalCellExplorer } from "@/components/interactives/ElectrochemicalCellExplorer";
 import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
@@ -34,7 +35,7 @@ function formatBulletText(text: string) {
     const rest = text.slice(colonIdx + 1).trim();
     return (
       <div className="flex items-start gap-1.5 sm:gap-2 min-w-0 flex-1">
-        <span className="inline-flex items-baseline justify-between w-32 sm:w-40 shrink-0 font-semibold text-[var(--foreground)]">
+        <span className="m4-deck-bullet-key inline-flex items-baseline justify-between w-32 sm:w-40 shrink-0 font-semibold text-[var(--foreground)]">
           <span>{prefix}</span>
           <span className="text-[var(--muted)]">:</span>
         </span>
@@ -406,6 +407,17 @@ export function SlideDeckCanvas({
               Each is wrapped in .m4-deck-panel so it scrolls inside itself
               instead of pushing the slide past the viewport — the deck stays
               one screen tall while the panel keeps all of its content. */}
+          {currentSlide.embeddedComponent === "electrodeposition-diagram" && (
+            <div className="space-y-2 min-w-0">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
+                Skema Sel Elektrodeposisi
+              </h2>
+              <div className="m4-deck-panel">
+                <ElectrodepositionDiagram />
+              </div>
+            </div>
+          )}
+
           {currentSlide.embeddedComponent === "potential-gap" && (
             <div className="space-y-2 min-w-0">
               <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">

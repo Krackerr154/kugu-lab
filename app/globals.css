@@ -743,6 +743,9 @@ body:has(.m4-deck-fit) .app-shell {
     font-size: clamp(0.6875rem, 2.8vh, 0.75rem);
     line-height: 1.32;
   }
+  .m4-deck-compact .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets .m4-deck-bullet-key {
+    width: 6.25rem;
+  }
 
   .m4-deck-compact .m4-deck-bullets {
     padding: clamp(0.5rem, 1.5vh, 0.75rem);

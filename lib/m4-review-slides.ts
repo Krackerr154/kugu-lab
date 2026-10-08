@@ -38,7 +38,7 @@ export const REVIEW_SLIDES: readonly ReviewSlide[] = [
 
   // ── PEMBAHASAN ───────────────────────────────────────────────────────────
   { id: "p3", chapter: "understand", label: "Mengapa paduan", title: "Mengapa Paduan Sn–Bi, Bukan Logam Murni", kind: "content", anchor: "review-why-alloy", rubric: "f.1" },
-  { id: "p4", chapter: "understand", label: "Prinsip deposisi", title: "Bagaimana Arus Membentuk Lapisan", kind: "content", anchor: "review-why-alloy", rubric: "f.1" },
+  { id: "p4", chapter: "understand", label: "Definisi elektrodeposisi", title: "Apa itu Elektrodeposisi?", kind: "content", anchor: "review-why-alloy", rubric: "f.1" },
   { id: "p5", chapter: "understand", label: "Selisih potensial", title: "Selisih Potensial Menghambat Kodeposisi", kind: "content", anchor: "review-potential-gap", rubric: "f.1" },
   { id: "p6", chapter: "understand", label: "Pengompleks", title: "Mengapa Perlu Agen Pengompleks", kind: "content", anchor: "review-potential-gap", rubric: "f.2" },
   { id: "p7", chapter: "understand", label: "Larutan A/B/C", title: "Fungsi Larutan A, B, dan C", kind: "content", anchor: "review-electrolyte", rubric: "f.2" },

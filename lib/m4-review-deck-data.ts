@@ -1,6 +1,7 @@
 import type { M3StageId, ReviewSlideId } from "@/lib/m3-presentation";
 
 export type EmbeddedComponentType =
+  | "electrodeposition-diagram"
   | "potential-gap"
   | "electrolyte-function"
   | "cell-explorer"
@@ -104,16 +105,19 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     id: "p4",
     chapter: "understand",
     chapterLabel: "Pembahasan",
-    label: "Prinsip deposisi",
-    title: "Bagaimana Arus Membentuk Lapisan",
+    label: "Definisi elektrodeposisi",
+    title: "Apa itu Elektrodeposisi?",
     kind: "content",
     bullets: [
-      "Arus searah (DC) menyediakan elektron pada katoda untuk mereduksi kation logam dari fasa cair menjadi padat.",
-      "Reaksi reduksi berlangsung pada suhu ruang tanpa membutuhkan pemanasan eksternal.",
-      "Parameter kunci yang mengendalikan morfologi dan komposisi: rapat arus, potensial, pH, dan konsentrasi ion.",
+      "Definisi: Pengendapan lapisan logam atau paduan pada katoda melalui reduksi kation dari larutan elektrolit oleh arus DC.",
+      "Reaksi Katoda: Elektron mereduksi kation di permukaan elektroda: Mⁿ⁺ + ne⁻ → M⁰ (lapisan paduan Sn–Bi pada plat Cu).",
+      "Komponen Sel: Katoda kerja (plat Cu), anoda inert (batang C), larutan elektrolit (Sn²⁺ & Bi³⁺), dan catu daya DC.",
     ],
     script:
-      "Yang mengontrol ketebalan dan kualitas lapisan kalian bukan kebetulan, melainkan rapat arus listrik, potensial katoda, keasaman larutan, dan ketersediaan ion di batas antar-fasa.",
+      "Elektrodeposisi pada dasarnya adalah proses pelapisan material secara elektrokimia. Arus searah (DC) menyuplai elektron ke katoda plat Cu kalian, sehingga kation timah dan bismut di larutan tereduksi dari fasa cair menjadi lapisan paduan padat di permukaan elektroda.",
+    pedagogicalNotes:
+      "Menekankan bahwa elektrodeposisi membutuhkan 4 komponen serentak: katoda (tempat reduksi), anoda (tempat oksidasi), larutan elektrolit (penghantar ionik), dan sirkuit eksternal DC (penyedia elektron).",
+    embeddedComponent: "electrodeposition-diagram",
     rubric: {
       code: "f.1",
       label: "Prinsip Elektrodeposisi",
