@@ -146,21 +146,30 @@ export function ComplexingEffectWorkbench() {
       </div>
 
       {/* ── MAIN BODY: 2 COLUMNS (ANIMATION LEFT, ANALYSIS RIGHT) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 flex-1 items-stretch min-h-0">
-        {/* Left: Animation Canvas Box (7 cols) */}
-        <div className="sm:col-span-7 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-1.5 flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between text-[9px] text-[var(--muted)] px-1 mb-0.5 font-semibold">
+      <div className="flex flex-col sm:flex-row gap-2 flex-1 items-stretch min-h-0">
+        {/* Left: Animation Canvas Box (61% width on landscape) */}
+        <div
+          className="w-full rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-1.5 flex flex-col justify-between min-w-0"
+          style={{ width: "61%", flex: "0 0 61%" }}
+        >
+          <div className="flex items-center justify-between text-[9px] text-[var(--muted)] px-1 mb-0.5 font-semibold shrink-0">
             <span>{view === "closeup" ? "Permukaan Katoda Plat Cu" : "Beaker Kodeposisi DC"}</span>
             <span className="font-bold text-[var(--primary-container)]">{frame.phase}</span>
           </div>
 
-          <div className="flex-1 flex items-center justify-center min-h-0">
+          <div className="flex-1 flex items-center justify-center min-h-0" style={{ height: "122px", maxHeight: "122px" }}>
             {view === "closeup" ? (
-              <div className="w-full h-[96px] max-h-[96px] flex items-center justify-center">
-                <CathodeCloseUp frame={frame} focus="all" activeAgent="edta" className="w-full h-full max-h-[96px]" />
+              <div className="w-full flex items-center justify-center" style={{ height: "122px", maxHeight: "122px" }}>
+                <CathodeCloseUp
+                  frame={frame}
+                  focus="all"
+                  activeAgent="edta"
+                  className="w-auto h-full"
+                  viewBox="10 20 280 200"
+                />
               </div>
             ) : (
-              <div className="w-full h-[96px] max-h-[96px] flex items-center justify-center">
+              <div className="w-full flex items-center justify-center" style={{ height: "122px", maxHeight: "122px" }}>
                 <CellSimulation
                   frame={frame}
                   running={advancing}
@@ -169,20 +178,24 @@ export function ComplexingEffectWorkbench() {
                   hotspot={() => ({})}
                   activeAgent="edta"
                   onAgentSelect={() => {}}
-                  className="w-full h-full max-h-[96px]"
+                  className="w-auto h-full"
+                  viewBox="35 8 230 190"
                 />
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-between px-1 text-[8.5px] text-[var(--text-secondary)]">
+          <div className="flex items-center justify-between px-1 text-[8.5px] text-[var(--text-secondary)] shrink-0">
             <span>Garis putus-putus: ion kation larutan</span>
             <span>Kotak/lingkaran solid: atom deposit</span>
           </div>
         </div>
 
-        {/* Right: Pedagogical Analysis & Live Result (5 cols) */}
-        <div className="sm:col-span-5 flex flex-col justify-between gap-1.5 min-w-0">
+        {/* Right: Pedagogical Analysis & Live Result (34% width on landscape) */}
+        <div
+          className="w-full flex flex-col justify-between gap-1 min-w-0"
+          style={{ width: "34%", flex: "0 0 34%" }}
+        >
           <div
             className={`rounded-lg border p-2 flex flex-col justify-between flex-1 min-w-0 ${
               complexed
@@ -218,13 +231,13 @@ export function ComplexingEffectWorkbench() {
                 </span>
               </div>
 
-              <p className="mt-1 text-[9.5px] font-semibold text-[var(--foreground)] leading-tight">
+              <p className="mt-1 text-[10px] font-bold text-[var(--foreground)] leading-snug">
                 {complexed
                   ? "EDTA & Sitrat mengikat Bi³⁺ lebih kuat daripada Sn²⁺."
                   : "Tanpa pengompleks, Bi³⁺ tereduksi jauh lebih awal."}
               </p>
 
-              <p className="mt-1 text-[8.5px] text-[var(--text-secondary)] leading-tight">
+              <p className="mt-1 text-[9px] text-[var(--text-secondary)] leading-relaxed">
                 {complexed
                   ? "Aktivitas Bi³⁺ turun drastis, potensial reduksinya bergeser mendekati Sn²⁺ sehingga keduanya mengendap serentak."
                   : "Selisih 0,45 V mencegah Sn²⁺ tereduksi pada potensial ini; deposit hanya bismut murni tanpa paduan timah."}
