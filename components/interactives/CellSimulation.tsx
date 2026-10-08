@@ -78,14 +78,14 @@ export function CellSimulation({ frame, running, focus, selected, hotspot, activ
       <rect x="50" y="70" width="20" height="60" rx="2"
         fill={selected === "anode" ? "var(--secondary-container)" : "var(--outline)"}
         stroke="var(--primary-container)" strokeWidth="1.5" {...hotspot("anode", "Anoda positif, elektroda karbon")} />
-      <text x="60" y="194" textAnchor="middle" fontSize="9" fill="var(--primary)" fontWeight="bold" pointerEvents="none">Anoda (+)</text>
+      <text x="60" y="64" textAnchor="middle" fontSize="8.5" fill="var(--primary)" fontWeight="bold" pointerEvents="none">Anoda (+)</text>
       <rect x="230" y="70" width="20" height="60" rx="2"
         fill={selected === "cathode" ? "var(--secondary-container)" : "var(--surface-variant)"}
         stroke="var(--primary-container)" strokeWidth="1.5" {...hotspot("cathode", "Katoda negatif, plat tembaga tempat paduan mengendap")} />
       <g data-testid="m3-deposit" data-deposit={frame.outcome} data-count={frame.deposited.length} pointerEvents="none">
         {frame.deposited.map((atom) => <rect key={atom.id} data-species={atom.species} opacity={emphasis(focus, atom.species)} x={227 - atom.layer * 3} y={78 + atom.row * 8} width="3" height="7" fill={metalTone(atom.species)} />)}
       </g>
-      <text x="240" y="194" textAnchor="middle" fontSize="9" fill="var(--primary)" fontWeight="bold" pointerEvents="none">Katoda (−)</text>
+      <text x="240" y="64" textAnchor="middle" fontSize="8.5" fill="var(--primary)" fontWeight="bold" pointerEvents="none">Katoda (−)</text>
       <g pointerEvents="none" data-testid="m3-bubbles" opacity={emphasis(focus, "h2")}>
         {[0, 1, 2].map((index) => {
           const f = cycle(Math.max(0, frame.elapsed - 3), 2.8, index / 3);

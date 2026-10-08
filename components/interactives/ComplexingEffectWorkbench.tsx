@@ -147,19 +147,19 @@ export function ComplexingEffectWorkbench() {
 
       {/* ── MAIN BODY: 2 COLUMNS (ANIMATION LEFT, ANALYSIS RIGHT) ── */}
       <div className="flex flex-col sm:flex-row gap-2 flex-1 items-stretch min-h-0">
-        {/* Left: Animation Canvas Box (61% width on landscape) */}
+        {/* Left: Animation Canvas Box (58% width on landscape) */}
         <div
           className="w-full rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-1.5 flex flex-col justify-between min-w-0"
-          style={{ width: "61%", flex: "0 0 61%" }}
+          style={{ width: "58%", flex: "0 0 58%" }}
         >
           <div className="flex items-center justify-between text-[9px] text-[var(--muted)] px-1 mb-0.5 font-semibold shrink-0">
             <span>{view === "closeup" ? "Permukaan Katoda Plat Cu" : "Beaker Kodeposisi DC"}</span>
             <span className="font-bold text-[var(--primary-container)]">{frame.phase}</span>
           </div>
 
-          <div className="flex-1 flex items-center justify-center min-h-0" style={{ height: "122px", maxHeight: "122px" }}>
+          <div className="flex-1 flex items-center justify-center min-h-0" style={{ height: "118px", maxHeight: "118px" }}>
             {view === "closeup" ? (
-              <div className="w-full flex items-center justify-center" style={{ height: "122px", maxHeight: "122px" }}>
+              <div className="w-full flex items-center justify-center" style={{ height: "118px", maxHeight: "118px" }}>
                 <CathodeCloseUp
                   frame={frame}
                   focus="all"
@@ -169,7 +169,7 @@ export function ComplexingEffectWorkbench() {
                 />
               </div>
             ) : (
-              <div className="w-full flex items-center justify-center" style={{ height: "122px", maxHeight: "122px" }}>
+              <div className="w-full flex items-center justify-center" style={{ height: "118px", maxHeight: "118px" }}>
                 <CellSimulation
                   frame={frame}
                   running={advancing}
@@ -179,7 +179,7 @@ export function ComplexingEffectWorkbench() {
                   activeAgent="edta"
                   onAgentSelect={() => {}}
                   className="w-auto h-full"
-                  viewBox="35 8 230 190"
+                  viewBox="35 8 230 192"
                 />
               </div>
             )}
@@ -191,11 +191,8 @@ export function ComplexingEffectWorkbench() {
           </div>
         </div>
 
-        {/* Right: Pedagogical Analysis & Live Result (34% width on landscape) */}
-        <div
-          className="w-full flex flex-col justify-between gap-1 min-w-0"
-          style={{ width: "34%", flex: "0 0 34%" }}
-        >
+        {/* Right: Pedagogical Analysis & Live Result (flex-1 to fill the remaining width completely) */}
+        <div className="w-full flex flex-col justify-between gap-1 min-w-0 flex-1">
           <div
             className={`rounded-lg border p-2 flex flex-col justify-between flex-1 min-w-0 ${
               complexed
@@ -245,7 +242,7 @@ export function ComplexingEffectWorkbench() {
             </div>
 
             {/* Bottom atoms summary */}
-            <div className="mt-1 flex items-center justify-between border-t border-[var(--outline-variant)]/40 pt-1 text-[8.5px]">
+            <div className="mt-1 flex items-center justify-between border-t border-[var(--outline-variant)]/40 pt-1 text-[8.5px] pr-10">
               <span className="text-[var(--text-secondary)]">Deposit katoda:</span>
               <div className="flex items-center gap-1.5 font-bold font-mono">
                 <span className="text-[var(--chart-navy)]">
