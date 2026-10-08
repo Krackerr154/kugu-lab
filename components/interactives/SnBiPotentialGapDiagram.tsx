@@ -82,7 +82,7 @@ export function SnBiPotentialGapDiagram() {
           {/* Bracket between Sn and Bi (from x=156 to x=426) */}
           <path d="M 156 78 L 156 84 L 426 84 L 426 78" fill="none" stroke="var(--secondary)" strokeWidth="1.5" />
           <rect x="235" y="76" width="112" height="16" rx="3" fill="var(--secondary-container)" stroke="var(--secondary)" strokeWidth="1" />
-          <text x="291" y="88" textAnchor="middle" fontSize="9.5" font-weight="bold" font-family="monospace" fill="var(--on-secondary-container)">
+          <text x="291" y="88" textAnchor="middle" fontSize="9.5" fontWeight="bold" fontFamily="monospace" fill="var(--on-secondary-container)">
             ΔE° ≈ 0,45 V (GAP)
           </text>
 
