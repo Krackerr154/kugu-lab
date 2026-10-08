@@ -378,6 +378,41 @@ export function SlideDeckCanvas({
           >
             <ul className="space-y-2">
               {currentSlide.bullets.map((bullet, idx) => {
+                if (currentSlide.id === "p4" && idx === 2) {
+                  return (
+                    <li key={idx} className="min-w-0 pt-0.5">
+                      <div className="grid grid-cols-3 gap-1.5 text-[10px] sm:text-xs min-w-0">
+                        <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 flex flex-col justify-between min-w-0">
+                          <div className="flex items-center gap-1 font-bold text-[var(--foreground)] truncate">
+                            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#D97706] shrink-0" />
+                            <span>Katoda</span>
+                          </div>
+                          <p className="mt-0.5 text-[9px] text-[var(--text-secondary)] leading-tight">
+                            Plat Cu aktif, reduksi deposit Sn–Bi
+                          </p>
+                        </div>
+                        <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 flex flex-col justify-between min-w-0">
+                          <div className="flex items-center gap-1 font-bold text-[var(--foreground)] truncate">
+                            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#334155] shrink-0" />
+                            <span>Anoda</span>
+                          </div>
+                          <p className="mt-0.5 text-[9px] text-[var(--text-secondary)] leading-tight">
+                            Batang C inert, oksidasi penutup arus
+                          </p>
+                        </div>
+                        <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 flex flex-col justify-between min-w-0">
+                          <div className="flex items-center gap-1 font-bold text-[var(--foreground)] truncate">
+                            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[var(--chart-navy)] shrink-0" />
+                            <span>Elektrolit</span>
+                          </div>
+                          <p className="mt-0.5 text-[9px] text-[var(--text-secondary)] leading-tight">
+                            Medium asam pH ~2, ion Sn²⁺ &amp; Bi³⁺
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                }
                 const isStepList = currentSlide.id === "p2";
                 return (
                   <li

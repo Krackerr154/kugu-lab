@@ -654,7 +654,7 @@ body:has(.m4-deck-fit) .app-shell {
   }
   .m4-deck-compact .m4-deck-split > * {
     max-height: 100%;
-    margin-top: 0;
+    margin-top: 0 !important;
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
