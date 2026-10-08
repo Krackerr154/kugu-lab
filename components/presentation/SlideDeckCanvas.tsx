@@ -371,7 +371,8 @@ export function SlideDeckCanvas({
               bullets and panel sit side by side. Portrait keeps the single
               column. The wrapper is always present; CSS decides the layout. */}
           <div className="m4-deck-split space-y-5 sm:space-y-6 min-w-0">
-          {/* Core Slide Takeaway Bullets Card */}
+          {/* Core Slide Takeaway Bullets Card (Omitted on dedicated full-diagram slides) */}
+          {currentSlide.embeddedComponent !== "potential-gap" && (
           <section
             aria-label="Poin utama materi"
             className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 bg-[var(--surface)] shadow-xs min-w-0"
@@ -437,6 +438,7 @@ export function SlideDeckCanvas({
               })}
             </ul>
           </section>
+          )}
 
           {/* Embedded Interactive Simulations / Panels based on active slide.
               Each is wrapped in .m4-deck-panel so it scrolls inside itself
@@ -449,13 +451,8 @@ export function SlideDeckCanvas({
           )}
 
           {currentSlide.embeddedComponent === "potential-gap" && (
-            <div className="space-y-2 min-w-0">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-                Diagram Interaktif Beda Potensial
-              </h2>
-              <div className="m4-deck-panel">
-                <SnBiPotentialGapDiagram />
-              </div>
+            <div className="m4-deck-panel min-w-0 h-full">
+              <SnBiPotentialGapDiagram />
             </div>
           )}
 

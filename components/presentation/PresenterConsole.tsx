@@ -238,10 +238,7 @@ export function PresenterConsole() {
             )}
 
             {currentSlide.embeddedComponent === "potential-gap" && (
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-                  Diagram Beda Potensial
-                </h3>
+              <div className="min-w-0">
                 <SnBiPotentialGapDiagram />
               </div>
             )}

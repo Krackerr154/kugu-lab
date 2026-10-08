@@ -2,85 +2,122 @@ import { ChemText } from "@/components/shared/ChemText";
 
 export function SnBiPotentialGapDiagram() {
   return (
-    <section
-      aria-labelledby="sn-bi-potential-gap-title"
+    <div
       data-potential-gap-diagram
-      className="m4-motion-enter rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-4 sm:p-5"
+      className="m4-motion-enter rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-2.5 sm:p-3 text-xs flex flex-col justify-between h-full"
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--muted)]">Peta potensial</p>
-          <h4
-            id="sn-bi-potential-gap-title"
-            className="mt-1 text-base font-bold text-[var(--primary)]"
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-          >
-            Selisih Potensial Menghambat Kodeposisi
-          </h4>
+      {/* Top Row: Reference + Gap Highlight */}
+      <div className="flex items-center justify-between px-1 mb-1.5 shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
+            Peta Potensial Reduksi Standar
+          </span>
+          <span className="rounded border border-[var(--outline-variant)] bg-[var(--surface-container-high)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--text-secondary)]">
+            E° vs SHE · 25 °C
+          </span>
         </div>
-        <span className="text-xs font-semibold text-[var(--text-secondary)]">E° vs SHE · 25 °C</span>
-      </div>
-
-      <div
-        role="img"
-        aria-label="Diagram potensial reduksi standar: Bi tiga plus per Bi pada plus 0,31 volt dan Sn dua plus per Sn pada minus 0,14 volt, berjarak sekitar 0,45 volt. EDTA dan sitrat menggeser potensial deposisi efektif ke rentang yang lebih berdekatan secara ilustratif sehingga kodeposisi lebih mungkin."
-        className="mt-4 rounded-lg bg-[var(--surface-container-low)] p-3 sm:p-4"
-      >
-        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--on-surface-variant)]">
-          Potensial reduksi standar
-        </p>
-        <div className="relative mt-2 h-32" aria-hidden="true">
-          <div className="absolute left-[8%] right-[8%] top-12 h-1 rounded-full bg-[var(--outline-variant)]" />
-
-          <div className="absolute left-[8%] top-10 h-5 w-px bg-[var(--outline)]" />
-          <div className="absolute left-[8%] top-[4.15rem] -translate-x-1/2 text-[10px] text-[var(--on-surface-variant)]">−0,30</div>
-          <div className="absolute left-1/2 top-10 h-5 w-px bg-[var(--outline)]" />
-          <div className="absolute left-1/2 top-[4.15rem] -translate-x-1/2 text-[10px] font-semibold text-[var(--on-surface-variant)]">0,00</div>
-          <div className="absolute right-[8%] top-10 h-5 w-px bg-[var(--outline)]" />
-          <div className="absolute right-[8%] top-[4.15rem] translate-x-1/2 text-[10px] text-[var(--on-surface-variant)]">+0,50 V</div>
-
-          <div className="absolute left-[25%] top-1 -translate-x-1/2 text-center">
-            <p className="text-xs font-bold text-[var(--chart-navy)]">Sn²⁺/Sn</p>
-            <p className="font-mono text-[11px] font-bold text-[var(--on-surface)]">−0,14 V</p>
-            <span className="mx-auto mt-1 block h-4 w-4 rounded-full border-2 border-[var(--on-surface)] bg-[var(--chart-navy)]" />
-          </div>
-          <div className="absolute left-[72%] top-1 -translate-x-1/2 text-center">
-            <p className="text-xs font-bold text-[var(--chart-gold)]">Bi³⁺/Bi</p>
-            <p className="font-mono text-[11px] font-bold text-[var(--on-surface)]">+0,31 V</p>
-            <span className="mx-auto mt-1 block h-4 w-4 rounded-full border-2 border-[var(--on-surface)] bg-[var(--chart-gold)]" />
-          </div>
-
-          {/* Potential gap bracket and label positioned cleanly below the ticks */}
-          <div className="absolute left-[25%] right-[28%] top-[5.6rem] border-t-2 border-[var(--secondary)]">
-            <span className="absolute left-1/2 top-1 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold text-[var(--secondary)]">
-              ΔE° ≈ 0,45 V
-            </span>
-          </div>
-        </div>
-        <div className="flex justify-between px-[8%] text-[10px] text-[var(--on-surface-variant)] mt-1">
-          <span>lebih sulit direduksi</span>
-          <span>lebih mudah direduksi</span>
-        </div>
-
-        <div className="mt-4 rounded-lg border border-[var(--secondary)]/40 bg-[var(--secondary-container)]/40 p-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--on-secondary-container)]">
-            Dengan pengompleks · arah pergeseran efektif
-          </p>
-          <div className="mt-2 flex items-center justify-between gap-2 text-xs text-[var(--on-surface)]">
-            <span className="font-semibold">Sn dan Bi</span>
-            <span aria-hidden="true" className="material-symbols-outlined text-lg text-[var(--primary-container)]">east</span>
-            <span className="rounded-md border border-[var(--secondary)]/60 bg-[var(--surface)] px-2 py-1 text-center font-semibold leading-tight">
-              rentang deposisi<br />lebih berdekatan
-            </span>
-            <span aria-hidden="true" className="material-symbols-outlined text-lg text-[var(--primary-container)]">east</span>
-            <span className="font-semibold text-right">kodeposisi<br />dapat terjadi</span>
-          </div>
+        <div className="flex items-center gap-1.5 font-bold text-[10px] text-[var(--secondary)]">
+          <span aria-hidden="true" className="inline-block h-2 w-2 rounded-full bg-[var(--secondary)]" />
+          <span>Gap Standar: ΔE° ≈ 0,45 V</span>
         </div>
       </div>
 
-      <p className="mt-3 text-xs leading-5 text-[var(--text-secondary)]">
-        <strong className="text-[var(--foreground)]">Inti:</strong> tanpa pengompleks, <ChemText>{"Bi^{3+}"}</ChemText> lebih mudah direduksi daripada <ChemText>{"Sn^{2+}"}</ChemText> sehingga lapisan awal cenderung kaya bismut. Nilai <em>0,31 V</em> dan <em>−0,14 V</em> adalah potensial reduksi standar; arah pergeseran dengan EDTA + sitrat bersifat konseptual, bukan angka efektif baru.
-      </p>
-    </section>
+      {/* Center: Deterministic SVG Potential Axis Box */}
+      <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-1.5 flex-1 flex flex-col justify-center min-h-0">
+        <svg
+          viewBox="0 0 600 100"
+          className="w-full h-auto max-h-[96px] select-none"
+          aria-hidden="true"
+        >
+          {/* Main axis horizontal line */}
+          <line
+            x1="50"
+            y1="52"
+            x2="550"
+            y2="52"
+            stroke="var(--outline-variant)"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+
+          {/* Ticks */}
+          {/* -0.30 V at x=60 */}
+          <line x1="60" y1="46" x2="60" y2="58" stroke="var(--outline)" strokeWidth="1.5" />
+          <text x="60" y="70" textAnchor="middle" fontSize="10" fontFamily="monospace" fill="var(--text-secondary)">
+            −0,30 V
+          </text>
+
+          {/* 0.00 V (SHE) at x=240 */}
+          <line x1="240" y1="44" x2="240" y2="60" stroke="var(--outline)" strokeWidth="2" />
+          <text x="240" y="70" textAnchor="middle" fontSize="10" fontWeight="bold" fontFamily="monospace" fill="var(--foreground)">
+            0,00 V (SHE)
+          </text>
+
+          {/* +0.50 V at x=540 */}
+          <line x1="540" y1="46" x2="540" y2="58" stroke="var(--outline)" strokeWidth="1.5" />
+          <text x="540" y="70" textAnchor="middle" fontSize="10" fontFamily="monospace" fill="var(--text-secondary)">
+            +0,50 V
+          </text>
+
+          {/* Sn2+/Sn marker at x=156 (-0.14 V) */}
+          <line x1="156" y1="28" x2="156" y2="52" stroke="var(--chart-navy)" strokeWidth="1.5" strokeDasharray="2 2" />
+          <circle cx="156" cy="52" r="5" fill="var(--chart-navy)" stroke="#FFFFFF" strokeWidth="1.5" />
+          <text x="156" y="16" textAnchor="middle" fontSize="12" fontWeight="bold" fill="var(--chart-navy)">
+            Sn²⁺/Sn
+          </text>
+          <text x="156" y="27" textAnchor="middle" fontSize="10" fontWeight="bold" fontFamily="monospace" fill="var(--foreground)">
+            −0,14 V
+          </text>
+
+          {/* Bi3+/Bi marker at x=426 (+0.31 V) */}
+          <line x1="426" y1="28" x2="426" y2="52" stroke="var(--chart-gold)" strokeWidth="1.5" strokeDasharray="2 2" />
+          <circle cx="426" cy="52" r="5" fill="var(--chart-gold)" stroke="#FFFFFF" strokeWidth="1.5" />
+          <text x="426" y="16" textAnchor="middle" fontSize="12" fontWeight="bold" fill="var(--chart-gold)">
+            Bi³⁺/Bi
+          </text>
+          <text x="426" y="27" textAnchor="middle" fontSize="10" fontWeight="bold" fontFamily="monospace" fill="var(--foreground)">
+            +0,31 V
+          </text>
+
+          {/* Bracket between Sn and Bi (from x=156 to x=426) */}
+          <path d="M 156 78 L 156 84 L 426 84 L 426 78" fill="none" stroke="var(--secondary)" strokeWidth="1.5" />
+          <rect x="235" y="76" width="112" height="16" rx="3" fill="var(--secondary-container)" stroke="var(--secondary)" strokeWidth="1" />
+          <text x="291" y="88" textAnchor="middle" fontSize="9.5" font-weight="bold" font-family="monospace" fill="var(--on-secondary-container)">
+            ΔE° ≈ 0,45 V (GAP)
+          </text>
+
+          {/* Qualitative directional arrows at bottom */}
+          <text x="60" y="94" textAnchor="start" fontSize="9" fill="var(--text-secondary)">
+            ← Lebih sulit direduksi
+          </text>
+          <text x="540" y="94" textAnchor="end" fontSize="9" fill="var(--text-secondary)">
+            Lebih mudah direduksi →
+          </text>
+        </svg>
+      </div>
+
+      {/* Bottom: 2 Comparative Takeaway Cards */}
+      <div className="mt-1.5 grid grid-cols-2 gap-2 text-[10px] shrink-0">
+        <div className="rounded-lg border border-[var(--error)]/30 bg-[var(--error-container)]/10 px-2.5 py-1.5 flex items-center gap-2">
+          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--error)] shrink-0" />
+          <div className="min-w-0">
+            <p className="font-bold text-[var(--error)] truncate">Tanpa Pengompleks (Garam Murni)</p>
+            <p className="text-[9px] text-[var(--text-secondary)] truncate">
+              Bi³⁺ jauh lebih mulia, tereduksi duluan; deposit tidak terbentuk paduan.
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-[var(--secondary)]/40 bg-[var(--secondary-container)]/20 px-2.5 py-1.5 flex items-center gap-2">
+          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--secondary)] shrink-0" />
+          <div className="min-w-0">
+            <p className="font-bold text-[var(--secondary)] truncate">Dengan Pengompleks (EDTA + Sitrat)</p>
+            <p className="text-[9px] text-[var(--text-secondary)] truncate">
+              Potensial efektif digeser berdekatan; kodeposisi Sn–Bi terjadi serentak.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
