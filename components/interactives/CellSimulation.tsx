@@ -16,6 +16,7 @@ interface CellSimulationProps {
   hotspot: (key: ComponentKey, label: string) => Record<string, unknown>;
   activeAgent: BathAgent;
   onAgentSelect: (agent: BathAgent) => void;
+  className?: string;
 }
 
 const metalTone = (species: "bi" | "sn") => species === "bi" ? "var(--chart-gold)" : "var(--chart-navy)";
@@ -31,12 +32,12 @@ const ELECTRONS = [
   { id: "e-down-2", segment: "down", offset: 0.8 },
 ];
 
-export function CellSimulation({ frame, running, focus, selected, hotspot, activeAgent, onAgentSelect }: CellSimulationProps) {
+export function CellSimulation({ frame, running, focus, selected, hotspot, activeAgent, onAgentSelect, className }: CellSimulationProps) {
   const clipId = useId();
   return (
     <svg
       viewBox="0 0 300 225"
-      className={`w-full ${running ? "" : "m3-sim-paused"}`}
+      className={className ?? `w-full ${running ? "" : "m3-sim-paused"}`}
       data-testid="m3-cell-scene"
       aria-label="Diagram sel elektrodeposisi: sumber DC dengan terminal positif ke elektroda karbon dan terminal negatif ke katoda tembaga; elektron mengalir dari anoda melalui sumber DC menuju katoda. Setiap komponen dapat dipilih untuk penjelasan."
     >
@@ -115,9 +116,9 @@ export function CellSimulation({ frame, running, focus, selected, hotspot, activ
   );
 }
 
-export function CathodeCloseUp({ frame, focus, activeAgent }: { frame: CellFrame; focus: ReactionFocus; activeAgent: BathAgent }) {
+export function CathodeCloseUp({ frame, focus, activeAgent, className = "w-full" }: { frame: CellFrame; focus: ReactionFocus; activeAgent: BathAgent; className?: string }) {
   return (
-    <svg viewBox="0 0 300 240" className="w-full" role="img" aria-label="Pembesaran katoda: spesi logam mendekati permukaan, menerima elektron, lalu tertinggal sebagai partikel logam. Skema bukan kisi kristal.">
+    <svg viewBox="0 0 300 240" className={className} role="img" aria-label="Pembesaran katoda: spesi logam mendekati permukaan, menerima elektron, lalu tertinggal sebagai partikel logam. Skema bukan kisi kristal.">
       <rect x="10" y="30" width="230" height="190" rx="4" fill="var(--surface-container)" />
       <rect x="240" y="30" width="48" height="190" fill="var(--surface-variant)" stroke="var(--outline)" />
       <text x="25" y="20" fontSize="11" fill="var(--on-surface-variant)">Larutan</text>

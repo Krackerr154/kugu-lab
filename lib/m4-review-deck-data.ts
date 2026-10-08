@@ -3,6 +3,7 @@ import type { M3StageId, ReviewSlideId } from "@/lib/m3-presentation";
 export type EmbeddedComponentType =
   | "electrodeposition-diagram"
   | "potential-gap"
+  | "complexing-effect"
   | "electrolyte-function"
   | "cell-explorer"
   | "data-entry"
@@ -163,6 +164,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     ],
     script:
       "Agen pengompleks bertindak sebagai penyeimbang termodinamika. EDTA dan sitrat mengikat ion bismut lebih kuat dan menarik potensial reduksi efektifnya mendekati timah sehingga keduanya dapat mengendap serentak.",
+    embeddedComponent: "complexing-effect",
     rubric: {
       code: "f.2",
       label: "Peran Agen Pengompleks",
