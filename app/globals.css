@@ -721,19 +721,19 @@ body:has(.m4-deck-fit) .app-shell {
   }
 
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets ul:has(> li:nth-child(4)) li {
-    font-size: clamp(0.8125rem, 3.6vh, 0.9375rem);
+    font-size: clamp(0.8125rem, 3.6vh, 0.90625rem);
     line-height: 1.4;
   }
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets ul:has(> li:nth-child(4)) {
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
 
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets ul:has(> li:nth-child(5)) li {
-    font-size: clamp(0.8125rem, 3.6vh, 0.875rem);
-    line-height: 1.4;
+    font-size: clamp(0.9375rem, 4vh, 1.03125rem);
+    line-height: 1.45;
   }
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets ul:has(> li:nth-child(5)) {
-    gap: 0.45rem;
+    gap: clamp(0.65rem, 2.6vh, 0.85rem);
   }
 
   /* Two-column slides share width with an embedded interactive panel:

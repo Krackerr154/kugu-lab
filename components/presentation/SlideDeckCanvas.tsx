@@ -34,7 +34,7 @@ function formatBulletText(text: string) {
     const rest = text.slice(colonIdx + 1).trim();
     return (
       <div className="flex items-start gap-1.5 sm:gap-2 min-w-0 flex-1">
-        <span className="inline-flex items-baseline justify-between w-28 sm:w-32 shrink-0 font-semibold text-[var(--foreground)]">
+        <span className="inline-flex items-baseline justify-between w-32 sm:w-40 shrink-0 font-semibold text-[var(--foreground)]">
           <span>{prefix}</span>
           <span className="text-[var(--muted)]">:</span>
         </span>
@@ -386,7 +386,7 @@ export function SlideDeckCanvas({
                     {isStepList && idx < currentSlide.bullets.length - 1 && (
                       <span
                         aria-hidden="true"
-                        className="absolute left-2.5 top-5 bottom-0 w-px bg-[var(--outline-variant)] -mb-2"
+                        className="absolute left-2.5 top-5 -bottom-2.5 w-px bg-[var(--outline-variant)]"
                       />
                     )}
                     <span
