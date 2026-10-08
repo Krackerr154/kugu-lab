@@ -99,8 +99,12 @@ export function SlideDeckCanvas({
   // In a guided session, students can only read back up to the presenter's
   // current slide. When studying solo (no presenter active), allow navigating
   // freely across all slides.
-  const presenterIdx = presenterSlideId ? deckSlideIndex(presenterSlideId) : TOTAL_REVIEW_DECK_SLIDES - 1;
-  const isDrifted = presenterSlideId !== null && presenterSlideId !== viewingId;
+  const isFollowing = (role === "following" || role === "presenting") && status === "following" && !presentation?.ended;
+  const presenterIdx =
+    isFollowing && presenterSlideId && deckSlideIndex(presenterSlideId) >= 0
+      ? deckSlideIndex(presenterSlideId)
+      : TOTAL_REVIEW_DECK_SLIDES - 1;
+  const isDrifted = isFollowing && presenterSlideId !== null && presenterSlideId !== viewingId;
 
   // Restart the enter animation on every swap. React reuses the same DOM node
   // across slides, so swapping the class alone would not replay it; and we
