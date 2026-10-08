@@ -13,6 +13,7 @@ import { REVIEW_CHAPTERS } from "@/lib/m4-review-slides";
 import { ElectrodepositionDiagram } from "@/components/interactives/ElectrodepositionDiagram";
 import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotentialGapDiagram";
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
+import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
 import { ElectrolyteFunctionCard } from "@/components/interactives/ElectrolyteFunctionCard";
 import { ElectrochemicalCellExplorer } from "@/components/interactives/ElectrochemicalCellExplorer";
 import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
@@ -247,6 +248,12 @@ export function PresenterConsole() {
             {currentSlide.embeddedComponent === "complexing-effect" && (
               <div className="min-w-0">
                 <ComplexingEffectWorkbench />
+              </div>
+            )}
+
+            {currentSlide.embeddedComponent === "electrolyte-solutions" && (
+              <div className="min-w-0">
+                <ElectrolyteSolutionsCards />
               </div>
             )}
 

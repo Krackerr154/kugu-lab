@@ -41,7 +41,7 @@ test("designated interactive components are correctly mapped to slides", () => {
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p6.embeddedComponent, "complexing-effect");
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p6.rubric?.code, "f.2");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.embeddedComponent, "electrolyte-function");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.embeddedComponent, "electrolyte-solutions");
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.initialView, "solutions");
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p7.rubric?.code, "f.2");
 

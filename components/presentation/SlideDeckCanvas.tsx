@@ -12,6 +12,7 @@ import {
 import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotentialGapDiagram";
 import { ElectrodepositionDiagram } from "@/components/interactives/ElectrodepositionDiagram";
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
+import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
 import { ElectrolyteFunctionCard } from "@/components/interactives/ElectrolyteFunctionCard";
 import { ElectrochemicalCellExplorer } from "@/components/interactives/ElectrochemicalCellExplorer";
 import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
@@ -373,7 +374,9 @@ export function SlideDeckCanvas({
               column. The wrapper is always present; CSS decides the layout. */}
           <div className="m4-deck-split space-y-5 sm:space-y-6 min-w-0">
           {/* Core Slide Takeaway Bullets Card (Omitted on dedicated full-diagram slides) */}
-          {currentSlide.embeddedComponent !== "potential-gap" && currentSlide.embeddedComponent !== "complexing-effect" && (
+          {currentSlide.embeddedComponent !== "potential-gap" &&
+           currentSlide.embeddedComponent !== "complexing-effect" &&
+           currentSlide.embeddedComponent !== "electrolyte-solutions" && (
           <section
             aria-label="Poin utama materi"
             className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 bg-[var(--surface)] shadow-xs min-w-0"
@@ -460,6 +463,12 @@ export function SlideDeckCanvas({
           {currentSlide.embeddedComponent === "complexing-effect" && (
             <div className="m4-deck-panel min-w-0 h-full">
               <ComplexingEffectWorkbench />
+            </div>
+          )}
+
+          {currentSlide.embeddedComponent === "electrolyte-solutions" && (
+            <div className="m4-deck-panel min-w-0 h-full w-full">
+              <ElectrolyteSolutionsCards />
             </div>
           )}
 

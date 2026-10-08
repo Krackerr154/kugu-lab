@@ -779,6 +779,9 @@ body:has(.m4-deck-fit) .app-shell {
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-bullets)) [data-complexing-effect-workbench] {
     padding-right: clamp(0.75rem, 2vw, 1.125rem);
   }
+  .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-bullets)) [data-electrolyte-solutions-cards] {
+    padding-right: clamp(2.5rem, 5.5vw, 2.85rem);
+  }
   .m4-deck-compact .m4-deck-bullets .m4-deck-bullet-badge {
     /* Step and checkmark badges maintain strict 20px box */
     height: 1.25rem;

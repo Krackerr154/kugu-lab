@@ -4,6 +4,7 @@ export type EmbeddedComponentType =
   | "electrodeposition-diagram"
   | "potential-gap"
   | "complexing-effect"
+  | "electrolyte-solutions"
   | "electrolyte-function"
   | "cell-explorer"
   | "data-entry"
@@ -185,7 +186,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     ],
     script:
       "Ini pertanyaan yang hampir selalu diujikan dan wajib ada di laporan: Larutan A untuk persiapan pengompleks EDTA, Larutan B sebagai sumber ion logam, dan Larutan C sebagai pengompleks pendamping serta penyangga.",
-    embeddedComponent: "electrolyte-function",
+    embeddedComponent: "electrolyte-solutions",
     initialView: "solutions",
     rubric: {
       code: "f.2",
