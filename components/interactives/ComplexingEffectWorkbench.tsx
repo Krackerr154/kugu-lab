@@ -31,6 +31,7 @@ export function ComplexingEffectWorkbench() {
     complexed?: boolean;
     view?: "closeup" | "cell";
     mode?: "alloy" | "dendrite";
+    peg?: boolean;
   }) => {
     if (!isPresenter || !presentation?.presentSimState) return;
     presentation.presentSimState({
@@ -39,6 +40,7 @@ export function ComplexingEffectWorkbench() {
       complexed: next.complexed !== undefined ? next.complexed : complexed,
       view: next.view !== undefined ? next.view : view,
       mode: next.mode !== undefined ? next.mode : mode,
+      peg: next.peg !== undefined ? next.peg : peg,
     });
   };
 
@@ -49,6 +51,9 @@ export function ComplexingEffectWorkbench() {
     setView(remoteSimState.view);
     if (remoteSimState.mode) {
       setMode(remoteSimState.mode);
+    }
+    if (remoteSimState.peg !== undefined) {
+      setPeg(remoteSimState.peg);
     }
     if (!remoteSimState.playing || Math.abs(remoteSimState.time - timeRef.current) > 0.5) {
       timeRef.current = clampTime(remoteSimState.time);
@@ -89,13 +94,14 @@ export function ComplexingEffectWorkbench() {
             complexed,
             view,
             mode,
+            peg,
           });
         }
       }
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [advancing, isPresenter, presentation, complexed, view, mode]);
+  }, [advancing, isPresenter, presentation, complexed, view, mode, peg]);
 
   const seek = (next: number) => {
     const clamped = clampTime(next);
@@ -120,6 +126,13 @@ export function ComplexingEffectWorkbench() {
     setMode(nextMode);
     if (isPresenter) {
       broadcastSim({ mode: nextMode });
+    }
+  };
+
+  const handleSetPeg = (nextPeg: boolean) => {
+    setPeg(nextPeg);
+    if (isPresenter) {
+      broadcastSim({ peg: nextPeg, mode: "dendrite" });
     }
   };
 
@@ -237,7 +250,7 @@ export function ComplexingEffectWorkbench() {
               <>
                 <button
                   type="button"
-                  onClick={() => setPeg(false)}
+                  onClick={() => handleSetPeg(false)}
                   className={`rounded px-1.5 py-0.5 font-bold transition-colors ${
                     !peg
                       ? "bg-[var(--surface)] text-[#7c3aed] shadow-xs"
@@ -248,7 +261,7 @@ export function ComplexingEffectWorkbench() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPeg(true)}
+                  onClick={() => handleSetPeg(true)}
                   className={`rounded px-1.5 py-0.5 font-bold transition-colors ${
                     peg
                       ? "bg-[var(--surface)] text-[var(--secondary)] shadow-xs"

@@ -11,6 +11,7 @@ export interface M3SimState {
   complexed: boolean;
   view: 'closeup' | 'cell';
   mode?: 'alloy' | 'dendrite';
+  peg?: boolean;
 }
 export interface M3PresentationState {
   version: 1;

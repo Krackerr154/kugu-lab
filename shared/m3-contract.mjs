@@ -33,6 +33,7 @@ function coerceSimState(input) {
   if (typeof input.time !== 'number' || !Number.isFinite(input.time) || input.time < 0 || input.time > 100) return null;
   if (input.view !== 'closeup' && input.view !== 'cell') return null;
   if (input.mode !== undefined && input.mode !== 'alloy' && input.mode !== 'dendrite') return null;
+  if (input.peg !== undefined && typeof input.peg !== 'boolean') return null;
   const result = {
     playing: input.playing,
     time: Math.round(input.time * 10) / 10,
@@ -41,6 +42,9 @@ function coerceSimState(input) {
   };
   if (input.mode !== undefined) {
     result.mode = input.mode;
+  }
+  if (input.peg !== undefined) {
+    result.peg = input.peg;
   }
   return result;
 }
