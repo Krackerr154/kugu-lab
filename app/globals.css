@@ -788,14 +788,23 @@ body:has(.m4-deck-fit) .app-shell {
     display: none;
   }
 
-  /* Fixed FAB speed dial anchored at bottom-right corner, 10px above next slide arrow */
+  /* Compact 28px FAB speed dial anchored at bottom-right corner, 10px above next slide arrow */
   [data-deck-action-dial] {
     position: fixed !important;
-    bottom: 2.75rem !important;
+    bottom: 2.5rem !important;
     right: 0.75rem !important;
     left: auto !important;
     top: auto !important;
     z-index: 40 !important;
+  }
+  [data-deck-action-dial] > button[aria-haspopup="menu"] {
+    height: 1.75rem !important;
+    width: 1.75rem !important;
+    min-height: 1.75rem !important;
+    min-width: 1.75rem !important;
+  }
+  [data-deck-action-dial] > button[aria-haspopup="menu"] span {
+    font-size: 1rem !important;
   }
 }
 
