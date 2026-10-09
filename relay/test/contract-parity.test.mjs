@@ -16,7 +16,7 @@ const CASES = [
   // Review-session additions.
   { version: 1, stageId: 'brief', slideId: 'p1' },
   { version: 1, stageId: 'understand', slideId: 'p7' },
-  { version: 1, stageId: 'prove', slideId: 'p13', phase: 'review', dataSetId: 'abc12345' },
+  { version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'abc12345' },
   { version: 1, stageId: 'ready', phase: 'games' },
   // Rejections.
   { version: 1, stageId: 'brief', slideId: 'p7' },      // slide/chapter mismatch
@@ -45,6 +45,6 @@ test('new optional fields are stripped when absent and preserved when valid', ()
   assert.equal('phase' in minimal, false);
   assert.equal('dataSetId' in minimal, false);
 
-  const full = appCoerce({ version: 1, stageId: 'prove', slideId: 'p12', phase: 'review', dataSetId: 'DS_123456' });
-  assert.deepEqual(full, { version: 1, stageId: 'prove', slideId: 'p12', phase: 'review', dataSetId: 'DS_123456' });
+  const full = appCoerce({ version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'DS_123456' });
+  assert.deepEqual(full, { version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'DS_123456' });
 });

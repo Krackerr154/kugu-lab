@@ -6,8 +6,6 @@ export type EmbeddedComponentType =
   | "complexing-effect"
   | "electrolyte-solutions"
   | "faraday-calculation"
-  | "data-entry"
-  | "data-chart"
   | "report-format"
   | "games";
 
@@ -216,120 +214,10 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
       points: 15,
     },
   },
-  {
-    id: "p9",
-    chapter: "prove",
-    chapterLabel: "Pengolahan Data",
-    label: "Data kelompok",
-    title: "Data Kelompok",
-    kind: "data",
-    bullets: [
-      "Input data eksperimen 3 kelompok praktikan: Arus (I), Waktu (t), Massa sebelum (m₁), dan Massa sesudah (m₂).",
-      "Massa aktual dihitung dari selisih: m_aktual = m₂ − m₁.",
-      "Perhitungan efisiensi arus dilakukan secara otomatis oleh sistem untuk perbandingan kelas.",
-    ],
-    script:
-      "Sekarang kita kumpulkan angka pengamatan dari masing-masing kelompok meja praktikum: nilai arus, durasi deposisi, dan massa sebelum serta sesudah pelapisan.",
-    embeddedComponent: "data-entry",
-    rubric: {
-      code: "d",
-      label: "Data Pengamatan Laboratorium",
-      points: 15,
-    },
-  },
-  {
-    id: "p10",
-    chapter: "prove",
-    chapterLabel: "Pengolahan Data",
-    label: "Efisiensi kelas",
-    title: "Efisiensi Arus Kelompok",
-    kind: "data",
-    bullets: [
-      "Distribusi grafik efisiensi arus antar kelompok terhadap garis batas referensi 100%.",
-      "Kelompok dengan efisiensi wajar (< 100%): Arus terbagi dengan reaksi samping evolusi hidrogen.",
-      "Kelompok dengan efisiensi anomali (> 100%): Indikasi galat penimbangan, pencucian kurang bersih, atau oksidasi.",
-    ],
-    script:
-      "Mari kita amati bersama grafik sebaran efisiensi arus kelas. Perhatikan ada kelompok yang berada di bawah 100% dan mungkin ada yang melebihi 100%. Masing-masing memiliki penjelasan ilmiah yang berbeda.",
-    pedagogicalNotes:
-      "Bahas kedua skenario secara netral: efisiensi < 100% adalah fenomena elektrokimia nyata, sedangkan > 100% adalah diagnostik eksperimental.",
-    embeddedComponent: "data-chart",
-    rubric: {
-      code: "f.4",
-      label: "Analisis Efisiensi Arus",
-      points: 35,
-    },
-  },
-  {
-    id: "p11",
-    chapter: "prove",
-    chapterLabel: "Pengolahan Data",
-    label: "H₂ samping",
-    title: "Reaksi Samping Hidrogen",
-    kind: "content",
-    bullets: [
-      "Dalam medium elektrolit asam (pH ~2), kation H⁺ juga mengalami reduksi di katoda: 2H⁺ + 2e⁻ → H₂(g).",
-      "Reaksi evolusi hidrogen (HER) mengonsumsi sebagian arus listrik DC yang dialirkan.",
-      "Akibatnya, tidak seluruh muatan listrik dipakai untuk mengendapkan kation logam Sn²⁺ dan Bi³⁺.",
-      "Efisiensi arus di bawah 100% (misal 70%–90%) adalah hal yang wajar dan sesuai dengan teori.",
-    ],
-    script:
-      "Jika efisiensi kelompok kalian di kisaran 70% sampai 90%, kalian tidak salah. Sebagian elektron dipakai untuk mereduksi ion H⁺ menjadi gelembung gas hidrogen, sehingga efisiensi pelapisan logam memang di bawah 100%.",
-    rubric: {
-      code: "f.4",
-      label: "Reaksi Samping & Kompetisi Katodik",
-      points: 35,
-    },
-  },
-  {
-    id: "p12",
-    chapter: "prove",
-    chapterLabel: "Pengolahan Data",
-    label: ">100%",
-    title: "Bila Hasil Melebihi 100%",
-    kind: "content",
-    bullets: [
-      "Hukum kekekalan massa dan Faraday menyatakan efisiensi nyata tidak mungkin melebihi 100%.",
-      "Penyebab 1: Pencucian deposit kurang bersih sehingga garam elektrolit masih menempel dan mengkristal.",
-      "Penyebab 2: Pengeringan katoda belum tuntas saat ditimbang, atau terjadi oksidasi permukaan logam.",
-      "Penyebab 3: Asumsi valensi atau rasio stoikiometri yang digunakan dalam rumus belum sesuai komposisi aktual.",
-    ],
-    script:
-      "Bila hasil perhitungan efisiensi kelompok kalian di atas 100%, jangan bangga dan jangan panik. Nilai di atas 100% adalah alat diagnostik bahwa ada sisa garam yang belum terbilas bersih atau plat masih lembab saat ditimbang.",
-    pedagogicalNotes:
-      "Tekankan bahwa angka > 100% bukan tanda keberhasilan melainkan tanda galat eksperimen yang harus dibahas secara kritis pada laporan.",
-    rubric: {
-      code: "f.4 & h",
-      label: "Evaluasi Galat & Kesimpulan",
-      points: 35,
-    },
-  },
-  {
-    id: "p13",
-    chapter: "prove",
-    chapterLabel: "Pengolahan Data",
-    label: "Asumsi Sn–Bi",
-    title: "Asumsi yang Harus Dikonfirmasi",
-    kind: "content",
-    bullets: [
-      "Penuntun praktikum tidak menetapkan rasio stoikiometri deposit Sn dan Bi secara pasti tanpa uji XRD/EDX.",
-      "Perhitungan contoh menggunakan asumsi pendekatan Sn²⁺ murni (n = 2, M = 118,71 g/mol).",
-      "Pada laporan resmi, mahasiswa wajib menuliskan asumsi valensi atau rasio komposisi yang disepakati bersama asisten.",
-    ],
-    script:
-      "Poin penting untuk laporan: jangan mengarang rasio komposisi paduan. Tuliskan secara jujur asumsi apa yang kalian gunakan — misalnya asumsi Sn²⁺ atau rasio perkiraan — dan diskusikan keterbatasannya.",
-    pedagogicalNotes:
-      "Contoh perhitungan protokol: I = 0,058 A, t = 900 s (Q = 52,2 C) menghasilkan m_teoritis = 0,0321 g pada asumsi Sn²⁺. Bila m_aktual = 0,0280 g maka efisiensi ≈ 87,19%.",
-    rubric: {
-      code: "f.4 & h",
-      label: "Batas Asumsi Stoikiometri",
-      points: 35,
-    },
-  },
 
   // ── BAB 4: FORMAT LAPORAN & PENUTUP ────────────────────────────────────────
   {
-    id: "p14",
+    id: "p9",
     chapter: "ready",
     chapterLabel: "Format Laporan",
     label: "Format laporan",
@@ -350,7 +238,7 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     },
   },
   {
-    id: "p15",
+    id: "p10",
     chapter: "ready",
     chapterLabel: "Format Laporan",
     label: "Penutup",

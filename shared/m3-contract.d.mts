@@ -3,8 +3,7 @@ export type M3FocusId = 'cell-map' | 'complexing-agents' | 'calculator';
 export type M3DemoAgentId = 'edta' | 'citrate' | 'peg400';
 export type M3DemoOverlay = { kind: 'complexing-agent'; id: M3DemoAgentId } | null;
 export type ReviewSlideId =
-  | 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'p6' | 'p7' | 'p8' | 'p9' | 'p10'
-  | 'p11' | 'p12' | 'p13' | 'p14' | 'p15';
+  | 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'p6' | 'p7' | 'p8' | 'p9' | 'p10';
 export type ReviewPhase = 'review' | 'games';
 export interface M3PresentationState {
   version: 1;

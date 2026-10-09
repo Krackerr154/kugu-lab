@@ -45,17 +45,12 @@ export const REVIEW_SLIDES: readonly ReviewSlide[] = [
 
   // ── PENGOLAHAN DATA ──────────────────────────────────────────────────────
   { id: "p8", chapter: "prove", label: "Rumus", title: "Dari Arus ke Massa ke Efisiensi", kind: "content", anchor: "review-formulas", rubric: "e" },
-  { id: "p9", chapter: "prove", label: "Data kelompok", title: "Data Kelompok", kind: "data", rubric: "d" },
-  { id: "p10", chapter: "prove", label: "Efisiensi kelas", title: "Efisiensi Arus Kelompok", kind: "data", rubric: "f.4" },
-  { id: "p11", chapter: "prove", label: "H₂ samping", title: "Reaksi Samping Hidrogen", kind: "content", anchor: "review-efficiency-notes", rubric: "f.4" },
-  { id: "p12", chapter: "prove", label: ">100%", title: "Bila Hasil Melebihi 100%", kind: "content", anchor: "review-efficiency-notes", rubric: "f.4, h" },
-  { id: "p13", chapter: "prove", label: "Asumsi Sn–Bi", title: "Asumsi yang Harus Dikonfirmasi", kind: "content", anchor: "review-assumptions", rubric: "f.4, h" },
 
   // ── FORMAT LAPORAN ───────────────────────────────────────────────────────
-  { id: "p14", chapter: "ready", label: "Format laporan", title: "Format & Rubrik Laporan (100 Poin)", kind: "content", anchor: "review-report-format", rubric: "seluruh" },
+  { id: "p9", chapter: "ready", label: "Format laporan", title: "Format & Rubrik Laporan (100 Poin)", kind: "content", anchor: "review-report-format", rubric: "seluruh" },
 
   // ── PENUTUP ──────────────────────────────────────────────────────────────
-  { id: "p15", chapter: "ready", label: "Penutup", title: "Selesai Review — Lanjut Games", kind: "closing" },
+  { id: "p10", chapter: "ready", label: "Penutup", title: "Selesai Review — Lanjut Games", kind: "closing" },
 ] as const;
 
 export const REVIEW_SLIDE_BY_ID: Readonly<Record<ReviewSlideId, ReviewSlide>> =

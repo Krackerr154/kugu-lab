@@ -14,7 +14,6 @@ import { ElectrodepositionDiagram } from "@/components/interactives/Electrodepos
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
 import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
 import { FaradayCalculationCards } from "@/components/interactives/FaradayCalculationCards";
-import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
 import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
 import { ReviewGames } from "@/components/shared/ReviewGames";
 import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
@@ -479,35 +478,6 @@ export function SlideDeckCanvas({
           {currentSlide.embeddedComponent === "faraday-calculation" && (
             <div className="m4-deck-panel min-w-0 h-full w-full">
               <FaradayCalculationCards />
-            </div>
-          )}
-
-          {currentSlide.embeddedComponent === "data-entry" && (
-            <div className="rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-5 text-center space-y-3 min-w-0">
-              <span aria-hidden="true" className="material-symbols-outlined text-4xl text-[var(--primary-container)]">
-                hourglass_top
-              </span>
-              <h2 className="text-base font-bold text-[var(--foreground)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-                Pengumpulan Data Eksperimen Kelas
-              </h2>
-              <p className="max-w-md mx-auto text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-                Asisten praktikum sedang menginput data penimbangan dari masing-masing kelompok meja kerja. Grafik perbandingan efisiensi arus akan segera ditampilkan secara langsung.
-              </p>
-            </div>
-          )}
-
-          {currentSlide.embeddedComponent === "data-chart" && (
-            <div className="rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-4 sm:p-5 space-y-4 min-w-0">
-              <h2 className="text-sm font-bold text-[var(--foreground)]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-                Grafik Perbandingan Efisiensi Arus Antar Kelompok
-              </h2>
-              {dataSetId ? (
-                <ReviewDataChart dataSetId={dataSetId} />
-              ) : (
-                <p className="text-xs text-[var(--muted)] text-center py-4">
-                  Menunggu asisten mempublikasikan data hasil perhitungan kelompok…
-                </p>
-              )}
             </div>
           )}
 

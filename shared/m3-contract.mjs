@@ -19,8 +19,8 @@ export const M3_PRESENTATION_VERSION = 1;
 export const REVIEW_SLIDE_CHAPTER = Object.freeze({
   p1: 'brief', p2: 'brief',
   p3: 'understand', p4: 'understand', p5: 'understand', p6: 'understand', p7: 'understand',
-  p8: 'prove', p9: 'prove', p10: 'prove', p11: 'prove', p12: 'prove', p13: 'prove',
-  p14: 'ready', p15: 'ready',
+  p8: 'prove',
+  p9: 'ready', p10: 'ready',
 });
 export const REVIEW_SLIDE_IDS = Object.freeze(Object.keys(REVIEW_SLIDE_CHAPTER));
 export const REVIEW_PHASES = Object.freeze(['review', 'games']);

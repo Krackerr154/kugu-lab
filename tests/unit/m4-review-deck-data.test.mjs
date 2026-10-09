@@ -7,9 +7,9 @@ import {
 } from "../../lib/m4-review-deck-data.ts";
 import { REVIEW_SLIDE_IDS, REVIEW_SLIDE_CHAPTER } from "../../shared/m3-contract.mjs";
 
-test("review deck contains exactly 15 slides matching contract allowlist", () => {
-  assert.equal(TOTAL_REVIEW_DECK_SLIDES, 15);
-  assert.equal(REVIEW_DECK_SLIDES.length, 15);
+test("review deck contains exactly 10 slides matching contract allowlist", () => {
+  assert.equal(TOTAL_REVIEW_DECK_SLIDES, 10);
+  assert.equal(REVIEW_DECK_SLIDES.length, 10);
 
   const ids = REVIEW_DECK_SLIDES.map((s) => s.id);
   assert.deepEqual(ids, [...REVIEW_SLIDE_IDS]);
@@ -48,16 +48,9 @@ test("designated interactive components are correctly mapped to slides", () => {
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.embeddedComponent, "faraday-calculation");
   assert.equal(REVIEW_DECK_SLIDE_BY_ID.p8.rubric?.code, "e");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.kind, "data");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.embeddedComponent, "data-entry");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.embeddedComponent, "report-format");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p9.rubric?.code, "seluruh");
 
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.kind, "data");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.embeddedComponent, "data-chart");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.rubric?.code, "f.4");
-
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p14.embeddedComponent, "report-format");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p14.rubric?.code, "seluruh");
-
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p15.kind, "closing");
-  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p15.embeddedComponent, "games");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.kind, "closing");
+  assert.equal(REVIEW_DECK_SLIDE_BY_ID.p10.embeddedComponent, "games");
 });
