@@ -32,12 +32,17 @@ function coerceSimState(input) {
   if (typeof input.complexed !== 'boolean') return null;
   if (typeof input.time !== 'number' || !Number.isFinite(input.time) || input.time < 0 || input.time > 100) return null;
   if (input.view !== 'closeup' && input.view !== 'cell') return null;
-  return {
+  if (input.mode !== undefined && input.mode !== 'alloy' && input.mode !== 'dendrite') return null;
+  const result = {
     playing: input.playing,
     time: Math.round(input.time * 10) / 10,
     complexed: input.complexed,
     view: input.view,
   };
+  if (input.mode !== undefined) {
+    result.mode = input.mode;
+  }
+  return result;
 }
 
 export function coercePresentationState(input) {

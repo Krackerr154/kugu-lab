@@ -10,6 +10,7 @@ export interface M3SimState {
   time: number;
   complexed: boolean;
   view: 'closeup' | 'cell';
+  mode?: 'alloy' | 'dendrite';
 }
 export interface M3PresentationState {
   version: 1;
