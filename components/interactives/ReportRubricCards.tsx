@@ -30,7 +30,8 @@ const SECTIONS: RubricSection[] = [
     items: [
       { code: "a", label: "Sampul Depan (Identitas & Logo)", points: "5 pt", dotColor: "#64748b" },
       { code: "b", label: "Judul Modul (Sesuai Penuntun)", points: "5 pt", dotColor: "#64748b" },
-      { code: "c", label: "Tujuan Praktikum (Spesifik)", points: "10 pt", dotColor: "#0284c7" },
+      { code: "c", label: "Tujuan Praktikum (Spesifik)", points: "5 pt", dotColor: "#0284c7" },
+      { code: "d", label: "Hipotesis / Prinsip Reaksi", points: "5 pt", dotColor: "#0284c7" },
     ],
   },
   {

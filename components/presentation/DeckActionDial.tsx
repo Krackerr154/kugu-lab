@@ -143,7 +143,7 @@ export function DeckActionDial({
       ref={rootRef}
       data-deck-action-dial
       data-deck-dial-open={open ? "true" : "false"}
-      className="fixed bottom-[5.5rem] right-3 z-40 flex flex-col items-end gap-2 sm:bottom-20 sm:right-4"
+      className="relative inline-flex items-center"
     >
       {/* Items stack above the trigger, per the vertical speed-dial arrangement.
           Removed from the a11y tree while closed so it is not a hidden tab stop. */}
@@ -158,7 +158,9 @@ export function DeckActionDial({
         // tree and not focusable, but still focusable the moment it opens.
         inert={!open}
         onKeyDown={onMenuKeyDown}
-        className={`flex flex-col items-end gap-2 ${open ? "" : "pointer-events-none invisible"}`}
+        className={`absolute bottom-10 right-0 z-50 flex flex-col items-end gap-1.5 min-w-[12rem] ${
+          open ? "" : "pointer-events-none invisible"
+        }`}
       >
         <button
           type="button"
@@ -172,9 +174,9 @@ export function DeckActionDial({
                 : "Kembali ke slide asisten"
               : "Sudah berada di slide asisten"
           }
-          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--outline-variant)] bg-[var(--surface)] pl-3 pr-4 text-sm font-semibold text-[var(--primary-container)] shadow-lg hover:bg-[var(--surface-container)] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[var(--surface)]"
+          className="inline-flex min-h-9 items-center gap-2 rounded-full border border-[var(--outline-variant)] bg-[var(--surface)] pl-3 pr-4 text-xs font-semibold text-[var(--primary-container)] shadow-lg hover:bg-[var(--surface-container)] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-[var(--surface)] whitespace-nowrap"
         >
-          <span aria-hidden="true" className="material-symbols-outlined text-lg">
+          <span aria-hidden="true" className="material-symbols-outlined text-base">
             my_location
           </span>
           <span>Kembali ke Asisten</span>
@@ -185,9 +187,9 @@ export function DeckActionDial({
             type="button"
             role="menuitem"
             onClick={() => runAction(onExit)}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--outline-variant)] bg-[var(--surface)] pl-3 pr-4 text-sm font-semibold text-[var(--primary-container)] shadow-lg hover:bg-[var(--surface-container)]"
+            className="inline-flex min-h-9 items-center gap-2 rounded-full border border-[var(--outline-variant)] bg-[var(--surface)] pl-3 pr-4 text-xs font-semibold text-[var(--primary-container)] shadow-lg hover:bg-[var(--surface-container)] whitespace-nowrap"
           >
-            <span aria-hidden="true" className="material-symbols-outlined text-lg">
+            <span aria-hidden="true" className="material-symbols-outlined text-base">
               close
             </span>
             <span>{exitLabel}</span>
@@ -203,9 +205,9 @@ export function DeckActionDial({
         aria-controls={menuId}
         aria-label={open ? "Tutup menu aksi dek" : "Buka menu aksi dek"}
         onClick={() => setOpen((v) => !v)}
-        className="m4-motion-control flex h-14 w-14 items-center justify-center rounded-full bg-[var(--primary-container)] text-[var(--on-primary-container)] shadow-xl hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
+        className="m4-motion-control inline-flex min-h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--outline-variant)] text-[var(--primary-container)] hover:bg-[var(--surface-container)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
       >
-        <span aria-hidden="true" className="material-symbols-outlined text-2xl">
+        <span aria-hidden="true" className="material-symbols-outlined text-base">
           {open ? "close" : "more_vert"}
         </span>
       </button>
