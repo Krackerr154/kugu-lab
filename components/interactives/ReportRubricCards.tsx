@@ -120,7 +120,7 @@ export function ReportRubricCards() {
             <div className="text-[7.5px] font-bold uppercase tracking-wider text-[var(--muted)] mb-0.5">
               Komponen &amp; Bobot:
             </div>
-            <div className="space-y-0.5 min-w-0">
+            <div className={`space-y-0.5 min-w-0 ${sec.id === "data-closing" ? "pr-10" : ""}`}>
               {sec.items.map((item, idx) => (
                 <div
                   key={idx}

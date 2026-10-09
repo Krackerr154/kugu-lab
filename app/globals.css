@@ -787,6 +787,16 @@ body:has(.m4-deck-fit) .app-shell {
   .m4-deck-compact [data-connection-banner] {
     display: none;
   }
+
+  /* Fixed FAB speed dial anchored at bottom-right corner, 10px above next slide arrow */
+  [data-deck-action-dial] {
+    position: fixed !important;
+    bottom: 2.75rem !important;
+    right: 0.75rem !important;
+    left: auto !important;
+    top: auto !important;
+    z-index: 40 !important;
+  }
 }
 
 @keyframes m4-access-backdrop-enter {

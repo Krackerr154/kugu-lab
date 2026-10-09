@@ -561,23 +561,6 @@ export function SlideDeckCanvas({
                 chevron_right
               </span>
             </button>
-
-            {/* Deck actions (return to assistant, exit) live cleanly in the navigation bar */}
-            <DeckActionDial
-              onReturnToPresenter={returnToPresenter}
-              canReturnToPresenter={isDrifted}
-              driftLabel={
-                presenterSlideId ? `Slide ${viewingIdx + 1} (Asisten di Slide ${presenterIdx + 1})` : undefined
-              }
-              onExit={
-                onExit ??
-                (exitHref
-                  ? () => {
-                      window.location.href = exitHref;
-                    }
-                  : undefined)
-              }
-            />
           </div>
         </div>
       </footer>
@@ -586,6 +569,23 @@ export function SlideDeckCanvas({
           Mounted here (student canvas) rather than in PresenterConsole, so only
           students following on a phone see it. */}
       <OrientationNudge />
+
+      {/* Deck actions floating at bottom-right corner, a little bit above the arrow button */}
+      <DeckActionDial
+        onReturnToPresenter={returnToPresenter}
+        canReturnToPresenter={isDrifted}
+        driftLabel={
+          presenterSlideId ? `Slide ${viewingIdx + 1} (Asisten di Slide ${presenterIdx + 1})` : undefined
+        }
+        onExit={
+          onExit ??
+          (exitHref
+            ? () => {
+                window.location.href = exitHref;
+              }
+            : undefined)
+        }
+      />
     </div>
   );
 }
