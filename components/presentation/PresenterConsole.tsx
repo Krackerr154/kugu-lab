@@ -15,7 +15,7 @@ import { SnBiPotentialGapDiagram } from "@/components/interactives/SnBiPotential
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
 import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
 import { FaradayCalculationCards } from "@/components/interactives/FaradayCalculationCards";
-import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
+import { ReportRubricCards } from "@/components/interactives/ReportRubricCards";
 import { ReviewDataChart } from "@/components/shared/ReviewDataChart";
 import { AsprakDataEntry } from "@/components/shared/AsprakDataEntry";
 import { AsprakGamesPanel } from "@/components/shared/AsprakGamesPanel";
@@ -263,11 +263,8 @@ export function PresenterConsole() {
             )}
 
             {currentSlide.embeddedComponent === "report-format" && (
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-                  Rubrik Penilaian Laporan Lengkap
-                </h3>
-                <ReportFormatGuide />
+              <div className="min-w-0">
+                <ReportRubricCards />
               </div>
             )}
 

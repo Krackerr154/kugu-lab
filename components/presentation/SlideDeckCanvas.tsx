@@ -14,7 +14,7 @@ import { ElectrodepositionDiagram } from "@/components/interactives/Electrodepos
 import { ComplexingEffectWorkbench } from "@/components/interactives/ComplexingEffectWorkbench";
 import { ElectrolyteSolutionsCards } from "@/components/interactives/ElectrolyteSolutionsCards";
 import { FaradayCalculationCards } from "@/components/interactives/FaradayCalculationCards";
-import { ReportFormatGuide } from "@/components/shared/ReportFormatGuide";
+import { ReportRubricCards } from "@/components/interactives/ReportRubricCards";
 import { ReviewGames } from "@/components/shared/ReviewGames";
 import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
 import { OrientationNudge } from "@/components/shared/OrientationNudge";
@@ -379,7 +379,8 @@ export function SlideDeckCanvas({
           {currentSlide.embeddedComponent !== "potential-gap" &&
            currentSlide.embeddedComponent !== "complexing-effect" &&
            currentSlide.embeddedComponent !== "electrolyte-solutions" &&
-           currentSlide.embeddedComponent !== "faraday-calculation" && (
+           currentSlide.embeddedComponent !== "faraday-calculation" &&
+           currentSlide.embeddedComponent !== "report-format" && (
           <section
             aria-label="Poin utama materi"
             className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 bg-[var(--surface)] shadow-xs min-w-0"
@@ -482,13 +483,8 @@ export function SlideDeckCanvas({
           )}
 
           {currentSlide.embeddedComponent === "report-format" && (
-            <div className="space-y-2 min-w-0">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)]">
-                Rubrik Penilaian Laporan Lengkap
-              </h2>
-              <div className="m4-deck-panel">
-                <ReportFormatGuide />
-              </div>
+            <div className="m4-deck-panel min-w-0 h-full w-full">
+              <ReportRubricCards />
             </div>
           )}
 

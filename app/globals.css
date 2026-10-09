@@ -780,7 +780,8 @@ body:has(.m4-deck-fit) .app-shell {
     padding-right: clamp(0.75rem, 2vw, 1.125rem);
   }
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-bullets)) [data-electrolyte-solutions-cards],
-  .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-bullets)) [data-faraday-calculation-cards] {
+  .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-bullets)) [data-faraday-calculation-cards],
+  .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-bullets)) [data-report-rubric-cards] {
     padding-right: clamp(2.5rem, 5.5vw, 2.85rem);
   }
   .m4-deck-compact .m4-deck-bullets .m4-deck-bullet-badge {
@@ -804,6 +805,10 @@ body:has(.m4-deck-fit) .app-shell {
   }
   [data-deck-action-dial] > button[aria-haspopup="menu"] span {
     font-size: 1.25rem;
+  }
+
+  .m4-deck-compact [data-connection-banner] {
+    display: none;
   }
 }
 
