@@ -202,11 +202,11 @@ export const REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
     kind: "content",
     bullets: [
       "Langkah 1: Hitung total muatan listrik yang mengalir: Q = I × t (Coulomb).",
-      "Langkah 2: Hitung massa teoritis paduan Sn–Bi (1:1 mol): m_teoritis = (Q × (M_Sn + M_Bi)) / (5 × F).",
+      "Langkah 2: Hitung massa teoritis paduan Sn–Bi (1:1 mol): m_teoritis = (Q × (M_Sn + M_Bi)) / ((n_Sn + n_Bi) × F).",
       "Langkah 3: Hitung efisiensi arus: η = (m_aktual / m_teoritis) × 100%.",
     ],
     script:
-      "Alur matematis pengolahan data harus runtut di laporan: hitung total muatan Q terlebih dahulu, tentukan massa teoritis paduan Sn–Bi rasio 1:1 mol (5 mol elektron per mol paduan), baru kemudian bandingkan dengan massa aktual hasil timbangan.",
+      "Alur matematis pengolahan data harus runtut di laporan: hitung total muatan Q terlebih dahulu, tentukan massa teoritis paduan Sn–Bi rasio 1:1 mol dengan membagi terhadap transfer elektron gabungan (n_Sn + n_Bi = 2 + 3 = 5), baru kemudian bandingkan dengan massa aktual hasil timbangan.",
     embeddedComponent: "faraday-calculation",
     rubric: {
       code: "e",

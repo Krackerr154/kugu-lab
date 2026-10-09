@@ -38,12 +38,12 @@ const STEPS: FaradayStep[] = [
     stepLabel: "Langkah 2",
     title: "Massa Paduan Teoritis",
     accentColor: "#d97706",
-    tex: "m_{\\text{teoritis}} = \\frac{Q \\times (M_{\\text{Sn}} + M_{\\text{Bi}})}{5 \\times F}",
+    tex: "m_{\\text{teoritis}} = \\frac{Q \\times (M_{\\text{Sn}} + M_{\\text{Bi}})}{(n_{\\text{Sn}} + n_{\\text{Bi}}) \\times F}",
     explanation:
       "Menghitung massa teoritis paduan Sn–Bi rasio 1:1 mol. Reduksi 1 mol Sn²⁺ (2e⁻) dan 1 mol Bi³⁺ (3e⁻) membutuhkan total 5 mol elektron.",
     params: [
       { symbol: "M_Sn + M_Bi", desc: "327,69 g/mol" },
-      { symbol: "n_tot", desc: "5 mol e⁻" },
+      { symbol: "n_Sn + n_Bi", desc: "2 + 3 = 5 e⁻" },
       { symbol: "F", desc: "96.485 C/mol" },
     ],
   },
