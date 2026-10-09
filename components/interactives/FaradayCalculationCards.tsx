@@ -36,14 +36,14 @@ const STEPS: FaradayStep[] = [
   {
     stepNum: 2,
     stepLabel: "Langkah 2",
-    title: "Massa Logam Teoritis",
+    title: "Massa Paduan Teoritis",
     accentColor: "#d97706",
-    tex: "m_{\\text{teoritis}} = \\frac{Q \\times M}{n \\times F}",
+    tex: "m_{\\text{teoritis}} = \\frac{Q \\times (M_{\\text{Sn}} + M_{\\text{Bi}})}{5 \\times F}",
     explanation:
-      "Menghitung massa deposit teoritis berdasarkan stoikiometri transfer elektron hukum Faraday jika seluruh arus terpakai untuk reduksi ion.",
+      "Menghitung massa teoritis paduan Sn–Bi rasio 1:1 mol. Reduksi 1 mol Sn²⁺ (2e⁻) dan 1 mol Bi³⁺ (3e⁻) membutuhkan total 5 mol elektron.",
     params: [
-      { symbol: "M", desc: "Massa molar" },
-      { symbol: "n", desc: "Valensi e⁻" },
+      { symbol: "M_Sn + M_Bi", desc: "327,69 g/mol" },
+      { symbol: "n_tot", desc: "5 mol e⁻" },
       { symbol: "F", desc: "96.485 C/mol" },
     ],
   },
