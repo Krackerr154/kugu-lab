@@ -5,14 +5,49 @@ import { CellSimulation, CathodeCloseUp } from "@/components/interactives/CellSi
 import { cellFrame, clampTime, ILLUSTRATION_SECONDS, type ReactionFocus } from "@/lib/m3-simulation";
 import type { BathAgent } from "@/lib/m3-ligands";
 import { useReducedMotion } from "@/components/shared/useReducedMotion";
+import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
 
 export function ComplexingEffectWorkbench() {
+  const presentation = useOptionalM3Presentation();
+  const role = presentation?.role ?? "solo";
+  const remoteSimState = presentation?.snapshot?.simState;
+  const isPresenter = role === "presenting";
+  const isFollowing = (role === "following" || role === "presenting") && presentation?.status === "following" && !presentation?.ended;
+
   const [time, setTime] = useState(6);
   const timeRef = useRef(6);
   const [playing, setPlaying] = useState(false);
   const [complexed, setComplexed] = useState(true);
   const [view, setView] = useState<"closeup" | "cell">("cell");
   const reducedMotion = useReducedMotion();
+
+  // Broadcast simulation state from presenter to students
+  const broadcastSim = (next: {
+    playing?: boolean;
+    time?: number;
+    complexed?: boolean;
+    view?: "closeup" | "cell";
+  }) => {
+    if (!isPresenter || !presentation?.presentSimState) return;
+    presentation.presentSimState({
+      playing: next.playing ?? playing,
+      time: next.time !== undefined ? next.time : timeRef.current,
+      complexed: next.complexed !== undefined ? next.complexed : complexed,
+      view: next.view !== undefined ? next.view : view,
+    });
+  };
+
+  // Follower synchronizes to incoming presenter simulation state
+  useEffect(() => {
+    if (!isFollowing || !remoteSimState) return;
+    setComplexed(remoteSimState.complexed);
+    setView(remoteSimState.view);
+    if (!remoteSimState.playing || Math.abs(remoteSimState.time - timeRef.current) > 0.5) {
+      timeRef.current = clampTime(remoteSimState.time);
+      setTime(timeRef.current);
+    }
+    setPlaying(remoteSimState.playing);
+  }, [remoteSimState, isFollowing]);
 
   const frame = cellFrame(time, complexed);
   const advancing = playing && !reducedMotion;
@@ -39,21 +74,58 @@ export function ComplexingEffectWorkbench() {
         raf = requestAnimationFrame(tick);
       } else {
         setPlaying(false);
+        if (isPresenter) {
+          presentation?.presentSimState?.({
+            playing: false,
+            time: ILLUSTRATION_SECONDS,
+            complexed,
+            view,
+          });
+        }
       }
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [advancing]);
+  }, [advancing, isPresenter, presentation, complexed, view]);
 
   const seek = (next: number) => {
+    const clamped = clampTime(next);
     setPlaying(false);
-    timeRef.current = clampTime(next);
-    setTime(timeRef.current);
+    timeRef.current = clamped;
+    setTime(clamped);
+    if (isPresenter) {
+      broadcastSim({ playing: false, time: clamped });
+    }
   };
 
   const toggleComplexed = () => {
+    const next = !complexed;
     setPlaying(false);
-    setComplexed((prev) => !prev);
+    setComplexed(next);
+    if (isPresenter) {
+      broadcastSim({ playing: false, complexed: next });
+    }
+  };
+
+  const handleTogglePlay = () => {
+    const nextPlaying = !playing;
+    let nextTime = timeRef.current;
+    if (nextPlaying && nextTime >= ILLUSTRATION_SECONDS) {
+      nextTime = 0;
+      timeRef.current = 0;
+      setTime(0);
+    }
+    setPlaying(nextPlaying);
+    if (isPresenter) {
+      broadcastSim({ playing: nextPlaying, time: nextTime });
+    }
+  };
+
+  const handleSetView = (nextView: "closeup" | "cell") => {
+    setView(nextView);
+    if (isPresenter) {
+      broadcastSim({ view: nextView });
+    }
   };
 
   return (
@@ -96,7 +168,7 @@ export function ComplexingEffectWorkbench() {
           <div className="inline-flex rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-0.5 text-[10px]">
             <button
               type="button"
-              onClick={() => setView("closeup")}
+              onClick={() => handleSetView("closeup")}
               className={`rounded px-1.5 py-0.5 font-bold transition-colors ${
                 view === "closeup"
                   ? "bg-[var(--surface)] text-[var(--primary)] shadow-xs"
@@ -107,7 +179,7 @@ export function ComplexingEffectWorkbench() {
             </button>
             <button
               type="button"
-              onClick={() => setView("cell")}
+              onClick={() => handleSetView("cell")}
               className={`rounded px-1.5 py-0.5 font-bold transition-colors ${
                 view === "cell"
                   ? "bg-[var(--surface)] text-[var(--primary)] shadow-xs"
@@ -121,8 +193,8 @@ export function ComplexingEffectWorkbench() {
           {/* Play/Pause */}
           <button
             type="button"
-            onClick={() => setPlaying((p) => !p)}
-            disabled={reducedMotion || time >= ILLUSTRATION_SECONDS}
+            onClick={handleTogglePlay}
+            disabled={reducedMotion || (time >= ILLUSTRATION_SECONDS && !isPresenter)}
             className="m4-motion-control inline-flex items-center gap-0.5 rounded border border-[var(--outline-variant)] bg-[var(--surface-control)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--foreground)] hover:bg-[var(--surface-container)] disabled:opacity-40"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary)]">

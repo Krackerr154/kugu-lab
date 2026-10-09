@@ -24,6 +24,7 @@ export type {
   M3DemoAgentId,
   M3DemoOverlay,
   M3PresentationState,
+  M3SimState,
   ReviewSlideId,
   ReviewPhase,
 } from "../shared/m3-contract.mjs";

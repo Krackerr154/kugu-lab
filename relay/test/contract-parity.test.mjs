@@ -16,9 +16,12 @@ const CASES = [
   // Review-session additions.
   { version: 1, stageId: 'brief', slideId: 'p1' },
   { version: 1, stageId: 'understand', slideId: 'p7' },
+  { version: 1, stageId: 'understand', slideId: 'p6', simState: { playing: true, time: 4.5, complexed: true, view: 'cell' } },
   { version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'abc12345' },
   { version: 1, stageId: 'ready', phase: 'games' },
   // Rejections.
+  { version: 1, stageId: 'understand', simState: { playing: 'invalid' } },
+  { version: 1, stageId: 'understand', simState: { playing: true, time: 5, complexed: true, view: 'unknown' } },
   { version: 1, stageId: 'brief', slideId: 'p7' },      // slide/chapter mismatch
   { version: 1, stageId: 'brief', slideId: 'nope' },     // unknown slide
   { version: 1, stageId: 'brief', phase: 'party' },      // unknown phase
@@ -44,7 +47,8 @@ test('new optional fields are stripped when absent and preserved when valid', ()
   assert.equal('slideId' in minimal, false);
   assert.equal('phase' in minimal, false);
   assert.equal('dataSetId' in minimal, false);
+  assert.equal('simState' in minimal, false);
 
-  const full = appCoerce({ version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'DS_123456' });
-  assert.deepEqual(full, { version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'DS_123456' });
+  const full = appCoerce({ version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'DS_123456', simState: { playing: true, time: 2.5, complexed: false, view: 'closeup' } });
+  assert.deepEqual(full, { version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'DS_123456', simState: { playing: true, time: 2.5, complexed: false, view: 'closeup' } });
 });

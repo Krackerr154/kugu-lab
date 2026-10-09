@@ -10,6 +10,7 @@ import {
   newEpoch,
   REVIEW_SLIDE_CHAPTER,
   type M3PresentationState,
+  type M3SimState,
   type M3StageId,
   type M3DemoOverlay,
   type ReviewSlideId,
@@ -59,6 +60,7 @@ interface M3PresentationContextValue {
   presentSlide: (slideId: ReviewSlideId) => void;
   presentDataSet: (dataSetId: string) => void;
   presentDemoOverlay: (overlay: M3DemoOverlay) => void;
+  presentSimState: (simState: M3SimState) => void;
 }
 
 const Context = createContext<M3PresentationContextValue | null>(null);
@@ -346,8 +348,13 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     setSnapshot(presenterStateRef.current);
     presenterPublishRef.current?.();
   }, []);
+  const presentSimState = useCallback((simState: M3SimState) => {
+    presenterStateRef.current = { ...presenterStateRef.current, simState };
+    setSnapshot(presenterStateRef.current);
+    presenterPublishRef.current?.();
+  }, []);
 
-  const value = useMemo(() => ({ role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDataSet, presentDemoOverlay }), [role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDataSet, presentDemoOverlay]);
+  const value = useMemo(() => ({ role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, setRoomId, setPresenterTicket, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDataSet, presentDemoOverlay, presentSimState }), [role, status, snapshot, navRequest, slideRequest, agentRequest, audienceCount, ended, relayMode, roomId, presenterTicket, joinError, activeSession, createSession, closeSession, refreshActiveSession, follow, unfollow, rejoin, startPresenting, endPresenting, presentStage, presentSlide, presentDataSet, presentDemoOverlay, presentSimState]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

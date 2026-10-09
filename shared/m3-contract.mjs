@@ -26,6 +26,20 @@ export const REVIEW_SLIDE_IDS = Object.freeze(Object.keys(REVIEW_SLIDE_CHAPTER))
 export const REVIEW_PHASES = Object.freeze(['review', 'games']);
 const DATA_SET_ID_RE = /^[A-Za-z0-9_-]{8,32}$/;
 
+function coerceSimState(input) {
+  if (typeof input !== 'object' || input === null || Array.isArray(input)) return null;
+  if (typeof input.playing !== 'boolean') return null;
+  if (typeof input.complexed !== 'boolean') return null;
+  if (typeof input.time !== 'number' || !Number.isFinite(input.time) || input.time < 0 || input.time > 100) return null;
+  if (input.view !== 'closeup' && input.view !== 'cell') return null;
+  return {
+    playing: input.playing,
+    time: Math.round(input.time * 10) / 10,
+    complexed: input.complexed,
+    view: input.view,
+  };
+}
+
 export function coercePresentationState(input) {
   if (typeof input !== 'object' || input === null || Array.isArray(input)) return null;
   if (input.version !== M3_PRESENTATION_VERSION || !M3_STAGE_IDS.includes(input.stageId)) return null;
@@ -46,6 +60,10 @@ export function coercePresentationState(input) {
   }
   if (input.phase !== undefined && !REVIEW_PHASES.includes(input.phase)) return null;
   if (input.dataSetId !== undefined && (typeof input.dataSetId !== 'string' || !DATA_SET_ID_RE.test(input.dataSetId))) return null;
+  if (input.simState !== undefined) {
+    const sim = coerceSimState(input.simState);
+    if (sim === null) return null;
+  }
   const state = { version: M3_PRESENTATION_VERSION, stageId: input.stageId };
   if (input.focusId !== undefined) state.focusId = input.focusId;
   if (overlay === null) state.demoOverlay = null;
@@ -53,5 +71,6 @@ export function coercePresentationState(input) {
   if (input.slideId !== undefined) state.slideId = input.slideId;
   if (input.phase !== undefined) state.phase = input.phase;
   if (input.dataSetId !== undefined) state.dataSetId = input.dataSetId;
+  if (input.simState !== undefined) state.simState = coerceSimState(input.simState);
   return state;
 }

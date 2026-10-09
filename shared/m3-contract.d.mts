@@ -5,6 +5,12 @@ export type M3DemoOverlay = { kind: 'complexing-agent'; id: M3DemoAgentId } | nu
 export type ReviewSlideId =
   | 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'p6' | 'p7' | 'p8' | 'p9' | 'p10';
 export type ReviewPhase = 'review' | 'games';
+export interface M3SimState {
+  playing: boolean;
+  time: number;
+  complexed: boolean;
+  view: 'closeup' | 'cell';
+}
 export interface M3PresentationState {
   version: 1;
   stageId: M3StageId;
@@ -13,6 +19,7 @@ export interface M3PresentationState {
   slideId?: ReviewSlideId;
   phase?: ReviewPhase;
   dataSetId?: string;
+  simState?: M3SimState;
 }
 export const M3_STAGE_IDS: readonly M3StageId[];
 export const M3_FOCUS_IDS: readonly M3FocusId[];
