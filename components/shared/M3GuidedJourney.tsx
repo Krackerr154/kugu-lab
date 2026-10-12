@@ -7,6 +7,7 @@ import { useM3Presentation } from "@/components/shared/M3PresentationProvider";
 import { useM4GuidedAccess } from "@/components/shared/M4GuidedAccessGate";
 import { M3_STAGE_IDS, type M3StageId } from "@/lib/m3-presentation";
 import { TOTAL_REVIEW_SLIDES, slideIndex } from "@/lib/m4-review-slides";
+import { toggleFullscreen } from "@/lib/fullscreen";
 
 const DEFAULT_STAGE_LABEL: Record<M3StageId, string> = {
   brief: "Tujuan Praktikum",
@@ -193,6 +194,7 @@ export function M3FollowControls({
         <div className="flex items-center gap-1.5 shrink-0">
           <Link
             href="/modules/m4-sn-bi-electrodeposition/presentation"
+            onClick={() => { void toggleFullscreen(); }}
             className="m4-motion-control inline-flex min-h-9 items-center gap-1 rounded-lg border border-[var(--primary-container)] bg-[var(--primary-container)] px-3 text-xs font-bold text-[var(--on-primary)] hover:opacity-90"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-[15px]">
@@ -240,6 +242,7 @@ export function M3FollowControls({
         <div className="flex items-center gap-1.5 shrink-0">
           <Link
             href="/modules/m4-sn-bi-electrodeposition/presentation"
+            onClick={() => { void toggleFullscreen(); }}
             className="m4-motion-control inline-flex min-h-9 items-center gap-1 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface)] px-3 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-[15px]">

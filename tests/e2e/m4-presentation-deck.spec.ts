@@ -25,8 +25,8 @@ test.describe("M4 Presentation Deck & Presenter Console Dual Synchronization", (
 
     // Live status and title
     await expect(consoleEl).toContainText("Sesi Praktikum KI3131");
-    await expect(consoleEl).toContainText("Slide 1 dari 17");
-    await expect(consoleEl).toContainText("Review Praktikum Modul 4 — Sintesis Paduan Sn–Bi");
+    await expect(consoleEl).toContainText("Slide 1 dari 10");
+    await expect(consoleEl).toContainText("Tujuan & Output Praktikum");
 
     // Teleprompter is visible with script
     await expect(consoleEl.getByText("Apa yang Disampaikan ke Praktikan")).toBeVisible();
@@ -49,14 +49,14 @@ test.describe("M4 Presentation Deck & Presenter Console Dual Synchronization", (
     await expect(studentDeck).toBeVisible({ timeout: 10000 });
 
     // Student view displays Slide 1
-    await expect(studentDeck).toContainText("Slide 1 dari 17");
-    await expect(studentDeck).toContainText("Review Praktikum Modul 4");
+    await expect(studentDeck).toContainText("Slide 1 dari 10");
+    await expect(studentDeck).toContainText("Tujuan & Output Praktikum");
 
     await presenterPage.close();
     await studentPage.close();
   });
 
-  test("advancing to Slide 7 synchronizes both views and renders potential gap diagram", async ({ context }) => {
+  test("advancing to Slide 5 synchronizes both views and renders potential gap diagram", async ({ context }) => {
     const presenterPage = await context.newPage();
     await presenterPage.emulateMedia({ reducedMotion: "reduce" });
     await presenterPage.goto(presenterRoute);
@@ -68,19 +68,19 @@ test.describe("M4 Presentation Deck & Presenter Console Dual Synchronization", (
     const studentDeck = studentPage.locator("[data-student-slide-deck]");
     await expect(studentDeck).toBeVisible({ timeout: 10000 });
 
-    // Presenter jumps to Slide 7 (Selisih potensial)
-    const slide7Btn = presenterPage.locator("button").filter({ hasText: /^7$/ });
-    await expect(slide7Btn).toBeVisible();
-    await slide7Btn.click();
+    // Presenter jumps to Slide 5 (Selisih potensial Sn vs Bi)
+    const slide5Btn = presenterPage.locator("button").filter({ hasText: /^5$/ });
+    await expect(slide5Btn).toBeVisible();
+    await slide5Btn.click();
 
-    // Verify presenter view on Slide 7
-    await expect(presenterPage.locator("[data-presenter-console]")).toContainText("Slide 7 dari 17");
+    // Verify presenter view on Slide 5
+    await expect(presenterPage.locator("[data-presenter-console]")).toContainText("Slide 5 dari 10");
     await expect(presenterPage.locator("[data-potential-gap-diagram]")).toBeVisible();
-    await expect(presenterPage.getByText("Selisih potensial reduksi sebesar 0,45 Volt")).toBeVisible();
+    await expect(presenterPage.getByText("Bismut dan timah memiliki selisih potensial reduksi")).toBeVisible();
     await expect(presenterPage.getByText("Poin f.1")).toBeVisible();
 
-    // Verify student view synchronously updates to Slide 7
-    await expect(studentDeck).toContainText("Slide 7 dari 17");
+    // Verify student view synchronously updates to Slide 5
+    await expect(studentDeck).toContainText("Slide 5 dari 10");
     await expect(studentDeck.locator("[data-potential-gap-diagram]")).toBeVisible();
     await expect(studentDeck).toContainText("Selisih Potensial Menghambat Kodeposisi");
     await expect(studentDeck.locator("[data-slide-rubric-badge]")).toContainText("Poin f.1");
@@ -89,7 +89,7 @@ test.describe("M4 Presentation Deck & Presenter Console Dual Synchronization", (
     await studentPage.close();
   });
 
-  test("student bounded read-back displays drift banner and allows instant snap-back", async ({ context }) => {
+  test("student bounded read-back displays drift state and allows instant snap-back via action dial", async ({ context }) => {
     const presenterPage = await context.newPage();
     await presenterPage.emulateMedia({ reducedMotion: "reduce" });
     await presenterPage.goto(presenterRoute);
@@ -101,35 +101,35 @@ test.describe("M4 Presentation Deck & Presenter Console Dual Synchronization", (
     const studentDeck = studentPage.locator("[data-student-slide-deck]");
     await expect(studentDeck).toBeVisible({ timeout: 10000 });
 
-    // Presenter jumps to Slide 4
-    const slide4Btn = presenterPage.locator("button").filter({ hasText: /^4$/ });
-    await slide4Btn.click();
-    await expect(studentDeck).toContainText("Slide 4 dari 17");
+    // Presenter jumps to Slide 3
+    const slide3Btn = presenterPage.locator("button").filter({ hasText: /^3$/ });
+    await slide3Btn.click();
+    await expect(studentDeck).toContainText("Slide 3 dari 10");
 
-    // Student clicks Previous button to read Slide 3
+    // Student clicks Previous button to read Slide 2
     const prevBtn = studentDeck.getByRole("button", { name: "Slide sebelumnya" });
     await prevBtn.click();
 
-    // Student sees Slide 3 and drift banner appears
-    await expect(studentDeck).toContainText("Slide 3 dari 17");
-    const driftBanner = studentDeck.locator("[data-slide-drift-banner]");
-    await expect(driftBanner).toBeVisible();
-    await expect(driftBanner).toContainText("Anda sedang membaca Slide 3");
-    await expect(driftBanner).toContainText("Asisten memandu di Slide 4");
+    // Student sees Slide 2
+    await expect(studentDeck).toContainText("Slide 2 dari 10");
 
-    // Student clicks 'Kembali ke Posisi Asisten'
-    const returnBtn = driftBanner.getByRole("button", { name: "Kembali ke Posisi Asisten" });
+    // Student opens the action dial menu
+    const dialTrigger = studentDeck.locator("[data-deck-action-dial] > button");
+    await dialTrigger.click();
+
+    // The snap-back button is enabled
+    const returnBtn = studentDeck.getByRole("menuitem", { name: "Kembali ke Asisten" });
+    await expect(returnBtn).toBeEnabled();
     await returnBtn.click();
 
-    // Student view is restored to Slide 4 and drift banner disappears
-    await expect(studentDeck).toContainText("Slide 4 dari 17");
-    await expect(driftBanner).not.toBeVisible();
+    // Student view is restored to Slide 3
+    await expect(studentDeck).toContainText("Slide 3 dari 10");
 
     await presenterPage.close();
     await studentPage.close();
   });
 
-  test("Slide 18 renders report format guide and Slide 19 renders games", async ({ context }) => {
+  test("Slide 9 renders report rubric cards and Slide 10 renders games", async ({ context }) => {
     const presenterPage = await context.newPage();
     await presenterPage.emulateMedia({ reducedMotion: "reduce" });
     await presenterPage.goto(presenterRoute);
@@ -141,16 +141,16 @@ test.describe("M4 Presentation Deck & Presenter Console Dual Synchronization", (
     const studentDeck = studentPage.locator("[data-student-slide-deck]");
     await expect(studentDeck).toBeVisible({ timeout: 10000 });
 
-    // Presenter jumps to Slide 18 (Format Laporan)
-    const slide18Btn = presenterPage.locator("button").filter({ hasText: /^18$/ });
-    await slide18Btn.click();
+    // Presenter jumps to Slide 9 (Format Laporan)
+    const slide9Btn = presenterPage.locator("button").filter({ hasText: /^9$/ });
+    await slide9Btn.click();
 
-    await expect(presenterPage.locator("[data-report-format]")).toBeVisible();
-    await expect(studentDeck.locator("[data-report-format]")).toBeVisible();
+    await expect(presenterPage.locator("[data-report-rubric-cards]")).toBeVisible();
+    await expect(studentDeck.locator("[data-report-rubric-cards]")).toBeVisible();
 
-    // Presenter jumps to Slide 19 (Penutup & Games)
-    const slide19Btn = presenterPage.locator("button").filter({ hasText: /^19$/ });
-    await slide19Btn.click();
+    // Presenter jumps to Slide 10 (Penutup & Games)
+    const slide10Btn = presenterPage.locator("button").filter({ hasText: /^10$/ });
+    await slide10Btn.click();
 
     await expect(presenterPage.locator("[data-asprak-games]")).toBeVisible();
     await expect(studentDeck.locator("[data-review-games]")).toBeVisible();

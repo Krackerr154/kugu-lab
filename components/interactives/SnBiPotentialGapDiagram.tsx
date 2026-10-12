@@ -4,10 +4,10 @@ export function SnBiPotentialGapDiagram() {
   return (
     <div
       data-potential-gap-diagram
-      className="m4-motion-enter rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-2.5 sm:p-3 text-xs flex flex-col justify-between h-full"
+      className="m4-motion-enter rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-2 sm:p-3 text-xs flex flex-col justify-between h-full"
     >
       {/* Top Row: Reference + Gap Highlight */}
-      <div className="flex items-center justify-between px-1 mb-1.5 shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-1.5 px-1 mb-1 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">
             Peta Potensial Reduksi Standar
@@ -23,10 +23,10 @@ export function SnBiPotentialGapDiagram() {
       </div>
 
       {/* Center: Deterministic SVG Potential Axis Box */}
-      <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-1.5 flex-1 flex flex-col justify-center min-h-0">
+      <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-1 flex-1 flex flex-col justify-center min-h-0">
         <svg
           viewBox="0 0 600 100"
-          className="w-full h-auto max-h-[96px] select-none"
+          className="w-full h-auto max-h-[82px] select-none"
           aria-hidden="true"
         >
           {/* Main axis horizontal line */}
@@ -97,22 +97,22 @@ export function SnBiPotentialGapDiagram() {
       </div>
 
       {/* Bottom: 2 Comparative Takeaway Cards */}
-      <div className="mt-1.5 grid grid-cols-2 gap-2 text-[10px] shrink-0">
-        <div className="rounded-lg border border-[var(--error)]/30 bg-[var(--error-container)]/10 px-2.5 py-1.5 flex items-center gap-2">
-          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--error)] shrink-0" />
-          <div className="min-w-0">
-            <p className="font-bold text-[var(--error)] truncate">Tanpa Pengompleks (Garam Murni)</p>
-            <p className="text-[9px] text-[var(--text-secondary)] truncate">
+      <div className="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[10px] shrink-0">
+        <div className="rounded-lg border border-[var(--error)]/30 bg-[var(--error-container)]/10 px-2 py-1 flex items-start gap-1.5">
+          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--error)] shrink-0 mt-0.5" />
+          <div className="min-w-0 flex-1">
+            <p className="font-bold text-[var(--error)]">Tanpa Pengompleks (Garam Murni)</p>
+            <p className="text-[9px] text-[var(--text-secondary)] leading-tight mt-0.5">
               Bi³⁺ jauh lebih mulia, tereduksi duluan; deposit tidak terbentuk paduan.
             </p>
           </div>
         </div>
 
-        <div className="rounded-lg border border-[var(--secondary)]/40 bg-[var(--secondary-container)]/20 px-2.5 py-1.5 flex items-center gap-2">
-          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--secondary)] shrink-0" />
-          <div className="min-w-0">
-            <p className="font-bold text-[var(--secondary)] truncate">Dengan Pengompleks (EDTA + Sitrat)</p>
-            <p className="text-[9px] text-[var(--text-secondary)] truncate">
+        <div className="rounded-lg border border-[var(--secondary)]/40 bg-[var(--secondary-container)]/20 px-2 py-1 flex items-start gap-1.5">
+          <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--secondary)] shrink-0 mt-0.5" />
+          <div className="min-w-0 flex-1">
+            <p className="font-bold text-[var(--secondary)]">Dengan Pengompleks (EDTA + Sitrat)</p>
+            <p className="text-[9px] text-[var(--text-secondary)] leading-tight mt-0.5">
               Potensial efektif digeser berdekatan; kodeposisi Sn–Bi terjadi serentak.
             </p>
           </div>

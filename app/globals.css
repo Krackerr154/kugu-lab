@@ -478,34 +478,60 @@ h1, h2, h3, h4, h5, h6 {
   --deck-fit-max: calc(100vh - 39rem);
 }
 
-/* While a deck is mounted, the surrounding app chrome (global site footer,
-   page main) would otherwise still reserve height below the fixed deck and
-   reintroduce a page scroll. Hide it for the duration of the presentation —
-   the deck is a full-screen mode, and the site footer is not part of a slide.
-   :has() keeps this scoped to routes that actually mount a deck. */
+/* While a deck or presenter console is mounted, hide all external app navigation,
+   sidebars, and footers. The presentation deck has its own dedicated header, exit
+   button, and bottom rail, and requires the full viewport. */
+body:has(.m4-deck-fit) aside.sidebar-scroll,
+body:has(.m4-deck-fit) header[style*="app-mobile-bar"],
+body:has(.m4-deck-fit) header[style*="app-header"],
 body:has(.m4-deck-fit) > .app-shell > footer.no-print,
-body:has(.m4-deck-fit) .app-shell > footer.no-print {
-  display: none;
+body:has(.m4-deck-fit) .app-shell > footer.no-print,
+body:has([data-presenter-console]) aside.sidebar-scroll,
+body:has([data-presenter-console]) header[style*="app-mobile-bar"],
+body:has([data-presenter-console]) header[style*="app-header"],
+body:has([data-presenter-console]) > .app-shell > footer.no-print,
+body:has([data-presenter-console]) .app-shell > footer.no-print {
+  display: none !important;
 }
-body:has(.m4-deck-fit) .app-shell {
+body:has(.m4-deck-fit) .app-shell,
+body:has([data-presenter-console]) .app-shell {
   min-height: 0;
 }
 
-/* The deck used to be hidden behind the global mobile nav bar (sticky top: 0,
-   z-50) because the deck frame also started at top: 0. Rather than hiding the
-   app nav — which costs the student their way out of the deck — inset the deck
-   frame below it. The nav is 4rem tall on mobile and 5rem from lg up. */
 .m4-deck-fit {
-  top: 4rem;
-  height: calc(100vh - 4rem);
-  height: calc(100dvh - 4rem);
+  position: fixed;
+  inset: 0;
+  top: 0 !important;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  z-index: 40;
+  min-height: 0;
+  --deck-fit-max: calc(100vh - 16rem);
 }
 
 @media (min-width: 1024px) {
   .m4-deck-fit {
-    top: 5rem;
-    height: calc(100vh - 5rem);
-    height: calc(100dvh - 5rem);
+    top: 0 !important;
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
+/* In portrait mode, allow natural smooth vertical scrolling so large diagrams
+   and multi-bullet cards are never cropped or cut off. */
+@media (orientation: portrait) {
+  .m4-deck-slidebody {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+  }
+  .m4-deck-panel {
+    max-height: none !important;
+    overflow-y: visible !important;
   }
 }
 
@@ -638,17 +664,9 @@ body:has(.m4-deck-fit) .app-shell {
    dimension — portrait and larger landscape keep the normal flow. */
 @media (orientation: landscape) and (max-height: 500px) {
   .m4-deck-compact .m4-deck-split {
-    /* 100vh minus: global app nav 4rem, deck header ~25px, slim deck footer ~37px,
-       slide body padding, chapter heading. Re-tuned after the footer was unified
-       into a single row (saving 20px).
-
-       height (not just max-height) so the card fills the frame instead of
-       stopping wherever its text ends and leaving an empty band above the
-       footer. */
-    height: calc(100vh - 12.625rem);
-    max-height: calc(100vh - 12.625rem);
+    height: 100%;
+    max-height: 100%;
     overflow: hidden;
-    /* Two columns sit side by side here, so the stacked gap is dead height. */
     gap: 0.375rem;
     margin-top: 0;
   }
@@ -675,7 +693,7 @@ body:has(.m4-deck-fit) .app-shell {
     height: 100%;
     max-height: 100%;
     width: 100%;
-    overflow-y: hidden;
+    overflow-y: auto;
   }
   /* A text-only card that still exceeds the frame must scroll inside itself
      rather than clip its last bullet: the slide stays one screen, but no
@@ -690,8 +708,8 @@ body:has(.m4-deck-fit) .app-shell {
      awkward dead band above the footer. */
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)),
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-bullets)) {
-    height: calc(100vh - 12.625rem);
-    max-height: calc(100vh - 12.625rem);
+    height: 100%;
+    max-height: 100%;
   }
   .m4-deck-compact .m4-deck-split:not(:has(.m4-deck-panel)) > .m4-deck-bullets {
     height: 100%;
@@ -788,24 +806,7 @@ body:has(.m4-deck-fit) .app-shell {
     display: none;
   }
 
-  /* Compact 28px FAB speed dial anchored at bottom-right corner, 10px above next slide arrow */
-  [data-deck-action-dial] {
-    position: fixed !important;
-    bottom: 2.5rem !important;
-    right: 0.75rem !important;
-    left: auto !important;
-    top: auto !important;
-    z-index: 40 !important;
-  }
-  [data-deck-action-dial] > button[aria-haspopup="menu"] {
-    height: 1.75rem !important;
-    width: 1.75rem !important;
-    min-height: 1.75rem !important;
-    min-width: 1.75rem !important;
-  }
-  [data-deck-action-dial] > button[aria-haspopup="menu"] span {
-    font-size: 1rem !important;
-  }
+
 }
 
 @keyframes m4-access-backdrop-enter {

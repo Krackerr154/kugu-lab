@@ -20,6 +20,8 @@ import { useOptionalM3Presentation } from "@/components/shared/M3PresentationPro
 import { OrientationNudge } from "@/components/shared/OrientationNudge";
 import { DeckActionDial } from "@/components/presentation/DeckActionDial";
 import { useReducedMotion } from "@/components/shared/useReducedMotion";
+import { toggleFullscreen } from "@/lib/fullscreen";
+import { useFullscreenStatus } from "@/components/shared/useFullscreenStatus";
 import type { ReviewSlideId } from "@/lib/m3-presentation";
 
 interface SlideDeckCanvasProps {
@@ -78,6 +80,7 @@ export function SlideDeckCanvas({
   const [swapDirection, setSwapDirection] = useState<"forward" | "back">("forward");
   const [swapKey, setSwapKey] = useState(0);
   const reducedMotion = useReducedMotion();
+  const fullscreen = useFullscreenStatus();
   const slideBodyRef = useRef<HTMLDivElement>(null);
 
   // Automatically snap to presenter position when a new broadcast token arrives
@@ -242,9 +245,35 @@ export function SlideDeckCanvas({
             </span>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Header keeps only live status now: rubric point moved beside the
-                slide title, and deck actions live in the bottom-right speed dial. */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => { void toggleFullscreen(); }}
+              aria-label={fullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
+              className="m4-motion-control inline-flex min-h-7 px-2 items-center justify-center gap-1 rounded-lg border border-[var(--outline-variant)] text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
+              title={fullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-sm">
+                {fullscreen ? "fullscreen_exit" : "fullscreen"}
+              </span>
+              <span className="hidden sm:inline">{fullscreen ? "Normal" : "Layar Penuh"}</span>
+            </button>
+
+            <DeckActionDial
+              onReturnToPresenter={returnToPresenter}
+              canReturnToPresenter={isDrifted}
+              driftLabel={
+                presenterSlideId ? `Slide ${viewingIdx + 1} (Asisten di Slide ${presenterIdx + 1})` : undefined
+              }
+              onExit={
+                onExit ??
+                (exitHref
+                  ? () => {
+                      window.location.href = exitHref;
+                    }
+                  : undefined)
+              }
+            />
           </div>
         </div>
 
@@ -320,7 +349,7 @@ export function SlideDeckCanvas({
       </header>
 
       {/* ── MAIN SLIDE CANVAS ────────────────────────────────────────────── */}
-      <main className="m4-deck-slidebody flex-1 px-3 py-5 sm:px-4 md:py-8 pb-16 min-w-0 overflow-x-hidden">
+      <main className="m4-deck-slidebody flex-1 px-3 py-2 sm:px-4 min-w-0 overflow-y-auto">
         {/* Animation restarts imperatively (see useIsomorphicLayoutEffect below)
             rather than via a changing `key`, because remounting this subtree
             would reset the embedded interactive panels mid-session. */}
@@ -498,7 +527,7 @@ export function SlideDeckCanvas({
       </main>
 
       {/* ── FOOTER / SLIDE NAVIGATION RAIL (ALWAYS PINNED TO SCREEN BOTTOM) ───────────────── */}
-      <footer className="m4-deck-footer fixed inset-x-0 bottom-0 z-30 border-t border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-1.5 min-w-0 shadow-lg">
+      <footer className="m4-deck-footer shrink-0 border-t border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-1.5 min-w-0 shadow-lg">
         {/* Single row: left arrow on left, progress dots centered, counter + right arrow on right. */}
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 min-w-0">
           <button
@@ -570,22 +599,7 @@ export function SlideDeckCanvas({
           students following on a phone see it. */}
       <OrientationNudge />
 
-      {/* Deck actions floating at bottom-right corner, a little bit above the arrow button */}
-      <DeckActionDial
-        onReturnToPresenter={returnToPresenter}
-        canReturnToPresenter={isDrifted}
-        driftLabel={
-          presenterSlideId ? `Slide ${viewingIdx + 1} (Asisten di Slide ${presenterIdx + 1})` : undefined
-        }
-        onExit={
-          onExit ??
-          (exitHref
-            ? () => {
-                window.location.href = exitHref;
-              }
-            : undefined)
-        }
-      />
+      
     </div>
   );
 }

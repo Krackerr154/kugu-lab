@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { toggleFullscreen } from "@/lib/fullscreen";
+import { useFullscreenStatus } from "@/components/shared/useFullscreenStatus";
 
 interface DeckActionDialProps {
   /** Jump the student back to the slide the assistant is on. */
@@ -15,24 +17,11 @@ interface DeckActionDialProps {
 }
 
 /**
- * Bottom-right speed dial (Material's "FAB menu") for the student deck.
+ * Topbar action menu for the student deck.
  *
- * The deck is height-starved on phones, so the header keeps only status and
- * reference info; the two *actions* (return to the assistant, exit the deck)
- * live here instead of taking a permanent row of chrome.
- *
- * Implementation notes:
- * - Hand-rolled rather than pulled from a component library: the app has no
- *   MUI/Mantine dependency, and the existing disclosure widgets
- *   (GlossaryTerm, M4InstructorUnlock, Navigation) follow the same pattern.
- * - ARIA follows the Speed Dial contract: aria-haspopup / aria-expanded /
- *   aria-controls on the trigger, role="menu" + aria-orientation on the list,
- *   role="menuitem" on the items.
- * - Keyboard: Escape closes and restores focus to the trigger; Arrow keys walk
- *   the items; Home/End jump to first/last. Focus is moved into the menu on
- *   open so keyboard and screen-reader users land on the choices directly.
- * - Dismisses on outside pointerdown and on scroll/resize, so it can never
- *   strand itself over the slide content.
+ * Placed in the topbar header next to Fullscreen toggle so it never obscures
+ * slide content, never collides with bottom navigation chevrons, and stays
+ * accessible across portrait and landscape viewports.
  */
 export function DeckActionDial({
   onReturnToPresenter,
@@ -46,16 +35,14 @@ export function DeckActionDial({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
+  const fullscreen = useFullscreenStatus();
 
   const close = useCallback((restoreFocus = true) => {
     setOpen(false);
     if (restoreFocus) triggerRef.current?.focus();
   }, []);
 
-  // Move focus to the first enabled item when the menu opens. The `hidden`
-  // attribute is removed in the same commit, so wait for the browser to make
-  // the items focusable before trying to focus one — a single rAF still ran
-  // while the node was unfocusable.
+  // Move focus to the first enabled item when the menu opens.
   useEffect(() => {
     if (!open) return;
     let raf = 0;
@@ -69,7 +56,6 @@ export function DeckActionDial({
     };
     raf = window.requestAnimationFrame(() => {
       if (focusFirst()) return;
-      // Fallback for browsers that need a full task turn after `hidden` flips.
       timer = window.setTimeout(focusFirst, 0);
     });
     return () => {
@@ -94,7 +80,6 @@ export function DeckActionDial({
     const onFocusOut = (e: FocusEvent) => {
       const next = e.relatedTarget as Node | null;
       if (next && rootRef.current?.contains(next)) return;
-      // Focus left the dial entirely (e.g. tabbing past the last item).
       setOpen(false);
     };
 
@@ -143,23 +128,18 @@ export function DeckActionDial({
       ref={rootRef}
       data-deck-action-dial
       data-deck-dial-open={open ? "true" : "false"}
-      style={{ bottom: "2.5rem", right: "0.75rem" }}
-      className="fixed z-40 flex flex-col items-end gap-1.5"
+      className="relative inline-flex items-center shrink-0"
     >
-      {/* Items stack above the trigger, per the vertical speed-dial arrangement.
-          Removed from the a11y tree while closed so it is not a hidden tab stop. */}
+      {/* Dropdown menu items */}
       <div
         ref={menuRef}
         id={menuId}
         role="menu"
         aria-orientation="vertical"
         aria-label="Aksi dek slide"
-        // `hidden` would make the items unfocusable in the same commit that
-        // flips it off, so collapse with inert instead: removed from the a11y
-        // tree and not focusable, but still focusable the moment it opens.
         inert={!open}
         onKeyDown={onMenuKeyDown}
-        className={`flex flex-col items-end gap-1.5 ${
+        className={`absolute right-0 top-full mt-1.5 z-50 flex flex-col items-end gap-1.5 ${
           open ? "" : "pointer-events-none invisible"
         }`}
       >
@@ -181,6 +161,20 @@ export function DeckActionDial({
             my_location
           </span>
           <span>Kembali ke Asisten</span>
+        </button>
+
+        {/* Fullscreen Toggle Button */}
+        <button
+          type="button"
+          role="menuitem"
+          onClick={() => runAction(() => { void toggleFullscreen(); })}
+          title={fullscreen ? "Keluar dari mode layar penuh" : "Masuk ke mode layar penuh"}
+          className="inline-flex min-h-9 items-center gap-2 rounded-full border border-[var(--outline-variant)] bg-[var(--surface)] pl-3 pr-4 text-xs font-semibold text-[var(--primary-container)] shadow-lg hover:bg-[var(--surface-container)] whitespace-nowrap"
+        >
+          <span aria-hidden="true" className="material-symbols-outlined text-base">
+            {fullscreen ? "fullscreen_exit" : "fullscreen"}
+          </span>
+          <span>{fullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}</span>
         </button>
 
         {onExit ? (
@@ -206,7 +200,8 @@ export function DeckActionDial({
         aria-controls={menuId}
         aria-label={open ? "Tutup menu aksi dek" : "Buka menu aksi dek"}
         onClick={() => setOpen((v) => !v)}
-        className="m4-motion-control flex h-7 w-7 items-center justify-center rounded-full bg-[var(--primary-container)] text-[var(--on-primary-container)] shadow-md hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
+        className="m4-motion-control inline-flex min-h-7 px-2 items-center justify-center gap-1 rounded-lg border border-[var(--outline-variant)] text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)]"
+        title="Menu aksi dek"
       >
         <span aria-hidden="true" className="material-symbols-outlined text-base">
           {open ? "close" : "more_vert"}
