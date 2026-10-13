@@ -73,6 +73,9 @@ export function coercePresentationState(input) {
     const sim = coerceSimState(input.simState);
     if (sim === null) return null;
   }
+  if (input.slideStage !== undefined) {
+    if (typeof input.slideStage !== 'number' || !Number.isInteger(input.slideStage) || input.slideStage < 0 || input.slideStage > 2) return null;
+  }
   const state = { version: M3_PRESENTATION_VERSION, stageId: input.stageId };
   if (input.focusId !== undefined) state.focusId = input.focusId;
   if (overlay === null) state.demoOverlay = null;
@@ -81,5 +84,6 @@ export function coercePresentationState(input) {
   if (input.phase !== undefined) state.phase = input.phase;
   if (input.dataSetId !== undefined) state.dataSetId = input.dataSetId;
   if (input.simState !== undefined) state.simState = coerceSimState(input.simState);
+  if (input.slideStage !== undefined) state.slideStage = input.slideStage;
   return state;
 }

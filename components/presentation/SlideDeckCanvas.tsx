@@ -22,6 +22,7 @@ import { DeckActionDial } from "@/components/presentation/DeckActionDial";
 import { useReducedMotion } from "@/components/shared/useReducedMotion";
 import { toggleFullscreen } from "@/lib/fullscreen";
 import { useFullscreenStatus } from "@/components/shared/useFullscreenStatus";
+import { ChemText } from "@/components/shared/ChemText";
 import type { ReviewSlideId } from "@/lib/m3-presentation";
 
 interface SlideDeckCanvasProps {
@@ -74,6 +75,7 @@ export function SlideDeckCanvas({
   const relayMode = presentation?.relayMode ?? false;
 
   const [viewingId, setViewingId] = useState<ReviewSlideId>(presenterSlideId ?? initialSlideId);
+  const [slide7Stage, setSlide7Stage] = useState<0 | 1 | 2>(0);
   const [lastToken, setLastToken] = useState<number | null>(null);
   // Direction of the last slide change, so the transition can travel the same
   // way the user moved. Paired with `swapKey` to force the animation to replay.
@@ -107,6 +109,18 @@ export function SlideDeckCanvas({
       ? deckSlideIndex(presenterSlideId)
       : TOTAL_REVIEW_DECK_SLIDES - 1;
   const isDrifted = isFollowing && presenterSlideId !== null && presenterSlideId !== viewingId;
+
+  // Synchronize Slide 7 sub-stages when following the presenter
+  useEffect(() => {
+    if (isFollowing && presentation?.snapshot) {
+      if (presentation.snapshot.slideId === "p7") {
+        const stage = (presentation.snapshot.slideStage as 0 | 1 | 2) ?? 0;
+        setSlide7Stage(stage);
+      } else {
+        setSlide7Stage(0);
+      }
+    }
+  }, [isFollowing, presentation?.snapshot?.slideId, presentation?.snapshot?.slideStage]);
 
   // Restart the enter animation on every swap. React reuses the same DOM node
   // across slides, so swapping the class alone would not replay it; and we
@@ -153,6 +167,7 @@ export function SlideDeckCanvas({
 
   const goToSlide = useCallback(
     (targetIdx: number) => {
+      setSlide7Stage(0);
       const clamped = Math.max(0, Math.min(presenterIdx, targetIdx));
       const targetSlide = REVIEW_DECK_SLIDES[clamped];
       if (targetSlide) {
@@ -166,7 +181,50 @@ export function SlideDeckCanvas({
     [presenterIdx, viewingIdx, reducedMotion]
   );
 
+  const stepForward = useCallback(() => {
+    if (viewingId === "p7") {
+      if (slide7Stage === 0) {
+        setSlide7Stage(1);
+        return;
+      }
+      if (slide7Stage === 1) {
+        setSlide7Stage(2);
+        return;
+      }
+      if (slide7Stage === 2) {
+        setSlide7Stage(0);
+        goToSlide(viewingIdx + 1);
+        return;
+      }
+    }
+    if (canGoForward) {
+      goToSlide(viewingIdx + 1);
+    }
+  }, [viewingId, slide7Stage, canGoForward, goToSlide, viewingIdx]);
+
+  const stepBack = useCallback(() => {
+    if (viewingId === "p7") {
+      if (slide7Stage === 2) {
+        setSlide7Stage(1);
+        return;
+      }
+      if (slide7Stage === 1) {
+        setSlide7Stage(0);
+        return;
+      }
+    }
+    if (viewingId === "p8") {
+      goToSlide(viewingIdx - 1);
+      setSlide7Stage(2);
+      return;
+    }
+    if (canGoBack) {
+      goToSlide(viewingIdx - 1);
+    }
+  }, [viewingId, slide7Stage, canGoBack, goToSlide, viewingIdx]);
+
   const returnToPresenter = useCallback(() => {
+    setSlide7Stage(0);
     if (presenterSlideId) {
       setSwapDirection(deckSlideIndex(presenterSlideId) < viewingIdx ? "back" : "forward");
       setSwapKey((k) => k + 1);
@@ -181,21 +239,29 @@ export function SlideDeckCanvas({
       const tag = document.activeElement?.tagName.toLowerCase();
       if (tag === "input" || tag === "textarea" || tag === "select") return;
 
-      if (e.key === "ArrowLeft" && canGoBack) {
+      if (e.key === "ArrowLeft") {
+        if (canGoBack || (viewingId === "p7" && slide7Stage > 0)) {
+          e.preventDefault();
+          stepBack();
+        }
+      } else if (e.key === "ArrowRight" || e.key === " ") {
+        if (canGoForward || (viewingId === "p7" && slide7Stage < 2)) {
+          e.preventDefault();
+          stepForward();
+        }
+      } else if (e.key === "Escape" && slide7Stage > 0) {
         e.preventDefault();
-        goToSlide(viewingIdx - 1);
-      } else if ((e.key === "ArrowRight" || e.key === " ") && canGoForward) {
-        e.preventDefault();
-        goToSlide(viewingIdx + 1);
+        setSlide7Stage(0);
       } else if (e.key === "Home") {
         e.preventDefault();
+        setSlide7Stage(0);
         goToSlide(0);
       }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [canGoBack, canGoForward, goToSlide, viewingIdx]);
+  }, [canGoBack, canGoForward, stepBack, stepForward, viewingId, slide7Stage, goToSlide]);
 
   const currentSlide: ReviewDeckSlide = REVIEW_DECK_SLIDE_BY_ID[viewingId] || REVIEW_DECK_SLIDES[0];
 
@@ -349,13 +415,13 @@ export function SlideDeckCanvas({
       </header>
 
       {/* ── MAIN SLIDE CANVAS ────────────────────────────────────────────── */}
-      <main className="m4-deck-slidebody flex-1 px-3 py-2 sm:px-4 min-w-0 overflow-y-auto">
+      <main className="m4-deck-slidebody flex-1 flex flex-col px-3 py-2 sm:px-4 min-w-0 overflow-y-auto">
         {/* Animation restarts imperatively (see useIsomorphicLayoutEffect below)
             rather than via a changing `key`, because remounting this subtree
             would reset the embedded interactive panels mid-session. */}
         <div
           ref={slideBodyRef}
-          className={`mx-auto max-w-4xl space-y-5 sm:space-y-6 min-w-0 ${
+          className={`mx-auto w-full max-w-5xl flex-1 min-h-0 flex flex-col justify-between space-y-5 sm:space-y-6 min-w-0 ${
             reducedMotion ? "" : swapDirection === "back" ? "m4-slide-enter-back" : "m4-slide-enter-forward"
           }`}
           data-slide-direction={swapDirection}
@@ -403,7 +469,7 @@ export function SlideDeckCanvas({
           {/* In landscape a phone has width to spare and almost no height, so
               bullets and panel sit side by side. Portrait keeps the single
               column. The wrapper is always present; CSS decides the layout. */}
-          <div className="m4-deck-split space-y-5 sm:space-y-6 min-w-0">
+          <div className="m4-deck-split flex-1 min-h-0 space-y-5 sm:space-y-6 min-w-0">
           {/* Core Slide Takeaway Bullets Card (Omitted on dedicated full-diagram slides) */}
           {currentSlide.embeddedComponent !== "potential-gap" &&
            currentSlide.embeddedComponent !== "complexing-effect" &&
@@ -412,39 +478,73 @@ export function SlideDeckCanvas({
            currentSlide.embeddedComponent !== "report-format" && (
           <section
             aria-label="Poin utama materi"
-            className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 bg-[var(--surface)] shadow-xs min-w-0"
+            className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 md:p-6 bg-[var(--surface)] shadow-xs min-w-0 flex-1 min-h-0 flex flex-col justify-between"
           >
-            <ul className="space-y-2">
+            <ul className="space-y-2 flex-1 min-h-0 flex flex-col justify-between">
               {currentSlide.bullets.map((bullet, idx) => {
+                if (currentSlide.id === "p4" && idx === 1) {
+                  return (
+                    <li
+                      key={idx}
+                      className="relative flex items-start gap-2.5 text-sm sm:text-base leading-relaxed text-[var(--text-secondary)] min-w-0"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="m4-deck-bullet-badge relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--primary-container)]/10 text-xs font-bold text-[var(--primary-container)] mt-0.5 tabular-nums"
+                      >
+                        ✓
+                      </span>
+                      <div className="flex flex-col gap-1 min-w-0 flex-1">
+                        <div className="min-w-0 flex-1">
+                          <span className="m4-deck-bullet-key font-bold text-[var(--foreground)] mr-1">
+                            Reaksi Katoda:
+                          </span>
+                          <span className="break-words">
+                            Elektron mereduksi kation di permukaan elektroda:
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                          <span className="inline-flex items-center gap-1 rounded-md bg-[var(--surface-container-low)] border border-[var(--outline-variant)] px-2.5 py-0.5 text-xs font-semibold text-[var(--chart-navy)] shadow-2xs">
+                            <ChemText>{"Sn^{2+} + 2e^{-} → Sn^{0}"}</ChemText>
+                          </span>
+                          <span className="inline-flex items-center gap-1 rounded-md bg-[var(--surface-container-low)] border border-[var(--outline-variant)] px-2.5 py-0.5 text-xs font-semibold text-[var(--chart-gold)] shadow-2xs">
+                            <ChemText>{"Bi^{3+} + 3e^{-} → Bi^{0}"}</ChemText>
+                          </span>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                }
+
                 if (currentSlide.id === "p4" && idx === 2) {
                   return (
-                    <li key={idx} className="min-w-0 pt-0.5">
-                      <div className="grid grid-cols-3 gap-1.5 text-[10px] sm:text-xs min-w-0">
-                        <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 flex flex-col justify-between min-w-0">
-                          <div className="flex items-center gap-1 font-bold text-[var(--foreground)] truncate">
-                            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#D97706] shrink-0" />
+                    <li key={idx} className="min-w-0">
+                      <div className="grid grid-cols-3 gap-1.5 md:gap-2 min-w-0">
+                        <div className="rounded-lg md:rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 md:p-2.5 flex flex-col justify-between min-w-0 shadow-2xs">
+                          <div className="flex items-center gap-1 md:gap-1.5 font-bold text-[11px] md:text-sm text-[var(--foreground)] truncate">
+                            <span aria-hidden="true" className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-[#D97706] shrink-0" />
                             <span>Katoda</span>
                           </div>
-                          <p className="mt-0.5 text-[9px] text-[var(--text-secondary)] leading-tight">
-                            Plat Cu aktif, reduksi deposit Sn–Bi
+                          <p className="mt-0.5 text-[9.5px] md:text-xs text-[var(--text-secondary)] leading-snug">
+                            Plat Cu, reduksi deposit Sn–Bi
                           </p>
                         </div>
-                        <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 flex flex-col justify-between min-w-0">
-                          <div className="flex items-center gap-1 font-bold text-[var(--foreground)] truncate">
-                            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#334155] shrink-0" />
+                        <div className="rounded-lg md:rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 md:p-2.5 flex flex-col justify-between min-w-0 shadow-2xs">
+                          <div className="flex items-center gap-1 md:gap-1.5 font-bold text-[11px] md:text-sm text-[var(--foreground)] truncate">
+                            <span aria-hidden="true" className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-[#334155] shrink-0" />
                             <span>Anoda</span>
                           </div>
-                          <p className="mt-0.5 text-[9px] text-[var(--text-secondary)] leading-tight">
-                            Batang C inert, oksidasi penutup arus
+                          <p className="mt-0.5 text-[9.5px] md:text-xs text-[var(--text-secondary)] leading-snug">
+                            Batang C inert, penutup arus
                           </p>
                         </div>
-                        <div className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 flex flex-col justify-between min-w-0">
-                          <div className="flex items-center gap-1 font-bold text-[var(--foreground)] truncate">
-                            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[var(--chart-navy)] shrink-0" />
+                        <div className="rounded-lg md:rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-1.5 md:p-2.5 flex flex-col justify-between min-w-0 shadow-2xs">
+                          <div className="flex items-center gap-1 md:gap-1.5 font-bold text-[11px] md:text-sm text-[var(--foreground)] truncate">
+                            <span aria-hidden="true" className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-[var(--chart-navy)] shrink-0" />
                             <span>Elektrolit</span>
                           </div>
-                          <p className="mt-0.5 text-[9px] text-[var(--text-secondary)] leading-tight">
-                            Medium asam pH ~2, ion Sn²⁺ &amp; Bi³⁺
+                          <p className="mt-0.5 text-[9.5px] md:text-xs text-[var(--text-secondary)] leading-snug">
+                            Larutan pH ~2, ion Sn²⁺ &amp; Bi³⁺
                           </p>
                         </div>
                       </div>
@@ -500,8 +600,13 @@ export function SlideDeckCanvas({
           )}
 
           {currentSlide.embeddedComponent === "electrolyte-solutions" && (
-            <div className="m4-deck-panel min-w-0 h-full w-full">
-              <ElectrolyteSolutionsCards />
+            <div className="m4-deck-panel min-w-0 h-full w-full relative">
+              <ElectrolyteSolutionsCards
+                stage={slide7Stage}
+                onSetStage={setSlide7Stage}
+                overlayOpen={slide7Stage > 0}
+                onToggleOverlay={(open) => setSlide7Stage(open ? 1 : 0)}
+              />
             </div>
           )}
 
@@ -532,8 +637,8 @@ export function SlideDeckCanvas({
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 min-w-0">
           <button
             type="button"
-            onClick={() => goToSlide(viewingIdx - 1)}
-            disabled={!canGoBack}
+            onClick={stepBack}
+            disabled={!canGoBack && !(viewingId === "p7" && slide7Stage > 0)}
             aria-label="Slide sebelumnya"
             className="m4-motion-control inline-flex min-h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--outline-variant)] text-[var(--primary-container)] hover:bg-[var(--surface-container)] disabled:opacity-30"
           >
@@ -581,8 +686,8 @@ export function SlideDeckCanvas({
 
             <button
               type="button"
-              onClick={() => goToSlide(viewingIdx + 1)}
-              disabled={!canGoForward}
+              onClick={stepForward}
+              disabled={!canGoForward && !(viewingId === "p7" && slide7Stage < 2)}
               aria-label="Slide berikutnya"
               className="m4-motion-control inline-flex min-h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--outline-variant)] text-[var(--primary-container)] hover:bg-[var(--surface-container)] disabled:opacity-30"
             >

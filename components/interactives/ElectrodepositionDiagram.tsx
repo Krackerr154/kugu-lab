@@ -12,8 +12,8 @@ export function ElectrodepositionDiagram() {
         className="rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-1 flex-1 flex items-center justify-center min-h-0"
       >
         <svg
-          viewBox="0 0 380 152"
-          className="w-full h-auto max-h-[135px] select-none"
+          viewBox="28 0 324 164"
+          className="w-full h-full select-none"
           aria-hidden="true"
         >
           <defs>
@@ -241,17 +241,17 @@ export function ElectrodepositionDiagram() {
       </div>
 
       {/* ── COMPACT FOOTER REACTION STRIP ── */}
-      <div className="mt-1.5 flex items-center justify-between gap-1.5 text-[10px]">
-        <div className="rounded border border-[var(--outline-variant)] bg-[var(--surface-container-low)] px-2 py-0.5 flex-1 flex items-center gap-1">
+      <div className="mt-1 flex items-center justify-between gap-1.5 text-[10px] sm:text-[11px] shrink-0">
+        <div className="rounded border border-[var(--outline-variant)] bg-[var(--surface-container-low)] px-2 py-0.5 flex-1 flex items-center gap-1 min-w-0">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#334155] shrink-0" />
-          <span className="font-semibold text-[var(--foreground)]">Anoda:</span>
+          <span className="font-semibold text-[var(--foreground)] shrink-0">Anoda:</span>
           <span className="text-[var(--text-secondary)] truncate">Oksidasi (C inert)</span>
         </div>
 
-        <div className="rounded border border-[var(--primary)]/30 bg-[var(--primary-container)]/10 px-2 py-0.5 flex-1 flex items-center gap-1">
+        <div className="rounded border border-[var(--primary)]/30 bg-[var(--primary-container)]/10 px-2 py-0.5 flex-1 flex items-center gap-1 min-w-0">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--chart-navy)] shrink-0" />
-          <span className="font-semibold text-[var(--primary)]">Katoda:</span>
-          <span className="font-mono text-[9px] text-[var(--foreground)] font-bold truncate">
+          <span className="font-semibold text-[var(--primary)] shrink-0">Katoda:</span>
+          <span className="font-mono text-[9px] sm:text-[9.5px] text-[var(--foreground)] font-bold truncate">
             <ChemText>{"M^{n+} + ne^{-} → M^{0}"}</ChemText>
           </span>
         </div>

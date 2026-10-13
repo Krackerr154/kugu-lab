@@ -52,6 +52,11 @@ export function PresenterConsole() {
   const hasNextSlide = currentSlideIndex < TOTAL_REVIEW_DECK_SLIDES - 1;
   const hasPrevSlide = currentSlideIndex > 0;
 
+  const presenterSlide7Stage: 0 | 1 | 2 =
+    currentSlideId === "p7"
+      ? ((snapshot?.slideStage as 0 | 1 | 2) ?? 0)
+      : 0;
+
   // Session elapsed timer
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   useEffect(() => {
@@ -68,11 +73,51 @@ export function PresenterConsole() {
       const clamped = Math.max(0, Math.min(TOTAL_REVIEW_DECK_SLIDES - 1, index));
       const target = REVIEW_DECK_SLIDES[clamped];
       if (target) {
-        presentSlide(target.id);
+        presentSlide(target.id, target.id === "p7" ? 0 : undefined);
       }
     },
     [presentSlide]
   );
+
+  const stepForward = useCallback(() => {
+    if (currentSlideId === "p7") {
+      if (presenterSlide7Stage === 0) {
+        presentSlide("p7", 1);
+        return;
+      }
+      if (presenterSlide7Stage === 1) {
+        presentSlide("p7", 2);
+        return;
+      }
+      if (presenterSlide7Stage === 2) {
+        goToSlide(currentSlideIndex + 1);
+        return;
+      }
+    }
+    if (hasNextSlide) {
+      goToSlide(currentSlideIndex + 1);
+    }
+  }, [currentSlideId, presenterSlide7Stage, hasNextSlide, goToSlide, currentSlideIndex, presentSlide]);
+
+  const stepBack = useCallback(() => {
+    if (currentSlideId === "p7") {
+      if (presenterSlide7Stage === 2) {
+        presentSlide("p7", 1);
+        return;
+      }
+      if (presenterSlide7Stage === 1) {
+        presentSlide("p7", 0);
+        return;
+      }
+    }
+    if (currentSlideId === "p8") {
+      presentSlide("p7", 2);
+      return;
+    }
+    if (hasPrevSlide) {
+      goToSlide(currentSlideIndex - 1);
+    }
+  }, [currentSlideId, presenterSlide7Stage, hasPrevSlide, goToSlide, currentSlideIndex, presentSlide]);
 
   // Keyboard navigation handler with input suppression
   useEffect(() => {
@@ -84,10 +129,13 @@ export function PresenterConsole() {
 
       if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
         e.preventDefault();
-        if (hasNextSlide) goToSlide(currentSlideIndex + 1);
+        stepForward();
       } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
         e.preventDefault();
-        if (hasPrevSlide) goToSlide(currentSlideIndex - 1);
+        stepBack();
+      } else if (e.key === "Escape" && currentSlideId === "p7" && presenterSlide7Stage > 0) {
+        e.preventDefault();
+        presentSlide("p7", 0);
       } else if (e.key === "Home") {
         e.preventDefault();
         goToSlide(0);
@@ -99,7 +147,7 @@ export function PresenterConsole() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentSlideIndex, hasNextSlide, hasPrevSlide, goToSlide]);
+  }, [stepForward, stepBack, currentSlideId, presenterSlide7Stage, goToSlide, presentSlide]);
 
   const isDataSlide = currentSlide.kind === "data";
   const isClosingSlide = currentSlide.kind === "closing";
@@ -251,8 +299,13 @@ export function PresenterConsole() {
             )}
 
             {currentSlide.embeddedComponent === "electrolyte-solutions" && (
-              <div className="min-w-0">
-                <ElectrolyteSolutionsCards />
+              <div className="min-w-0 relative">
+                <ElectrolyteSolutionsCards
+                  stage={presenterSlide7Stage}
+                  onSetStage={(s) => presentSlide("p7", s)}
+                  overlayOpen={presenterSlide7Stage > 0}
+                  onToggleOverlay={(open) => presentSlide("p7", open ? 1 : 0)}
+                />
               </div>
             )}
 
@@ -369,7 +422,11 @@ export function PresenterConsole() {
                 Berikutnya:
               </span>
               <span className="font-semibold text-[var(--foreground)] truncate">
-                Slide {nextSlideIndex + 1} · {nextSlide.title}
+                {currentSlideId === "p7" && presenterSlide7Stage === 0
+                  ? "Tahap 2 · Reagen Pelarut & Asam/Basa (H₂O, HCl, NH₃)"
+                  : currentSlideId === "p7" && presenterSlide7Stage === 1
+                  ? "Tahap 3 · Kelat & Supresi (EDTA, Sitrat, PEG-400)"
+                  : `Slide ${nextSlideIndex + 1} · ${nextSlide.title}`}
               </span>
             </div>
 
@@ -377,8 +434,8 @@ export function PresenterConsole() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => goToSlide(currentSlideIndex - 1)}
-                disabled={!hasPrevSlide}
+                onClick={stepBack}
+                disabled={!hasPrevSlide && !(currentSlideId === "p7" && presenterSlide7Stage > 0)}
                 aria-label="Slide sebelumnya"
                 className="m4-motion-control inline-flex min-h-9 items-center gap-1 rounded-lg border border-[var(--outline-variant)] px-3 text-xs font-semibold text-[var(--primary-container)] hover:bg-[var(--surface-container)] disabled:opacity-30"
               >
@@ -394,8 +451,8 @@ export function PresenterConsole() {
 
               <button
                 type="button"
-                onClick={() => goToSlide(currentSlideIndex + 1)}
-                disabled={!hasNextSlide}
+                onClick={stepForward}
+                disabled={!hasNextSlide && !(currentSlideId === "p7" && presenterSlide7Stage < 2)}
                 aria-label="Slide berikutnya"
                 className="m4-motion-control inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-[var(--primary-container)] bg-[var(--primary-container)] px-3.5 text-xs font-bold text-[var(--on-primary)] hover:opacity-90 disabled:opacity-30"
               >

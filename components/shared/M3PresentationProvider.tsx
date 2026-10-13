@@ -57,7 +57,7 @@ interface M3PresentationContextValue {
   startPresenting: () => void;
   endPresenting: () => void;
   presentStage: (stageId: M3StageId) => void;
-  presentSlide: (slideId: ReviewSlideId) => void;
+  presentSlide: (slideId: ReviewSlideId, slideStage?: number) => void;
   presentDataSet: (dataSetId: string) => void;
   presentDemoOverlay: (overlay: M3DemoOverlay) => void;
   presentSimState: (simState: M3SimState) => void;
@@ -67,12 +67,28 @@ const Context = createContext<M3PresentationContextValue | null>(null);
 const INITIAL_STATE: M3PresentationState = { version: 1, stageId: "brief", slideId: "p1" };
 const envRelayUrl = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_M3_RELAY_URL ?? "" : "";
 
+function resolveRelayUrl(configuredUrl: string): string {
+  if (typeof window === "undefined" || !configuredUrl) return configuredUrl;
+  if (configuredUrl.startsWith("wss://")) return configuredUrl;
+  try {
+    const parsed = new URL(configuredUrl);
+    if (window.location.hostname && window.location.hostname !== parsed.hostname) {
+      parsed.hostname = window.location.hostname;
+      return parsed.toString();
+    }
+  } catch {
+    // fallback
+  }
+  return configuredUrl;
+}
+
 export function M3PresentationProvider({ children, transportFactory, relayUrl = envRelayUrl }: {
   children: React.ReactNode;
   transportFactory?: PresentationTransportFactory;
   relayUrl?: string;
 }) {
-  const relayMode = relayUrl.length > 0;
+  const activeRelayUrl = resolveRelayUrl(relayUrl);
+  const relayMode = activeRelayUrl.length > 0;
   const [role, setRole] = useState<Role>("solo");
   const [status, setStatus] = useState<ConnectionStatus>("solo");
   const [snapshot, setSnapshot] = useState<M3PresentationState | null>(null);
@@ -178,9 +194,9 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
 
   const makeTransport = useCallback((config: PresentationTransportConfig) => {
     if (transportFactory) return transportFactory(config);
-    if (relayMode) return createRelayTransport({ url: relayUrl, ...config });
+    if (relayMode) return createRelayTransport({ url: activeRelayUrl, ...config });
     return createLocalTransport();
-  }, [relayMode, relayUrl, transportFactory]);
+  }, [relayMode, activeRelayUrl, transportFactory]);
 
   const applyState = useCallback((state: M3PresentationState) => {
     tokenRef.current += 1;
@@ -321,11 +337,16 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
       presenterPublishRef.current?.();
     }
   }, []);
-  const presentSlide = useCallback((slideId: ReviewSlideId) => {
+  const presentSlide = useCallback((slideId: ReviewSlideId, slideStage?: number) => {
     // A slide implies its chapter; publish both so scroll-view followers still
     // land on the right stage and slide-view followers get the fine position.
     const stageId = REVIEW_SLIDE_CHAPTER[slideId] as M3StageId;
-    presenterStateRef.current = { version: 1, stageId, slideId };
+    presenterStateRef.current = {
+      version: 1,
+      stageId,
+      slideId,
+      ...(slideStage !== undefined ? { slideStage } : {}),
+    };
     tokenRef.current += 1;
     const token = tokenRef.current;
     setSnapshot(presenterStateRef.current);

@@ -63,7 +63,7 @@ export function ComplexingEffectWorkbench() {
   }, [remoteSimState, isFollowing]);
 
   const frame = cellFrame(time, complexed);
-  const advancing = playing && !reducedMotion;
+  const advancing = playing;
   const percent = Math.round((time / ILLUSTRATION_SECONDS) * 100);
 
   const snCount = frame.deposited.filter((atom) => atom.species === "sn").length;
@@ -165,9 +165,9 @@ export function ComplexingEffectWorkbench() {
       className="m4-motion-enter rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-2 sm:p-2.5 text-xs flex flex-col justify-between h-full"
     >
       {/* ── TOP CONTROL BAR ── */}
-      <div className="flex flex-wrap items-center justify-between gap-1.5 px-1 mb-1 shrink-0">
+      <div className="flex items-center justify-between gap-1.5 px-1 mb-1 shrink-0">
         {/* Scenario Toggles */}
-        <div className="flex flex-wrap items-center gap-1 min-w-0">
+        <div className="flex items-center gap-1 min-w-0 shrink-0">
           <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)] shrink-0">
             Skenario:
           </span>
@@ -278,7 +278,8 @@ export function ComplexingEffectWorkbench() {
           <button
             type="button"
             onClick={handleTogglePlay}
-            disabled={reducedMotion || (time >= ILLUSTRATION_SECONDS && !isPresenter)}
+            disabled={isFollowing}
+            title={isFollowing ? "Disinkronkan oleh asisten" : undefined}
             className="m4-motion-control inline-flex items-center gap-0.5 rounded border border-[var(--outline-variant)] bg-[var(--surface-control)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--foreground)] hover:bg-[var(--surface-container)] disabled:opacity-40"
           >
             <span aria-hidden="true" className="material-symbols-outlined text-sm text-[var(--primary)]">
@@ -329,12 +330,12 @@ export function ComplexingEffectWorkbench() {
             </span>
           </div>
 
-          <div className="flex-1 flex items-center justify-center min-h-0" style={{ height: "118px", maxHeight: "118px" }}>
+          <div className="flex-1 flex items-center justify-center min-h-0 w-full py-0.5 sm:py-1">
             {mode === "dendrite" ? (
-              <div className="w-full flex items-center justify-center" style={{ height: "118px", maxHeight: "118px" }}>
+              <div className="w-full h-full flex items-center justify-center min-h-0">
                 <svg
                   viewBox="0 0 300 150"
-                  className="w-auto h-full max-h-[118px]"
+                  className="w-full h-full select-none"
                   role="img"
                   aria-label={peg ? "Pertumbuhan tersebar dengan adsorpsi PEG400" : "Pertumbuhan jarum dendrit tanpa PEG400"}
                 >
@@ -370,17 +371,17 @@ export function ComplexingEffectWorkbench() {
                 </svg>
               </div>
             ) : view === "closeup" ? (
-              <div className="w-full flex items-center justify-center" style={{ height: "118px", maxHeight: "118px" }}>
+              <div className="w-full h-full flex items-center justify-center min-h-0">
                 <CathodeCloseUp
                   frame={frame}
                   focus="all"
                   activeAgent="edta"
-                  className="w-auto h-full"
+                  className="w-full h-full select-none"
                   viewBox="10 20 280 200"
                 />
               </div>
             ) : (
-              <div className="w-full flex items-center justify-center" style={{ height: "118px", maxHeight: "118px" }}>
+              <div className="w-full h-full flex items-center justify-center min-h-0">
                 <CellSimulation
                   frame={frame}
                   running={advancing}
@@ -389,7 +390,7 @@ export function ComplexingEffectWorkbench() {
                   hotspot={() => ({})}
                   activeAgent="edta"
                   onAgentSelect={() => {}}
-                  className="w-auto h-full"
+                  className="w-full h-full select-none"
                   viewBox="35 8 230 192"
                 />
               </div>
@@ -416,7 +417,7 @@ export function ComplexingEffectWorkbench() {
         <div className="w-full flex flex-col justify-between gap-1 min-w-0 flex-1">
           {mode === "dendrite" ? (
             <div
-              className={`rounded-lg border p-2 flex flex-col justify-between flex-1 min-w-0 ${
+              className={`rounded-lg border p-2 sm:p-2.5 flex flex-col justify-between flex-1 min-w-0 ${
                 !peg
                   ? "border-[#7c3aed]/40 bg-[#7c3aed]/10"
                   : "border-[var(--secondary)]/40 bg-[var(--secondary-container)]/15"
@@ -425,7 +426,7 @@ export function ComplexingEffectWorkbench() {
               <div>
                 <div className="flex items-center justify-between gap-1">
                   <span
-                    className={`inline-flex items-center gap-1 font-bold text-[10px] truncate ${
+                    className={`inline-flex items-center gap-1 font-bold text-[10.5px] sm:text-xs truncate ${
                       !peg ? "text-[#7c3aed]" : "text-[var(--secondary)]"
                     }`}
                   >
@@ -440,7 +441,7 @@ export function ComplexingEffectWorkbench() {
                     </span>
                   </span>
                   <span
-                    className={`rounded px-1.5 py-0.2 font-mono text-[8.5px] font-bold ${
+                    className={`rounded px-1.5 py-0.5 font-mono text-[9px] sm:text-[10px] font-bold ${
                       !peg
                         ? "bg-[var(--surface)] text-[#7c3aed]"
                         : "bg-[var(--surface)] text-[var(--secondary)]"
@@ -450,13 +451,13 @@ export function ComplexingEffectWorkbench() {
                   </span>
                 </div>
 
-                <p className="mt-1 text-[10px] font-bold text-[var(--foreground)] leading-snug">
+                <p className="mt-1 sm:mt-1.5 text-[10.5px] sm:text-xs font-bold text-[var(--foreground)] leading-snug">
                   {!peg
                     ? "Efek medan listrik lokal di ujung tonjolan (tip effect)."
                     : "Molekul PEG400 menutup situs tonjolan aktif."}
                 </p>
 
-                <p className="mt-1 text-[9px] text-[var(--text-secondary)] leading-relaxed">
+                <p className="mt-1 sm:mt-1.5 text-[9.5px] sm:text-[10.5px] text-[var(--text-secondary)] leading-relaxed">
                   {!peg
                     ? "Tanpa aditif penghambat, ion logam terus mengendap di titik tertinggi, memicu percabangan jarum yang rapuh dan mudah rontok."
                     : "Adsorpsi PEG400 memperlambat pertumbuhan di puncak tonjolan, memaksa ion baru mengendap di lembah sehingga lapisan rata."}
@@ -464,7 +465,7 @@ export function ComplexingEffectWorkbench() {
               </div>
 
               {/* Bottom status */}
-              <div className="mt-1 flex items-center justify-between border-t border-[var(--outline-variant)]/40 pt-1 text-[8.5px] pr-10">
+              <div className="mt-1 flex items-center justify-between border-t border-[var(--outline-variant)]/40 pt-1 sm:pt-1.5 text-[9px] sm:text-[10px]">
                 <span className="text-[var(--text-secondary)]">Morfologi deposit:</span>
                 <div className="flex items-center gap-1.5 font-bold font-mono">
                   <span className={!peg ? "text-[#7c3aed]" : "text-[var(--secondary)]"}>
@@ -477,7 +478,7 @@ export function ComplexingEffectWorkbench() {
             </div>
           ) : (
             <div
-              className={`rounded-lg border p-2 flex flex-col justify-between flex-1 min-w-0 ${
+              className={`rounded-lg border p-2 sm:p-2.5 flex flex-col justify-between flex-1 min-w-0 ${
                 complexed
                   ? "border-[var(--secondary)]/40 bg-[var(--secondary-container)]/15"
                   : "border-[var(--error)]/30 bg-[var(--error-container)]/10"
@@ -486,7 +487,7 @@ export function ComplexingEffectWorkbench() {
               <div>
                 <div className="flex items-center justify-between gap-1">
                   <span
-                    className={`inline-flex items-center gap-1 font-bold text-[10px] truncate ${
+                    className={`inline-flex items-center gap-1 font-bold text-[10.5px] sm:text-xs truncate ${
                       complexed ? "text-[var(--secondary)]" : "text-[var(--error)]"
                     }`}
                   >
@@ -501,7 +502,7 @@ export function ComplexingEffectWorkbench() {
                     </span>
                   </span>
                   <span
-                    className={`rounded px-1.5 py-0.2 font-mono text-[8.5px] font-bold ${
+                    className={`rounded px-1.5 py-0.5 font-mono text-[9px] sm:text-[10px] font-bold ${
                       complexed
                         ? "bg-[var(--surface)] text-[var(--foreground)]"
                         : "bg-[var(--surface)] text-[var(--error)]"
@@ -511,13 +512,13 @@ export function ComplexingEffectWorkbench() {
                   </span>
                 </div>
 
-                <p className="mt-1 text-[10px] font-bold text-[var(--foreground)] leading-snug">
+                <p className="mt-1 sm:mt-1.5 text-[10.5px] sm:text-xs font-bold text-[var(--foreground)] leading-snug">
                   {complexed
                     ? "EDTA & Sitrat mengikat Bi³⁺ lebih kuat daripada Sn²⁺."
                     : "Tanpa pengompleks, Bi³⁺ tereduksi jauh lebih awal."}
                 </p>
 
-                <p className="mt-1 text-[9px] text-[var(--text-secondary)] leading-relaxed">
+                <p className="mt-1 sm:mt-1.5 text-[9.5px] sm:text-[10.5px] text-[var(--text-secondary)] leading-relaxed">
                   {complexed
                     ? "Aktivitas Bi³⁺ turun drastis, potensial reduksinya bergeser mendekati Sn²⁺ sehingga keduanya mengendap serentak."
                     : "Selisih 0,45 V mencegah Sn²⁺ tereduksi pada potensial ini; deposit hanya bismut murni tanpa paduan timah."}
@@ -525,7 +526,7 @@ export function ComplexingEffectWorkbench() {
               </div>
 
               {/* Bottom atoms summary */}
-              <div className="mt-1 flex items-center justify-between border-t border-[var(--outline-variant)]/40 pt-1 text-[8.5px] pr-10">
+              <div className="mt-1 flex items-center justify-between border-t border-[var(--outline-variant)]/40 pt-1 sm:pt-1.5 text-[9px] sm:text-[10px]">
                 <span className="text-[var(--text-secondary)]">Deposit katoda:</span>
                 <div className="flex items-center gap-1.5 font-bold font-mono">
                   <span className="text-[var(--chart-navy)]">

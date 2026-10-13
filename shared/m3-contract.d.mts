@@ -22,6 +22,7 @@ export interface M3PresentationState {
   phase?: ReviewPhase;
   dataSetId?: string;
   simState?: M3SimState;
+  slideStage?: number;
 }
 export const M3_STAGE_IDS: readonly M3StageId[];
 export const M3_FOCUS_IDS: readonly M3FocusId[];
