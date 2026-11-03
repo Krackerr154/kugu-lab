@@ -82,7 +82,7 @@ function CellTable({
                     <CopyButton value={c.formula} label={c.cell} />
                   </div>
                 ) : (
-                  <span className="text-[10.5px] italic text-[var(--text-secondary)]">salin dari kolom A/B</span>
+                  <span className="text-[10.5px] italic text-[var(--text-secondary)]">salin langsung dari data mentah</span>
                 )}
               </td>
             </tr>
@@ -97,15 +97,16 @@ export function BETExcelTutorial() {
   return (
     <div>
       <p className="text-sm leading-6 text-[var(--text-secondary)]">
-        Pengolahan dilakukan manual di Excel. Ikuti urutan ini; sel dan rumusnya sama dengan
-        panduan modul, jadi hasilnya bisa dicocokkan dengan lembar kerja asisten.
+        Pengolahan data BET dilakukan mandiri menggunakan Microsoft Excel. Ikuti tahapan sistematis
+        di bawah ini: alokasi sel dan sintaks formula diselaraskan persis dengan panduan modul agar
+        hasil olahan Anda dapat diverifikasi langsung dengan kunci lembar kerja asisten.
       </p>
 
-      <ol className="mt-2 space-y-2">
+      <ol className="mt-2.5 space-y-2">
         {EXCEL_STEPS.map((step, i) => (
           <li
             key={step.id}
-            className="rounded-lg border border-[var(--border)] bg-[var(--surface-container-lowest)] p-2.5"
+            className="rounded-lg border border-[var(--border)] bg-[var(--surface-container-lowest)] p-3"
           >
             <div className="flex items-baseline gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--secondary)] text-[10px] font-bold text-[var(--surface-container-lowest)]">
@@ -116,11 +117,11 @@ export function BETExcelTutorial() {
               </h3>
             </div>
 
-            <p className="mt-1 pl-7 text-[11.5px] leading-snug text-[var(--text-secondary)]">
+            <p className="mt-1 pl-7 text-[12px] leading-relaxed text-[var(--text-secondary)]">
               {step.intro}
             </p>
 
-            <ul className="mt-1 space-y-0.5 pl-11 text-[11.5px] leading-snug text-[var(--text-secondary)]">
+            <ul className="mt-1 space-y-0.5 pl-11 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
               {step.bullets.map((b) => (
                 <li key={b} className="list-disc">
                   {b}
@@ -144,11 +145,13 @@ export function BETExcelTutorial() {
         ))}
       </ol>
 
-      <p className="mt-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-control)] px-3 py-2 text-[11px] leading-snug text-[var(--text-secondary)]">
-        <strong className="text-[var(--foreground)]">Paling sering salah:</strong> mengambil titik
-        desorpsi untuk BET, memakai tekanan P alih-alih P/P₀, dan lupa bahwa jumlah titik BET tiap
-        sampel bisa 6 atau 7. Rentang di rumus (mis. <code className="font-mono">H16:H22</code>)
-        harus disesuaikan dengan baris terakhir data Anda.
+      <p className="mt-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-control)] px-3 py-2 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
+        <strong className="text-[var(--foreground)]">Kesalahan umum yang harus dihindari:</strong>{" "}
+        (1) Memasukkan data dari cabang desorpsi ke dalam regresi BET; (2) Memasukkan tekanan absolut P
+        alih-alih rasio P/P₀; dan (3) Lupa menyesuaikan baris akhir pada rentang rumus (misalnya{" "}
+        <code className="font-mono">H16:H22</code> untuk sampel 7 titik vs{" "}
+        <code className="font-mono">H16:H21</code> untuk sampel 6 titik). Pastikan batas baris rumus
+        Anda sesuai dengan jumlah baris data sampel yang sedang dikerjakan.
       </p>
     </div>
   );
