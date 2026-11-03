@@ -237,3 +237,44 @@ test("tiga pertanyaan penutup tersedia", () => {
   assert.equal(CONCLUSION_QUESTIONS.length, 3);
   assert.match(CONCLUSION_QUESTIONS[2], /valid/i);
 });
+
+/* ── Simetri pengisian pori ─────────────────────────────────────────────
+   Animasinya menggambar dinding kiri dan kanan sebagai cermin, jadi jumlah
+   situs terisi di kedua sisi harus sama pada setiap P/P₀. Kalau tidak,
+   pengisian terlihat tumbuh dari satu sisi saja. */
+
+test("pengisian pori simetris kiri-kanan pada setiap P/P0 (adsorpsi)", () => {
+  for (let pp = 0; pp <= 1.0001; pp += 0.05) {
+    const f = filledSites(pp, "ads");
+    const left = f.filter((s) => s.x < 50).length;
+    const right = f.filter((s) => s.x > 50).length;
+    assert.equal(left, right, `tidak simetris pada P/P0 ${pp.toFixed(2)}: kiri ${left}, kanan ${right}`);
+  }
+});
+
+test("pengisian pori simetris kiri-kanan pada setiap P/P0 (desorpsi)", () => {
+  for (let pp = 0; pp <= 1.0001; pp += 0.05) {
+    const f = filledSites(pp, "des");
+    const left = f.filter((s) => s.x < 50).length;
+    const right = f.filter((s) => s.x > 50).length;
+    assert.equal(left, right, `tidak simetris pada P/P0 ${pp.toFixed(2)}: kiri ${left}, kanan ${right}`);
+  }
+});
+
+test("kapiler mengisi dari kedua dinding menuju pusat", () => {
+  const sites = poreSites().filter((s) => s.layer === "capillary");
+  const leftOffsets = [...new Set(sites.filter((s) => s.x < 50).map((s) => +(s.x - 26).toFixed(2)))].sort((a, b) => a - b);
+  const rightOffsets = [...new Set(sites.filter((s) => s.x > 50).map((s) => +(74 - s.x).toFixed(2)))].sort((a, b) => a - b);
+  assert.deepEqual(leftOffsets, rightOffsets, "pasangan kolom kapiler tidak bercermin");
+  assert.ok(leftOffsets.length >= 6, "terlalu sedikit kolom kapiler");
+});
+
+test("situs yang terisi selalu bertambah seiring P/P0 pada cabang adsorpsi", () => {
+  let prev = -1;
+  for (let pp = 0; pp <= 1.0001; pp += 0.02) {
+    const n = filledSites(pp, "ads").length;
+    assert.ok(n >= prev, `jumlah terisi turun di P/P0 ${pp.toFixed(2)}`);
+    prev = n;
+  }
+  assert.equal(prev, PORE_SITE_COUNT, "pori belum penuh pada P/P0 = 1");
+});

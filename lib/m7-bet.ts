@@ -145,33 +145,42 @@ export type PoreSite = {
  * Situs adsorpsi di dalam pori, disusun deterministik: dinding dulu (monolayer),
  * lalu lapisan kedua, lalu pengisian kapiler. Ambang tiap situs naik sesuai
  * urutannya, sehingga fraksi terisi naik mulus terhadap P/P0.
+ *
+ * Kolom kapiler disusun BERPASANGAN dari kedua dinding ke arah tengah. Kalau
+ * daftar offset diiterasi apa adanya, situs kiri dan kanan tidak punya ambang
+ * yang sama, sehingga pengisian tampak tumbuh dari satu sisi saja — pori
+ * terlihat tidak simetris padahal kondensasi kapiler mengisi dari kedua dinding.
  */
 export function poreSites(): PoreSite[] {
   const sites: PoreSite[] = [];
   const rows = 9;
   const channelX0 = 26;
   const channelX1 = 74;
-  const inner = [30, 36, 42, 48, 54, 60, 66, 70];
+
+  // jarak tiap pasangan kolom dari dindingnya, berurutan menuju pusat
+  const ringOffsets = [1.5, 4, 6.5, 9, 11.5, 14, 16.5, 19];
 
   for (let r = 0; r < rows; r++) {
     const y = 18 + (r * 62) / (rows - 1);
 
-    // monolayer: menempel di kedua dinding
-    sites.push({ x: channelX0 + 2, y, threshold: 0.02 + r * 0.004, layer: "mono" });
-    sites.push({ x: channelX1 - 2, y, threshold: 0.025 + r * 0.004, layer: "mono" });
+    // monolayer: menempel di kedua dinding. Ambang kiri dan kanan harus sama
+    // supaya kedua sisi terisi serentak.
+    const tMono = 0.02 + r * 0.004;
+    sites.push({ x: channelX0 + 2, y, threshold: tMono, layer: "mono" });
+    sites.push({ x: channelX1 - 2, y, threshold: tMono, layer: "mono" });
 
     // multilayer: lapisan kedua & ketiga, tumbuh dari dinding ke dalam
-    sites.push({ x: channelX0 + 8, y, threshold: 0.12 + r * 0.01, layer: "multi" });
-    sites.push({ x: channelX1 - 8, y, threshold: 0.14 + r * 0.01, layer: "multi" });
+    const tMulti = 0.12 + r * 0.01;
+    sites.push({ x: channelX0 + 8, y, threshold: tMulti, layer: "multi" });
+    sites.push({ x: channelX1 - 8, y, threshold: tMulti, layer: "multi" });
 
-    // kondensasi kapiler: mengisi bagian tengah pada P/P0 tinggi
-    for (let i = 0; i < inner.length; i++) {
-      sites.push({
-        x: inner[i],
-        y,
-        threshold: 0.55 + i * 0.045 + r * 0.002,
-        layer: "capillary",
-      });
+    // kondensasi kapiler: mengisi bagian tengah, tumbuh simetris dari kedua
+    // dinding. Pasangan kolom berbagi ambang yang sama supaya kiri dan kanan
+    // selalu terisi bersamaan.
+    for (let i = 0; i < ringOffsets.length; i++) {
+      const threshold = 0.55 + i * 0.045 + r * 0.002;
+      sites.push({ x: channelX0 + ringOffsets[i], y, threshold, layer: "capillary" });
+      sites.push({ x: channelX1 - ringOffsets[i], y, threshold, layer: "capillary" });
     }
   }
   return sites;
@@ -442,20 +451,37 @@ export const CONCLUSION_QUESTIONS: readonly string[] = [
   "Termasuk tipe isoterm apa sampel Anda, dan bagaimana karakter porinya?",
   "Apakah ada histeresis? Apa penyebabnya?",
   "Apakah C positif? Apakah luas permukaan BET valid?",
-];
-
-/** Kisi-kisi laporan (panduan slide 25). */
-export const REPORT_GRID: readonly string[] = [
-  "Isoterm adsorpsi-desorpsi N₂ sampel (data diberikan).",
-  "Klasifikasi tipe isoterm menurut IUPAC dan kaitannya dengan struktur pori.",
-  "Penentuan luas permukaan spesifik dari kurva BET.",
-  "Analisis nilai C dan maknanya terhadap interaksi adsorbat-adsorben.",
-  "Kaitan luas permukaan dengan sifat Al-Fum sebagai adsorben atau katalis.",
-];
-
-/** Kesalahan yang paling sering terjadi (panduan slide 23). */
-export const COMMON_TRAPS: readonly string[] = [
-  "Pakai titik adsorpsi untuk BET, bukan titik desorpsi.",
-  "Gunakan P/P₀, bukan tekanan P; V dalam cm³/g STP.",
-  "Jumlah titik BET berbeda tiap sampel (6 atau 7).",
-];
+];
+
+
+
+/** Kisi-kisi laporan (panduan slide 25). */
+
+export const REPORT_GRID: readonly string[] = [
+
+  "Isoterm adsorpsi-desorpsi N₂ sampel (data diberikan).",
+
+  "Klasifikasi tipe isoterm menurut IUPAC dan kaitannya dengan struktur pori.",
+
+  "Penentuan luas permukaan spesifik dari kurva BET.",
+
+  "Analisis nilai C dan maknanya terhadap interaksi adsorbat-adsorben.",
+
+  "Kaitan luas permukaan dengan sifat Al-Fum sebagai adsorben atau katalis.",
+
+];
+
+
+
+/** Kesalahan yang paling sering terjadi (panduan slide 23). */
+
+export const COMMON_TRAPS: readonly string[] = [
+
+  "Pakai titik adsorpsi untuk BET, bukan titik desorpsi.",
+
+  "Gunakan P/P₀, bukan tekanan P; V dalam cm³/g STP.",
+
+  "Jumlah titik BET berbeda tiap sampel (6 atau 7).",
+
+];
+
