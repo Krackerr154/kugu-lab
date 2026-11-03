@@ -220,6 +220,37 @@ export function poreCurve(branch: "ads" | "des" = "ads", steps = 80): { x: numbe
   return pts;
 }
 
+/**
+ * Nilai V pada posisi x di sepanjang polyline hasil sampling.
+ *
+ * Kurva dilukis sebagai polyline. Kalau titik berjalan dihitung dari fungsi
+ * eksak, ia sedikit keluar dari garis setiap kali x berada di antara dua titik
+ * sampel — makin renggang sampling, makin jauh, dan gejalanya muncul persis
+ * saat nilai P/P0 tidak jatuh di grid sampel. Interpolasi linear pada titik
+ * sampel yang sama membuat titik selalu tepat di garis yang dilihat pengguna.
+ */
+export function interpolateCurve(
+  pts: readonly { x: number; v: number }[],
+  x: number,
+): number {
+  if (pts.length === 0) return 0;
+  const t = Math.min(1, Math.max(0, x));
+  if (t <= pts[0].x) return pts[0].v;
+  let lo = 0;
+  let hi = pts.length - 1;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    if (pts[mid].x <= t) lo = mid;
+    else hi = mid;
+  }
+  const a = pts[lo];
+  const b = pts[hi];
+  const span = b.x - a.x;
+  if (span <= 0) return b.v;
+  const f = (t - a.x) / span;
+  return a.v + (b.v - a.v) * f;
+}
+
 /* ── Matematika BET ────────────────────────────────────────────────────── */
 
 export interface BetPoint {

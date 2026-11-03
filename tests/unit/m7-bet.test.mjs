@@ -14,6 +14,7 @@ import {
   filledSites,
   iupacCurve,
   iupacVolume,
+  interpolateCurve,
   linearFit,
   poreCurve,
   poreSites,
@@ -310,4 +311,66 @@ test("tidak ada dataran mati di tengah kurva", () => {
 
 test("pori penuh sebelum P/P0 1", () => {
   assert.equal(poreVolume(0.95, "ads"), 1, "pori belum penuh pada P/P0 0,95");
+});
+
+/* ── Titik berjalan harus menempel pada garis yang digambar ────────────
+   Kurva dilukis sebagai polyline hasil sampling; nilai eksak berbeda dari
+   polyline di antara titik sampel. Kalau titik berjalan memakai nilai eksak,
+   ia tampak lepas dari garis saat P/P0 berada di antara dua sampel. */
+
+test("interpolasi polyline sama dengan titik sampel di x sampel", () => {
+  const pts = poreCurve("ads", 100);
+  for (const p of pts) {
+    assert.equal(interpolateCurve(pts, p.x), p.v, `mismatch di x=${p.x}`);
+  }
+});
+
+test("interpolasi polyline tetap di antara dua nilai tetangga", () => {
+  const pts = poreCurve("ads", 40);
+  for (let k = 0; k <= 200; k++) {
+    const x = k / 200;
+    const v = interpolateCurve(pts, x);
+    // cari segmen yang memuat x
+    let i = 1;
+    while (i < pts.length - 1 && pts[i].x < x) i++;
+    const a = pts[i - 1];
+    const b = pts[i];
+    const lo = Math.min(a.v, b.v);
+    const hi = Math.max(a.v, b.v);
+    assert.ok(v >= lo - 1e-12 && v <= hi + 1e-12, `x=${x}: ${v} di luar [${lo}, ${hi}]`);
+  }
+});
+
+test("titik berjalan selalu tepat pada polyline yang digambar", () => {
+  // Invarian yang sebenarnya: titik memakai interpolateCurve pada polyline yang
+  // sama dengan yang dilukis, jadi posisinya identik dengan garis di setiap x.
+  const pts = poreCurve("ads", 400);
+  for (let k = 0; k <= 400; k++) {
+    const x = k / 400;
+    const onLine = interpolateCurve(pts, x);
+    // mereproduksi cara SVG menggambar: segmen lurus antara dua titik sampel
+    let i = 1;
+    while (i < pts.length - 1 && pts[i].x < x) i++;
+    const a = pts[i - 1];
+    const b = pts[i];
+    const f = b.x === a.x ? 0 : (x - a.x) / (b.x - a.x);
+    const drawn = a.v + (b.v - a.v) * f;
+    assert.ok(
+      Math.abs(onLine - drawn) < 1e-12,
+      `x=${x}: titik ${onLine} tidak di garis ${drawn}`,
+    );
+  }
+});
+
+test("segmen polyline produksi cukup rapat untuk tampak mulus", () => {
+  // poreVolume adalah fungsi tangga (90 langkah), jadi polyline tidak akan
+  // pernah "konvergen" tepat di tepi langkah. Yang penting untuk mata: tiap
+  // segmen garis hanya naik sedikit, sehingga tangga tampak seperti kurva.
+  // 2 unit viewBox = ~2 px pada panel 190 px.
+  const pts = poreCurve("ads", 400);
+  let worst = 0;
+  for (let i = 1; i < pts.length; i++) {
+    worst = Math.max(worst, Math.abs(pts[i].v - pts[i - 1].v));
+  }
+  assert.ok(worst <= 0.02, `lompatan segmen ${(worst * 100).toFixed(1)}% terlalu terlihat`);
 });

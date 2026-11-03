@@ -17,6 +17,7 @@ import {
   ISOTHERM_TYPES,
   type IsothermTypeId,
   filledSites,
+  interpolateCurve,
   iupacCurve,
   poreCurve,
   poreVolume,
@@ -34,6 +35,10 @@ const LAYER_COLOR: Record<string, string> = {
   capillary: "var(--chart-green, var(--secondary))",
 };
 
+/** Jumlah titik sampel kurva. 400 titik membuat segmen < 0,25 unit viewBox. */
+const CURVE_SAMPLES = 400;
+
+
 function pathOf(pts: readonly { x: number; v: number }[], w: number, h: number): string {
   return pts
     .map((p, i) => `${i === 0 ? "M" : "L"}${(p.x * w).toFixed(2)},${(h - p.v * h).toFixed(2)}`)
@@ -47,9 +52,19 @@ export function BETPoreFilling() {
   const describedBy = useId();
 
   const sites = useMemo(() => filledSites(pp, branch), [pp, branch]);
-  const ads = useMemo(() => poreCurve("ads"), []);
-  const des = useMemo(() => poreCurve("des"), []);
+  // Cukup halus sehingga segmen garis jauh lebih pendek daripada satu piksel
+  // layar. Dengan 80 titik, deviasi titik terhadap polyline mencapai 1,2 unit
+  // viewBox — terlihat sebagai titik "lepas" dari garis setiap kali nilai P/P₀
+  // berada di antara dua titik sampel (misalnya saat animasi berjalan).
+  const ads = useMemo(() => poreCurve("ads", CURVE_SAMPLES), []);
+  const des = useMemo(() => poreCurve("des", CURVE_SAMPLES), []);
   const vol = poreVolume(pp, branch);
+  // Titik berjalan memakai nilai dari polyline yang benar-benar digambar,
+  // bukan fungsi eksak, supaya selalu menempel pada garis.
+  const volOnLine = useMemo(
+    () => interpolateCurve(branch === "ads" ? ads : des, pp),
+    [branch, ads, des, pp],
+  );
 
   const stage =
     pp <= 0
@@ -168,8 +183,16 @@ export function BETPoreFilling() {
             <path d={pathOf(ads, 100, 100)} fill="none" stroke={ACID_COLOR} strokeWidth={1.6} strokeLinejoin="round" />
             <path d={pathOf(des, 100, 100)} fill="none" stroke={ALFUM_COLOR} strokeWidth={1.6} strokeDasharray="3 2" strokeLinejoin="round" />
 
-            {/* titik berjalan */}
-            <circle cx={pp * 100} cy={100 - vol * 100} r={2.6} fill={branch === "ads" ? ACID_COLOR : ALFUM_COLOR} stroke="var(--surface-container-lowest)" strokeWidth={1} />
+            {/* titik berjalan — memakai volOnLine (interpolasi polyline yang
+                digambar), bukan vol (fungsi eksak), supaya selalu di garis */}
+            <circle
+              cx={pp * 100}
+              cy={100 - volOnLine * 100}
+              r={2.6}
+              fill={branch === "ads" ? ACID_COLOR : ALFUM_COLOR}
+              stroke="var(--surface-container-lowest)"
+              strokeWidth={1}
+            />
           </svg>
           <div className="mt-1 flex items-center justify-between text-[9px] text-[var(--text-secondary)]">
             <span>P/P₀ 0</span>
