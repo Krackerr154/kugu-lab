@@ -212,7 +212,7 @@ export const modules: ModuleMeta[] = [
       "FTIR menghubungkan pita serapan dengan gugus fungsi; TGA memanaskan sampel sambil menimbangnya terus-menerus untuk melacak kehilangan massa dan dekomposisi.",
     keyInteractives: [
       "Planner instrumen-run",
-      "Workspace FTIR (konten sedang disiapkan)",
+      "Workspace FTIR — penetapan pita dan evaluasi kemurnian",
       "Workspace TG/DTG (grafik sinkron)",
       "Alat anotasi kehilangan-massa/suhu",
       "Worksheet teoretis-vs-eksperimental",
@@ -284,10 +284,15 @@ export const modules: ModuleMeta[] = [
       "Mengolah kurva BET dan menentukan luas permukaan spesifik.",
       "Menghubungkan luas permukaan dengan sifat material berpori.",
     ],
-    theorySummary: "Placeholder kurikulum: konten BET akan diisi dari Shared_Modul KUGU.docx.",
-    keyInteractives: ["Workspace isoterm N₂/BET (direncanakan)", "Regresi BET dan interpretasi pori"],
+    theorySummary:
+      "Adsorpsi fisisorpsi N₂ pada 77 K, klasifikasi isoterm IUPAC, persamaan BET dengan jendela 0,05–0,30, lalu pengolahan kurva menjadi luas permukaan spesifik beserta pemeriksaan validitas C.",
+    keyInteractives: [
+      "Model pengisian pori tersinkron dengan kurva isoterm",
+      "Galeri tipe isoterm IUPAC",
+      "Tutorial pengolahan BET di Excel (sel dan rumus)",
+    ],
     safetyBlockers: ["Konten keselamatan dan prosedur pengukuran menunggu verifikasi pengajar"],
-    contentState: "placeholder",
+    contentState: "partial",
   },
 ];
 

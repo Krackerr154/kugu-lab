@@ -640,6 +640,61 @@ body:has([data-presenter-console]) .app-shell {
   scrollbar-width: thin;
 }
 
+/* IUPAC gallery: six tiles that must never leave an orphan row.
+   auto-fit gives 6 across on a wide panel but 4+2 in a narrow one, and a
+   2-card second row wastes half the width. Cap at 3 below 900px so the
+   gallery is always 3+3, and at 2 on very narrow phones. */
+.iupac-grid {
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+}
+@media (max-width: 900px) {
+  .iupac-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 380px) {
+  .iupac-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Short landscape (phone sideways, 360–500px tall): the deck panel only gets
+   ~216px, and the caption box below the grid takes ~91px of it. Shrink the
+   drawn curve so both rows plus the caption land inside the panel at once —
+   the assistant must not have to scroll the figure being discussed. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .iupac-grid svg {
+    height: 48px !important;
+  }
+  .iupac-grid button {
+    padding: 0.2rem !important;
+  }
+  .iupac-grid button > span {
+    margin-top: 0 !important;
+    font-size: 10px !important;
+    line-height: 1 !important;
+  }
+  .iupac-grid {
+    gap: 0.3rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+  /* The caption box is the last 27px. Collapse its padding and leading so the
+     whole gallery + explanation fits the 216px panel without a scrollbar. */
+  .iupac-grid + div {
+    margin-top: 0.3rem !important;
+    padding: 0.35rem 0.5rem !important;
+    min-height: 0 !important;
+  }
+  .iupac-grid + div p {
+    font-size: 10.5px !important;
+    line-height: 1.25 !important;
+    margin-top: 0.1rem !important;
+  }
+  .iupac-grid + div p:first-child {
+    margin-top: 0 !important;
+  }
+}
+
 /* Two columns when short and wide: bullets left, panel right. Uses the space
    landscape actually has (width) instead of the space it lacks (height).
 
@@ -650,7 +705,10 @@ body:has([data-presenter-console]) .app-shell {
 @media (orientation: landscape) and (min-width: 640px) and (max-height: 500px) {
   .m4-deck-split:has(.m4-deck-panel):has(.m4-deck-bullets) {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    /* The embedded figure is the thing the assistant points at while talking,
+       so it gets the larger share. 1 : 1.35 keeps the bullets readable while
+       giving the panel the width its curves need. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
     gap: 0.75rem;
     align-items: stretch;
   }
@@ -691,7 +749,7 @@ body:has([data-presenter-console]) .app-shell {
   }
   .m4-deck-compact .m4-deck-split:has(.m4-deck-panel):has(.m4-deck-bullets) {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
     gap: 0.5rem;
     align-items: stretch;
     flex: 1;
@@ -1411,3 +1469,75 @@ body:has([data-presenter-console]) .app-shell {
 
 
 
+
+/* ── FTIR theory visuals ─────────────────────────────────────────────────
+   Motion is encoded to match the standard classification of the six modes:
+
+     dalam bidang (in-plane)    : ulur, gunting, goyang
+     luar bidang (out-of-plane) : kipas, puntir
+
+   The rule that separates the look-alike pair:
+     goyang — BOTH terminal atoms slide the SAME way, in the plane
+     kipas  — BOTH terminal atoms move the SAME way, out of plane
+     puntir — terminal atoms move in OPPOSITE directions, out of plane
+
+   Two details that keep the set tidy:
+   1. Scaling an arm also scales the atom circle inside it, turning it into an
+      ellipse. Each arm therefore carries a shield animation that applies the
+      reciprocal scale to the circle, so atoms stay perfectly round.
+   2. All amplitudes are normalised to ~4 px of terminal displacement, so the
+      six tiles read as one designed set rather than six separate effects.
+
+   Period is read from --ftir-dur so a tile can run faster (stretching) or
+   slower (bending) while its shield stays in lockstep.                     */
+@keyframes ftir-stretch        { 0%, 100% { transform: scaleX(1); }      50% { transform: scaleX(1.22); } }
+@keyframes ftir-compress       { 0%, 100% { transform: scaleX(1); }      50% { transform: scaleX(0.78); } }
+@keyframes ftir-shield-stretch { 0%, 100% { transform: scaleX(1); }      50% { transform: scaleX(0.8197); } }
+@keyframes ftir-shield-compress{ 0%, 100% { transform: scaleX(1); }      50% { transform: scaleX(1.2821); } }
+@keyframes ftir-scissor-l      { 0%, 100% { transform: rotate(0deg); }   50% { transform: rotate(12deg); } }
+@keyframes ftir-scissor-r      { 0%, 100% { transform: rotate(0deg); }   50% { transform: rotate(-12deg); } }
+@keyframes ftir-slide-x        { 0%, 100% { transform: translateX(-4px); } 50% { transform: translateX(4px); } }
+@keyframes ftir-slide-y        { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
+@keyframes ftir-twist-up       { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
+@keyframes ftir-twist-down     { 0%, 100% { transform: translateY(4px); }  50% { transform: translateY(-4px); } }
+@keyframes ftir-dipole         { 0%, 100% { transform: scaleX(0.55); }    50% { transform: scaleX(1); } }
+
+/* Origins: a half-bond group must pivot/scale at the central atom, which is
+   always its inner edge. `transform-box: fill-box` makes that per element. */
+.ftir-anim   { transform-box: fill-box; transform-origin: center; }
+.ftir-anim-l { transform-box: fill-box; transform-origin: right center; }
+.ftir-anim-r { transform-box: fill-box; transform-origin: left center; }
+.ftir-anim-origin-left { transform-box: fill-box; transform-origin: left center; }
+
+.ftir-a-stretch      { animation: ftir-stretch var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-a-compress     { animation: ftir-compress var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-a-scissor-l    { animation: ftir-scissor-l var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-a-scissor-r    { animation: ftir-scissor-r var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-a-slide-x      { animation: ftir-slide-x var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-a-slide-y      { animation: ftir-slide-y var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-a-twist-up     { animation: ftir-twist-up var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-a-twist-down   { animation: ftir-twist-down var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-a-dipole       { animation: ftir-dipole var(--ftir-dur, 1.9s) ease-in-out infinite; }
+
+/* atom shields: reciprocal scale, same clock, so the circle never distorts */
+.ftir-shield-stretch  { transform-box: fill-box; transform-origin: center; animation: ftir-shield-stretch var(--ftir-dur, 1.9s) ease-in-out infinite; }
+.ftir-shield-compress { transform-box: fill-box; transform-origin: center; animation: ftir-shield-compress var(--ftir-dur, 1.9s) ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ftir-a-stretch, .ftir-a-compress,
+  .ftir-a-scissor-l, .ftir-a-scissor-r,
+  .ftir-a-slide-x, .ftir-a-slide-y,
+  .ftir-a-twist-up, .ftir-a-twist-down,
+  .ftir-a-dipole,
+  .ftir-shield-stretch, .ftir-shield-compress { animation-play-state: paused !important; }
+}
+
+/* Explicit opt-in: the OS preference is respected by default, but a user who
+   asks to see the animation gets it back. The global reduce rule above sets
+   duration/iteration-count on `*`, so both have to be restored here. */
+[data-ftir-anim="on"] [class*="ftir-a-"],
+[data-ftir-anim="on"] [class*="ftir-shield-"] {
+  animation-duration: var(--ftir-dur, 1.9s) !important;
+  animation-iteration-count: infinite !important;
+  animation-play-state: running !important;
+}

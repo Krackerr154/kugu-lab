@@ -10,28 +10,24 @@ export function OrientationNudge() {
   const { isPortraitPhone, canLock, dismissed, dismiss } = useOrientationNudge();
   const [lockFailed, setLockFailed] = useState(false);
   const [exiting, setExiting] = useState(false);
-  const [timedOut, setTimedOut] = useState(false);
 
   // Reset transient state whenever the relevant device state changes.
   useEffect(() => {
     setLockFailed(false);
     setExiting(false);
-    setTimedOut(false);
   }, [isPortraitPhone, dismissed]);
 
-  // Auto-dismiss after 5 seconds so it doesn't occupy screen space if ignored.
-  // Note: Only hides the current view/mount — does not persist to storage,
-  // preserving the hint for future sessions or when re-entering portrait.
+  // Auto-dismiss after 5 seconds so it doesn't occupy screen space if ignored
   useEffect(() => {
-    if (!isPortraitPhone || dismissed || timedOut) return;
+    if (!isPortraitPhone || dismissed) return;
     const timer = window.setTimeout(() => {
       setExiting(true);
-      window.setTimeout(() => setTimedOut(true), 180);
+      window.setTimeout(dismiss, 180);
     }, 5000);
     return () => window.clearTimeout(timer);
-  }, [isPortraitPhone, dismissed, timedOut]);
+  }, [isPortraitPhone, dismissed, dismiss]);
 
-  if (!isPortraitPhone || dismissed || timedOut) return null;
+  if (!isPortraitPhone || dismissed) return null;
 
   const handleRotate = async () => {
     const ok = await requestLandscape();

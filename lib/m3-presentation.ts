@@ -17,6 +17,12 @@ export {
   REVIEW_SLIDE_CHAPTER,
   REVIEW_SLIDE_IDS,
   REVIEW_PHASES,
+  REVIEW_DECK_IDS,
+  REVIEW_SLIDE_CHAPTER_BY_DECK,
+  REVIEW_SLIDE_IDS_BY_DECK,
+  ALL_REVIEW_SLIDE_IDS,
+  reviewDeckOfSlide,
+  reviewStageOfSlide,
 } from "../shared/m3-contract.mjs";
 export type {
   M3StageId,
@@ -26,6 +32,7 @@ export type {
   M3PresentationState,
   M3SimState,
   ReviewSlideId,
+  ReviewDeckId,
   ReviewPhase,
 } from "../shared/m3-contract.mjs";
 

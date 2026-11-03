@@ -19,7 +19,14 @@ const CASES = [
   { version: 1, stageId: 'understand', slideId: 'p6', simState: { playing: true, time: 4.5, complexed: true, view: 'cell' } },
   { version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'abc12345' },
   { version: 1, stageId: 'ready', phase: 'games' },
+  // Module 6 (FTIR) deck — same waypoint model, its own q* namespace.
+  { version: 1, stageId: 'brief', slideId: 'q1' },
+  { version: 1, stageId: 'understand', slideId: 'q6' },
+  { version: 1, stageId: 'prove', slideId: 'q10' },
+  { version: 1, stageId: 'ready', slideId: 'q13' },
   // Rejections.
+  { version: 1, stageId: 'brief', slideId: 'q6' },       // M6 slide in the wrong chapter
+  { version: 1, stageId: 'brief', slideId: 'q99' },      // unknown M6 slide
   { version: 1, stageId: 'understand', simState: { playing: 'invalid' } },
   { version: 1, stageId: 'understand', simState: { playing: true, time: 5, complexed: true, view: 'unknown' } },
   { version: 1, stageId: 'brief', slideId: 'p7' },      // slide/chapter mismatch

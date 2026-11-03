@@ -16,13 +16,83 @@ export const M3_PRESENTATION_VERSION = 1;
 // slideId <-> stageId consistency exactly as it already does focusId <-> stageId.
 // This map is the authoritative slide list; the UI layer (lib/m4-review-slides)
 // adds titles/anchors on top of it rather than inventing its own id set.
-export const REVIEW_SLIDE_CHAPTER = Object.freeze({
+//
+// Two decks now share this contract. Each keeps its own id namespace — Module 4
+// uses p1..p10, Module 6 (FTIR) uses q1..q13, Module 7 (BET) uses r1..r25 — so
+// a state can never be read
+// against the wrong deck's chapter map.
+const M4_REVIEW_SLIDE_CHAPTER = Object.freeze({
   p1: 'brief', p2: 'brief',
   p3: 'understand', p4: 'understand', p5: 'understand', p6: 'understand', p7: 'understand',
   p8: 'prove',
   p9: 'ready', p10: 'ready',
 });
-export const REVIEW_SLIDE_IDS = Object.freeze(Object.keys(REVIEW_SLIDE_CHAPTER));
+const M6_REVIEW_SLIDE_CHAPTER = Object.freeze({
+  q1: 'brief', q2: 'brief',
+  q3: 'understand', q4: 'understand', q5: 'understand', q6: 'understand',
+  q7: 'understand', q8: 'understand',
+  q9: 'prove', q10: 'prove', q11: 'prove',
+  q12: 'ready', q13: 'ready',
+});
+
+const M7_REVIEW_SLIDE_CHAPTER = Object.freeze({
+  r1: 'brief', r2: 'brief',
+  r3: 'understand', r4: 'understand', r5: 'understand', r6: 'understand',
+  r7: 'understand', r8: 'understand', r9: 'understand',
+  r10: 'prove', r11: 'prove', r12: 'prove', r13: 'prove', r14: 'prove',
+  r15: 'prove', r16: 'prove', r17: 'prove', r18: 'prove', r19: 'prove',
+  r20: 'prove', r21: 'prove', r22: 'prove',
+  r23: 'ready', r24: 'ready', r25: 'ready',
+});
+// Flat lookup the validator uses. The namespaces are disjoint, so spreading is safe.
+const ALL_REVIEW_SLIDE_CHAPTER = Object.freeze({
+  ...M4_REVIEW_SLIDE_CHAPTER,
+  ...M6_REVIEW_SLIDE_CHAPTER,
+  ...M7_REVIEW_SLIDE_CHAPTER,
+});
+
+export const REVIEW_DECK_IDS = Object.freeze(['m4', 'm6', 'm7']);
+export const REVIEW_SLIDE_CHAPTER_BY_DECK = Object.freeze({
+  m4: M4_REVIEW_SLIDE_CHAPTER,
+  m6: M6_REVIEW_SLIDE_CHAPTER,
+  m7: M7_REVIEW_SLIDE_CHAPTER,
+});
+// Backward-compatible aliases. Module 4's deck was the only one when these were
+// introduced and its tests assert REVIEW_SLIDE_IDS equals its own id list, so
+// these must keep pointing at Module 4 alone.
+export const REVIEW_SLIDE_CHAPTER = M4_REVIEW_SLIDE_CHAPTER;
+export const REVIEW_SLIDE_IDS = Object.freeze(Object.keys(M4_REVIEW_SLIDE_CHAPTER));
+export const REVIEW_SLIDE_IDS_BY_DECK = Object.freeze({
+  m4: REVIEW_SLIDE_IDS,
+  m6: Object.freeze(Object.keys(M6_REVIEW_SLIDE_CHAPTER)),
+  m7: Object.freeze(Object.keys(M7_REVIEW_SLIDE_CHAPTER)),
+});
+export const ALL_REVIEW_SLIDE_IDS = Object.freeze([
+  ...REVIEW_SLIDE_IDS,
+  ...REVIEW_SLIDE_IDS_BY_DECK.m6,
+  ...REVIEW_SLIDE_IDS_BY_DECK.m7,
+]);
+
+/** Which deck a slide belongs to, or null for an unknown id. */
+export function reviewDeckOfSlide(slideId) {
+  if (typeof slideId !== 'string') return null;
+  if (REVIEW_SLIDE_IDS_BY_DECK.m4.includes(slideId)) return 'm4';
+  if (REVIEW_SLIDE_IDS_BY_DECK.m6.includes(slideId)) return 'm6';
+  if (REVIEW_SLIDE_IDS_BY_DECK.m7.includes(slideId)) return 'm7';
+  return null;
+}
+
+/**
+ * The chapter a slide lives in, across every deck.
+ *
+ * presentSlide derives stageId from the slide id; using the Module 4-only map
+ * would return undefined for a q* slide and the contract would drop the state.
+ */
+export function reviewStageOfSlide(slideId) {
+  if (typeof slideId !== 'string') return null;
+  return ALL_REVIEW_SLIDE_CHAPTER[slideId] ?? null;
+}
+
 export const REVIEW_PHASES = Object.freeze(['review', 'games']);
 const DATA_SET_ID_RE = /^[A-Za-z0-9_-]{8,32}$/;
 
@@ -64,8 +134,8 @@ export function coercePresentationState(input) {
   // Review-session fields — all optional; absent === pre-Phase-1 behavior.
   // .includes() (not `in`) guards against prototype keys like "constructor".
   if (input.slideId !== undefined) {
-    if (typeof input.slideId !== 'string' || !REVIEW_SLIDE_IDS.includes(input.slideId)) return null;
-    if (REVIEW_SLIDE_CHAPTER[input.slideId] !== input.stageId) return null;
+    if (typeof input.slideId !== 'string' || !ALL_REVIEW_SLIDE_IDS.includes(input.slideId)) return null;
+    if (ALL_REVIEW_SLIDE_CHAPTER[input.slideId] !== input.stageId) return null;
   }
   if (input.phase !== undefined && !REVIEW_PHASES.includes(input.phase)) return null;
   if (input.dataSetId !== undefined && (typeof input.dataSetId !== 'string' || !DATA_SET_ID_RE.test(input.dataSetId))) return null;

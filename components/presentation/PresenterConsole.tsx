@@ -44,7 +44,9 @@ export function PresenterConsole() {
   } = useM3Presentation();
 
   const currentSlideId = (snapshot?.slideId ?? "p1") as ReviewSlideId;
-  const currentSlideIndex = deckSlideIndex(currentSlideId);
+  const resolvedSlideIndex = deckSlideIndex(currentSlideId);
+  // Clamp: a snapshot from another deck resolves to -1 and would read "Slide 0".
+  const currentSlideIndex = resolvedSlideIndex >= 0 ? resolvedSlideIndex : 0;
   const currentSlide: ReviewDeckSlide = REVIEW_DECK_SLIDE_BY_ID[currentSlideId] || REVIEW_DECK_SLIDES[0];
 
   const nextSlideIndex = Math.min(TOTAL_REVIEW_DECK_SLIDES - 1, currentSlideIndex + 1);

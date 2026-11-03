@@ -1,0 +1,19 @@
+# Normalize line endings: repo stores LF, working tree may be CRLF.
+* text=auto eol=lf
+
+# Binary assets must never be converted.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.zip binary
+
+# Windows batch/PS1 keep CRLF so they run on Olympus.
+*.bat text eol=crlf
+*.ps1 text eol=crlf

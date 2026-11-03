@@ -40,12 +40,7 @@ interface OrientationNudgeState {
 function readDismissed(): boolean {
   if (typeof window === "undefined") return false;
   try {
-    // Purge legacy permanent localStorage flag if present, so devices that were
-    // locked out by the previous auto-dismiss bug are automatically restored.
-    if (window.localStorage.getItem(DISMISS_KEY) === "1") {
-      window.localStorage.removeItem(DISMISS_KEY);
-    }
-    return window.sessionStorage.getItem(DISMISS_KEY) === "1";
+    return window.localStorage.getItem(DISMISS_KEY) === "1";
   } catch {
     // Private mode / storage disabled: treat as not dismissed, never crash.
     return false;
@@ -107,7 +102,7 @@ export function useOrientationNudge(): OrientationNudgeState & {
     setDismissed(true);
     if (typeof window === "undefined") return;
     try {
-      window.sessionStorage.setItem(DISMISS_KEY, "1");
+      window.localStorage.setItem(DISMISS_KEY, "1");
     } catch {
       // Ignored: dismissal just won't persist. Nudge still hides for this session.
     }

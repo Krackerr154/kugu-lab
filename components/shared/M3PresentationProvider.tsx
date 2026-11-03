@@ -9,6 +9,7 @@ import {
   newClientId,
   newEpoch,
   REVIEW_SLIDE_CHAPTER,
+  reviewStageOfSlide,
   type M3PresentationState,
   type M3SimState,
   type M3StageId,
@@ -46,7 +47,7 @@ interface M3PresentationContextValue {
   presenterTicket: string;
   joinError: string | null;
   activeSession: { roomId: string; name: string; stageId: string } | null;
-  createSession: (name?: string) => Promise<{ ok: boolean; error?: string }>;
+  createSession: (name?: string, initialSlideId?: ReviewSlideId) => Promise<{ ok: boolean; error?: string }>;
   closeSession: () => Promise<void>;
   refreshActiveSession: () => Promise<void>;
   setRoomId: (id: string) => void;
@@ -143,7 +144,7 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
     }
   }, [activeSession, role]);
 
-  const createSession = useCallback(async (name = "Sesi Praktikum KI3131") => {
+  const createSession = useCallback(async (name = "Sesi Praktikum KI3131", initialSlideId: ReviewSlideId = "p1") => {
     try {
       const res = await fetch("/api/m4-guided/session", {
         method: "POST",
@@ -157,11 +158,16 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
         setActiveSession({ roomId: data.session.roomId, name: data.session.name, stageId: data.session.stageId });
         setJoinError(null);
         tokenRef.current += 1;
-        const initialPresenterState: M3PresentationState = { version: 1, stageId: "brief", slideId: "p1" };
+        const initialStageId = (reviewStageOfSlide(initialSlideId) as M3StageId | null) ?? "brief";
+        const initialPresenterState: M3PresentationState = {
+          version: 1,
+          stageId: initialStageId,
+          slideId: initialSlideId,
+        };
         presenterStateRef.current = initialPresenterState;
         setSnapshot(initialPresenterState);
-        setSlideRequest({ slideId: "p1", token: tokenRef.current });
-        setNavRequest({ stageId: "brief", token: tokenRef.current });
+        setSlideRequest({ slideId: initialSlideId, token: tokenRef.current });
+        setNavRequest({ stageId: initialStageId, token: tokenRef.current });
         setRole("presenting");
         return { ok: true };
       }
@@ -340,7 +346,10 @@ export function M3PresentationProvider({ children, transportFactory, relayUrl = 
   const presentSlide = useCallback((slideId: ReviewSlideId, slideStage?: number) => {
     // A slide implies its chapter; publish both so scroll-view followers still
     // land on the right stage and slide-view followers get the fine position.
-    const stageId = REVIEW_SLIDE_CHAPTER[slideId] as M3StageId;
+    // reviewStageOfSlide spans every deck — the M4-only map returns undefined
+    // for a Module 6 q* slide, and the contract would then drop the state.
+    const stageId = reviewStageOfSlide(slideId) as M3StageId | null;
+    if (!stageId) return;
     presenterStateRef.current = {
       version: 1,
       stageId,

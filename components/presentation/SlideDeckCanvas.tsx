@@ -74,7 +74,9 @@ export function SlideDeckCanvas({
   const joinError = presentation?.joinError ?? null;
   const relayMode = presentation?.relayMode ?? false;
 
-  const [viewingId, setViewingId] = useState<ReviewSlideId>(presenterSlideId ?? initialSlideId);
+  const [viewingId, setViewingId] = useState<ReviewSlideId>(() =>
+    presenterSlideId && deckSlideIndex(presenterSlideId) >= 0 ? presenterSlideId : initialSlideId
+  );
   const [slide7Stage, setSlide7Stage] = useState<0 | 1 | 2>(0);
   const [lastToken, setLastToken] = useState<number | null>(null);
   // Direction of the last slide change, so the transition can travel the same
@@ -89,6 +91,9 @@ export function SlideDeckCanvas({
   useEffect(() => {
     if (slideRequest && slideRequest.token !== lastToken) {
       setLastToken(slideRequest.token);
+      // Ignore a slide id from another deck (a Module 6 session while this
+      // Module 4 deck is open): its index is -1 and would render "Slide 0".
+      if (deckSlideIndex(slideRequest.slideId) < 0) return;
       setViewingId((current) => {
         // Presenter-driven: compare where we are against where they went.
         const next = deckSlideIndex(slideRequest.slideId);
