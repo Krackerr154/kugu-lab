@@ -11,7 +11,7 @@
  * IUPACGallery — enam tipe isoterm IUPAC, dipilih untuk dibaca cirinya.
  */
 
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 import {
   ISOTHERM_TYPES,
@@ -43,6 +43,7 @@ function pathOf(pts: readonly { x: number; v: number }[], w: number, h: number):
 export function BETPoreFilling() {
   const [pp, setPp] = useState(0);
   const [branch, setBranch] = useState<"ads" | "des">("ads");
+  const [playing, setPlaying] = useState(false);
   const describedBy = useId();
 
   const sites = useMemo(() => filledSites(pp, branch), [pp, branch]);
@@ -60,6 +61,73 @@ export function BETPoreFilling() {
         : pp < 0.9
           ? "Kondensasi kapiler mengisi bagian tengah pori"
           : "Pori terisi penuh";
+
+  /* ── Putar otomatis ───────────────────────────────────────────────────
+     Satu putaran penuh menelusuri seluruh cerita histeresis: tekanan naik
+     (adsorpsi mengisi pori), lalu turun pada cabang desorpsi yang tertinggal
+     lebih penuh. Berhenti sendiri di P/P₀ = 0 supaya pengamat melihat satu
+     siklus utuh, bukan animasi yang berputar tanpa henti di kelas. */
+  const raf = useRef<number | null>(null);
+  const clock = useRef({ last: 0, dir: 1 as 1 | -1 });
+
+  useEffect(() => {
+    if (!playing) return;
+
+    const UP_MS = 4200; // adsorpsi 0 → 1
+    const DOWN_MS = 3400; // desorpsi 1 → 0
+    let value = pp;
+    clock.current = { last: 0, dir: 1 };
+
+    const step = (ts: number) => {
+      if (!clock.current.last) clock.current.last = ts;
+      const dt = Math.min(ts - clock.current.last, 64); // clamp tab-switch jumps
+      clock.current.last = ts;
+
+      const span = clock.current.dir === 1 ? UP_MS : DOWN_MS;
+      value += (dt / span) * clock.current.dir;
+
+      if (value >= 1) {
+        value = 1;
+        clock.current.dir = -1; // mulai desorpsi
+        setBranch("des");
+      } else if (value <= 0 && clock.current.dir === -1) {
+        // Hanya berhenti saat benar-benar menurun kembali ke nol; pada frame
+        // pertama nilainya memang 0 dan tidak boleh menghentikan animasi.
+        setPp(0);
+        setPlaying(false); // siklus selesai
+        return;
+      }
+
+      setPp(value);
+      raf.current = requestAnimationFrame(step);
+    };
+
+    raf.current = requestAnimationFrame(step);
+    return () => {
+      if (raf.current) cancelAnimationFrame(raf.current);
+      raf.current = null;
+    };
+    // pp sengaja tidak masuk daftar dependensi: animasi memulai nilainya
+    // sendiri dan tidak boleh di-restart setiap frame.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing]);
+
+  const stopPlaying = () => setPlaying(false);
+
+  const onTogglePlay = () => {
+    if (playing) {
+      setPlaying(false);
+      return;
+    }
+    // Mulai dari keadaan bersih agar satu klik selalu menampilkan siklus utuh.
+    if (pp >= 0.999) {
+      setPp(0);
+      setBranch("ads");
+    } else if (pp <= 0.001) {
+      setBranch("ads");
+    }
+    setPlaying(true);
+  };
 
   return (
     <div>
@@ -111,6 +179,19 @@ export function BETPoreFilling() {
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={onTogglePlay}
+          aria-pressed={playing}
+          aria-label={playing ? "Hentikan animasi" : "Putar animasi otomatis"}
+          className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[var(--secondary)] bg-[var(--secondary)] px-3 text-[11px] font-semibold text-[var(--surface-container-lowest)] transition-colors hover:opacity-90"
+        >
+          <span aria-hidden="true" className="material-symbols-outlined text-[15px] leading-none">
+            {playing ? "pause" : "play_arrow"}
+          </span>
+          {playing ? "Jeda" : "Putar"}
+        </button>
+
         <span className="text-[10px] font-semibold text-[var(--foreground)]">P/P₀</span>
         <input
           type="range"
@@ -118,7 +199,10 @@ export function BETPoreFilling() {
           max={100}
           step={1}
           value={Math.round(pp * 100)}
-          onChange={(e) => setPp(Number(e.target.value) / 100)}
+          onChange={(e) => {
+            stopPlaying();
+            setPp(Number(e.target.value) / 100);
+          }}
           aria-label="Tekanan relatif P/P0"
           aria-valuetext={`P/P0 ${pp.toFixed(2)} — ${stage}`}
           className="h-8 min-w-[8rem] flex-1 accent-[var(--secondary)]"
@@ -130,7 +214,10 @@ export function BETPoreFilling() {
             <button
               key={b}
               type="button"
-              onClick={() => setBranch(b)}
+              onClick={() => {
+                stopPlaying();
+                setBranch(b);
+              }}
               aria-pressed={branch === b}
               className={`px-2 py-1 text-[10px] font-semibold ${
                 branch === b
