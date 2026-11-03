@@ -374,3 +374,36 @@ test("segmen polyline produksi cukup rapat untuk tampak mulus", () => {
   }
   assert.ok(worst <= 0.02, `lompatan segmen ${(worst * 100).toFixed(1)}% terlalu terlihat`);
 });
+
+/* ── Isi pembelajaran: definisi P/P0 dan cara pengukuran ─────────────────
+   Kedua bagian ini menjawab pertanyaan yang paling sering muncul sebelum
+   mahasiswa bisa mengolah data, jadi keberadaannya diuji, bukan hanya
+   diandalkan pada pembacaan manual. */
+
+test("P0 dijelaskan sebagai besaran terukur, bukan konstanta", async () => {
+  const fs = await import("node:fs/promises");
+  const src = await fs.readFile("app/modules/m7-bet/page.tsx", "utf8");
+  assert.match(src, /id="m7-pp0"/, "blok definisi P/P0 tidak ada");
+  assert.match(src, /diukur, bukan diasumsikan/, "P0 tidak dinyatakan sebagai besaran terukur");
+  // definisi harus muncul sebelum pemakaian pertamanya di animasi pori
+  const pp0 = src.indexOf('id="m7-pp0"');
+  const isoterm = src.indexOf('aria-labelledby="m7-isoterm"');
+  assert.ok(pp0 > 0 && isoterm > 0 && pp0 < isoterm, "definisi P/P0 harus mendahului bagian isoterm");
+});
+
+test("bagian pengukuran memuat enam tahap dan istilah kuncinya", async () => {
+  const fs = await import("node:fs/promises");
+  const src = await fs.readFile("app/modules/m7-bet/page.tsx", "utf8");
+  assert.match(src, /aria-labelledby="m7-ukur"/, "bagian cara pengukuran tidak ada");
+  for (const term of ["Degassing", "77 K", "kesetimbangan", "gas ideal", "histeresis", "STP"]) {
+    assert.ok(src.includes(term), `istilah "${term}" hilang dari bagian pengukuran`);
+  }
+  // Enam tahap didefinisikan sebagai objek { t, b } di dalam array yang
+  // di-map menjadi <li>. Hitung objeknya, bukan elemen JSX-nya.
+  const start = src.indexOf('aria-labelledby="m7-ukur"');
+  const olStart = src.indexOf("<ol", start);
+  const olEnd = src.indexOf("</ol>", olStart);
+  const block = src.slice(olStart, olEnd);
+  const steps = (block.match(/\n\s+t: "/g) || []).length;
+  assert.equal(steps, 6, `jumlah tahap pengukuran ${steps}, seharusnya 6`);
+});

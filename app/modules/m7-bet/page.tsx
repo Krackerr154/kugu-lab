@@ -52,11 +52,134 @@ export default function M7BetPage() {
         <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
           BET bertumpu pada fisisorpsi, sehingga pengukuran dilakukan pada suhu rendah. N₂ dipakai
           karena inert dan berinteraksi lemah; pada <strong>77 K</strong> tekanan uap jenuhnya (P₀)
-          sekitar 1 atm sehingga P/P₀ dari 0 sampai 1 mudah diatur. Luas penampang satu molekul N₂
+          mendekati 1 atm sehingga P/P₀ dari 0 sampai 1 mudah diatur. Luas penampang satu molekul N₂
           adalah <strong>0,162 nm²</strong>.
         </p>
-        <p className="mt-1 text-[11px] leading-snug text-[var(--text-secondary)]">
+
+        {/* ── Definisi P/P₀ ─────────────────────────────────────────────── */}
+        <div
+          id="m7-pp0"
+          className="mt-3 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-3"
+        >
+          <h3 className="text-[13px] font-bold text-[var(--foreground)]">
+            Apa itu P/P₀?
+          </h3>
+
+          <p className="mt-1.5 text-[12.5px] leading-6 text-[var(--text-secondary)]">
+            <strong className="text-[var(--foreground)]">P</strong> adalah tekanan gas N₂ di atas
+            sampel pada saat itu, dalam satuan tekanan (biasanya mmHg atau kPa).{" "}
+            <strong className="text-[var(--foreground)]">P₀</strong> adalah tekanan uap jenuh N₂
+            pada suhu pengukuran — tekanan saat N₂ mulai mengembun menjadi cairan. Pada 77 K
+            nilainya mendekati 1 atm.
+          </p>
+
+          <p className="mt-1.5 text-[12.5px] leading-6 text-[var(--text-secondary)]">
+            <strong className="text-[var(--foreground)]">P/P₀</strong> adalah perbandingan
+            keduanya: bilangan tanpa satuan, dari 0 (tidak ada gas) sampai 1 (gas tepat akan
+            mengembun). Inilah besaran yang dipakai di seluruh modul ini sebagai sumbu-x isoterm.
+          </p>
+
+          <p className="mt-1.5 text-[12.5px] leading-6 text-[var(--text-secondary)]">
+            Yang menentukan banyaknya N₂ yang menempel bukan tekanan mutlaknya, melainkan{" "}
+            <em>seberapa dekat gas itu ke titik embun</em>. Pada P/P₀ yang sama, permukaan akan
+            terisi dengan jumlah yang sama walaupun suhu dan tekanan mutlaknya berbeda — itulah
+            alasan isoterm selalu diplot terhadap P/P₀, bukan terhadap P. Tanpa normalisasi ini,
+            data dari dua laboratorium tidak akan bisa dibandingkan.
+          </p>
+
+          <div className="mt-2 overflow-x-auto rounded-md border border-[var(--outline-variant)]">
+            <table className="w-full min-w-[26rem] border-collapse text-left">
+              <caption className="sr-only">Arti tiap rentang P/P0</caption>
+              <thead>
+                <tr className="border-b border-[var(--outline-variant)] bg-[var(--surface-control)]">
+                  <th scope="col" className="px-2.5 py-1.5 text-[10.5px] font-semibold text-[var(--text-secondary)]">P/P₀</th>
+                  <th scope="col" className="px-2.5 py-1.5 text-[10.5px] font-semibold text-[var(--text-secondary)]">Yang terjadi di permukaan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  ["0", "Belum ada gas; permukaan bersih hasil degassing."],
+                  ["≈ 0,05–0,30", "Monolayer terbentuk, lalu lapisan berganda mulai menumpuk. Di rentang inilah BET dihitung."],
+                  ["≈ 0,30–0,90", "Lapisan berganda menebal; pada mesopori mulai terjadi kondensasi kapiler."],
+                  ["→ 1", "Semua pori terisi; N₂ hampir mengembun di seluruh permukaan."],
+                ].map(([r, t]) => (
+                  <tr key={r} className="border-b border-[var(--border)] last:border-0">
+                    <td className="whitespace-nowrap px-2.5 py-1.5 font-mono text-[11px] font-semibold text-[var(--foreground)]">{r}</td>
+                    <td className="px-2.5 py-1.5 text-[12px] leading-snug text-[var(--text-secondary)]">{t}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="mt-2 text-[11.5px] leading-snug text-[var(--text-secondary)]">
+            <strong className="text-[var(--foreground)]">P₀ diukur, bukan diasumsikan.</strong>{" "}
+            Instrumen menentukan P₀ pada tiap pengukuran dari tabung terpisah, karena tekanan uap
+            jenuh bergantung pada suhu dan tekanan atmosfer setempat. Nilai 1 atm hanya perkiraan
+            untuk 77 K di permukaan laut.
+          </p>
+        </div>
+
+        <p className="mt-2 text-[11px] leading-snug text-[var(--text-secondary)]">
           Pengukuran tidak dilakukan di praktikum — data isoterm diberikan, lalu diolah.
+        </p>
+      </section>
+
+      {/* ── Cara isoterm diukur ─────────────────────────────────────────── */}
+      <section aria-labelledby="m7-ukur" className={`${CARD} mt-4`}>
+        <h2 id="m7-ukur" className="text-lg font-bold text-[var(--foreground)]">
+          Bagaimana isoterm N₂ diukur
+        </h2>
+        <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+          Data yang Anda olah bukan angka yang muncul sendiri. Enam tahap berikut menjelaskan dari
+          mana pasangan P/P₀ dan V berasal. Penjelasan ini bersifat umum — rincian tiap instrumen
+          berbeda, tetapi urutan fisiknya sama.
+        </p>
+
+        <ol className="mt-2 space-y-2">
+          {[
+            {
+              t: "Degassing — membersihkan permukaan",
+              b: "Sampel dipanaskan dalam vakum untuk mengusir air dan pelarut yang menempel di pori. Tanpa langkah ini yang terukur adalah air, bukan pori. Suhu dan lama pemanasan bergantung pada ketahanan material: untuk MOF umumnya 100–200 °C selama beberapa jam sampai semalam, karena terlalu panas dapat merusak kerangka. Setelah degassing, sampel ditimbang — massa inilah pembagi pada sumbu V (cm³/g).",
+            },
+            {
+              t: "Pendinginan ke 77 K",
+              b: "Tabung sampel dicelupkan ke nitrogen cair. Suhu ini dipilih karena N₂ berada dekat titik embunnya, sehingga perubahan tekanan kecil saja sudah cukup untuk menyapu P/P₀ dari 0 sampai 1. Pada suhu kamar, rentang itu tidak terjangkau.",
+            },
+            {
+              t: "Penambahan gas bertahap",
+              b: "Instrumen memasukkan N₂ sedikit demi sedikit dan menunggu kesetimbangan di tiap titik — jumlah yang teradsorpsi berhenti berubah. Setiap titik kesetimbangan menjadi satu baris data: tekanan (menjadi P/P₀) dan jumlah teradsorpsi (menjadi V).",
+            },
+            {
+              t: "Menghitung berapa yang teradsorpsi",
+              b: "Yang diukur langsung adalah tekanan dalam volume tertutup yang diketahui. Dari selisih tekanan sebelum dan sesudah gas dimasukkan, dengan hukum gas ideal dan volume mati tabung, dihitung berapa mol yang meninggalkan fase gas. Mol yang hilang itulah yang menempel di permukaan. Cara lain (gravimetri) menimbang pertambahan massa sampel secara langsung.",
+            },
+            {
+              t: "Menaikkan lalu menurunkan tekanan",
+              b: "Pengukuran berjalan dari P/P₀ rendah ke tinggi (adsorpsi), lalu diturunkan kembali dengan menyedot gas (desorpsi). Bila kedua jalur tidak berimpit, terbentuk histeresis — jalur desorpsi bertahan lebih penuh karena kondensasi kapiler baru menguap pada tekanan lebih rendah. Inilah sebabnya isoterm punya dua cabang.",
+            },
+            {
+              t: "Yang dihasilkan",
+              b: "Tabel P/P₀ terhadap V (cm³/g STP) untuk kedua cabang. V dinyatakan pada kondisi standar agar sebanding antar-laboratorium: 1 mol gas = 22.414 cm³. Dari tabel inilah grafik isoterm, klasifikasi IUPAC, dan perhitungan BET dikerjakan.",
+            },
+          ].map((s, i) => (
+            <li key={s.t} className="rounded-lg border border-[var(--border)] bg-[var(--surface-container-lowest)] p-2.5">
+              <div className="flex items-baseline gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--secondary)] text-[10px] font-bold text-[var(--surface-container-lowest)]">
+                  {i + 1}
+                </span>
+                <h3 className="text-[13px] font-bold text-[var(--foreground)]">{s.t}</h3>
+              </div>
+              <p className="mt-1 pl-7 text-[12px] leading-snug text-[var(--text-secondary)]">{s.b}</p>
+            </li>
+          ))}
+        </ol>
+
+        <p className="mt-2 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-control)] px-3 py-2 text-[11.5px] leading-snug text-[var(--text-secondary)]">
+          <strong className="text-[var(--foreground)]">Perlu ditekankan:</strong> luas permukaan
+          BET bukan luas geometrik partikel. Ia adalah luas permukaan tempat N₂ bisa menempel —
+          termasuk seluruh dinding pori di dalam partikel — sehingga nilainya bisa ratusan kali
+          lebih besar daripada luas luar partikelnya.
         </p>
       </section>
 
