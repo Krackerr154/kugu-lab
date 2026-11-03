@@ -278,3 +278,36 @@ test("situs yang terisi selalu bertambah seiring P/P0 pada cabang adsorpsi", () 
   }
   assert.equal(prev, PORE_SITE_COUNT, "pori belum penuh pada P/P0 = 1");
 });
+
+/* ── Kehalusan kurva ────────────────────────────────────────────────────
+   Titik berjalan mengikuti polyline hasil sampling. Kalau ambang situs
+   menggerombol, kurva naik sebagai tangga dan titik tampak "melompat" dari
+   garis. Tidak ada langkah yang boleh melewati ~2% kapasitas. */
+
+test("kurva adsorpsi tidak menaiki tangga", () => {
+  let prev = poreVolume(0, "ads");
+  let worst = 0;
+  let at = 0;
+  for (let pp = 0.005; pp <= 1.0001; pp += 0.005) {
+    const v = poreVolume(pp, "ads");
+    const d = Math.abs(v - prev);
+    if (d > worst) {
+      worst = d;
+      at = pp;
+    }
+    prev = v;
+  }
+  assert.ok(worst <= 0.02, `lompatan ${(worst * 100).toFixed(1)}% pada P/P0 ${at.toFixed(3)}`);
+});
+
+test("tidak ada dataran mati di tengah kurva", () => {
+  // Di antara P/P0 0,25 dan 0,45 kurva harus tetap bergerak: pori yang sedang
+  // diisi lapisan berganda tidak boleh diam sama sekali.
+  const a = poreVolume(0.25, "ads");
+  const b = poreVolume(0.45, "ads");
+  assert.ok(b - a > 0.02, `kurva datar antara 0,25 dan 0,45 (${(a * 100).toFixed(0)}% -> ${(b * 100).toFixed(0)}%)`);
+});
+
+test("pori penuh sebelum P/P0 1", () => {
+  assert.equal(poreVolume(0.95, "ads"), 1, "pori belum penuh pada P/P0 0,95");
+});

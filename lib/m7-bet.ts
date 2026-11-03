@@ -162,23 +162,34 @@ export function poreSites(): PoreSite[] {
 
   for (let r = 0; r < rows; r++) {
     const y = 18 + (r * 62) / (rows - 1);
+    // pergeseran halus per baris supaya situs tidak bergerak berkelompok
+    const jitter = (r / (rows - 1)) * 0.02;
 
     // monolayer: menempel di kedua dinding. Ambang kiri dan kanan harus sama
-    // supaya kedua sisi terisi serentak.
-    const tMono = 0.02 + r * 0.004;
+    // supaya kedua sisi terisi serentak. Rentang 0,01–0,22 mengikuti lutut
+    // isoterm: monolayer memang selesai jauh sebelum P/P0 0,3.
+    const tMono = 0.01 + r * 0.024 + jitter;
     sites.push({ x: channelX0 + 2, y, threshold: tMono, layer: "mono" });
     sites.push({ x: channelX1 - 2, y, threshold: tMono, layer: "mono" });
 
-    // multilayer: lapisan kedua & ketiga, tumbuh dari dinding ke dalam
-    const tMulti = 0.12 + r * 0.01;
+    // multilayer: lapisan kedua & ketiga, tumbuh dari dinding ke dalam.
+    // Mulai tepat setelah monolayer selesai agar tidak ada dataran mati
+    // di antara lutut dan kondensasi kapiler.
+    const tMulti = 0.22 + r * 0.028 + jitter;
     sites.push({ x: channelX0 + 8, y, threshold: tMulti, layer: "multi" });
     sites.push({ x: channelX1 - 8, y, threshold: tMulti, layer: "multi" });
 
     // kondensasi kapiler: mengisi bagian tengah, tumbuh simetris dari kedua
     // dinding. Pasangan kolom berbagi ambang yang sama supaya kiri dan kanan
     // selalu terisi bersamaan.
+    //
+    // Urutan pengisian mengikuti fisika: cincin terluar (menempel dinding)
+    // terisi lebih dulu di SEMUA baris, lalu cincin berikutnya ke arah pusat.
+    // Indeks gabungan (i * rows + r) memberi 72 ambang yang tersebar merata,
+    // sehingga tiap langkah hanya mengisi dua situs — kurva naik mulus, bukan
+    // menaiki satu cincin penuh sekaligus yang tampak sebagai tangga.
     for (let i = 0; i < ringOffsets.length; i++) {
-      const threshold = 0.55 + i * 0.045 + r * 0.002;
+      const threshold = 0.47 + (i * rows + r) * 0.00563;
       sites.push({ x: channelX0 + ringOffsets[i], y, threshold, layer: "capillary" });
       sites.push({ x: channelX1 - ringOffsets[i], y, threshold, layer: "capillary" });
     }
