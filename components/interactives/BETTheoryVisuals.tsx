@@ -45,6 +45,28 @@ function pathOf(pts: readonly { x: number; v: number }[], w: number, h: number):
     .join(" ");
 }
 
+/**
+ * Potongan kurva di sekitar x tertentu, selebar `halfWidth` satuan.
+ *
+ * Dipakai untuk menutup celah dash di bawah titik berjalan: cabang desorpsi
+ * digambar putus-putus, jadi tanpa segmen pejal ini titik kadang berdiri di
+ * atas kekosongan dan tampak lepas dari garis.
+ */
+function segmentAround(
+  pts: readonly { x: number; v: number }[],
+  x: number,
+  halfWidth: number,
+): { x: number; v: number }[] {
+  const lo = Math.max(0, x - halfWidth / 100);
+  const hi = Math.min(1, x + halfWidth / 100);
+  const out: { x: number; v: number }[] = [{ x: lo, v: interpolateCurve(pts, lo) }];
+  for (const p of pts) {
+    if (p.x > lo && p.x < hi) out.push(p);
+  }
+  out.push({ x: hi, v: interpolateCurve(pts, hi) });
+  return out;
+}
+
 export function BETPoreFilling() {
   const [pp, setPp] = useState(0);
   const [branch, setBranch] = useState<"ads" | "des">("ads");
@@ -182,6 +204,21 @@ export function BETPoreFilling() {
             {/* loop histeresis: kedua cabang selalu tampak */}
             <path d={pathOf(ads, 100, 100)} fill="none" stroke={ACID_COLOR} strokeWidth={1.6} strokeLinejoin="round" />
             <path d={pathOf(des, 100, 100)} fill="none" stroke={ALFUM_COLOR} strokeWidth={1.6} strokeDasharray="3 2" strokeLinejoin="round" />
+
+            {/* Cabang desorpsi putus-putus: di celah dash tidak ada garis di
+                bawah titik, sehingga titik tampak "lepas" padahal posisinya
+                benar. Gejalanya hilang-timbul dan hanya terlihat saat animasi
+                berjalan (P/P₀ bergerak halus melewati tiap celah). Segmen pejal
+                pendek di sekitar titik memastikan selalu ada garis di bawahnya. */}
+            {branch === "des" && (
+              <path
+                d={pathOf(segmentAround(des, pp, 3.5), 100, 100)}
+                fill="none"
+                stroke={ALFUM_COLOR}
+                strokeWidth={1.6}
+                strokeLinecap="round"
+              />
+            )}
 
             {/* titik berjalan — memakai volOnLine (interpolasi polyline yang
                 digambar), bukan vol (fungsi eksak), supaya selalu di garis */}
