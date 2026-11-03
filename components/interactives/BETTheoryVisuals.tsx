@@ -212,7 +212,7 @@ export function BETPoreFilling() {
                 pendek di sekitar titik memastikan selalu ada garis di bawahnya. */}
             {branch === "des" && (
               <path
-                d={pathOf(segmentAround(des, pp, 3.5), 100, 100)}
+                d={pathOf(segmentAround(des, pp, 9), 100, 100)}
                 fill="none"
                 stroke={ALFUM_COLOR}
                 strokeWidth={1.6}
