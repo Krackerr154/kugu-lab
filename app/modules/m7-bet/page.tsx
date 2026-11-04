@@ -260,6 +260,90 @@ export default function M7BetPage() {
             </p>
           </div>
         </div>
+
+        {/* ── Mengapa Wajib Cabang Adsorpsi ─────────────────────────────── */}
+        <div
+          id="m7-kenapa-adsorpsi"
+          className="mt-3 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-lowest)] p-3.5"
+        >
+          <h3 className="text-[13px] font-bold text-[var(--foreground)]">
+            Mengapa Perhitungan BET dan Nilai C Wajib Menggunakan Cabang Adsorpsi?
+          </h3>
+
+          <p className="mt-1.5 text-[12.5px] leading-6 text-[var(--text-secondary)]">
+            Model BET diturunkan dari model kinetika bahwa molekul gas menabrak dan menempel pada{" "}
+            <strong>permukaan padatan terbuka</strong> yang bersih, lalu secara bebas menumpuk
+            membentuk lapisan-lapisan berikutnya (multilayer). Proses pelapisan bertahap dari dinding
+            pori kosong ini <strong>hanya terjadi pada cabang adsorpsi</strong> (P/P₀ bergerak naik
+            dari 0 ke 1). Memasukkan titik dari cabang desorpsi melanggar termodinamika fisisorpsi
+            dan merusak keabsahan regresi:
+          </p>
+
+          <div className="mt-2.5 space-y-2">
+            <div className="rounded-md border border-[var(--border)] bg-[var(--surface-control)] p-2.5">
+              <p className="text-[12px] font-bold text-[var(--foreground)]">
+                1. Makna fisik konstanta C menuntut permukaan dinding pori bersih
+              </p>
+              <p className="mt-1 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
+                Secara termodinamika, konstanta energi C merepresentasikan rasio eksponensial:{" "}
+                <code className="font-mono text-[11px] font-semibold text-[var(--foreground)]">
+                  C ≈ exp((q₁ − q_L) / (R·T))
+                </code>
+                , dengan <code className="font-mono text-[11px]">q₁</code> adalah kalor adsorpsi
+                lapisan pertama langsung pada dinding padatan dan{" "}
+                <code className="font-mono text-[11px]">q_L</code> adalah kalor kondensasi N₂ cair.
+                Pada cabang adsorpsi, molekul gas berinteraksi langsung dengan permukaan pori yang
+                telah didegassing, sehingga data eksperimen benar-benar merekam energi interaksi gas–padatan.
+              </p>
+            </div>
+
+            <div className="rounded-md border border-[var(--border)] bg-[var(--surface-control)] p-2.5">
+              <p className="text-[12px] font-bold text-[var(--foreground)]">
+                2. Cabang desorpsi dikendalikan penguapan meniskus (Persamaan Kelvin), bukan pelapisan BET
+              </p>
+              <p className="mt-1 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
+                Pada cabang desorpsi (P/P₀ bergerak turun dari 1 ke 0), seluruh rongga pori sebelumnya
+                telah terisi penuh cairan kondensat N₂. Pengosongan pori tidak berlangsung lapis-demi-lapis,
+                melainkan dikendalikan oleh penguapan meniskus cekung yang diatur oleh persamaan Kelvin:{" "}
+                <code className="font-mono text-[11px] font-semibold text-[var(--foreground)]">
+                  ln(P/P₀) = −(2γ · V_molar) / (r_k · R · T)
+                </code>
+                . Akibat kelengkungan meniskus dan efek penyempitan leher pori (<em>ink-bottle pores</em>),
+                cairan N₂ tertahan dan baru menguap pada tekanan yang jauh lebih rendah daripada saat
+                pengisiannya. Pada nilai P/P₀ yang sama, volume desorpsi memuat{" "}
+                <strong>kondensasi kapiler metastabil</strong>, bukan lapisan film adsorpsi bebas.
+              </p>
+            </div>
+
+            <div className="rounded-md border border-[var(--border)] bg-[var(--surface-control)] p-2.5">
+              <p className="text-[12px] font-bold text-[var(--foreground)]">
+                3. Konsekuensi matematis: volume tergelembungkan dan intersep menjadi negatif (C ≤ 0)
+              </p>
+              <p className="mt-1 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
+                Bentuk linear persamaan BET adalah:{" "}
+                <code className="font-mono text-[11px] font-semibold text-[var(--foreground)]">
+                  1 / [V(P₀/P − 1)] = a + b(P/P₀)
+                </code>
+                , dengan intersep{" "}
+                <code className="font-mono text-[11px]">a = 1 / (V_m · C)</code>. Jika titik desorpsi
+                digunakan, volume V tergelembungkan oleh sisa cairan kapiler. Akibatnya nilai ordinat y
+                anjlok ke bawah, garis regresi bergeser miring, dan intersep <code className="font-mono text-[11px]">a</code>{" "}
+                sering kali terseret menjadi bernilai negatif. Intersep negatif menghasilkan nilai{" "}
+                <code className="font-mono text-[11px] font-bold text-[var(--foreground)]">C ≤ 0</code>,
+                yang secara termodinamika mustahil dan membatalkan keabsahan fisisorpsi model BET.
+              </p>
+            </div>
+          </div>
+
+          <p className="mt-2 text-[11.5px] leading-snug text-[var(--text-secondary)]">
+            <strong className="text-[var(--foreground)]">Standar IUPAC:</strong> Cabang adsorpsi
+            khusus dialokasikan untuk penentuan <strong>luas permukaan BET (S_BET)</strong>, kapasitas
+            monolayer (V_m), dan konstanta C pada jendela pra-kapiler (P/P₀ 0,05–0,30). Sebaliknya,
+            cabang desorpsi digunakan khusus untuk analisis <strong>distribusi ukuran pori (PSD)</strong>{" "}
+            (seperti metode BJH atau NLDFT) karena geometri meniskus cairan saat pengosongan pori memiliki
+            sudut kontak yang terdefinisi baik (θ ≈ 0°).
+          </p>
+        </div>
       </section>
 
       {/* ── Kurva ke luas permukaan ─────────────────────────────────────── */}

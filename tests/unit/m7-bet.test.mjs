@@ -407,3 +407,17 @@ test("bagian pengukuran memuat enam tahap dan istilah kuncinya", async () => {
   const steps = (block.match(/\n\s+t: "/g) || []).length;
   assert.equal(steps, 6, `jumlah tahap pengukuran ${steps}, seharusnya 6`);
 });
+
+test("penjelasan mengapa cabang adsorpsi (bukan desorpsi) dipakai untuk BET dan C termuat", async () => {
+  const fs = await import("node:fs/promises");
+  const src = await fs.readFile("app/modules/m7-bet/page.tsx", "utf8");
+  assert.match(src, /id="m7-kenapa-adsorpsi"/, "bagian penjelasan cabang adsorpsi tidak ada");
+  for (const term of ["Kelvin", "kondensasi kapiler", "intersep", "q₁", "q_L", "IUPAC"]) {
+    assert.ok(src.includes(term), `istilah "${term}" hilang dari penjelasan cabang adsorpsi`);
+  }
+  // Letaknya harus di dalam section persamaan BET sebelum kurva ke luas
+  const persamaan = src.indexOf('aria-labelledby="m7-persamaan"');
+  const kenapaAds = src.indexOf('id="m7-kenapa-adsorpsi"');
+  const hitung = src.indexOf('aria-labelledby="m7-hitung"');
+  assert.ok(persamaan > 0 && kenapaAds > persamaan && kenapaAds < hitung, "blok kenapa adsorpsi harus berada di dalam bagian persamaan BET");
+});

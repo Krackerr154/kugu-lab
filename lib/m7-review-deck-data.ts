@@ -290,10 +290,10 @@ export const M7_REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
       "Basis massa: salin x ke M16 dan V ke N16.",
       "O16 (W, g/g) = N16/$B$5*$B$4; P16 = M16/(O16*(1−M16)); tarik sampai titik terakhir.",
       "y = x/[V(1−x)] untuk basis volume dan y = x/[W(1−x)] untuk basis massa.",
-      "Jangan pernah memakai titik desorpsi untuk BET.",
+      "Jangan pernah memakai titik desorpsi: menahan kondensat kapiler dan mendistorsi intersep C.",
     ],
     script:
-      "Dua basis, dua kolom y, satu tujuan: saling memeriksa. Basis volume memakai V apa adanya, basis massa mengubahnya dulu menjadi gram N₂ per gram sampel lewat B5 dan B4. Kalau kalian hanya mengerjakan satu basis, kalian kehilangan pemeriksaan gratis yang disediakan panduan. Dan yang paling fatal di langkah ini: memakai titik desorpsi. Persamaan BET diturunkan untuk jalur adsorpsi.",
+      "Dua basis, dua kolom y, satu tujuan: saling memeriksa. Basis volume memakai V apa adanya, basis massa mengubahnya dulu menjadi gram N₂ per gram sampel lewat B5 dan B4. Kalau kalian hanya mengerjakan satu basis, kalian kehilangan pemeriksaan gratis yang disediakan panduan. Dan yang paling fatal di langkah ini: memakai titik desorpsi. Persamaan BET diturunkan untuk pelapisan dinding pori terbuka pada jalur adsorpsi. Jalur desorpsi menahan cairan kapiler sesuai persamaan Kelvin, sehingga volume tergelembungkan dan intersep a anjlok menjadi negatif dengan C ≤ 0.",
     pedagogicalNotes:
       "Tanda dolar pada $B$5 dan $B$4 bukan gaya-gayaan: itu yang menjaga konstanta tetap saat rumus ditarik ke bawah. Mahasiswa yang menulis B5 tanpa dolar akan mendapat hasil berbeda di tiap baris.",
   },
