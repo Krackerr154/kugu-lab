@@ -5,7 +5,7 @@ import { ReportChecklist } from "@/components/shared/ReportChecklist";
 import { BETPoreFilling, IUPACGallery } from "@/components/interactives/BETTheoryVisuals";
 import { BETExcelTutorial } from "@/components/interactives/BETExcelTutorial";
 import { ClaimEvidenceReasoning } from "@/components/shared/ClaimEvidenceReasoning";
-import { BET_CONSTANTS, CONCLUSION_QUESTIONS, GIVEN_COLUMNS, GUIDE_RESULTS } from "@/lib/m7-bet";
+import { CONCLUSION_QUESTIONS, GIVEN_COLUMNS, GUIDE_RESULTS } from "@/lib/m7-bet";
 import { getModule } from "@/lib/modules";
 
 const CARD = "rounded-xl border border-[var(--outline-variant)] bg-[var(--surface-container-low)] p-4 sm:p-5";
@@ -381,10 +381,42 @@ export default function M7BetPage() {
           Hasil perhitungan basis volume dan basis massa harus menghasilkan nilai yang sama persis—gunakan
           keselarasan ini sebagai verifikasi mandiri atas rumus lembar kerja Anda.
         </p>
-        <p className="mt-1 font-mono text-[11px] text-[var(--text-secondary)]">
-          N = {BET_CONSTANTS.avogadro.toExponential(4)} /mol · A_cs = {BET_CONSTANTS.crossSection.toExponential(2)} m² ·
-          V_molar = {BET_CONSTANTS.molarVolume} cm³/mol · M = {BET_CONSTANTS.molarMassN2} g/mol
-        </p>
+
+        <div className="mt-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-control)] p-2.5">
+          <p className="text-[11px] font-semibold text-[var(--foreground)]">
+            Nilai Tetapan Perhitungan Luas Permukaan:
+          </p>
+          <div className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="rounded-md border border-[var(--border)] bg-[var(--surface-container-lowest)] p-2">
+              <span className="block text-[10px] font-medium text-[var(--muted)]">Tetapan Avogadro (N)</span>
+              <p className="mt-0.5 font-mono text-[11.5px] font-semibold text-[var(--foreground)]">
+                6,0221 × 10²³
+              </p>
+              <span className="block text-[10px] text-[var(--text-secondary)]">mol⁻¹</span>
+            </div>
+            <div className="rounded-md border border-[var(--border)] bg-[var(--surface-container-lowest)] p-2">
+              <span className="block text-[10px] font-medium text-[var(--muted)]">Luas Penampang (A_cs)</span>
+              <p className="mt-0.5 font-mono text-[11.5px] font-semibold text-[var(--foreground)]">
+                1,62 × 10⁻¹⁹
+              </p>
+              <span className="block text-[10px] text-[var(--text-secondary)]">m² (0,162 nm²)</span>
+            </div>
+            <div className="rounded-md border border-[var(--border)] bg-[var(--surface-container-lowest)] p-2">
+              <span className="block text-[10px] font-medium text-[var(--muted)]">Volume Molar STP (V_m)</span>
+              <p className="mt-0.5 font-mono text-[11.5px] font-semibold text-[var(--foreground)]">
+                22.414
+              </p>
+              <span className="block text-[10px] text-[var(--text-secondary)]">cm³/mol</span>
+            </div>
+            <div className="rounded-md border border-[var(--border)] bg-[var(--surface-container-lowest)] p-2">
+              <span className="block text-[10px] font-medium text-[var(--muted)]">Massa Molar N₂ (M)</span>
+              <p className="mt-0.5 font-mono text-[11.5px] font-semibold text-[var(--foreground)]">
+                28,0134
+              </p>
+              <span className="block text-[10px] text-[var(--text-secondary)]">g/mol</span>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ── Data yang diberikan ─────────────────────────────────────────── */}
