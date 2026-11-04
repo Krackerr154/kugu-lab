@@ -370,12 +370,12 @@ export const EXCEL_STEPS: readonly ExcelStep[] = [
   {
     id: "siapkan",
     title: "1. Siapkan data di Excel",
-    intro: "Konstanta diletakkan di A4:B9, data mentah mulai baris 15.",
+    intro: "Konstanta diletakkan di sel **A4:B9**, sedangkan data mentah mulai ditempel dari **baris 15**.",
     bullets: [
-      "Isi konstanta di A4:B9 — kolom A nama besaran, kolom B nilainya.",
-      "Baris 14 dijadikan judul kolom: A = P/P₀ adsorpsi, B = V adsorpsi, D = P/P₀ desorpsi, E = V desorpsi.",
-      "Tempel data adsorpsi di A15:B dan data desorpsi di D15:E. Jumlah barisnya memang berbeda.",
-      "Pastikan angka berformat angka (bukan teks) dan tidak ada sel kosong di tengah data.",
+      "Isi tetapan di **sel A4:B9** — kolom A untuk nama besaran, kolom B untuk nilainya.",
+      "Baris 14 wajib dijadikan judul kolom: **A = P/P₀ adsorpsi**, **B = V adsorpsi**, **D = P/P₀ desorpsi**, **E = V desorpsi**.",
+      "Tempel data adsorpsi di **A15:B** dan data desorpsi di **D15:E**. **Jumlah baris keduanya berbeda** — hal ini normal, bukan data rusak.",
+      "Pastikan format sel adalah **angka (Number)**, bukan teks (rata kiri), dan **tidak ada baris kosong** di tengah rentang data.",
     ],
     cells: [
       { cell: "B4", label: "M N₂ (g/mol)", formula: "28,0134" },
@@ -389,22 +389,22 @@ export const EXCEL_STEPS: readonly ExcelStep[] = [
   {
     id: "plot",
     title: "2. Plot isoterm",
-    intro: "Satu grafik memuat cabang adsorpsi dan desorpsi sekaligus.",
+    intro: "Satu grafik memuat kurva cabang **adsorpsi dan desorpsi sekaligus** (membentuk loop histeresis tertutup).",
     bullets: [
-      "Blok A15:B (adsorpsi), lalu Insert > Charts > Scatter with Straight Lines and Markers.",
-      "Klik kanan grafik > Select Data > Add. Nama: Desorpsi, X: D15 sampai baris terakhir kolom D, Y: E15 sampai baris terakhir kolom E. Blok hanya sel yang berisi data.",
-      "Pastikan data desorpsi dimulai dari titik yang sama dengan adsorpsi terakhir, sehingga kurva menutup sendiri tanpa seri tambahan.",
-      "Sumbu X: minimum 0, maksimum 1,05 (ada titik P/P₀ sedikit di atas 1). Sumbu Y: minimum 0.",
-      "Judul sumbu: X = P/P₀ dan Y = V teradsorpsi (cm³/g STP). Hapus judul grafik bawaan dan gridline vertikal.",
+      "Blok rentang **A15:B** (adsorpsi), lalu pilih menu **Insert > Charts > Scatter with Straight Lines and Markers**.",
+      "Tambahkan seri desorpsi: **klik kanan grafik > Select Data > Add**. Beri nama: `Desorpsi`, **sumbu X = D15 sampai baris terakhir**, **sumbu Y = E15 sampai baris terakhir**.",
+      "Pastikan titik awal desorpsi berimpit dengan titik akhir adsorpsi agar kurva **menutup sendiri tanpa seri tambahan**.",
+      "Atur batas sumbu: **Sumbu X minimum 0 dan maksimum 1,05** (karena ada titik P/P₀ sedikit di atas 1,00). **Sumbu Y minimum 0**.",
+      "Beri judul sumbu yang jelas: **X = P/P₀** dan **Y = V teradsorpsi (cm³/g STP)**. **Hapus judul grafik bawaan** agar tidak menutupi kurva.",
     ],
   },
   {
     id: "bet",
     title: "3. Siapkan data BET",
-    intro: "Hanya titik adsorpsi di dalam jendela 0,05–0,30 yang dipakai.",
+    intro: "Hanya titik dari **cabang adsorpsi** di dalam jendela linear **P/P₀ 0,05–0,30** yang dipakai.",
     bullets: [
-      "Ambil titik adsorpsi dengan P/P₀ antara 0,05 dan 0,30.",
-      "Kerjakan dua basis sekaligus (volume dan massa) — hasil luas permukaannya harus sama, jadi keduanya sekaligus menjadi pemeriksaan.",
+      "Wajib gunakan **hanya cabang adsorpsi** pada rentang **P/P₀ 0,05–0,30**. **Dilarang keras memakai titik desorpsi** untuk perhitungan BET!",
+      "Kerjakan **dua basis sekaligus (basis volume dan basis massa)** sebagai verifikasi silang mandiri — nilai akhir luas permukaannya **harus sama persis**.",
     ],
     basis: [
       {
@@ -429,12 +429,13 @@ export const EXCEL_STEPS: readonly ExcelStep[] = [
   {
     id: "regresi",
     title: "4. Kurva BET dan regresi",
-    intro: "Regresi dihitung dengan fungsi Excel, lalu dicocokkan dengan garis tren.",
+    intro: "Regresi linear dihitung dengan fungsi formula Excel, lalu diverifikasi kecocokannya dengan **garis tren linear**.",
     bullets: [
-      "Blok H (x) dan J (y) titik BET, lalu Insert > Scatter (hanya titik).",
-      "Klik titik data > Chart Elements > Trendline > Linear.",
-      "Beri judul sumbu: P/P₀ dan 1/[V(P₀/P − 1)].",
-      "Cocokkan slope dan intersep hasil fungsi dengan persamaan trendline pada grafik.",
+      "Blok kolom **H (x)** dan **J (y)** titik BET terpilih, lalu pilih **Insert > Scatter (hanya titik data tanpa garis)**.",
+      "Tambahkan garis regresi: klik kanan titik data > **Add Trendline > Linear > centang 'Display Equation on chart' dan 'Display R-squared value'**.",
+      "Beri label sumbu: **Sumbu X = P/P₀** dan **Sumbu Y = 1/[V(P₀/P − 1)]**.",
+      "Gunakan fungsi bawaan Excel: **`SLOPE`**, **`INTERCEPT`**, **`RSQ`**, dan **`CORREL`**.",
+      "**Cocokkan slope dan intersep** hasil fungsi Excel dengan persamaan trendline pada grafik — keduanya **harus identik**.",
     ],
     cells: [
       { cell: "I24", label: "n", formula: "=COUNT(H16:H22)" },
@@ -447,10 +448,11 @@ export const EXCEL_STEPS: readonly ExcelStep[] = [
   {
     id: "hitung",
     title: "5. Hitung Vm, C, dan luas permukaan",
-    intro: "Empat sel terakhir; perhatikan faktor luas memakai B5 untuk basis volume.",
+    intro: "Hitung kapasitas monolayer (Vm), konstanta energi (C), dan luas permukaan spesifik (S).",
     bullets: [
-      "Ganti angka 22 pada rentang dengan baris terakhir titik BET Anda.",
-      "Pengecekan basis massa: Wm = 1/(N25+N26), C = N25/N26+1, faktor luas = B6*B7/B4, S = N29*N31. Nilainya harus sama dengan basis volume.",
+      "**PENTING — Sesuaikan baris akhir pada rentang rumus**: ganti angka baris `22` (untuk 7 titik) menjadi `21` bila sampel Anda hanya memiliki 6 titik.",
+      "Gunakan **faktor luas = B6*B7/B5** untuk basis volume (`22414 cm³/mol STP`).",
+      "Pengecekan basis massa: **Wm = 1/(N25+N26)**, **C = N25/N26+1**, dan **S = N29*N31** — hasilnya **wajib sama dengan basis volume**.",
     ],
     cells: [
       { cell: "I29", label: "Vm (cm³/g STP)", formula: "=1/(I25+I26)" },
@@ -462,12 +464,12 @@ export const EXCEL_STEPS: readonly ExcelStep[] = [
   {
     id: "validasi",
     title: "6. Periksa validitas",
-    intro: "R² bagus belum tentu sah — intersep harus positif.",
+    intro: "**Nilai R² tinggi belum tentu valid** — syarat fisik mutlak BET adalah **intersep harus bernilai positif**.",
     bullets: [
-      "R² dan r mendekati 1.",
-      "Intersep (a) harus positif, sehingga C = b/a + 1 juga positif.",
-      "Jika C negatif: luas permukaan tetap dihitung dan dicatat, tetapi dilaporkan tidak valid, lalu jelaskan kemungkinan penyebabnya.",
-      "Pakai titik adsorpsi (bukan desorpsi), sumbu x P/P₀ (bukan P), dan V dalam cm³/g STP.",
+      "Koefisien korelasi **R² dan r harus mendekati 1**.",
+      "**Intersep (a) wajib positif (a > 0)** agar konstanta energi **C bernilai positif (C > 0)**.",
+      "Jika **C bernilai negatif (C ≤ 0)**: luas permukaan tetap dihitung dan dicantumkan, tetapi **wajib diberi status tegas TIDAK VALID** disertai pembahasan ilmiah mengapa model gagal.",
+      "Pastikan ketiga prinsip ini terpenuhi: **hanya titik adsorpsi**, **sumbu x adalah P/P₀ (bukan P mutlak)**, dan **V dalam cm³/g STP**.",
     ],
     cells: [
       {

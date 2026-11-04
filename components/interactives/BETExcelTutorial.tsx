@@ -93,6 +93,31 @@ function CellTable({
   );
 }
 
+function renderFormattedText(text: string) {
+  // Parses **bold** and `code` markers into styled React elements
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="font-semibold text-[var(--foreground)]">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return (
+        <code
+          key={i}
+          className="rounded bg-[var(--surface-control)] px-1 py-0.5 font-mono text-[11px] font-semibold text-[var(--foreground)]"
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+    return part;
+  });
+}
+
 export function BETExcelTutorial() {
   return (
     <div>
@@ -118,13 +143,13 @@ export function BETExcelTutorial() {
             </div>
 
             <p className="mt-1 pl-7 text-[12px] leading-relaxed text-[var(--text-secondary)]">
-              {step.intro}
+              {renderFormattedText(step.intro)}
             </p>
 
             <ul className="mt-1 space-y-0.5 pl-11 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
-              {step.bullets.map((b) => (
-                <li key={b} className="list-disc">
-                  {b}
+              {step.bullets.map((b, bi) => (
+                <li key={bi} className="list-disc">
+                  {renderFormattedText(b)}
                 </li>
               ))}
             </ul>
@@ -147,11 +172,12 @@ export function BETExcelTutorial() {
 
       <p className="mt-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-control)] px-3 py-2 text-[11.5px] leading-relaxed text-[var(--text-secondary)]">
         <strong className="text-[var(--foreground)]">Kesalahan umum yang harus dihindari:</strong>{" "}
-        (1) Memasukkan data dari cabang desorpsi ke dalam regresi BET; (2) Memasukkan tekanan absolut P
-        alih-alih rasio P/P₀; dan (3) Lupa menyesuaikan baris akhir pada rentang rumus (misalnya{" "}
-        <code className="font-mono">H16:H22</code> untuk sampel 7 titik vs{" "}
-        <code className="font-mono">H16:H21</code> untuk sampel 6 titik). Pastikan batas baris rumus
-        Anda sesuai dengan jumlah baris data sampel yang sedang dikerjakan.
+        (1) <strong className="text-[var(--foreground)]">Memasukkan data cabang desorpsi</strong> ke dalam regresi BET;{" "}
+        (2) <strong className="text-[var(--foreground)]">Memasukkan tekanan mutlak P</strong> alih-alih rasio tanpa satuan P/P₀;{" "}
+        (3) <strong className="text-[var(--foreground)]">Lupa menyesuaikan baris akhir rentang rumus</strong> (misalnya{" "}
+        <code className="font-mono text-[11px] font-semibold text-[var(--foreground)]">H16:H22</code> untuk sampel 7 titik vs{" "}
+        <code className="font-mono text-[11px] font-semibold text-[var(--foreground)]">H16:H21</code> untuk sampel 6 titik); dan{" "}
+        (4) <strong className="text-[var(--foreground)]">Mengabaikan tanda nilai C</strong> (menganggap R² tinggi selalu valid padahal intersep negatif membuat model gugur).
       </p>
     </div>
   );
