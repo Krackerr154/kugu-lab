@@ -908,51 +908,19 @@ export function BraggDiagram() {
 
 /* ── 3. Anatomi difraktogram ──────────────────────────────────────────── */
 
-/**
- * Satu chip nomor-label untuk anotasi anatomi. Semua chip duduk di satu baris
- * di atas plot, jadi tidak ada yang bertumpuk dengan kurva, puncak, atau
- * kotak perbesaran.
- */
-function ChipBadge({
-  x,
-  y,
-  n,
-  label,
-  tone,
-  width,
-}: {
-  x: number;
-  y: number;
-  n: number;
-  label: string;
-  tone: "amber" | "purple";
-  width: number;
-}) {
-  const accent = tone === "amber" ? "#b45309" : "#9333ea";
-  const ink = tone === "amber" ? "#92400e" : "#6b21a8";
-  return (
-    <g transform={`translate(${x}, ${y})`}>
-      <rect x={0} y={-11} width={width} height={18} rx={9} fill="#ffffff" stroke={accent} strokeWidth={1.1} />
-      <circle cx={9} cy={-2} r={6} fill={accent} />
-      <text x={9} y={0.6} fontSize={7.5} fill="#ffffff" fontWeight={800} textAnchor="middle">
-        {n}
-      </text>
-      <text x={18} y={0.6} fontSize={7.5} fill={ink} fontWeight={700}>
-        {label}
-      </text>
-    </g>
-  );
-}
-
 export function DiffractogramAnatomy() {
-  const W = 700;
-  const H = 400;
-  const marginLeft = 52;
-  const marginRight = 20;
-  const marginTop = 26;
-  const plotHeight = 262;
-  const baselineY = marginTop + plotHeight; // 288
-  const plotWidth = W - marginLeft - marginRight; // 628
+  // ── Canvas ───────────────────────────────────────────────────────────────
+  // The plot fills the card: a slim top gutter only for the axis title, a
+  // narrow left gutter for tick numbers. No floating badges inside the data
+  // area — the four keys live in a legend row beneath the chart.
+  const W = 900;
+  const H = 420;
+  const marginLeft = 46;
+  const marginRight = 16;
+  const marginTop = 14;
+  const plotHeight = 336;
+  const baselineY = marginTop + plotHeight; // 350
+  const plotWidth = W - marginLeft - marginRight; // 838
   const minX = 5;
   const maxX = 80;
   const yMax = 112;
@@ -960,17 +928,9 @@ export function DiffractogramAnatomy() {
   const sx = (x: number) => marginLeft + ((x - minX) / (maxX - minX)) * plotWidth;
   const sy = (y: number) => baselineY - (Math.min(y, yMax) / yMax) * plotHeight;
 
-  // Geometry of the two annotated peaks is MEASURED from the same curve that is
-  // drawn (lib/m5-xrd.ts), so a bracket or a shaded region can never disagree
-  // with the trace it labels.
-  const fwhmPeak = useMemo(
-    () => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[0]), // 011 @ 10,39°
-    []
-  );
-  const areaPeak = useMemo(
-    () => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[3]), // 033 @ 31,52°
-    []
-  );
+  // Both annotations are measured from the SAME curve that gets drawn.
+  const fwhmPeak = useMemo(() => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[0]), []);
+  const areaPeak = useMemo(() => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[3]), []);
 
   const { pattern, peakArea, haloArea, fwhmInset } = useMemo(() => {
     const rnd = seededRandom(20261108);
@@ -978,8 +938,6 @@ export function DiffractogramAnatomy() {
     const haloPts: { x: number; y: number }[] = [];
 
     for (let x = minX; x <= maxX + 1e-9; x += 0.05) {
-      // Same model as anatomyCurve, plus a small deterministic noise floor so
-      // the trace reads as measured data.
       const y = anatomyCurve(x) + (rnd() - 0.5) * 1.6;
       pts.push({ x: Math.round(x * 100) / 100, y });
       if (x >= 6 && x <= 46) {
@@ -987,15 +945,17 @@ export function DiffractogramAnatomy() {
       }
     }
 
-    // ── ③ Peak area: shaded ONLY between the measurement window, between the
-    // curve and its LOCAL background — never down to the halo-inflated axis,
-    // and never bleeding into neighbouring peaks or the halo itself.
+    // ③ Luas puncak: between the curve and its LOCAL background inside the
+    // measurement window only — never down to y = 0, never over the halo.
     const aLo = areaPeak.apexTwoTheta - ANATOMY_WINDOW_HALF_WIDTH;
     const aHi = areaPeak.apexTwoTheta + ANATOMY_WINDOW_HALF_WIDTH;
     const areaPts = pts.filter((p) => p.x >= aLo && p.x <= aHi);
     const peakAreaD =
       areaPts
-        .map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(Math.max(p.y, anatomyBaseline(p.x))).toFixed(1)}`)
+        .map(
+          (p, i) =>
+            `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(Math.max(p.y, anatomyBaseline(p.x))).toFixed(1)}`
+        )
         .join(" ") +
       " " +
       [...areaPts]
@@ -1004,14 +964,13 @@ export function DiffractogramAnatomy() {
         .join(" ") +
       " Z";
 
-    // ── ② FWHM magnifier: 0,55° is ~4 px at full scale, so the bracket is
-    // drawn in a zoomed inset window (11° span) where it is actually readable.
     const zoomLo = fwhmPeak.apexTwoTheta - 1.2;
     const zoomHi = fwhmPeak.apexTwoTheta + 1.2;
     const insetPts: { x: number; y: number }[] = [];
     for (let x = zoomLo; x <= zoomHi + 1e-9; x += 0.01) {
       insetPts.push({ x, y: anatomyCurve(x) });
     }
+
     return {
       pattern: pts,
       peakArea: peakAreaD,
@@ -1022,14 +981,15 @@ export function DiffractogramAnatomy() {
         ` L${sx(haloPts[haloPts.length - 1].x).toFixed(1)},${baselineY} L${sx(haloPts[0].x).toFixed(1)},${baselineY} Z`,
       fwhmInset: { zoomLo, zoomHi, pts: insetPts },
     };
-  }, [sx, sy, baselineY, fwhmPeak, areaPeak, minX, maxX]);
+  }, [sx, sy, baselineY, fwhmPeak, areaPeak]);
 
   const lineD = patternPath(pattern, marginLeft, marginTop, plotWidth, plotHeight, yMax);
-  const areaD = patternAreaPath(pattern, marginLeft, marginTop, plotWidth, plotHeight, yMax);
 
-  // ── Inset (magnifier) coordinate system, bottom-left of the plot ─────────
-  const IN = { x: 300, y: 150, w: 300, h: 150 };
-  const inPad = { l: 40, r: 16, t: 34, b: 26 };
+  // ── Magnifier inset: parked in the empty 56–79° region, vertically centred
+  // on the flat baseline. Verified against the data: nothing but noise lives
+  // above 30 a.u. past 56°, so this box hides no peak.
+  const IN = { x: sx(56), y: sy(40), w: sx(79) - sx(56), h: sy(8) - sy(40) };
+  const inPad = { l: 30, r: 12, t: 24, b: 18 };
   const inW = IN.w - inPad.l - inPad.r;
   const inH = IN.h - inPad.t - inPad.b;
   const inMinY = Math.min(...fwhmInset.pts.map((p) => p.y)) - 2;
@@ -1042,7 +1002,13 @@ export function DiffractogramAnatomy() {
     .map((p, i) => `${i === 0 ? "M" : "L"}${ix(p.x).toFixed(1)},${iy(p.y).toFixed(1)}`)
     .join(" ");
 
+  // Marker halo: the amorphous hump is described by its own curve, so the
+  // arrow points at ink that actually exists.
+  const haloTipX = 24;
+  const haloTipY = anatomyHalo(haloTipX);
+
   const TICKS_X = [10, 20, 30, 40, 50, 60, 70, 80];
+  const Y_TICKS = [25, 50, 75, 100];
 
   return (
     <section className="rounded-xl border border-[var(--border)] bg-white p-4 sm:p-5 shadow-xs">
@@ -1053,49 +1019,50 @@ export function DiffractogramAnatomy() {
         </p>
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-muted)] p-1">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Anatomi difraktogram standar Al-Fum">
+      <div className="mt-3 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-muted)]">
+        <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="Anatomi difraktogram standar Al-Fum">
           <defs>
             <linearGradient id="m5-anatomy-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#001f3f" stopOpacity="0.22" />
+              <stop offset="0%" stopColor="#001f3f" stopOpacity="0.18" />
               <stop offset="100%" stopColor="#001f3f" stopOpacity="0.02" />
             </linearGradient>
             <linearGradient id="m5-halo-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#9333ea" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#9333ea" stopOpacity="0.03" />
+              <stop offset="0%" stopColor="#9333ea" stopOpacity="0.20" />
+              <stop offset="100%" stopColor="#9333ea" stopOpacity="0.02" />
             </linearGradient>
-            <marker id="arrow-gold" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <marker id="arrow-gold" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto">
               <polygon points="0 0, 6 3, 0 6" fill="#b45309" />
             </marker>
-            <marker id="arrow-purple" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <marker id="arrow-purple" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto">
               <polygon points="0 0, 6 3, 0 6" fill="#9333ea" />
             </marker>
           </defs>
 
-          {/* Grid lines horizontal */}
-          <line x1={marginLeft} y1={sy(25)} x2={marginLeft + plotWidth} y2={sy(25)} stroke="#e2e8f0" strokeDasharray="3,3" strokeWidth={0.7} />
-          <line x1={marginLeft} y1={sy(50)} x2={marginLeft + plotWidth} y2={sy(50)} stroke="#cbd5e1" strokeDasharray="3,3" strokeWidth={0.7} />
-          <line x1={marginLeft} y1={sy(75)} x2={marginLeft + plotWidth} y2={sy(75)} stroke="#e2e8f0" strokeDasharray="3,3" strokeWidth={0.7} />
-          <line x1={marginLeft} y1={sy(100)} x2={marginLeft + plotWidth} y2={sy(100)} stroke="#cbd5e1" strokeDasharray="3,3" strokeWidth={0.7} />
+          {/* ── Plot chrome ── */}
+          {Y_TICKS.map((v) => (
+            <line
+              key={v}
+              x1={marginLeft}
+              y1={sy(v)}
+              x2={marginLeft + plotWidth}
+              y2={sy(v)}
+              stroke={v === 50 || v === 100 ? "#cbd5e1" : "#e2e8f0"}
+              strokeDasharray="3,4"
+              strokeWidth={0.8}
+            />
+          ))}
 
-          {/* Area under curve & main curve line */}
-          <path d={areaD} fill="url(#m5-anatomy-fill)" />
-
-          {/* ③ Highlighted peak area (033 at 31.52) */}
-          {/* ③ Luas puncak: hanya jendela ukur, antara kurva dan latar lokalnya */}
-          <path d={peakArea} fill="rgba(217, 119, 6, 0.30)" stroke="#d97706" strokeWidth={1.1} />
-
-          {/* ④ Shaded amorphous halo mound */}
+          {/* ── ④ Amorphous halo (background), then ③ peak area on top ── */}
           <path d={haloArea} fill="url(#m5-halo-fill)" stroke="#9333ea" strokeWidth={1} strokeDasharray="3,3" />
+          <path d={peakArea} fill="rgba(217, 119, 6, 0.32)" stroke="#d97706" strokeWidth={1.1} />
 
-          {/* Main diffractogram trace */}
-          <path d={lineD} fill="none" stroke={NAVY} strokeWidth={1.6} strokeLinejoin="round" />
+          {/* ── The trace ── */}
+          <path d={lineD} fill="none" stroke={NAVY} strokeWidth={1.7} strokeLinejoin="round" />
 
-          {/* Sumbu X & Y */}
+          {/* ── Axes ── */}
           <line x1={marginLeft} y1={marginTop} x2={marginLeft} y2={baselineY} stroke="#64748b" strokeWidth={1.2} />
           <line x1={marginLeft} y1={baselineY} x2={marginLeft + plotWidth} y2={baselineY} stroke="#64748b" strokeWidth={1.2} />
 
-          {/* Ticks & Labels X (Equal linear spacing) */}
           {TICKS_X.map((t) => (
             <g key={t}>
               <line x1={sx(t)} y1={baselineY} x2={sx(t)} y2={baselineY + 4} stroke="#64748b" strokeWidth={1} />
@@ -1104,18 +1071,18 @@ export function DiffractogramAnatomy() {
               </text>
             </g>
           ))}
-          <text x={marginLeft + plotWidth / 2} y={baselineY + 32} fontSize={9.5} fill="#1e293b" fontWeight={700} textAnchor="middle">
+          <text x={marginLeft + plotWidth / 2} y={baselineY + 31} fontSize={9.5} fill="#334155" fontWeight={700} textAnchor="middle">
             Sudut Difraksi 2θ (°)
           </text>
 
-          {/* Ticks & Labels Y */}
-          <text x={marginLeft - 5} y={sy(25) + 3} fontSize={8} fill="#64748b" textAnchor="end">25</text>
-          <text x={marginLeft - 5} y={sy(50) + 3} fontSize={8} fill="#64748b" textAnchor="end">50</text>
-          <text x={marginLeft - 5} y={sy(75) + 3} fontSize={8} fill="#64748b" textAnchor="end">75</text>
-          <text x={marginLeft - 5} y={sy(100) + 3} fontSize={8} fill="#64748b" textAnchor="end">100</text>
+          {Y_TICKS.map((v) => (
+            <text key={v} x={marginLeft - 6} y={sy(v) + 3} fontSize={8} fill="#64748b" textAnchor="end">
+              {v}
+            </text>
+          ))}
           <text
             x={-(marginTop + plotHeight / 2)}
-            y={15}
+            y={11}
             transform="rotate(-90)"
             fontSize={9.5}
             fill="#334155"
@@ -1125,69 +1092,101 @@ export function DiffractogramAnatomy() {
             Intensitas (a.u.)
           </text>
 
-          {/* ── ANOTASI ①: Posisi Puncak 2θ (011 @ 10,39°) ── */}
+          {/* ══ ① Posisi puncak 2θ ══════════════════════════════════════════
+              Drop line from the measured apex down to the axis. The marker
+              numbers are drawn in the legend strip below, not over the data. */}
+          <line
+            x1={sx(fwhmPeak.apexTwoTheta)}
+            y1={sy(fwhmPeak.apexY)}
+            x2={sx(fwhmPeak.apexTwoTheta)}
+            y2={baselineY}
+            stroke="#b45309"
+            strokeWidth={1.1}
+            strokeDasharray="4,3"
+            opacity={0.9}
+          />
+          <circle cx={sx(fwhmPeak.apexTwoTheta)} cy={sy(fwhmPeak.apexY)} r={3.2} fill="#b45309" />
+          <circle cx={sx(fwhmPeak.apexTwoTheta)} cy={baselineY} r={2.6} fill="#b45309" />
+          <text
+            x={sx(fwhmPeak.apexTwoTheta)}
+            y={sy(fwhmPeak.apexY) - 8}
+            fontSize={8.5}
+            fill="#92400e"
+            fontWeight={800}
+            textAnchor="middle"
+          >
+            10,39°
+          </text>
+
+          {/* ══ ③ Luas puncak ═══════════════════════════════════════════════
+              Short callout sitting in the empty band above the 033 peak. */}
+          <line
+            x1={sx(areaPeak.apexTwoTheta)}
+            y1={sy(areaPeak.apexY) - 34}
+            x2={sx(areaPeak.apexTwoTheta)}
+            y2={sy(areaPeak.apexY) - 6}
+            stroke="#b45309"
+            strokeWidth={1.1}
+            markerEnd="url(#arrow-gold)"
+          />
+          <text
+            x={sx(areaPeak.apexTwoTheta)}
+            y={sy(areaPeak.apexY) - 40}
+            fontSize={8.5}
+            fill="#92400e"
+            fontWeight={800}
+            textAnchor="middle"
+          >
+            A₀₃₃
+          </text>
+
+          {/* ══ ④ Halo amorf ════════════════════════════════════════════════
+              Arrow lands on the halo curve itself, in the quiet gap that
+              follows the 022 peak. */}
+          <path
+            d={`M ${sx(40)} ${sy(30)} C ${sx(36)} ${sy(26)}, ${sx(32)} ${sy(haloTipY + 6)}, ${sx(haloTipX)} ${sy(haloTipY + 1)}`}
+            fill="none"
+            stroke="#9333ea"
+            strokeWidth={1.2}
+            markerEnd="url(#arrow-purple)"
+          />
+          <text x={sx(40)} y={sy(30) - 5} fontSize={8.5} fill="#6b21a8" fontWeight={800}>
+            halo
+          </text>
+
+          {/* ══ ② Lebar puncak β — magnifier ═══════════════════════════════
+              β is 0,55° ≈ 6 px on the main axis, so it is measured in a zoom
+              window. The window sits over the empty 56–79° stretch. */}
           <g>
+            {/* Zoom lines from the real peak into the box corners (classic
+                magnifier convention, avoids any floating leader crossing data). */}
             <line
-              x1={sx(fwhmPeak.apexTwoTheta)}
-              y1={sy(fwhmPeak.apexY)}
-              x2={sx(fwhmPeak.apexTwoTheta)}
-              y2={baselineY}
+              x1={sx(fwhmPeak.apexTwoTheta) - 6}
+              y1={sy(fwhmPeak.halfMaxY)}
+              x2={IN.x}
+              y2={IN.y + IN.h}
               stroke="#b45309"
-              strokeWidth={1.1}
-              strokeDasharray="3,3"
-              opacity={0.85}
+              strokeWidth={0.8}
+              strokeDasharray="2,3"
+              opacity={0.55}
             />
-            <circle cx={sx(fwhmPeak.apexTwoTheta)} cy={sy(fwhmPeak.apexY)} r={3} fill="#b45309" />
-            <circle cx={sx(fwhmPeak.apexTwoTheta)} cy={baselineY} r={2.5} fill="#b45309" />
-
-            {/* Chip pin ① / ② / ③ / ④ — satu baris rapi di atas plot */}
-            <ChipBadge x={26} y={16} n={1} label="Posisi puncak 2θ" tone="amber" width={126} />
-          </g>
-
-          {/* ── ANOTASI ③: Luas Puncak (033 @ 31,52°) ── */}
-          <g>
-            <ChipBadge x={168} y={16} n={3} label="Luas puncak" tone="amber" width={104} />
             <line
-              x1={220}
-              y1={24}
-              x2={sx(areaPeak.apexTwoTheta)}
-              y2={sy(areaPeak.apexY) - 6}
+              x1={sx(fwhmPeak.apexTwoTheta) + 6}
+              y1={sy(fwhmPeak.halfMaxY)}
+              x2={IN.x}
+              y2={IN.y}
               stroke="#b45309"
-              strokeWidth={1}
-              markerEnd="url(#arrow-gold)"
+              strokeWidth={0.8}
+              strokeDasharray="2,3"
+              opacity={0.55}
             />
-          </g>
 
-          {/* ── ANOTASI ②: Lebar Puncak FWHM β (inset perbesaran) ── */}
-          <g>
-            <ChipBadge x={288} y={16} n={2} label="Lebar puncak β (FWHM)" tone="amber" width={166} />
-            {/* Garis penghubung chip -> kotak perbesaran */}
-            <path
-              d={`M 300 24 C 300 60, ${IN.x + 10} 100, ${IN.x + 10} ${IN.y - 2}`}
-              fill="none"
-              stroke="#b45309"
-              strokeWidth={1}
-              markerEnd="url(#arrow-gold)"
-            />
-          </g>
-
-          {/* ── KOTAK PERBESARAN FWHM ── */}
-          <g>
-            <rect
-              x={IN.x}
-              y={IN.y}
-              width={IN.w}
-              height={IN.h}
-              rx={6}
-              fill="#ffffff"
-              stroke="#b45309"
-              strokeWidth={1.2}
-            />
-            <text x={IN.x + 8} y={IN.y + 12} fontSize={7.5} fill="#92400e" fontWeight={800}>
-              PERBESARAN β = {fwhmPeak.fwhmDeg.toFixed(2)}°
+            <rect x={IN.x} y={IN.y} width={IN.w} height={IN.h} rx={5} fill="#ffffff" stroke="#b45309" strokeWidth={1.3} />
+            <text x={IN.x + 7} y={IN.y + 13} fontSize={8} fill="#92400e" fontWeight={800}>
+              LEBIH DEKAT · β
             </text>
 
-            {/* Latar lokal di dalam kotak */}
+            {/* Background and half-maximum levels */}
             <line
               x1={ix(fwhmInset.zoomLo)}
               y1={iy(fwhmPeak.baselineY)}
@@ -1197,7 +1196,6 @@ export function DiffractogramAnatomy() {
               strokeDasharray="3,3"
               strokeWidth={0.8}
             />
-            {/* Level setengah-maksimum = baseline + tinggi/2 */}
             <line
               x1={ix(fwhmInset.zoomLo)}
               y1={iy(fwhmPeak.halfMaxY)}
@@ -1207,51 +1205,41 @@ export function DiffractogramAnatomy() {
               strokeDasharray="4,3"
               strokeWidth={1}
             />
-            <text x={IN.x + 6} y={iy(fwhmPeak.halfMaxY) + 2.5} fontSize={6.5} fill="#b45309" fontWeight={700}>
-              I½
+            <text x={IN.x + 5} y={iy(fwhmPeak.halfMaxY) - 2} fontSize={6.5} fill="#b45309" fontWeight={700}>
+              ½I
             </text>
 
-            {/* Puncak */}
-            <path d={insetLineD} fill="none" stroke={NAVY} strokeWidth={1.6} strokeLinejoin="round" />
+            <path d={insetLineD} fill="none" stroke={NAVY} strokeWidth={1.7} strokeLinejoin="round" />
 
-            {/* Bracket FWHM */}
+            {/* β bracket at the half-maximum level */}
             <line
               x1={ix(fwhmPeak.leftTwoTheta)}
               y1={iy(fwhmPeak.halfMaxY)}
               x2={ix(fwhmPeak.rightTwoTheta)}
               y2={iy(fwhmPeak.halfMaxY)}
               stroke="#b45309"
-              strokeWidth={2.6}
+              strokeWidth={3}
             />
             <line
-              x1={ix(fwhmPeak.apexTwoTheta)}
-              y1={iy(fwhmPeak.halfMaxY) - 8}
-              x2={ix(fwhmPeak.apexTwoTheta)}
-              y2={iy(fwhmPeak.halfMaxY) + 8}
-              stroke="#16a34a"
+              x1={ix(fwhmPeak.leftTwoTheta)}
+              y1={iy(fwhmPeak.halfMaxY) - 5}
+              x2={ix(fwhmPeak.leftTwoTheta)}
+              y2={iy(fwhmPeak.halfMaxY) + 5}
+              stroke="#b45309"
               strokeWidth={1.4}
             />
-            <circle cx={ix(fwhmPeak.apexTwoTheta)} cy={iy(fwhmPeak.halfMaxY)} r={2.2} fill="#16a34a" />
-
-            {/* Tangga turun dari apex ke level setengah */}
             <line
-              x1={ix(fwhmPeak.apexTwoTheta)}
-              y1={iy(fwhmPeak.apexY)}
-              x2={ix(fwhmPeak.apexTwoTheta)}
-              y2={iy(fwhmPeak.halfMaxY)}
-              stroke="#16a34a"
-              strokeWidth={0.9}
-              strokeDasharray="2,2"
+              x1={ix(fwhmPeak.rightTwoTheta)}
+              y1={iy(fwhmPeak.halfMaxY) - 5}
+              x2={ix(fwhmPeak.rightTwoTheta)}
+              y2={iy(fwhmPeak.halfMaxY) + 5}
+              stroke="#b45309"
+              strokeWidth={1.4}
             />
-            <text x={ix(fwhmPeak.apexTwoTheta) + 3} y={iy(fwhmPeak.apexY) + 8} fontSize={6.5} fill="#16a34a" fontWeight={700}>
-              I_maks
-            </text>
-
-            {/* Label β */}
             <text
               x={(ix(fwhmPeak.leftTwoTheta) + ix(fwhmPeak.rightTwoTheta)) / 2}
               y={iy(fwhmPeak.halfMaxY) + 14}
-              fontSize={8.5}
+              fontSize={9}
               fill="#92400e"
               fontWeight={800}
               textAnchor="middle"
@@ -1259,39 +1247,65 @@ export function DiffractogramAnatomy() {
               β
             </text>
 
-            {/* Sumbu 2θ kotak perbesaran */}
+            {/* Apex stem */}
             <line
-              x1={ix(fwhmInset.zoomLo)}
-              y1={IN.y + IN.h - inPad.b}
-              x2={ix(fwhmInset.zoomHi)}
-              y2={IN.y + IN.h - inPad.b}
-              stroke="#cbd5e1"
+              x1={ix(fwhmPeak.apexTwoTheta)}
+              y1={iy(fwhmPeak.apexY)}
+              x2={ix(fwhmPeak.apexTwoTheta)}
+              y2={iy(fwhmPeak.halfMaxY)}
+              stroke="#b45309"
               strokeWidth={0.8}
+              strokeDasharray="2,2"
+              opacity={0.7}
             />
-            <text x={ix(fwhmPeak.leftTwoTheta)} y={IN.y + IN.h - 8} fontSize={6.5} fill="#64748b" textAnchor="middle">
-              {fwhmPeak.leftTwoTheta.toFixed(2)}°
-            </text>
-            <text x={ix(fwhmPeak.rightTwoTheta)} y={IN.y + IN.h - 8} fontSize={6.5} fill="#64748b" textAnchor="middle">
-              {fwhmPeak.rightTwoTheta.toFixed(2)}°
-            </text>
-          </g>
 
-          {/* ── ANOTASI ④: Gundukan Lebar / Halo Amorf ── */}
-          <g>
-            <ChipBadge x={470} y={16} n={4} label="Halo amorf" tone="purple" width={112} />
-            <path
-              d={`M 520 24 C 560 70, ${sx(30)} 90, ${sx(36)} ${sy(anatomyHalo(36)) - 4}`}
-              fill="none"
-              stroke="#9333ea"
-              strokeWidth={1}
-              markerEnd="url(#arrow-purple)"
-            />
+            <text
+              x={IN.x + IN.w / 2}
+              y={IN.y + IN.h - 5}
+              fontSize={7.5}
+              fill="#92400e"
+              fontWeight={700}
+              textAnchor="middle"
+            >
+              β = {fwhmPeak.fwhmDeg.toFixed(2)}° (2θ)
+            </text>
           </g>
         </svg>
       </div>
 
+      {/* ── Numbered legend strip: where ①②③④ actually live ── */}
+      <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {[
+          { n: 1, label: "Posisi puncak", detail: `2θ = 10,39°`, tone: "amber" },
+          { n: 2, label: "Lebar puncak β", detail: `FWHM = ${fwhmPeak.fwhmDeg.toFixed(2)}°`, tone: "amber" },
+          { n: 3, label: "Luas puncak", detail: "area di atas latar", tone: "amber" },
+          { n: 4, label: "Halo amorf", detail: "hamburan difus", tone: "purple" },
+        ].map((k) => (
+          <div
+            key={k.n}
+            className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 ${
+              k.tone === "amber" ? "border-amber-200 bg-amber-50/60" : "border-purple-200 bg-purple-50/60"
+            }`}
+          >
+            <span
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white ${
+                k.tone === "amber" ? "bg-amber-700" : "bg-purple-700"
+              }`}
+            >
+              {k.n}
+            </span>
+            <span className="min-w-0">
+              <span className={`block text-[11px] font-bold leading-tight ${k.tone === "amber" ? "text-amber-900" : "text-purple-900"}`}>
+                {k.label}
+              </span>
+              <span className="block font-mono text-[10px] leading-tight text-[var(--text-secondary)]">{k.detail}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+
       {/* 4-Card Pedagogical Summary */}
-      <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-3 shadow-xs">
           <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-200 text-[10px] font-bold">1</span>
@@ -1314,7 +1328,7 @@ export function DiffractogramAnatomy() {
             D = Kλ / (β cosθ)
           </div>
           <p className="mt-1.5 text-[11px] text-[var(--text-secondary)] leading-relaxed">
-            Lebar puncak pada setengah tinggi maksimum (FWHM) berbanding terbalik dengan ukuran domain kristalit (Persamaan Scherrer). Makin ramping puncak, kristalit makin besar.
+            β diukur pada setengah tinggi puncak <strong>di atas latar lokal</strong> — bukan setengah nilai mentah. Berbanding terbalik dengan ukuran kristalit (Scherrer).
           </p>
         </div>
 
@@ -1327,7 +1341,7 @@ export function DiffractogramAnatomy() {
             % = (Σ A_kristal / A_total) × 100%
           </div>
           <p className="mt-1.5 text-[11px] text-[var(--text-secondary)] leading-relaxed">
-            Integral area di bawah puncak kristalin dibandingkan dengan luas total kurva (termasuk latar amorf) dengan baseline y = 0 menentukan derajat kristalinitas.
+            Luas kurva di atas latar lokal tiap puncak, dijumlahkan lalu dibandingkan luas total kurva (termasuk gundukan amorf) menentukan derajat kristalinitas.
           </p>
         </div>
 
@@ -1346,11 +1360,11 @@ export function DiffractogramAnatomy() {
       </div>
 
       {/* Standard Al-Fum Reference chips */}
-      <div className="mt-3.5 flex flex-wrap items-center gap-2 rounded-lg bg-[var(--surface-muted)] px-3 py-2 text-xs border border-[var(--border)]">
+      <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-2 text-xs">
         <span className="font-semibold text-[var(--foreground)]">Standar Al-Fum (CCDC 1051975):</span>
         <div className="flex flex-wrap items-center gap-1.5 font-mono text-[11px]">
           {ALFUM_STANDARD_REFLECTIONS.map((r) => (
-            <span key={r.hkl} className="rounded bg-white px-2 py-0.5 border border-[var(--outline-variant)] text-[var(--primary-dark)]">
+            <span key={r.hkl} className="rounded border border-[var(--outline-variant)] bg-white px-2 py-0.5 text-[var(--primary-dark)]">
               {r.hkl} @ {r.twoThetaStd.toFixed(2)}°
             </span>
           ))}
