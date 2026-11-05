@@ -4,6 +4,7 @@
 import { useMemo, useRef, useState } from "react";
 
 import { Equation } from "@/components/shared/Equation";
+import { BraggDiagram } from "./XRDTheoryVisuals";
 
 import {
   ALFUM_SAMPLES,
@@ -63,136 +64,10 @@ export function XRDWorkspace() {
         ))}
       </div>
 
-      {tab === "bragg" && <BraggSandbox />}
+      {tab === "bragg" && <BraggDiagram />}
       {tab === "bandingkan" && <AlFumComparison />}
       {tab === "scherrer" && <ScherrerCalculator />}
     </div>
-  );
-}
-
-/* ── 1. Sandbox Hukum Bragg ───────────────────────────────────────────── */
-
-function BraggSandbox() {
-  const [lambda, setLambda] = useState(1.5406);
-  const [twoTheta, setTwoTheta] = useState(28.5);
-  const [n, setN] = useState(1);
-
-  const theta = twoTheta / 2;
-  const thetaRad = (theta * Math.PI) / 180;
-  const d = (n * lambda) / (2 * Math.sin(thetaRad));
-
-  return (
-    <section className="rounded-xl border border-[var(--border)] bg-white p-4">
-      <h3 className="text-lg font-bold">Sandbox Hukum Bragg</h3>
-      <Equation
-        tex={"n\\lambda = 2d \\sin\\theta"}
-        label="Hukum Bragg"
-        description="n = orde refleksi, λ = panjang gelombang (Å), d = jarak bidang (Å), θ = sudut Bragg (setengah dari 2θ)"
-      />
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div>
-          <label htmlFor="m5-lambda-source" className="text-sm font-medium">Sumber Sinar-X (λ, Å)</label>
-          <select
-            id="m5-lambda-source"
-            value={lambda}
-            onChange={(e) => setLambda(Number(e.target.value))}
-            className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
-          >
-            <option value={1.5406}>Cu Kα (1.5406 Å)</option>
-            <option value={0.7107}>Mo Kα (0.7107 Å)</option>
-            <option value={1.7902}>Co Kα (1.7902 Å)</option>
-            <option value={1.54059}>Cu Kα1 (1.54059 Å)</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="m5-two-theta" className="text-sm font-medium">2θ (derajat)</label>
-          <input
-            id="m5-two-theta"
-            type="number"
-            step="0.01"
-            value={twoTheta}
-            onChange={(e) => setTwoTheta(Number(e.target.value))}
-            className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
-          />
-        </div>
-        <div>
-          <label htmlFor="m5-order" className="text-sm font-medium">Orde (n)</label>
-          <input
-            id="m5-order"
-            type="number"
-            min="1"
-            value={n}
-            onChange={(e) => setN(Number(e.target.value))}
-            className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
-          />
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-lg bg-[var(--primary-light)] p-4">
-        <h4 className="font-semibold text-sm text-[var(--primary-dark)]">Hasil:</h4>
-        <div className="mt-2 space-y-1 text-sm">
-          <p>θ = {twoTheta / 2}° → {theta.toFixed(4)}°</p>
-          <p>θ (radian) = {thetaRad.toFixed(6)}</p>
-          <p>sin(θ) = {Math.sin(thetaRad).toFixed(6)}</p>
-          <div className="mt-2 border-t border-[var(--primary)] pt-2">
-            <Equation
-              tex={`d = \\frac{n \\lambda}{2 \\sin\\theta} = \\frac{${n} \\times ${lambda}}{2 \\times ${Math.sin(thetaRad).toFixed(6)}}`}
-              label="Perhitungan d-spacing"
-            />
-            <p className="mt-2 text-2xl font-bold text-[var(--primary-dark)]">
-              d = {d.toFixed(4)} Å
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Visualization */}
-      <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-4">
-        <svg viewBox="0 0 300 150" className="w-full max-w-md mx-auto" role="img" aria-label="Visualisasi Hukum Bragg">
-          {/* Crystal planes */}
-          <line x1="20" y1="50" x2="280" y2="50" stroke="#475569" strokeWidth="1" strokeDasharray="4,2" />
-          <line x1="20" y1="90" x2="280" y2="90" stroke="#475569" strokeWidth="1" strokeDasharray="4,2" />
-          <text x="10" y="54" fontSize="8" fill="#64748b">→</text>
-          <text x="10" y="94" fontSize="8" fill="#64748b">→</text>
-          <text x="290" y="72" fontSize="8" fill="#64748b">d</text>
-          <line x1="288" y1="50" x2="288" y2="90" stroke="#64748b" strokeWidth="1" />
-
-          {/* Incoming beam */}
-          <line
-            x1="50" y1="130" x2="150" y2="50"
-            stroke="#ef4444" strokeWidth="2"
-            markerEnd="url(#arrowred)"
-          />
-          {/* Reflected beam */}
-          <line
-            x1="150" y1="50" x2="250" y2="130"
-            stroke="#476083" strokeWidth="2"
-            markerEnd="url(#arrowblue)"
-          />
-          {/* Angle arcs */}
-          <path d="M 130 65 A 25 25 0 0 1 150 50" fill="none" stroke="#ef4444" strokeWidth="1" />
-          <path d="M 150 50 A 25 25 0 0 0 170 65" fill="none" stroke="#476083" strokeWidth="1" />
-          <text x="125" y="60" fontSize="8" fill="#ef4444">θ</text>
-          <text x="168" y="60" fontSize="8" fill="#476083">θ</text>
-
-          <defs>
-            <marker id="arrowred" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <polygon points="0 0, 6 3, 0 6" fill="#ef4444" />
-            </marker>
-            <marker id="arrowblue" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <polygon points="0 0, 6 3, 0 6" fill="#476083" />
-            </marker>
-          </defs>
-
-          <text x="80" y="140" fontSize="8" fill="#ef4444">Sinar masuk</text>
-          <text x="210" y="140" fontSize="8" fill="#476083">Sinar difraksi</text>
-        </svg>
-        <p className="text-center text-xs text-[var(--muted)] mt-1">
-          Bidang kristal (garis putus-putus) dengan jarak d = {d.toFixed(4)} Å
-        </p>
-      </div>
-    </section>
   );
 }
 

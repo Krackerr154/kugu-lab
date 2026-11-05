@@ -494,146 +494,408 @@ export function CrystalOrderContinuum() {
 
 /* ── 2. Sandbox geometri Bragg ────────────────────────────────────────── */
 
-const SOURCES = [
+const BRAGG_SOURCES = [
   { value: 1.5406, label: "Cu Kα (1.5406 Å)" },
+  { value: 1.54059, label: "Cu Kα1 (1.54059 Å)" },
   { value: 0.7107, label: "Mo Kα (0.7107 Å)" },
   { value: 1.7902, label: "Co Kα (1.7902 Å)" },
-  { value: 1.54059, label: "Cu Kα1 (1.54059 Å)" },
+];
+
+const LATTICE_PRESETS = [
+  { id: "alfum-011", label: "Al-Fum (011) — d = 8,51 Å", d: 8.506 },
+  { id: "alfum-020", label: "Al-Fum (020) — d = 6,04 Å", d: 6.040 },
+  { id: "alfum-022", label: "Al-Fum (022) — d = 4,26 Å", d: 4.256 },
+  { id: "si-111", label: "Silikon (111) — d = 3,14 Å", d: 3.135 },
+  { id: "custom", label: "Kustom (Atur d manual)", d: 4.0 },
 ];
 
 export function BraggDiagram() {
   const [lambda, setLambda] = useState(1.5406);
-  const [twoTheta, setTwoTheta] = useState(28.5);
+  const [presetId, setPresetId] = useState("alfum-011");
+  const [customD, setCustomD] = useState(4.0);
+  const [twoTheta, setTwoTheta] = useState(10.4);
   const [n, setN] = useState(1);
+
+  const d = presetId === "custom" ? customD : (LATTICE_PRESETS.find((p) => p.id === presetId)?.d ?? 8.506);
 
   const theta = twoTheta / 2;
   const thetaRad = (theta * Math.PI) / 180;
-  const d = (n * lambda) / (2 * Math.sin(thetaRad));
+
+  // Path difference: 2d sin(theta)
   const pathDiff = 2 * d * Math.sin(thetaRad);
   const nLambda = n * lambda;
-  const constructive = Math.abs(nLambda - pathDiff) < 0.05;
-  const residual = nLambda - pathDiff;
+  const pathDiffError = Math.abs(pathDiff - nLambda);
 
-  const W = 300;
-  const H = 150;
-  const gap = Math.max(16, Math.min(64, d * 9));
-  const y1 = 55;
+  // Constructive resonance: within 0.08 A
+  const constructive = pathDiffError < 0.08;
+
+  // Theoretical exact Bragg angle for this d, lambda, n
+  const sinBragg = (n * lambda) / (2 * d);
+  const braggAngle = sinBragg <= 1 ? (Math.asin(sinBragg) * 180 / Math.PI) * 2 : null;
+
+  const jumpToBragg = () => {
+    if (braggAngle !== null) {
+      setTwoTheta(Math.round(braggAngle * 10) / 10);
+    }
+  };
+
+  // Dimensions
+  const W = 600;
+  const H = 260;
+
+  // Lattice geometry
+  const y1 = 110;
+  const gap = Math.max(48, Math.min(84, d * 8.5));
   const y2 = y1 + gap;
-  const cx = 150;
+  const y3 = Math.min(H - 20, y2 + gap * 0.7);
+  const x0 = 280;
 
-  const rayLen = 92;
-  const startX = cx - rayLen * Math.cos(thetaRad);
-  const startY = y1 - rayLen * Math.sin(thetaRad);
-  const endX = cx + rayLen * Math.cos(thetaRad);
-  const endY = y1 + rayLen * Math.sin(thetaRad);
+  // Visual angle clamped between 8 and 22 degrees for clean ray and detector alignment
+  const visualTheta = Math.max(8, Math.min(22, theta));
+  const vRad = (visualTheta * Math.PI) / 180;
+  const cosT = Math.cos(vRad);
+  const sinT = Math.sin(vRad);
+  const tanT = Math.tan(vRad);
+  const L = 220;
+
+  // Detector position and dimensions
+  const det_x = 495;
+  const dx = det_x - x0;
+  const dy = dx * tanT;
+  const det_h = gap + 34;
+  const det_center = ((y1 - dy) + (y2 - dy)) / 2;
+  const det_top = Math.max(12, Math.min(130, det_center - det_h / 2));
+
+  // Rays
+  const r1_in = { x1: x0 - L * cosT, y1: y1 - L * sinT, x2: x0, y2: y1 };
+  const r1_out = { x1: x0, y1: y1, x2: det_x, y2: y1 - dy };
+
+  const r2_in = { x1: x0 - L * cosT, y1: y2 - L * sinT, x2: x0, y2: y2 };
+  const r2_out = { x1: x0, y1: y2, x2: det_x, y2: y2 - dy };
+
+  // Perpendicular projection points
+  const p1 = { x: x0 - gap * sinT * cosT, y: y2 - gap * sinT * sinT };
+  const p2 = { x: x0 + gap * sinT * cosT, y: y2 - gap * sinT * sinT };
+
+  // Atoms per row
+  const ATOM_XS = [100, 160, 220, 280, 340, 400, 460];
 
   return (
-    <section className="rounded-xl border border-[var(--border)] bg-white p-4">
-      <h3 className="text-lg font-bold">Sandbox Hukum Bragg</h3>
-      <p className="mt-1 text-sm text-[var(--muted)]">
-        nλ = 2d sinθ. Geser 2θ — ketika nλ ≈ 2d sinθ, hamburan sefase dan puncak
-        muncul.
-      </p>
+    <section className="rounded-xl border border-[var(--border)] bg-white p-4 sm:p-5 shadow-xs">
+      {/* Header bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] pb-3">
+        <div>
+          <h3 className="text-base font-bold text-[var(--foreground)]">Sandbox Hukum Bragg</h3>
+          <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
+            Interferensi berkas sinar-X pada dua bidang kisi kristal: nλ = 2d sinθ.
+          </p>
+        </div>
+        {braggAngle !== null && (
+          <button
+            type="button"
+            onClick={jumpToBragg}
+            className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3.5 py-1 text-xs font-semibold text-amber-900 shadow-2xs hover:bg-amber-100 transition-colors"
+          >
+            <span>🎯</span>
+            <span>Lompat ke 2θ Bragg ({braggAngle.toFixed(2)}°)</span>
+          </button>
+        )}
+      </div>
 
+      {/* Control bar */}
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <div>
-          <label htmlFor="m5-bragg-source" className="text-sm font-medium">Sumber sinar-X (λ, Å)</label>
+          <label htmlFor="m5-bragg-preset" className="text-xs font-semibold text-[var(--foreground)]">
+            Bidang Kisi Kristal (d)
+          </label>
+          <select
+            id="m5-bragg-preset"
+            value={presetId}
+            onChange={(e) => {
+              const pid = e.target.value;
+              setPresetId(pid);
+              const p = LATTICE_PRESETS.find((x) => x.id === pid);
+              if (p && p.id !== "custom") {
+                const s = (n * lambda) / (2 * p.d);
+                if (s <= 1) {
+                  setTwoTheta(Math.round(Math.asin(s) * 360 / Math.PI * 10) / 10);
+                }
+              }
+            }}
+            className="mt-1 w-full rounded-md border border-[var(--border)] bg-white p-2 text-xs font-medium"
+          >
+            {LATTICE_PRESETS.map((p) => (
+              <option key={p.id} value={p.id}>{p.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="m5-bragg-source" className="text-xs font-semibold text-[var(--foreground)]">
+            Sumber Sinar-X (λ, Å)
+          </label>
           <select
             id="m5-bragg-source"
             value={lambda}
             onChange={(e) => setLambda(Number(e.target.value))}
-            className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
+            className="mt-1 w-full rounded-md border border-[var(--border)] bg-white p-2 text-xs font-medium"
           >
-            {SOURCES.map((s) => (
+            {BRAGG_SOURCES.map((s) => (
               <option key={s.value} value={s.value}>{s.label}</option>
             ))}
           </select>
         </div>
+
         <div>
-          <label htmlFor="m5-bragg-two-theta" className="text-sm font-medium">2θ (°)</label>
-          <input
-            id="m5-bragg-two-theta"
-            type="range"
-            min={4}
-            max={120}
-            step={0.1}
-            value={twoTheta}
-            onChange={(e) => setTwoTheta(Number(e.target.value))}
-            className="mt-3 w-full"
-          />
-          <div className="text-right text-sm font-mono">{twoTheta.toFixed(1)}°</div>
-        </div>
-        <div>
-          <label htmlFor="m5-bragg-order" className="text-sm font-medium">Orde n</label>
-          <input
-            id="m5-bragg-order"
-            type="number"
-            min={1}
-            max={4}
-            value={n}
-            onChange={(e) => setN(Math.max(1, Math.min(4, Number(e.target.value) || 1)))}
-            className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
-          />
+          <label className="text-xs font-semibold text-[var(--foreground)]">
+            Orde Difraksi (n)
+          </label>
+          <div className="mt-1 flex gap-1.5">
+            {[1, 2].map((val) => (
+              <button
+                key={val}
+                type="button"
+                onClick={() => setN(val)}
+                className={`flex-1 rounded-md py-1.5 text-xs font-semibold transition-all ${
+                  n === val
+                    ? "bg-[var(--primary)] text-white shadow-xs"
+                    : "border border-[var(--border)] bg-white text-[var(--muted)] hover:bg-[var(--surface-muted)]"
+                }`}
+              >
+                n = {val}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-2">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Geometri Hukum Bragg">
-          {/* Bidang kristal */}
-          <line x1={16} y1={y1} x2={W - 16} y2={y1} stroke={NAVY} strokeWidth={1.2} strokeDasharray="5,3" />
-          <line x1={16} y1={y2} x2={W - 16} y2={y2} stroke={NAVY} strokeWidth={1.2} strokeDasharray="5,3" />
-          <text x={W - 12} y={(y1 + y2) / 2 + 3} fontSize={9} fill={MUTED} textAnchor="end">
-            d
+      {presetId === "custom" && (
+        <div className="mt-3 flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-2.5">
+          <span className="text-xs font-semibold text-[var(--foreground)]">Jarak antarbidang d:</span>
+          <input
+            type="range"
+            min={1.5}
+            max={10.0}
+            step={0.05}
+            value={customD}
+            onChange={(e) => setCustomD(Number(e.target.value))}
+            className="h-2 flex-1 cursor-pointer accent-[var(--primary)]"
+          />
+          <span className="font-mono text-xs font-bold text-[var(--primary-dark)]">{customD.toFixed(2)} Å</span>
+        </div>
+      )}
+
+      {/* Slider Sudut 2θ */}
+      <div className="mt-3.5 space-y-1.5">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-semibold text-[var(--foreground)]">
+            Sudut Difraksi (2θ): <span className="font-mono font-bold text-[var(--primary-dark)]">{twoTheta.toFixed(2)}°</span>
+            <span className="ml-2 font-normal text-[var(--text-secondary)]">(θ = {theta.toFixed(2)}°)</span>
+          </span>
+          {constructive ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
+              PUNCAK AKTIF
+            </span>
+          ) : (
+            <span className="text-[11px] text-[var(--text-secondary)]">Off-resonance</span>
+          )}
+        </div>
+        <input
+          type="range"
+          min={5.0}
+          max={90.0}
+          step={0.1}
+          value={twoTheta}
+          onChange={(e) => setTwoTheta(Number(e.target.value))}
+          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-[var(--surface-container-high)] accent-[var(--primary)]"
+        />
+        <div className="flex justify-between text-[10px] text-[var(--muted)]">
+          <span>5°</span>
+          <span>30°</span>
+          <span>60°</span>
+          <span>90°</span>
+        </div>
+      </div>
+
+      {/* Diagram SVG */}
+      <div className="mt-3.5 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-muted)] p-1">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Geometri dan interferensi Hukum Bragg">
+          <defs>
+            <marker id="bragg-red" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <polygon points="0 0, 6 3, 0 6" fill="#ef4444" />
+            </marker>
+            <marker id="bragg-gold" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <polygon points="0 0, 6 3, 0 6" fill="#f59e0b" />
+            </marker>
+            <marker id="bragg-slate" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <polygon points="0 0, 6 3, 0 6" fill="#64748b" />
+            </marker>
+            <filter id="bragg-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          {/* Bidang kristal (garis putus-putus) */}
+          <line x1={30} y1={y1} x2={570} y2={y1} stroke="#94a3b8" strokeDasharray="5,4" strokeWidth={1} />
+          <line x1={30} y1={y2} x2={570} y2={y2} stroke="#94a3b8" strokeDasharray="5,4" strokeWidth={1} />
+          {y3 < H && <line x1={30} y1={y3} x2={570} y2={y3} stroke="#cbd5e1" strokeDasharray="4,4" strokeWidth={0.8} opacity={0.6} />}
+
+          {/* Label bidang */}
+          <text x={34} y={y1 - 6} fontSize={8} fill="#64748b" fontWeight={600}>Bidang 1</text>
+          <text x={34} y={y2 - 6} fontSize={8} fill="#64748b" fontWeight={600}>Bidang 2</text>
+
+          {/* Jarak antarbidang d (dimensi vertikal kiri) */}
+          <line x1={55} y1={y1} x2={55} y2={y2} stroke="#2563eb" strokeWidth={1.5} />
+          <line x1={50} y1={y1} x2={60} y2={y1} stroke="#2563eb" strokeWidth={1.5} />
+          <line x1={50} y1={y2} x2={60} y2={y2} stroke="#2563eb" strokeWidth={1.5} />
+          <text x={64} y={(y1 + y2) / 2 + 3} fontSize={8.5} fill="#1d4ed8" fontWeight={700}>
+            d = {d.toFixed(2)} Å
           </text>
 
-          {/* Berkas datang & pantul */}
-          <line x1={startX} y1={startY} x2={cx} y2={y1} stroke="#ef4444" strokeWidth={2} />
-          <line x1={cx} y1={y1} x2={endX} y2={endY} stroke="#476083" strokeWidth={2} />
-          <line x1={startX + 14} y1={startY + 14} x2={cx + 10} y2={y2} stroke="#ef4444" strokeWidth={1.2} opacity={0.55} />
+          {/* Atom-atom di bidang 1, 2, 3 */}
+          {ATOM_XS.map((x, idx) => (
+            <g key={x}>
+              <circle cx={x} cy={y1} r={5.2} fill={idx % 2 === 0 ? "#001f3f" : "#d97706"} stroke="#fff" strokeWidth={1.2} />
+              <circle cx={x} cy={y2} r={5.2} fill={idx % 2 === 0 ? "#001f3f" : "#d97706"} stroke="#fff" strokeWidth={1.2} />
+              {y3 < H && <circle cx={x} cy={y3} r={4.5} fill={idx % 2 === 0 ? "#001f3f" : "#d97706"} stroke="#fff" strokeWidth={1} opacity={0.5} />}
+            </g>
+          ))}
 
-          {/* Busur sudut θ */}
-          <path d={`M ${cx - 18} ${y1} A 18 18 0 0 0 ${cx - 18 * Math.cos(thetaRad)} ${y1 - 18 * Math.sin(thetaRad)}`} fill="none" stroke="#ef4444" strokeWidth={1} />
-          <text x={cx - 26} y={y1 - 8} fontSize={9} fill="#ef4444">θ</text>
+          {/* ── Berkas 1 (Menghambur di Atom 1 @ x0, y1) ── */}
+          {/* Datang */}
+          <line x1={r1_in.x1} y1={r1_in.y1} x2={r1_in.x2} y2={r1_in.y2} stroke="#ef4444" strokeWidth={2} markerEnd="url(#bragg-red)" />
+          {/* Pantul (Ke atas menuju detektor) */}
+          <line
+            x1={r1_out.x1}
+            y1={r1_out.y1}
+            x2={r1_out.x2}
+            y2={r1_out.y2}
+            stroke={constructive ? "#f59e0b" : "#64748b"}
+            strokeWidth={constructive ? 2.8 : 1.2}
+            strokeDasharray={constructive ? "none" : "4,3"}
+            opacity={constructive ? 1 : 0.45}
+            filter={constructive ? "url(#bragg-glow)" : undefined}
+            markerEnd={constructive ? "url(#bragg-gold)" : "url(#bragg-slate)"}
+          />
 
-          {/* Verdict glow */}
+          {/* ── Berkas 2 (Menembus dan Menghambur di Atom 2 @ x0, y2) ── */}
+          {/* Datang */}
+          <line x1={r2_in.x1} y1={r2_in.y1} x2={r2_in.x2} y2={r2_in.y2} stroke="#ef4444" strokeWidth={2} markerEnd="url(#bragg-red)" />
+          {/* Pantul (Ke atas paralel berkas 1) */}
+          <line
+            x1={r2_out.x1}
+            y1={r2_out.y1}
+            x2={r2_out.x2}
+            y2={r2_out.y2}
+            stroke={constructive ? "#f59e0b" : "#64748b"}
+            strokeWidth={constructive ? 2.8 : 1.2}
+            strokeDasharray={constructive ? "none" : "4,3"}
+            opacity={constructive ? 1 : 0.45}
+            filter={constructive ? "url(#bragg-glow)" : undefined}
+            markerEnd={constructive ? "url(#bragg-gold)" : "url(#bragg-slate)"}
+          />
+
+          {/* ── Geometri Beda Lintasan 2d sinθ ── */}
+          {/* Garis tegak lurus dari Atom 1 ke Berkas 2 (datang & pantul) */}
+          <line x1={x0} y1={y1} x2={p1.x} y2={p1.y} stroke="#f59e0b" strokeWidth={1.2} strokeDasharray="3,3" />
+          <line x1={x0} y1={y1} x2={p2.x} y2={p2.y} stroke="#f59e0b" strokeWidth={1.2} strokeDasharray="3,3" />
+
+          {/* Ruas lintasan ekstra (Segmen P1 -> Atom 2 -> P2) */}
+          <path d={`M ${p1.x} ${p1.y} L ${x0} ${y2} L ${p2.x} ${p2.y}`} fill="none" stroke="#d97706" strokeWidth={3.5} strokeLinejoin="round" />
+
+          {/* Badge Beda Lintasan ΔL = 2d sinθ di bawah bidang 2 */}
+          <g transform={`translate(${x0}, ${y2 + 22})`}>
+            <rect x={-52} y={-10} width={104} height={20} rx={4} fill="#ffffff" stroke="#d97706" strokeWidth={1.2} />
+            <text x={0} y={3.5} fontSize={8.5} fill="#b45309" fontWeight={700} textAnchor="middle">
+              ΔL = 2d sinθ
+            </text>
+          </g>
+          <line x1={x0 - 18} y1={y2 + 12} x2={(p1.x + x0) / 2} y2={y2 + 2} stroke="#d97706" strokeWidth={1} />
+          <line x1={x0 + 18} y1={y2 + 12} x2={(p2.x + x0) / 2} y2={y2 + 2} stroke="#d97706" strokeWidth={1} />
+
+          {/* Sudut serang θ di Atom 1 */}
+          <path d={`M ${x0 - 24} ${y1} A 24 24 0 0 0 ${x0 - 24 * cosT} ${y1 - 24 * sinT}`} fill="none" stroke="#ef4444" strokeWidth={1.2} />
+          <text x={x0 - 34} y={y1 - 6} fontSize={8.5} fill="#dc2626" fontWeight={700}>θ</text>
+
+          {/* Sudut pantul θ di Atom 1 */}
+          <path d={`M ${x0 + 24} ${y1} A 24 24 0 0 1 ${x0 + 24 * cosT} ${y1 - 24 * sinT}`} fill="none" stroke={constructive ? "#f59e0b" : "#64748b"} strokeWidth={1.2} />
+          <text x={x0 + 28} y={y1 - 6} fontSize={8.5} fill={constructive ? "#d97706" : "#64748b"} fontWeight={700}>θ</text>
+
+          {/* Atom 1 & Atom 2 active centers */}
+          <circle cx={x0} cy={y1} r={6.5} fill="#001f3f" stroke="#fff" strokeWidth={1.5} />
+          <circle cx={x0} cy={y2} r={6.5} fill="#001f3f" stroke="#fff" strokeWidth={1.5} />
           {constructive && (
             <g>
-              <circle cx={cx} cy={y1} r={5} fill={GOLD} opacity={0.9} />
-              <circle cx={cx} cy={y1} r={9} fill="none" stroke={GOLD} strokeWidth={1.5} opacity={0.5} />
+              <circle cx={x0} cy={y1} r={14} fill="none" stroke="#f59e0b" strokeWidth={2} opacity={0.7} />
+              <circle cx={x0} cy={y2} r={14} fill="none" stroke="#f59e0b" strokeWidth={2} opacity={0.7} />
             </g>
           )}
+
+          {/* Detektor X-ray di kanan — berotasi tegak lurus langsung menyambut berkas pantul */}
+          <g transform={`translate(${det_x}, ${det_center}) rotate(${-visualTheta}) translate(0, ${-det_h / 2})`}>
+            <rect x={0} y={0} width={75} height={det_h} rx={6} fill="#0f172a" stroke="#334155" strokeWidth={1.5} />
+            {/* Sensor aperture slit */}
+            <line x1={0} y1={14} x2={0} y2={det_h - 14} stroke={constructive ? "#22c55e" : "#475569"} strokeWidth={2.5} />
+            <text x={37} y={15} fontSize={7.5} fill="#94a3b8" fontWeight={700} textAnchor="middle">DETEKTOR</text>
+            <rect x={12} y={23} width={51} height={24} rx={3} fill="#020617" />
+            <text
+              x={37}
+              y={39}
+              fontSize={9}
+              fontWeight={800}
+              fill={constructive ? "#22c55e" : "#64748b"}
+              textAnchor="middle"
+            >
+              {constructive ? "100%" : "0%"}
+            </text>
+            <text x={37} y={58} fontSize={7.5} fontWeight={700} fill={constructive ? "#4ade80" : "#64748b"} textAnchor="middle">
+              {constructive ? "PUNCAK" : "PADAM"}
+            </text>
+          </g>
         </svg>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-        <div className="rounded-md bg-[var(--surface-muted)] p-2">
-          <div className="text-xs text-[var(--muted)]">θ</div>
-          <div className="font-mono">{theta.toFixed(2)}°</div>
+      {/* Live Math / Physics Results Cards */}
+      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-2.5 shadow-2xs">
+          <div className="text-[11px] text-[var(--text-secondary)]">Sudut Bragg (θ)</div>
+          <div className="mt-1 font-mono text-sm font-bold text-[var(--foreground)]">{theta.toFixed(2)}°</div>
+          <div className="text-[10px] text-[var(--muted)]">2θ = {twoTheta.toFixed(2)}°</div>
         </div>
-        <div className="rounded-md bg-[var(--surface-muted)] p-2">
-          <div className="text-xs text-[var(--muted)]">d</div>
-          <div className="font-mono">{d.toFixed(3)} Å</div>
+
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-2.5 shadow-2xs">
+          <div className="text-[11px] text-[var(--text-secondary)]">Beda Lintasan (2d sinθ)</div>
+          <div className="mt-1 font-mono text-sm font-bold text-amber-700">{pathDiff.toFixed(3)} Å</div>
+          <div className="text-[10px] text-[var(--muted)]">Lintasan ekstra berkas 2</div>
         </div>
-        <div className="rounded-md bg-[var(--surface-muted)] p-2">
-          <div className="text-xs text-[var(--muted)]">2d sinθ</div>
-          <div className="font-mono">{pathDiff.toFixed(3)} Å</div>
+
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-2.5 shadow-2xs">
+          <div className="text-[11px] text-[var(--text-secondary)]">Syarat Sefase (nλ)</div>
+          <div className="mt-1 font-mono text-sm font-bold text-[var(--primary-dark)]">{nLambda.toFixed(3)} Å</div>
+          <div className="text-[10px] text-[var(--muted)]">{n} × {lambda.toFixed(4)} Å</div>
         </div>
-        <div className="rounded-md bg-[var(--surface-muted)] p-2">
-          <div className="text-xs text-[var(--muted)]">nλ</div>
-          <div className="font-mono">{nLambda.toFixed(3)} Å</div>
+
+        <div className={`rounded-xl border p-2.5 shadow-2xs ${
+          constructive
+            ? "border-emerald-300 bg-emerald-50 text-emerald-950"
+            : "border-[var(--border)] bg-[var(--surface-container-low)] text-[var(--muted)]"
+        }`}>
+          <div className="text-[11px] font-semibold">Status Interferensi</div>
+          <div className="mt-1 font-mono text-sm font-bold">
+            {constructive ? "✓ Sefase (Konstruktif)" : "✕ Destruktif"}
+          </div>
+          <div className="text-[10px]">
+            {constructive
+              ? "Puncak difraksi muncul!"
+              : `Selisih: ${pathDiffError.toFixed(3)} Å`}
+          </div>
         </div>
       </div>
 
-      <div
-        className={`mt-3 rounded-md px-3 py-2 text-sm font-medium ${
-          constructive
-            ? "bg-[var(--surface-selected)] text-[var(--primary-dark)]"
-            : "border border-[var(--border)] text-[var(--muted)]"
-        }`}
-      >
-        {constructive
-          ? "✓ Konstruktif — hamburan sefase (nλ ≈ 2d sinθ), muncul puncak difraksi"
-          : `Tidak sefase — selisih ${Math.abs(residual).toFixed(3)} Å dari nλ; puncak padam`}
+      <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-3.5 py-2.5 text-xs text-[var(--text-secondary)] leading-relaxed">
+        <strong>Fisika di balik Hukum Bragg:</strong> Berkas kedua menembus kristal dan menempuh jarak ekstra sebesar <strong>2d sinθ</strong> (ruas kuning tebal). Hanya ketika beda lintasan ini persis sama dengan kelipatan bulat panjang gelombang (<strong>nλ</strong>), kedua sinar pantul bertemu puncak-dengan-puncak (sefase) dan saling menguatkan ke arah detektor.
       </div>
     </section>
   );
