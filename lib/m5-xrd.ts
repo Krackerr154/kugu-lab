@@ -289,6 +289,154 @@ export interface PeakAnnotation {
   deltaDeg: number;
 }
 
+/* ── Peak-shape model used by the anatomy figure ───────────────────────── */
+
+/**
+ * Amplitude factor applied to every reflection in the anatomy figure.
+ * Kept here (not in the component) so the drawn curve and the FWHM/area
+ * read-offs are computed by one source.
+ */
+export const ANATOMY_AMPLITUDE = 0.85;
+/** Noise-free background level of the anatomy curve. */
+export const ANATOMY_BASE = 3;
+/** Gaussian width of every reflection, degrees. */
+export const ANATOMY_FWHM_DEG = 0.55;
+/** Amorphous halo used as the local background in the anatomy figure. */
+export const ANATOMY_HALO = { amplitude: 18, center: 22, sigma: 12 } as const;
+
+function anatomySigma(): number {
+  return ANATOMY_FWHM_DEG / (2 * Math.sqrt(2 * Math.log(2)));
+}
+
+/** Amorphous halo intensity at 2θ, degrees. */
+export function anatomyHalo(twoThetaDeg: number): number {
+  const { amplitude, center, sigma } = ANATOMY_HALO;
+  return amplitude * Math.exp(-((twoThetaDeg - center) ** 2) / (2 * sigma ** 2));
+}
+
+/** Local background (flat base + halo) at 2θ. This is the peak's baseline. */
+export function anatomyBaseline(twoThetaDeg: number): number {
+  return ANATOMY_BASE + anatomyHalo(twoThetaDeg);
+}
+
+/** One reflection's own contribution at 2θ, above the background. */
+export function anatomyPeakAt(twoThetaDeg: number, reflection: AlFumReflection): number {
+  const sigma = anatomySigma();
+  return (
+    reflection.relIntensity *
+    ANATOMY_AMPLITUDE *
+    Math.exp(-((twoThetaDeg - reflection.twoThetaStd) ** 2) / (2 * sigma ** 2))
+  );
+}
+
+/** The full drawn curve at 2θ: background + every reflection. */
+export function anatomyCurve(twoThetaDeg: number): number {
+  return (
+    anatomyBaseline(twoThetaDeg) +
+    ALFUM_STANDARD_REFLECTIONS.reduce(
+      (sum, r) => sum + anatomyPeakAt(twoThetaDeg, r),
+      0
+    )
+  );
+}
+
+export interface AnatomyPeakMeasure {
+  hkl: string;
+  /** 2θ of the apex (sampled, degrees). */
+  apexTwoTheta: number;
+  /** Absolute intensity (curve value) at the apex. */
+  apexY: number;
+  /** Local background immediately under the apex. */
+  baselineY: number;
+  /** Peak height above the local background. */
+  heightAboveBase: number;
+  /** Absolute intensity of the half-maximum level (baseline + half height). */
+  halfMaxY: number;
+  /** 2θ where the peak's own contribution falls to half, left branch. */
+  leftTwoTheta: number;
+  /** 2θ where the peak's own contribution falls to half, right branch. */
+  rightTwoTheta: number;
+  /**
+   * Full width at half maximum, degrees — measured from the peak's own
+   * contribution above background. Reproduces ANATOMY_FWHM_DEG.
+   */
+  fwhmDeg: number;
+}
+
+/**
+ * Measure a peak the way a crystallographer does: locate the apex, find the
+ * local background right under it, and walk out until the peak's own
+ * contribution has fallen to half. The half-maximum level is therefore
+ * baseline + height/2, NOT half of the raw curve value — using half of the
+ * raw value on a peak sitting on a halo gives a wrong (much wider) answer.
+ */
+export function measureAnatomyPeak(
+  reflection: AlFumReflection
+): AnatomyPeakMeasure {
+  const center = reflection.twoThetaStd;
+
+  let apexTwoTheta = center;
+  let apexY = -Infinity;
+  for (let x = center - 0.4; x <= center + 0.4 + 1e-9; x += 0.001) {
+    const y = anatomyCurve(x);
+    if (y > apexY) {
+      apexY = y;
+      apexTwoTheta = x;
+    }
+  }
+
+  const baselineY = anatomyBaseline(apexTwoTheta);
+  const halfOwn = (reflection.relIntensity * ANATOMY_AMPLITUDE) / 2;
+
+  const walk = (dir: 1 | -1): number => {
+    for (let d = 0; d <= 1.2; d += 0.001) {
+      const x = apexTwoTheta + dir * d;
+      if (anatomyPeakAt(x, reflection) <= halfOwn) return x;
+    }
+    return apexTwoTheta + dir * 1.2;
+  };
+
+  const leftTwoTheta = walk(-1);
+  const rightTwoTheta = walk(1);
+
+  return {
+    hkl: reflection.hkl,
+    apexTwoTheta: Math.round(apexTwoTheta * 1000) / 1000,
+    apexY,
+    baselineY,
+    heightAboveBase: apexY - baselineY,
+    halfMaxY: baselineY + (apexY - baselineY) / 2,
+    leftTwoTheta: Math.round(leftTwoTheta * 1000) / 1000,
+    rightTwoTheta: Math.round(rightTwoTheta * 1000) / 1000,
+    fwhmDeg: rightTwoTheta - leftTwoTheta,
+  };
+}
+
+/** Half-width of the measurement window (degrees either side of a peak). */
+export const ANATOMY_WINDOW_HALF_WIDTH = 1.2;
+
+/**
+ * Integral of the drawn curve minus its local background, between two 2θ
+ * limits — i.e. the peak area exactly as it is shaded in the figure.
+ * Trapezoidal, at 0.005° steps.
+ */
+export function anatomyPeakArea(
+  twoThetaFrom: number,
+  twoThetaTo: number,
+  step = 0.005
+): number {
+  let area = 0;
+  let prevX = twoThetaFrom;
+  let prevY = Math.max(0, anatomyCurve(prevX) - anatomyBaseline(prevX));
+  for (let x = twoThetaFrom + step; x <= twoThetaTo + 1e-9; x += step) {
+    const y = Math.max(0, anatomyCurve(x) - anatomyBaseline(x));
+    area += ((prevY + y) / 2) * (x - prevX);
+    prevX = x;
+    prevY = y;
+  }
+  return area;
+}
+
 /**
  * Assign a measured peak to a standard reflection. Matching uses the guide's
  * ±0,5° criterion (slide 21). Returns null when no standard reflection is

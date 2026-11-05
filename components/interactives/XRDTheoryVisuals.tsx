@@ -20,9 +20,14 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 import {
   ALFUM_STANDARD_REFLECTIONS,
+  ANATOMY_WINDOW_HALF_WIDTH,
+  anatomyBaseline,
+  anatomyCurve,
+  anatomyHalo,
   dSpacing,
   diffractogram,
   disorderPattern,
+  measureAnatomyPeak,
   orderStageLabel,
   seededRandom,
 } from "@/lib/m5-xrd";
@@ -903,64 +908,139 @@ export function BraggDiagram() {
 
 /* ── 3. Anatomi difraktogram ──────────────────────────────────────────── */
 
+/**
+ * Satu chip nomor-label untuk anotasi anatomi. Semua chip duduk di satu baris
+ * di atas plot, jadi tidak ada yang bertumpuk dengan kurva, puncak, atau
+ * kotak perbesaran.
+ */
+function ChipBadge({
+  x,
+  y,
+  n,
+  label,
+  tone,
+  width,
+}: {
+  x: number;
+  y: number;
+  n: number;
+  label: string;
+  tone: "amber" | "purple";
+  width: number;
+}) {
+  const accent = tone === "amber" ? "#b45309" : "#9333ea";
+  const ink = tone === "amber" ? "#92400e" : "#6b21a8";
+  return (
+    <g transform={`translate(${x}, ${y})`}>
+      <rect x={0} y={-11} width={width} height={18} rx={9} fill="#ffffff" stroke={accent} strokeWidth={1.1} />
+      <circle cx={9} cy={-2} r={6} fill={accent} />
+      <text x={9} y={0.6} fontSize={7.5} fill="#ffffff" fontWeight={800} textAnchor="middle">
+        {n}
+      </text>
+      <text x={18} y={0.6} fontSize={7.5} fill={ink} fontWeight={700}>
+        {label}
+      </text>
+    </g>
+  );
+}
+
 export function DiffractogramAnatomy() {
-  const W = 640;
-  const H = 340;
+  const W = 700;
+  const H = 400;
   const marginLeft = 52;
   const marginRight = 20;
   const marginTop = 26;
-  const plotHeight = 260;
-  const baselineY = marginTop + plotHeight; // 286
-  const plotWidth = W - marginLeft - marginRight; // 568
+  const plotHeight = 262;
+  const baselineY = marginTop + plotHeight; // 288
+  const plotWidth = W - marginLeft - marginRight; // 628
   const minX = 5;
   const maxX = 80;
-  const yMax = 115;
+  const yMax = 112;
 
   const sx = (x: number) => marginLeft + ((x - minX) / (maxX - minX)) * plotWidth;
   const sy = (y: number) => baselineY - (Math.min(y, yMax) / yMax) * plotHeight;
 
-  const { pattern, peak033Area, haloArea } = useMemo(() => {
-    const fwhmDeg = 0.55;
-    const sigmaDeg = fwhmDeg / (2 * Math.sqrt(2 * Math.log(2)));
-    const haloAmp = 18;
-    const rnd = seededRandom(20261108);
+  // Geometry of the two annotated peaks is MEASURED from the same curve that is
+  // drawn (lib/m5-xrd.ts), so a bracket or a shaded region can never disagree
+  // with the trace it labels.
+  const fwhmPeak = useMemo(
+    () => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[0]), // 011 @ 10,39°
+    []
+  );
+  const areaPeak = useMemo(
+    () => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[3]), // 033 @ 31,52°
+    []
+  );
 
+  const { pattern, peakArea, haloArea, fwhmInset } = useMemo(() => {
+    const rnd = seededRandom(20261108);
     const pts: { x: number; y: number }[] = [];
-    const peak033Pts: { x: number; y: number }[] = [];
     const haloPts: { x: number; y: number }[] = [];
 
-    for (let x = 5; x <= 80 + 1e-9; x += 0.05) {
-      let y = 3 + rnd() * 2;
-      const haloVal = haloAmp * Math.exp(-((x - 22) ** 2) / (2 * 12 ** 2));
-      y += haloVal;
-
-      for (const ref of ALFUM_STANDARD_REFLECTIONS) {
-        y += ref.relIntensity * 0.85 * Math.exp(-((x - ref.twoThetaStd) ** 2) / (2 * sigmaDeg ** 2));
-      }
-      const pt = { x: Math.round(x * 100) / 100, y };
-      pts.push(pt);
-
-      if (x >= 29.5 && x <= 33.5) {
-        peak033Pts.push(pt);
-      }
-      if (x >= 8 && x <= 45) {
-        haloPts.push({ x: Math.round(x * 100) / 100, y: 3 + haloVal });
+    for (let x = minX; x <= maxX + 1e-9; x += 0.05) {
+      // Same model as anatomyCurve, plus a small deterministic noise floor so
+      // the trace reads as measured data.
+      const y = anatomyCurve(x) + (rnd() - 0.5) * 1.6;
+      pts.push({ x: Math.round(x * 100) / 100, y });
+      if (x >= 6 && x <= 46) {
+        haloPts.push({ x: Math.round(x * 100) / 100, y: anatomyBaseline(x) });
       }
     }
 
-    const peak033AreaD =
-      peak033Pts.map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join(" ") +
-      ` L${sx(peak033Pts[peak033Pts.length - 1].x).toFixed(1)},${baselineY} L${sx(peak033Pts[0].x).toFixed(1)},${baselineY} Z`;
+    // ── ③ Peak area: shaded ONLY between the measurement window, between the
+    // curve and its LOCAL background — never down to the halo-inflated axis,
+    // and never bleeding into neighbouring peaks or the halo itself.
+    const aLo = areaPeak.apexTwoTheta - ANATOMY_WINDOW_HALF_WIDTH;
+    const aHi = areaPeak.apexTwoTheta + ANATOMY_WINDOW_HALF_WIDTH;
+    const areaPts = pts.filter((p) => p.x >= aLo && p.x <= aHi);
+    const peakAreaD =
+      areaPts
+        .map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(Math.max(p.y, anatomyBaseline(p.x))).toFixed(1)}`)
+        .join(" ") +
+      " " +
+      [...areaPts]
+        .reverse()
+        .map((p) => `L${sx(p.x).toFixed(1)},${sy(anatomyBaseline(p.x)).toFixed(1)}`)
+        .join(" ") +
+      " Z";
 
-    const haloAreaD =
-      haloPts.map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join(" ") +
-      ` L${sx(haloPts[haloPts.length - 1].x).toFixed(1)},${baselineY} L${sx(haloPts[0].x).toFixed(1)},${baselineY} Z`;
-
-    return { pattern: pts, peak033Area: peak033AreaD, haloArea: haloAreaD };
-  }, [sx, sy, baselineY]);
+    // ── ② FWHM magnifier: 0,55° is ~4 px at full scale, so the bracket is
+    // drawn in a zoomed inset window (11° span) where it is actually readable.
+    const zoomLo = fwhmPeak.apexTwoTheta - 1.2;
+    const zoomHi = fwhmPeak.apexTwoTheta + 1.2;
+    const insetPts: { x: number; y: number }[] = [];
+    for (let x = zoomLo; x <= zoomHi + 1e-9; x += 0.01) {
+      insetPts.push({ x, y: anatomyCurve(x) });
+    }
+    return {
+      pattern: pts,
+      peakArea: peakAreaD,
+      haloArea:
+        haloPts
+          .map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`)
+          .join(" ") +
+        ` L${sx(haloPts[haloPts.length - 1].x).toFixed(1)},${baselineY} L${sx(haloPts[0].x).toFixed(1)},${baselineY} Z`,
+      fwhmInset: { zoomLo, zoomHi, pts: insetPts },
+    };
+  }, [sx, sy, baselineY, fwhmPeak, areaPeak, minX, maxX]);
 
   const lineD = patternPath(pattern, marginLeft, marginTop, plotWidth, plotHeight, yMax);
   const areaD = patternAreaPath(pattern, marginLeft, marginTop, plotWidth, plotHeight, yMax);
+
+  // ── Inset (magnifier) coordinate system, bottom-left of the plot ─────────
+  const IN = { x: 300, y: 150, w: 300, h: 150 };
+  const inPad = { l: 40, r: 16, t: 34, b: 26 };
+  const inW = IN.w - inPad.l - inPad.r;
+  const inH = IN.h - inPad.t - inPad.b;
+  const inMinY = Math.min(...fwhmInset.pts.map((p) => p.y)) - 2;
+  const inMaxY = Math.max(...fwhmInset.pts.map((p) => p.y)) + 2;
+  const ix = (x: number) =>
+    IN.x + inPad.l + ((x - fwhmInset.zoomLo) / (fwhmInset.zoomHi - fwhmInset.zoomLo)) * inW;
+  const iy = (y: number) =>
+    IN.y + inPad.t + inH - ((y - inMinY) / (inMaxY - inMinY)) * inH;
+  const insetLineD = fwhmInset.pts
+    .map((p, i) => `${i === 0 ? "M" : "L"}${ix(p.x).toFixed(1)},${iy(p.y).toFixed(1)}`)
+    .join(" ");
 
   const TICKS_X = [10, 20, 30, 40, 50, 60, 70, 80];
 
@@ -1002,7 +1082,8 @@ export function DiffractogramAnatomy() {
           <path d={areaD} fill="url(#m5-anatomy-fill)" />
 
           {/* ③ Highlighted peak area (033 at 31.52) */}
-          <path d={peak033Area} fill="rgba(217, 119, 6, 0.35)" stroke="#d97706" strokeWidth={1.2} />
+          {/* ③ Luas puncak: hanya jendela ukur, antara kurva dan latar lokalnya */}
+          <path d={peakArea} fill="rgba(217, 119, 6, 0.30)" stroke="#d97706" strokeWidth={1.1} />
 
           {/* ④ Shaded amorphous halo mound */}
           <path d={haloArea} fill="url(#m5-halo-fill)" stroke="#9333ea" strokeWidth={1} strokeDasharray="3,3" />
@@ -1044,65 +1125,167 @@ export function DiffractogramAnatomy() {
             Intensitas (a.u.)
           </text>
 
-          {/* ── ANOTASI ①: Posisi Puncak 2θ (011 @ 10.39°) ── */}
+          {/* ── ANOTASI ①: Posisi Puncak 2θ (011 @ 10,39°) ── */}
           <g>
-            {/* Garis jatuh dari puncak ke sumbu 2θ */}
-            <line x1={sx(10.39)} y1={sy(102)} x2={sx(10.39)} y2={baselineY} stroke="#b45309" strokeWidth={1.2} strokeDasharray="3,3" />
-            <circle cx={sx(10.39)} cy={sy(102)} r={3.5} fill="#b45309" />
-            <circle cx={sx(10.39)} cy={baselineY} r={3} fill="#b45309" />
+            <line
+              x1={sx(fwhmPeak.apexTwoTheta)}
+              y1={sy(fwhmPeak.apexY)}
+              x2={sx(fwhmPeak.apexTwoTheta)}
+              y2={baselineY}
+              stroke="#b45309"
+              strokeWidth={1.1}
+              strokeDasharray="3,3"
+              opacity={0.85}
+            />
+            <circle cx={sx(fwhmPeak.apexTwoTheta)} cy={sy(fwhmPeak.apexY)} r={3} fill="#b45309" />
+            <circle cx={sx(fwhmPeak.apexTwoTheta)} cy={baselineY} r={2.5} fill="#b45309" />
 
-            {/* Chip pin ① */}
-            <g transform={`translate(${sx(10.39)}, 32)`}>
-              <rect x={-54} y={-14} width={108} height={20} rx={4} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
-              <circle cx={-40} cy={-4} r={6.5} fill="#b45309" />
-              <text x={-40} y={-1.5} fontSize={8} fill="#ffffff" fontWeight={800} textAnchor="middle">1</text>
-              <text x={-28} y={-0.5} fontSize={8} fill="#92400e" fontWeight={700}>Posisi (2θ = 10,39°)</text>
-            </g>
+            {/* Chip pin ① / ② / ③ / ④ — satu baris rapi di atas plot */}
+            <ChipBadge x={26} y={16} n={1} label="Posisi puncak 2θ" tone="amber" width={126} />
           </g>
 
-          {/* ── ANOTASI ②: Lebar Puncak FWHM β (022 @ 20.87°) ── */}
+          {/* ── ANOTASI ③: Luas Puncak (033 @ 31,52°) ── */}
           <g>
-            {/* Garis setengah tinggi Imaks/2 */}
-            <line x1={marginLeft} y1={sy(21)} x2={sx(20.87) - 14} y2={sy(21)} stroke="#cbd5e1" strokeDasharray="2,2" strokeWidth={0.8} />
-            <text x={marginLeft + 4} y={sy(21) - 3} fontSize={7} fill="#64748b">I_maks / 2</text>
-
-            {/* Indikator lebar FWHM */}
-            <line x1={sx(20.87) - 10} y1={sy(21)} x2={sx(20.87) + 10} y2={sy(21)} stroke="#b45309" strokeWidth={2.5} />
-            <polygon points={`${sx(20.87) - 10},${sy(21)} ${sx(20.87) - 6},${sy(21) - 3} ${sx(20.87) - 6},${sy(21) + 3}`} fill="#b45309" />
-            <polygon points={`${sx(20.87) + 10},${sy(21)} ${sx(20.87) + 6},${sy(21) - 3} ${sx(20.87) + 6},${sy(21) + 3}`} fill="#b45309" />
-
-            {/* Chip pin ② */}
-            <g transform={`translate(${sx(20.87)}, 95)`}>
-              <rect x={-45} y={-14} width={90} height={20} rx={4} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
-              <circle cx={-32} cy={-4} r={6.5} fill="#b45309" />
-              <text x={-32} y={-1.5} fontSize={8} fill="#ffffff" fontWeight={800} textAnchor="middle">2</text>
-              <text x={-20} y={-0.5} fontSize={8} fill="#92400e" fontWeight={700}>Lebar FWHM</text>
-            </g>
-            <line x1={sx(20.87)} y1={108} x2={sx(20.87)} y2={sy(21) - 4} stroke="#b45309" strokeWidth={1} markerEnd="url(#arrow-gold)" />
+            <ChipBadge x={168} y={16} n={3} label="Luas puncak" tone="amber" width={104} />
+            <line
+              x1={220}
+              y1={24}
+              x2={sx(areaPeak.apexTwoTheta)}
+              y2={sy(areaPeak.apexY) - 6}
+              stroke="#b45309"
+              strokeWidth={1}
+              markerEnd="url(#arrow-gold)"
+            />
           </g>
 
-          {/* ── ANOTASI ③: Luas di Bawah Puncak (033 @ 31.52°) ── */}
+          {/* ── ANOTASI ②: Lebar Puncak FWHM β (inset perbesaran) ── */}
           <g>
-            {/* Chip pin ③ */}
-            <g transform="translate(275, 120)">
-              <rect x={-45} y={-14} width={90} height={20} rx={4} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
-              <circle cx={-32} cy={-4} r={6.5} fill="#b45309" />
-              <text x={-32} y={-1.5} fontSize={8} fill="#ffffff" fontWeight={800} textAnchor="middle">3</text>
-              <text x={-20} y={-0.5} fontSize={8} fill="#92400e" fontWeight={700}>Luas Puncak</text>
-            </g>
-            <line x1={275} y1={132} x2={sx(31.52)} y2={sy(25)} stroke="#b45309" strokeWidth={1} markerEnd="url(#arrow-gold)" />
+            <ChipBadge x={288} y={16} n={2} label="Lebar puncak β (FWHM)" tone="amber" width={166} />
+            {/* Garis penghubung chip -> kotak perbesaran */}
+            <path
+              d={`M 300 24 C 300 60, ${IN.x + 10} 100, ${IN.x + 10} ${IN.y - 2}`}
+              fill="none"
+              stroke="#b45309"
+              strokeWidth={1}
+              markerEnd="url(#arrow-gold)"
+            />
           </g>
 
-          {/* ── ANOTASI ④: Gundukan Lebar / Halo Amorf (@ 22°) ── */}
+          {/* ── KOTAK PERBESARAN FWHM ── */}
           <g>
-            {/* Chip pin ④ */}
-            <g transform="translate(430, 145)">
-              <rect x={-48} y={-14} width={96} height={20} rx={4} fill="#ffffff" stroke="#9333ea" strokeWidth={1.2} />
-              <circle cx={-35} cy={-4} r={6.5} fill="#9333ea" />
-              <text x={-35} y={-1.5} fontSize={8} fill="#ffffff" fontWeight={800} textAnchor="middle">4</text>
-              <text x={-23} y={-0.5} fontSize={8} fill="#6b21a8" fontWeight={700}>Halo Amorf</text>
-            </g>
-            <line x1={400} y1={155} x2={330} y2={sy(12)} stroke="#9333ea" strokeWidth={1} markerEnd="url(#arrow-purple)" />
+            <rect
+              x={IN.x}
+              y={IN.y}
+              width={IN.w}
+              height={IN.h}
+              rx={6}
+              fill="#ffffff"
+              stroke="#b45309"
+              strokeWidth={1.2}
+            />
+            <text x={IN.x + 8} y={IN.y + 12} fontSize={7.5} fill="#92400e" fontWeight={800}>
+              PERBESARAN β = {fwhmPeak.fwhmDeg.toFixed(2)}°
+            </text>
+
+            {/* Latar lokal di dalam kotak */}
+            <line
+              x1={ix(fwhmInset.zoomLo)}
+              y1={iy(fwhmPeak.baselineY)}
+              x2={ix(fwhmInset.zoomHi)}
+              y2={iy(fwhmPeak.baselineY)}
+              stroke="#94a3b8"
+              strokeDasharray="3,3"
+              strokeWidth={0.8}
+            />
+            {/* Level setengah-maksimum = baseline + tinggi/2 */}
+            <line
+              x1={ix(fwhmInset.zoomLo)}
+              y1={iy(fwhmPeak.halfMaxY)}
+              x2={ix(fwhmInset.zoomHi)}
+              y2={iy(fwhmPeak.halfMaxY)}
+              stroke="#b45309"
+              strokeDasharray="4,3"
+              strokeWidth={1}
+            />
+            <text x={IN.x + 6} y={iy(fwhmPeak.halfMaxY) + 2.5} fontSize={6.5} fill="#b45309" fontWeight={700}>
+              I½
+            </text>
+
+            {/* Puncak */}
+            <path d={insetLineD} fill="none" stroke={NAVY} strokeWidth={1.6} strokeLinejoin="round" />
+
+            {/* Bracket FWHM */}
+            <line
+              x1={ix(fwhmPeak.leftTwoTheta)}
+              y1={iy(fwhmPeak.halfMaxY)}
+              x2={ix(fwhmPeak.rightTwoTheta)}
+              y2={iy(fwhmPeak.halfMaxY)}
+              stroke="#b45309"
+              strokeWidth={2.6}
+            />
+            <line
+              x1={ix(fwhmPeak.apexTwoTheta)}
+              y1={iy(fwhmPeak.halfMaxY) - 8}
+              x2={ix(fwhmPeak.apexTwoTheta)}
+              y2={iy(fwhmPeak.halfMaxY) + 8}
+              stroke="#16a34a"
+              strokeWidth={1.4}
+            />
+            <circle cx={ix(fwhmPeak.apexTwoTheta)} cy={iy(fwhmPeak.halfMaxY)} r={2.2} fill="#16a34a" />
+
+            {/* Tangga turun dari apex ke level setengah */}
+            <line
+              x1={ix(fwhmPeak.apexTwoTheta)}
+              y1={iy(fwhmPeak.apexY)}
+              x2={ix(fwhmPeak.apexTwoTheta)}
+              y2={iy(fwhmPeak.halfMaxY)}
+              stroke="#16a34a"
+              strokeWidth={0.9}
+              strokeDasharray="2,2"
+            />
+            <text x={ix(fwhmPeak.apexTwoTheta) + 3} y={iy(fwhmPeak.apexY) + 8} fontSize={6.5} fill="#16a34a" fontWeight={700}>
+              I_maks
+            </text>
+
+            {/* Label β */}
+            <text
+              x={(ix(fwhmPeak.leftTwoTheta) + ix(fwhmPeak.rightTwoTheta)) / 2}
+              y={iy(fwhmPeak.halfMaxY) + 14}
+              fontSize={8.5}
+              fill="#92400e"
+              fontWeight={800}
+              textAnchor="middle"
+            >
+              β
+            </text>
+
+            {/* Sumbu 2θ kotak perbesaran */}
+            <line
+              x1={ix(fwhmInset.zoomLo)}
+              y1={IN.y + IN.h - inPad.b}
+              x2={ix(fwhmInset.zoomHi)}
+              y2={IN.y + IN.h - inPad.b}
+              stroke="#cbd5e1"
+              strokeWidth={0.8}
+            />
+            <text x={ix(fwhmPeak.leftTwoTheta)} y={IN.y + IN.h - 8} fontSize={6.5} fill="#64748b" textAnchor="middle">
+              {fwhmPeak.leftTwoTheta.toFixed(2)}°
+            </text>
+            <text x={ix(fwhmPeak.rightTwoTheta)} y={IN.y + IN.h - 8} fontSize={6.5} fill="#64748b" textAnchor="middle">
+              {fwhmPeak.rightTwoTheta.toFixed(2)}°
+            </text>
+          </g>
+
+          {/* ── ANOTASI ④: Gundukan Lebar / Halo Amorf ── */}
+          <g>
+            <ChipBadge x={470} y={16} n={4} label="Halo amorf" tone="purple" width={112} />
+            <path
+              d={`M 520 24 C 560 70, ${sx(30)} 90, ${sx(36)} ${sy(anatomyHalo(36)) - 4}`}
+              fill="none"
+              stroke="#9333ea"
+              strokeWidth={1}
+              markerEnd="url(#arrow-purple)"
+            />
           </g>
         </svg>
       </div>

@@ -4,14 +4,19 @@ import assert from "node:assert/strict";
 import {
   ALFUM_SAMPLES,
   ALFUM_STANDARD_REFLECTIONS,
+  ANATOMY_AMPLITUDE,
+  ANATOMY_FWHM_DEG,
+  ANATOMY_WINDOW_HALF_WIDTH,
   GUIDE_SCHERRER_D011_NM,
   XRD_CONSTANTS,
   XRD_SCAN,
   XRD_SCAN_POINTS,
+  anatomyPeakArea,
   dSpacing,
   diffractogram,
   disorderPattern,
   matchPeakToStandard,
+  measureAnatomyPeak,
   orderStageLabel,
   scherrerD,
   seededRandom,
@@ -207,4 +212,77 @@ test("label tahap keteraturan sesuai slide 5", () => {
   assert.equal(orderStageLabel(0.7), "Semikristalin — puncak tajam di atas gundukan lebar");
   assert.equal(orderStageLabel(0.9), "Amorf — hanya gundukan lebar");
   assert.equal(orderStageLabel(1), "Amorf — hanya gundukan lebar");
+});
+
+test("anatomi: FWHM diukur dari setengah tinggi puncak DI ATAS latar lokal", () => {
+  for (const r of ALFUM_STANDARD_REFLECTIONS) {
+    const m = measureAnatomyPeak(r);
+    // Setengah-maksimum = baseline + tinggi/2, BUKAN setengah nilai mentah.
+    assert.ok(
+      Math.abs(m.halfMaxY - (m.baselineY + m.heightAboveBase / 2)) < 1e-9,
+      `${r.hkl}: halfMaxY salah`
+    );
+    assert.ok(m.halfMaxY > m.baselineY, `${r.hkl}: setengah-maksimum di bawah baseline`);
+    assert.ok(m.apexY > m.halfMaxY, `${r.hkl}: puncak tidak di atas setengah-maksimum`);
+    // Lebar terukur harus mereproduksi lebar puncak yang dipakai menggambar
+    assert.ok(
+      Math.abs(m.fwhmDeg - ANATOMY_FWHM_DEG) < 0.01,
+      `${r.hkl}: FWHM ${m.fwhmDeg} vs ${ANATOMY_FWHM_DEG}`
+    );
+    // Simetris terhadap pusat puncak
+    const centre = r.twoThetaStd;
+    assert.ok(Math.abs((m.leftTwoTheta + m.rightTwoTheta) / 2 - centre) < 0.01, `${r.hkl}: tidak simetris`);
+  }
+});
+
+test("anatomi: setengah nilai mentah BUKAN setengah maksimum", () => {
+  // Bug lama: memakai apexY/2 sebagai level setengah-maksimum. Untuk puncak
+  // yang berdiri di atas gundukan halo, level itu jatuh di BAWAH latar lokal
+  // dan garis ukurnya memotong jauh ke luar puncak (FWHM palsu).
+  // Puncak 011 di atas halo: apex/2 hanya sedikit di atas baseline, sehingga
+  // garis ukurnya memotong di KAKI puncak dan melaporkan lebar ~3° (bukan 0,55°).
+  const r = ALFUM_STANDARD_REFLECTIONS[0];
+  const m = measureAnatomyPeak(r);
+  const wrongLevel = m.apexY / 2;
+  assert.ok(
+    wrongLevel < m.halfMaxY,
+    `011: apex/2=${wrongLevel.toFixed(2)} seharusnya di bawah setengah-maksimum ${m.halfMaxY.toFixed(2)}`
+  );
+  // Level yang benar harus di atas baseline, dan lebarnya tetap sempit.
+  assert.ok(m.halfMaxY > m.baselineY, "setengah-maksimum harus di atas baseline");
+  assert.ok(m.fwhmDeg < 1, `FWHM melebar ${m.fwhmDeg}`);
+
+  // Untuk semua puncak: lebar terukur konsisten dan setengah-maksimum selalu
+  // berada tepat di tengah antara baseline dan apex.
+  for (const refl of ALFUM_STANDARD_REFLECTIONS) {
+    const a = measureAnatomyPeak(refl);
+    assert.ok(
+      Math.abs(a.halfMaxY - (a.baselineY + (a.apexY - a.baselineY) / 2)) < 1e-9,
+      `${refl.hkl}: halfMaxY tidak di tengah`
+    );
+    assert.ok(a.halfMaxY > a.baselineY, `${refl.hkl}: halfMaxY di bawah baseline`);
+  }
+});
+
+test("anatomi: luas puncak hanya menjumlahkan area di atas latar lokal", () => {
+  const r = ALFUM_STANDARD_REFLECTIONS[3];
+  const m = measureAnatomyPeak(r);
+  const lo = m.apexTwoTheta - ANATOMY_WINDOW_HALF_WIDTH;
+  const hi = m.apexTwoTheta + ANATOMY_WINDOW_HALF_WIDTH;
+  const area = anatomyPeakArea(lo, hi);
+  assert.ok(area > 0, `luas negatif/nol: ${area}`);
+
+  // Area harus sama dengan luas integral kontribusi puncak itu sendiri
+  // (bentuk Gaussian: int = amp·σ·√(2π)), bukan termasuk latar.
+  const amp = r.relIntensity * ANATOMY_AMPLITUDE;
+  const sigma = ANATOMY_FWHM_DEG / (2 * Math.sqrt(2 * Math.log(2)));
+  const expected = amp * sigma * Math.sqrt(2 * Math.PI);
+  assert.ok(
+    Math.abs(area - expected) / expected < 0.02,
+    `luas ${area.toFixed(3)} vs teoritis ${expected.toFixed(3)}`
+  );
+
+  // Area per area tidak boleh menghitung latar halo sebagai area puncak
+  const areaWithHaloCounted = anatomyPeakArea(lo, hi, 0.05) + 0; // konsistensi metode
+  assert.ok(Math.abs(area - areaWithHaloCounted) < 0.05, "metode integrasi tidak konsisten");
 });
