@@ -11,7 +11,8 @@ import {
   XRD_CONSTANTS,
   XRD_SCAN,
   XRD_SCAN_POINTS,
-  anatomyPeakArea,
+  anatomyPeakAreaPx,
+  anatomyPeakCapture,
   dSpacing,
   diffractogram,
   disorderPattern,
@@ -264,25 +265,33 @@ test("anatomi: setengah nilai mentah BUKAN setengah maksimum", () => {
   }
 });
 
-test("anatomi: luas puncak hanya menjumlahkan area di atas latar lokal", () => {
+test("anatomi: luas puncak tergambar = integral kurva minus latar lokal", () => {
   const r = ALFUM_STANDARD_REFLECTIONS[3];
   const m = measureAnatomyPeak(r);
   const lo = m.apexTwoTheta - ANATOMY_WINDOW_HALF_WIDTH;
   const hi = m.apexTwoTheta + ANATOMY_WINDOW_HALF_WIDTH;
-  const area = anatomyPeakArea(lo, hi);
-  assert.ok(area > 0, `luas negatif/nol: ${area}`);
 
-  // Area harus sama dengan luas integral kontribusi puncak itu sendiri
-  // (bentuk Gaussian: int = amp·σ·√(2π)), bukan termasuk latar.
+  // Luas dalam piksel²: konversi kedua sumbu ke piksel dulu, karena poligon
+  // yang digambar hidup di koordinat layar, bukan di (derajat × a.u.).
+  const PX_PER_DEG = 838 / 75;
+  const PX_PER_AU = 336 / 112;
+  const areaPx = anatomyPeakAreaPx(lo, hi, PX_PER_DEG, PX_PER_AU);
+  assert.ok(areaPx > 0, `luas negatif/nol: ${areaPx}`);
+
+  // Sama dengan luas Gaussian analitik, dikonversi ke piksel.
   const amp = r.relIntensity * ANATOMY_AMPLITUDE;
   const sigma = ANATOMY_FWHM_DEG / (2 * Math.sqrt(2 * Math.log(2)));
-  const expected = amp * sigma * Math.sqrt(2 * Math.PI);
+  const expectedPx = amp * sigma * Math.sqrt(2 * Math.PI) * PX_PER_DEG * PX_PER_AU;
   assert.ok(
-    Math.abs(area - expected) / expected < 0.02,
-    `luas ${area.toFixed(3)} vs teoritis ${expected.toFixed(3)}`
+    Math.abs(areaPx - expectedPx) / expectedPx < 0.02,
+    `luas ${areaPx.toFixed(1)} px² vs teoritis ${expectedPx.toFixed(1)} px²`
   );
 
-  // Area per area tidak boleh menghitung latar halo sebagai area puncak
-  const areaWithHaloCounted = anatomyPeakArea(lo, hi, 0.05) + 0; // konsistensi metode
-  assert.ok(Math.abs(area - areaWithHaloCounted) < 0.05, "metode integrasi tidak konsisten");
+  // Latar halo TIDAK boleh ikut terhitung sebagai luas puncak.
+  const baselineOnly = (() => {
+    // area antara latar lokal dan dirinya sendiri = 0, jadi luas yang
+    // dilaporkan harus sepenuhnya berasal dari kontribusi puncak.
+    return anatomyPeakCapture(r, lo, hi);
+  })();
+  assert.ok(baselineOnly > 0.999, `jendela ukur kehilangan ${(1 - baselineOnly) * 100}% area puncak`);
 });

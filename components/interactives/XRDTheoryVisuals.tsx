@@ -932,17 +932,21 @@ export function DiffractogramAnatomy() {
   const fwhmPeak = useMemo(() => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[0]), []);
   const areaPeak = useMemo(() => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[3]), []);
 
-  const { pattern, peakArea, haloArea, fwhmInset } = useMemo(() => {
+  const { pattern, peakArea, peakAreaTop, haloArea, haloTop, fwhmInset } = useMemo(() => {
     const rnd = seededRandom(20261108);
     const pts: { x: number; y: number }[] = [];
-    const haloPts: { x: number; y: number }[] = [];
-
     for (let x = minX; x <= maxX + 1e-9; x += 0.05) {
       const y = anatomyCurve(x) + (rnd() - 0.5) * 1.6;
       pts.push({ x: Math.round(x * 100) / 100, y });
-      if (x >= 6 && x <= 46) {
-        haloPts.push({ x: Math.round(x * 100) / 100, y: anatomyBaseline(x) });
-      }
+    }
+
+    // ④ Halo amorf: genapkan dari fungsi halonya sendiri di seluruh rentang
+    // plot, bukan potongan array terpisah. Bentuknya harus gundukan mulus
+    // (naik-turun simetris di sekitar 22°), bukan baji yang menurun lurus.
+    const haloStep = 0.1;
+    const haloPts: { x: number; y: number }[] = [];
+    for (let x = minX; x <= maxX + 1e-9; x += haloStep) {
+      haloPts.push({ x, y: anatomyBaseline(x) });
     }
 
     // ③ Luas puncak: between the curve and its LOCAL background inside the
@@ -971,6 +975,19 @@ export function DiffractogramAnatomy() {
       insetPts.push({ x, y: anatomyCurve(x) });
     }
 
+    const peakAreaTop =
+      areaPts
+        .map(
+          (p, i) =>
+            `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(Math.max(p.y, anatomyBaseline(p.x))).toFixed(1)}`
+        )
+        .join(" ");
+
+    const haloTop =
+      haloPts
+        .map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`)
+        .join(" ");
+
     return {
       pattern: pts,
       peakArea: peakAreaD,
@@ -979,6 +996,8 @@ export function DiffractogramAnatomy() {
           .map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`)
           .join(" ") +
         ` L${sx(haloPts[haloPts.length - 1].x).toFixed(1)},${baselineY} L${sx(haloPts[0].x).toFixed(1)},${baselineY} Z`,
+      peakAreaTop,
+      haloTop,
       fwhmInset: { zoomLo, zoomHi, pts: insetPts },
     };
   }, [sx, sy, baselineY, fwhmPeak, areaPeak]);
@@ -1001,11 +1020,6 @@ export function DiffractogramAnatomy() {
   const insetLineD = fwhmInset.pts
     .map((p, i) => `${i === 0 ? "M" : "L"}${ix(p.x).toFixed(1)},${iy(p.y).toFixed(1)}`)
     .join(" ");
-
-  // Marker halo: the amorphous hump is described by its own curve, so the
-  // arrow points at ink that actually exists.
-  const haloTipX = 24;
-  const haloTipY = anatomyHalo(haloTipX);
 
   const TICKS_X = [10, 20, 30, 40, 50, 60, 70, 80];
   const Y_TICKS = [25, 50, 75, 100];
@@ -1052,9 +1066,16 @@ export function DiffractogramAnatomy() {
             />
           ))}
 
-          {/* ── ④ Amorphous halo (background), then ③ peak area on top ── */}
-          <path d={haloArea} fill="url(#m5-halo-fill)" stroke="#9333ea" strokeWidth={1} strokeDasharray="3,3" />
-          <path d={peakArea} fill="rgba(217, 119, 6, 0.32)" stroke="#d97706" strokeWidth={1.1} />
+          {/* ── ④ Amorphous halo: gundukan mulus dari fungsinya sendiri ──
+              Digambar lebih dulu supaya puncak kristalin dan area puncak
+              tetap terbaca di atasnya. Garis atasnya solid (bukan putus) agar
+              bentuk gundukannya jelas tidak tertukar dengan kurva data. */}
+          <path d={haloArea} fill="url(#m5-halo-fill)" />
+          <path d={haloTop} fill="none" stroke="#9333ea" strokeWidth={1.4} strokeLinejoin="round" opacity={0.75} />
+
+          {/* ── ③ Luas puncak: kurva dikurangi latar lokalnya sendiri ── */}
+          <path d={peakArea} fill="rgba(217, 119, 6, 0.38)" stroke="#d97706" strokeWidth={1.4} strokeLinejoin="round" />
+          <path d={peakAreaTop} fill="none" stroke="#b45309" strokeWidth={1.6} strokeLinejoin="round" />
 
           {/* ── The trace ── */}
           <path d={lineD} fill="none" stroke={NAVY} strokeWidth={1.7} strokeLinejoin="round" />
@@ -1137,20 +1158,20 @@ export function DiffractogramAnatomy() {
             fontWeight={800}
             textAnchor="middle"
           >
-            A₀₃₃
+            A<tspan fontSize={6} dy={2}>033</tspan>
           </text>
 
           {/* ══ ④ Halo amorf ════════════════════════════════════════════════
-              Arrow lands on the halo curve itself, in the quiet gap that
-              follows the 022 peak. */}
+              The arrow lands on the halo's own curve at its crest region, so
+              the pointer touches ink that really exists. */}
           <path
-            d={`M ${sx(40)} ${sy(30)} C ${sx(36)} ${sy(26)}, ${sx(32)} ${sy(haloTipY + 6)}, ${sx(haloTipX)} ${sy(haloTipY + 1)}`}
+            d={`M ${sx(40)} ${sy(38)} C ${sx(36)} ${sy(32)}, ${sx(31)} ${sy(anatomyHalo(31) + 9)}, ${sx(26)} ${sy(anatomyHalo(26) - 1)}`}
             fill="none"
             stroke="#9333ea"
-            strokeWidth={1.2}
+            strokeWidth={1.3}
             markerEnd="url(#arrow-purple)"
           />
-          <text x={sx(40)} y={sy(30) - 5} fontSize={8.5} fill="#6b21a8" fontWeight={800}>
+          <text x={sx(40)} y={sy(38) - 5} fontSize={8.5} fill="#6b21a8" fontWeight={800}>
             halo
           </text>
 

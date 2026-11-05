@@ -302,7 +302,16 @@ export const ANATOMY_BASE = 3;
 /** Gaussian width of every reflection, degrees. */
 export const ANATOMY_FWHM_DEG = 0.55;
 /** Amorphous halo used as the local background in the anatomy figure. */
-export const ANATOMY_HALO = { amplitude: 18, center: 22, sigma: 12 } as const;
+/**
+ * Amorphous halo used as the local background in the anatomy figure.
+ *
+ * The amplitude is chosen so the shaded mound is legible at the plotting scale:
+ * at amplitude 18 the silhouette rose only ~19% of the plot height and read as
+ * a wedge rather than a hump. 26 puts the crest near a third of the height,
+ * which is still a soft diffuse background (the tallest Bragg peak is ~99 a.u.)
+ * but unmistakably a mound.
+ */
+export const ANATOMY_HALO = { amplitude: 26, center: 22, sigma: 12 } as const;
 
 function anatomySigma(): number {
   return ANATOMY_FWHM_DEG / (2 * Math.sqrt(2 * Math.log(2)));
@@ -418,11 +427,20 @@ export const ANATOMY_WINDOW_HALF_WIDTH = 1.2;
 /**
  * Integral of the drawn curve minus its local background, between two 2θ
  * limits — i.e. the peak area exactly as it is shaded in the figure.
- * Trapezoidal, at 0.005° steps.
+ *
+ * Both the 2θ limits and the intensity are converted to PIXELS before
+ * multiplying, because the trapezoid rule is only exact for the area actually
+ * enclosed by the plotted polygon when the grid is orthogonal. Mixing degrees
+ * with a.u. would report a number that does not match the ink on screen.
+ *
+ * @param pxPerDeg horizontal pixels per degree
+ * @param pxPerAu  vertical pixels per intensity unit
  */
-export function anatomyPeakArea(
+export function anatomyPeakAreaPx(
   twoThetaFrom: number,
   twoThetaTo: number,
+  pxPerDeg: number,
+  pxPerAu: number,
   step = 0.005
 ): number {
   let area = 0;
@@ -430,11 +448,41 @@ export function anatomyPeakArea(
   let prevY = Math.max(0, anatomyCurve(prevX) - anatomyBaseline(prevX));
   for (let x = twoThetaFrom + step; x <= twoThetaTo + 1e-9; x += step) {
     const y = Math.max(0, anatomyCurve(x) - anatomyBaseline(x));
-    area += ((prevY + y) / 2) * (x - prevX);
+    area += ((prevY + y) / 2) * (x - prevX) * pxPerDeg * pxPerAu;
     prevX = x;
     prevY = y;
   }
   return area;
+}
+
+/**
+ * Fraction of a peak's integrated area that survives inside the drawing
+ * window ±w degrees, measured for THAT peak only (its own contribution above
+ * background, not the whole pattern).
+ *
+ * Gaussian peaks have long tails: on a beta = 0,55 deg peak a ±1,2 deg window
+ * still carries ~99,9% of the area. This reports it instead of pretending the
+ * window is exact.
+ */
+export function anatomyPeakCapture(
+  reflection: AlFumReflection,
+  twoThetaFrom: number,
+  twoThetaTo: number,
+  step = 0.002
+): number {
+  let inside = 0;
+  let total = 0;
+  for (let x = twoThetaFrom; x <= twoThetaTo + 1e-9; x += step) {
+    const own = anatomyPeakAt(x, reflection);
+    total += own;
+    if (x >= twoThetaFrom && x <= twoThetaTo) inside += own;
+  }
+  // account for the tails outside the window by integrating the whole peak
+  let full = 0;
+  for (let x = reflection.twoThetaStd - 6; x <= reflection.twoThetaStd + 6; x += step) {
+    full += anatomyPeakAt(x, reflection);
+  }
+  return full > 0 ? total / full : 0;
 }
 
 /**
