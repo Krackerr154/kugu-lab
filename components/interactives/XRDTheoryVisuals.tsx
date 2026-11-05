@@ -24,6 +24,7 @@ import {
   anatomyBaseline,
   anatomyCurve,
   anatomyHalo,
+  anatomyPeakArea,
   dSpacing,
   diffractogram,
   disorderPattern,
@@ -931,6 +932,16 @@ export function DiffractogramAnatomy() {
   // Both annotations are measured from the SAME curve that gets drawn.
   const fwhmPeak = useMemo(() => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[0]), []);
   const areaPeak = useMemo(() => measureAnatomyPeak(ALFUM_STANDARD_REFLECTIONS[3]), []);
+  // Quoted in a.u.·° (degrees × intensity), the unit an integrated XRD peak
+  // area is normally reported in — not an hkl index, and not pixels.
+  const anatomyAreaValue = useMemo(
+    () =>
+      anatomyPeakArea(
+        areaPeak.apexTwoTheta - ANATOMY_WINDOW_HALF_WIDTH,
+        areaPeak.apexTwoTheta + ANATOMY_WINDOW_HALF_WIDTH
+      ),
+    [areaPeak]
+  );
 
   const { pattern, peakArea, peakAreaTop, haloArea, haloTop, fwhmInset } = useMemo(() => {
     const rnd = seededRandom(20261108);
@@ -1158,7 +1169,10 @@ export function DiffractogramAnatomy() {
             fontWeight={800}
             textAnchor="middle"
           >
-            A<tspan fontSize={6} dy={2}>033</tspan>
+            luas puncak
+            <tspan x={sx(areaPeak.apexTwoTheta)} dy={9} fontSize={7} fontWeight={700}>
+              A = {anatomyAreaValue.toFixed(1)} a.u.·°
+            </tspan>
           </text>
 
           {/* ══ ④ Halo amorf ════════════════════════════════════════════════

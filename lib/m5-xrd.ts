@@ -436,6 +436,29 @@ export const ANATOMY_WINDOW_HALF_WIDTH = 1.2;
  * @param pxPerDeg horizontal pixels per degree
  * @param pxPerAu  vertical pixels per intensity unit
  */
+/**
+ * Integrated area of one reflection in DEGREES x intensity units (a.u. deg) —
+ * the unit an integrated XRD peak area is normally quoted in. Unlike
+ * anatomyPeakAreaPx this is scale-free: it does not depend on how large the
+ * figure happens to be drawn.
+ */
+export function anatomyPeakArea(
+  twoThetaFrom: number,
+  twoThetaTo: number,
+  step = 0.005
+): number {
+  let area = 0;
+  let prevX = twoThetaFrom;
+  let prevY = Math.max(0, anatomyCurve(prevX) - anatomyBaseline(prevX));
+  for (let x = twoThetaFrom + step; x <= twoThetaTo + 1e-9; x += step) {
+    const y = Math.max(0, anatomyCurve(x) - anatomyBaseline(x));
+    area += ((prevY + y) / 2) * (x - prevX);
+    prevX = x;
+    prevY = y;
+  }
+  return area;
+}
+
 export function anatomyPeakAreaPx(
   twoThetaFrom: number,
   twoThetaTo: number,
