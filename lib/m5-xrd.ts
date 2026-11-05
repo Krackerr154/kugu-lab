@@ -1,0 +1,254 @@
+/**
+ * M5 XRD reference model.
+ *
+ * Source of truth: "Pengarahan Modul 5 — Pengolahan dan Analisis Data XRD dengan
+ * OriginPro" (Praktikum KI3131 Kimia Unsur Golongan Utama, Semester 1
+ * 2026/2027).
+ *
+ * The practical's data are Excel files given to students
+ * (XRD_Al-Fum_12/13/14.xlsx, XRD_Std_Al-Fum_CCDC1051975.xlsx) that are not
+ * part of this repository. The patterns rendered here are synthesised from the
+ * guide's own tables — the standard reflection list (hkl, 2θ, relative
+ * intensity) and the expected sample results (peak shifts, FWHM 011,
+ * Scherrer D 011, relative crystallinity) — and the workspace says so on
+ * screen rather than implying a measured sample.
+ */
+
+/**
+ * Scherrer / Bragg constants from the guide (slide 8 and 28).
+ * K = 0,9; λ(Cu Kα1) = 0,154059 nm for Scherrer, 1,54059 Å for d-spacing.
+ */
+export const XRD_CONSTANTS = {
+  /** Shape factor K (bulat, seragam). */
+  K: 0.9,
+  /** Cu Kα1 wavelength in nm — Scherrer equation. */
+  lambdaNm: 0.154059,
+  /** Cu Kα1 wavelength in Å — d-spacing. */
+  lambdaA: 1.54059,
+  /** Match tolerance for phase comparison, from the guide (±0,5°). */
+  matchToleranceDeg: 0.5,
+} as const;
+
+export type AlFumSampleId = "1:2" | "1:3" | "1:4";
+
+export interface AlFumReflection {
+  /** Miller indices as printed in the guide's expected-results table. */
+  hkl: string;
+  /** 2θ of the standard reflection, degrees. */
+  twoThetaStd: number;
+  /** Relative intensity (simulated; anchors the drawn pattern). */
+  relIntensity: number;
+}
+
+/**
+ * Standard Al-Fum reflections (CCDC 1051975) — the guide's expected-results
+ * table, slide 31. The six indexed reflections are the ones students are
+ * expected to match and index.
+ */
+export const ALFUM_STANDARD_REFLECTIONS: readonly AlFumReflection[] = [
+  { hkl: "011", twoThetaStd: 10.39, relIntensity: 100 },
+  { hkl: "020 / 002 / -102", twoThetaStd: 14.65, relIntensity: 55 },
+  { hkl: "022", twoThetaStd: 20.87, relIntensity: 40 },
+  { hkl: "033", twoThetaStd: 31.52, relIntensity: 30 },
+  { hkl: "044", twoThetaStd: 42.47, relIntensity: 22 },
+  { hkl: "055", twoThetaStd: 53.84, relIntensity: 16 },
+];
+
+export interface AlFumSample {
+  id: AlFumSampleId;
+  /** Position shift per reflection relative to the standard, degrees. */
+  shift: readonly number[];
+  /** FWHM of the 011 reflection in degrees (guide slide 32). */
+  fwhm011Deg: number;
+  /** Relative crystallinity vs 1:2, % (guide slide 32). */
+  crystallinityRelPct: number;
+}
+
+/**
+ * The three sample ratios. Peak shifts are the guide's "Hasil yang
+ * Diharapkan: Posisi Puncak" table (slide 31) — sample peaks sit slightly
+ * below the standard (holder height offset), well inside the ±0,5° tolerance.
+ * The array order must match ALFUM_STANDARD_REFLECTIONS.
+ */
+export const ALFUM_SAMPLES: readonly AlFumSample[] = [
+  {
+    id: "1:2",
+    shift: [-0.08, -0.04, -0.1, -0.1, -0.12, -0.11],
+    fwhm011Deg: 0.327,
+    crystallinityRelPct: 100,
+  },
+  {
+    id: "1:3",
+    shift: [-0.05, -0.01, -0.07, -0.08, -0.1, -0.09],
+    fwhm011Deg: 0.373,
+    crystallinityRelPct: 93.7,
+  },
+  {
+    id: "1:4",
+    shift: [-0.11, -0.02, -0.12, -0.15, -0.19, -0.15],
+    fwhm011Deg: 0.358,
+    crystallinityRelPct: 43.5,
+  },
+];
+
+/**
+ * Guide's expected D(011) values (nm) — used as the self-check target and as
+ * a test anchor. Computed from Scherrer with K = 0,9, λ = 0,154059 nm,
+ * β = FWHM 011 in radians, θ = 2θ(011)/2.
+ */
+export const GUIDE_SCHERRER_D011_NM: Record<AlFumSampleId, number> = {
+  "1:2": 24.4,
+  "1:3": 21.4,
+  "1:4": 22.3,
+};
+
+export interface DiffractogramPoint {
+  x: number;
+  y: number;
+}
+
+/** 2θ scan range from the guide (slide 10). */
+export const XRD_SCAN = { min: 5, max: 80, step: 0.05 } as const;
+
+/** Number of points in a full scan: (80−5)/0,05 + 1 = 1501. */
+export const XRD_SCAN_POINTS =
+  Math.round((XRD_SCAN.max - XRD_SCAN.min) / XRD_SCAN.step) + 1;
+
+/**
+ * Deterministic PRNG (mulberry32) so the synthesised noise is identical on
+ * every render — the old workspace regenerated noise inside the render body,
+ * reshuffling the pattern on every re-render.
+ */
+export function seededRandom(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function gaussianArea(intensity: number, sigma: number): number {
+  // ∫ intensity·exp(−x²/2σ²) dx = intensity·σ·√(2π)
+  return intensity * sigma * Math.sqrt(2 * Math.PI);
+}
+
+/**
+ * Crystalline fraction (kristalinitas) of a synthesised sample pattern, as
+ * defined by the guide: area under the crystalline peaks over total area under
+ * the curve, baseline y = 0. The halo (amorphous hump) amplitude is chosen so
+ * the synthetic pattern reproduces the guide's relative crystallinity values
+ * for the 1:2 / 1:3 / 1:4 samples.
+ */
+function haloAmplitudeFor(
+  sample: AlFumSample,
+  reflections: readonly AlFumReflection[],
+  sigmaDeg: number
+): number {
+  let crystallineArea = 0;
+  for (let i = 0; i < reflections.length; i++) {
+    crystallineArea += gaussianArea(reflections[i].relIntensity, sigmaDeg);
+  }
+  const fr = sample.crystallinityRelPct / 100;
+  // haloArea / crystallineArea = (1 − fr) / fr
+  return (crystallineArea * (1 - fr)) / fr / gaussianArea(1, 14);
+}
+
+/**
+ * Synthesise a deterministic diffractogram for a sample or the standard.
+ *
+ * - Standard: a clean pattern of the six indexed reflections (Kα1 only).
+ * - Samples: the same reflections shifted per the guide's table, broadened by
+ *   the sample's FWHM (011 value applied to all reflections), sitting on an
+ *   amorphous halo whose area matches the guide's relative crystallinity, with
+ *   a small fixed noise floor.
+ *
+ * The FWHM of a Gaussian peak at 2θ position p is 2σ√(2 ln 2) in the same
+ * units as σ, so a target FWHM in degrees maps to σ = FWHM / (2√(2 ln 2)).
+ */
+export function diffractogram(
+  target: AlFumSampleId | "standard",
+  seed = 20261105
+): DiffractogramPoint[] {
+  const reflections = ALFUM_STANDARD_REFLECTIONS;
+  const sample = target === "standard" ? null : ALFUM_SAMPLES.find((s) => s.id === target)!;
+
+  const fwhmDeg = sample ? sample.fwhm011Deg : 0.15;
+  const sigmaDeg = fwhmDeg / (2 * Math.sqrt(2 * Math.log(2)));
+  const haloSigmaDeg = 14;
+  const haloCenter = 22;
+  const haloAmp = sample
+    ? haloAmplitudeFor(sample, reflections, sigmaDeg)
+    : 0;
+
+  const rnd = seededRandom(seed);
+  const points: DiffractogramPoint[] = [];
+  for (let x = XRD_SCAN.min; x <= XRD_SCAN.max + 1e-9; x += XRD_SCAN.step) {
+    let y = 2 + rnd() * 3; // baseline noise
+    if (sample) {
+      y += haloAmp * Math.exp(-((x - haloCenter) ** 2) / (2 * haloSigmaDeg ** 2));
+    }
+    for (let i = 0; i < reflections.length; i++) {
+      const center = sample ? reflections[i].twoThetaStd + sample.shift[i] : reflections[i].twoThetaStd;
+      y += reflections[i].relIntensity * Math.exp(-((x - center) ** 2) / (2 * sigmaDeg ** 2));
+    }
+    points.push({ x: Math.round(x * 100) / 100, y });
+  }
+  return points;
+}
+
+/** d-spacing in Å from 2θ (degrees) with a given wavelength in Å. */
+export function dSpacing(twoThetaDeg: number, lambdaA = XRD_CONSTANTS.lambdaA): number {
+  const thetaRad = ((twoThetaDeg / 2) * Math.PI) / 180;
+  return lambdaA / (2 * Math.sin(thetaRad));
+}
+
+/**
+ * Scherrer crystallite size in nm.
+ * D = Kλ / (β cos θ); β must be in radians, θ = 2θ/2.
+ */
+export function scherrerD(
+  twoThetaDeg: number,
+  fwhmDeg: number,
+  k = XRD_CONSTANTS.K,
+  lambdaNm = XRD_CONSTANTS.lambdaNm
+): number {
+  const thetaRad = ((twoThetaDeg / 2) * Math.PI) / 180;
+  const betaRad = (fwhmDeg * Math.PI) / 180;
+  return (k * lambdaNm) / (betaRad * Math.cos(thetaRad));
+}
+
+export interface PeakAnnotation {
+  /** 2θ of the clicked peak (sample pattern), degrees. */
+  twoTheta: number;
+  /** Assigned hkl from the standard list. */
+  hkl: string;
+  /** d-spacing in Å at this position. */
+  d: number;
+  /** True if within the guide's ±0,5° match tolerance of its standard. */
+  matched: boolean;
+  /** Distance to the assigned standard reflection, degrees. */
+  deltaDeg: number;
+}
+
+/**
+ * Assign a measured peak to a standard reflection. Matching uses the guide's
+ * ±0,5° criterion (slide 21). Returns null when no standard reflection is
+ * within tolerance — that peak is "tidak teridentifikasi".
+ */
+export function matchPeakToStandard(
+  twoThetaDeg: number,
+  reflections: readonly AlFumReflection[] = ALFUM_STANDARD_REFLECTIONS,
+  toleranceDeg = XRD_CONSTANTS.matchToleranceDeg
+): { hkl: string; deltaDeg: number } | null {
+  let best: { hkl: string; deltaDeg: number } | null = null;
+  for (const r of reflections) {
+    const delta = Math.abs(twoThetaDeg - r.twoThetaStd);
+    if (delta <= toleranceDeg && (!best || delta < best.deltaDeg)) {
+      best = { hkl: r.hkl, deltaDeg: twoThetaDeg - r.twoThetaStd };
+    }
+  }
+  return best;
+}
