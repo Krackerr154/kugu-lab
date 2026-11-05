@@ -10,7 +10,9 @@ import {
   XRD_SCAN_POINTS,
   dSpacing,
   diffractogram,
+  disorderPattern,
   matchPeakToStandard,
+  orderStageLabel,
   scherrerD,
   seededRandom,
 } from "../../lib/m5-xrd.ts";
@@ -150,4 +152,54 @@ test("seededRandom deterministik dan di [0,1)", () => {
   const a = r1();
   assert.equal(a, r2());
   assert.ok(a >= 0 && a < 1);
+});
+
+test("continuum disorder: kristalin → amorf melebar dan menumbuhkan halo", () => {
+  const kristalin = disorderPattern(0);
+  const semikristalin = disorderPattern(0.5);
+  const amorf = disorderPattern(1);
+
+  // FWHM naik monoton
+  assert.ok(kristalin.fwhmDeg < semikristalin.fwhmDeg);
+  assert.ok(semikristalin.fwhmDeg < amorf.fwhmDeg);
+  assert.equal(kristalin.fwhmDeg, 0.15);
+  assert.ok(amorf.fwhmDeg > 3);
+
+  // kristalinitas = 100% → 0%
+  assert.equal(kristalin.crystallinityPct, 100);
+  assert.ok(amorf.crystallinityPct < 1);
+
+  // puncak tajam menyusut: kaki puncak (10,39° VS 10,89°) hampir rata saat
+  // amorf, sangat terjal saat kristalin
+  const yAt = (pat, x) => {
+    const p = pat.points.reduce((m, q) =>
+      Math.abs(q.x - x) < Math.abs(m.x - x) ? q : m
+    );
+    return p.y;
+  };
+  const peakC = yAt(kristalin, 10.39);
+  const shoulderC = yAt(kristalin, 10.89);
+  const peakA = yAt(amorf, 10.39);
+  const shoulderA = yAt(amorf, 10.89);
+  assert.ok(peakC > 80, `puncak kristalin ${peakC}`);
+  const staircaseC = peakC - shoulderC;
+  const staircaseA = peakA - shoulderA;
+  assert.ok(staircaseA < staircaseC * 0.2, `kaki amorf ${staircaseA} vs kristalin ${staircaseC}`);
+
+  // halo naik: di 45° (jauh dari puncak)
+  const haloC = yAt(kristalin, 45);
+  const haloA = yAt(amorf, 45);
+  assert.ok(haloC < haloA, `halo kristalin ${haloC} vs amorf ${haloA}`);
+
+  // deterministik
+  assert.deepEqual(disorderPattern(0.5), disorderPattern(0.5));
+});
+
+test("label tahap keteraturan sesuai slide 5", () => {
+  assert.equal(orderStageLabel(0), "Kristalin — puncak tajam");
+  assert.equal(orderStageLabel(0.2), "Kristalin — puncak tajam");
+  assert.equal(orderStageLabel(0.3), "Semikristalin — puncak tajam di atas gundukan lebar");
+  assert.equal(orderStageLabel(0.7), "Semikristalin — puncak tajam di atas gundukan lebar");
+  assert.equal(orderStageLabel(0.9), "Amorf — hanya gundukan lebar");
+  assert.equal(orderStageLabel(1), "Amorf — hanya gundukan lebar");
 });

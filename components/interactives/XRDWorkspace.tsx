@@ -1,30 +1,56 @@
-// M5 XRD Workspace — Bragg sandbox, diffractogram, FWHM/Scherrer calculator
+// M5 XRD Workspace — Bragg sandbox, Al-Fum comparison, FWHM/Scherrer calculator
 "use client";
 
-import { useState, useRef } from "react";
-import dynamic from "next/dynamic";
-import type { EChartsOption } from "echarts";
+import { useMemo, useRef, useState } from "react";
+
 import { Equation } from "@/components/shared/Equation";
 
-const ReactEChart = dynamic(() => import("echarts-for-react"), { ssr: false });
+import {
+  ALFUM_SAMPLES,
+  ALFUM_STANDARD_REFLECTIONS,
+  GUIDE_SCHERRER_D011_NM,
+  XRD_SCAN,
+  dSpacing,
+  diffractogram,
+  matchPeakToStandard,
+  scherrerD,
+  type AlFumSampleId,
+} from "@/lib/m5-xrd";
 
-const CRYSTAL_DEFAULTS = { LAMBDA_Cu: 1.5406 }; // Cu Kα
+const NAVY = "var(--chart-navy)";
+const GOLD = "var(--chart-gold)";
+
+function patternPoints(
+  pts: readonly { x: number; y: number }[],
+  w: number,
+  h: number,
+  pad = 6
+): string {
+  const minX = XRD_SCAN.min;
+  const maxX = XRD_SCAN.max;
+  let maxY = 0;
+  for (const p of pts) if (p.y > maxY) maxY = p.y;
+  const sx = (x: number) => pad + ((x - minX) / (maxX - minX)) * (w - 2 * pad);
+  const sy = (y: number) => h - pad - (y / maxY) * (h - 2 * pad);
+  return pts
+    .map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(2)},${sy(p.y).toFixed(2)}`)
+    .join(" ");
+}
 
 export function XRDWorkspace() {
-  const [tab, setTab] = useState<"bragg" | "diffractogram" | "scherrer">("bragg");
+  const [tab, setTab] = useState<"bragg" | "bandingkan" | "scherrer">("bragg");
 
   return (
     <div className="space-y-4">
-      {/* Tabs */}
       <div role="group" aria-label="Worksheet Modul 5" className="flex gap-1 rounded-lg bg-[var(--surface-muted)] p-1">
         {[
-          { id: "bragg", label: "Sandbox Bragg" },
-          { id: "diffractogram", label: "Difraktogram" },
-          { id: "scherrer", label: "FWHM/Scherrer" },
+          { id: "bragg" as const, label: "Sandbox Bragg" },
+          { id: "bandingkan" as const, label: "Bandingkan Al-Fum" },
+          { id: "scherrer" as const, label: "FWHM/Scherrer" },
         ].map((t) => (
           <button
             key={t.id}
-            onClick={() => setTab(t.id as any)}
+            onClick={() => setTab(t.id)}
             aria-pressed={tab === t.id}
             className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
               tab === t.id
@@ -38,15 +64,16 @@ export function XRDWorkspace() {
       </div>
 
       {tab === "bragg" && <BraggSandbox />}
-      {tab === "diffractogram" && <Diffractogram />}
+      {tab === "bandingkan" && <AlFumComparison />}
       {tab === "scherrer" && <ScherrerCalculator />}
     </div>
   );
 }
 
-// Bragg's Law sandbox: nλ = 2d sin θ
+/* ── 1. Sandbox Hukum Bragg ───────────────────────────────────────────── */
+
 function BraggSandbox() {
-  const [lambda, setLambda] = useState(CRYSTAL_DEFAULTS.LAMBDA_Cu);
+  const [lambda, setLambda] = useState(1.5406);
   const [twoTheta, setTwoTheta] = useState(28.5);
   const [n, setN] = useState(1);
 
@@ -75,7 +102,7 @@ function BraggSandbox() {
             <option value={1.5406}>Cu Kα (1.5406 Å)</option>
             <option value={0.7107}>Mo Kα (0.7107 Å)</option>
             <option value={1.7902}>Co Kα (1.7902 Å)</option>
-            <option value={1.5418}>Cu Kα1 (1.5418 Å)</option>
+            <option value={1.54059}>Cu Kα1 (1.54059 Å)</option>
           </select>
         </div>
         <div>
@@ -169,91 +196,116 @@ function BraggSandbox() {
   );
 }
 
-// Interactive diffractogram with sample data
-function Diffractogram() {
-  // Sample XRD pattern (simulated FAU zeolite-like peaks)
-  const sampleData: { x: number; y: number }[] = [];
-  // Generate a simulated pattern with peaks at known 2θ positions
-  const peaks = [
-    { center: 6.2, intensity: 100, width: 0.15 },
-    { center: 10.1, intensity: 40, width: 0.2 },
-    { center: 11.8, intensity: 35, width: 0.2 },
-    { center: 15.4, intensity: 30, width: 0.15 },
-    { center: 20.3, intensity: 45, width: 0.2 },
-    { center: 23.6, intensity: 60, width: 0.2 },
-    { center: 26.6, intensity: 25, width: 0.15 },
-    { center: 31.0, intensity: 35, width: 0.25 },
-  ];
+/* ── 2. Perbandingan sampel vs standar Al-Fum ─────────────────────────── */
 
-  for (let x = 5; x <= 40; x += 0.05) {
-    let y = 2 + Math.random() * 3; // baseline noise
-    for (const p of peaks) {
-      y += p.intensity * Math.exp(-((x - p.center) ** 2) / (2 * p.width ** 2));
+interface Annotation {
+  twoTheta: number;
+  hkl: string;
+  d: number;
+  matched: boolean;
+  deltaDeg: number;
+}
+
+const SAMPLE_LABEL: Record<AlFumSampleId, string> = {
+  "1:2": "Al-Fum 1:2",
+  "1:3": "Al-Fum 1:3",
+  "1:4": "Al-Fum 1:4",
+};
+
+function AlFumComparison() {
+  const [sampleId, setSampleId] = useState<AlFumSampleId>("1:2");
+  const [showStandard, setShowStandard] = useState(true);
+  const [normalize, setNormalize] = useState(true);
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const sample = ALFUM_SAMPLES.find((s) => s.id === sampleId)!;
+  const samplePattern = useMemo(() => diffractogram(sampleId, 20261106), [sampleId]);
+  const standardPattern = useMemo(() => diffractogram("standard", 11), []);
+
+  // Cari puncak utama sampel secara deterministik (posisi bernilai maksimum
+  // lokal, di atas ambang). Ini menyimulasikan langkah "Find Peaks" di Origin.
+  const samplePeaks = useMemo(() => {
+    const pts = samplePattern;
+    const peaks: number[] = [];
+    const maxY = Math.max(...pts.map((p) => p.y));
+    for (let i = 10; i < pts.length - 10; i++) {
+      const p = pts[i];
+      if (p.y > maxY * 0.08) {
+        const L = pts[i - 1].y;
+        const R = pts[i + 1].y;
+        if (p.y >= L && p.y > R && p.y > 12) {
+          peaks.push(p.x);
+        }
+      }
     }
-    sampleData.push({ x, y });
-  }
+    return peaks;
+  }, [samplePattern]);
 
-  const [annotateMode, setAnnotateMode] = useState(false);
-  const [annotations, setAnnotations] = useState<{ x: number; y: number; label: string }[]>([]);
-  const [clickX, setClickX] = useState<number | null>(null);
-
-  const handleChartClick = (params: any) => {
-    if (annotateMode && params.componentType === "series") {
-      const newAnnotation = {
-        x: params.value[0],
-        y: params.value[1],
-        label: `Peak @ ${params.value[0].toFixed(2)}°`,
-      };
-      setAnnotations([...annotations, newAnnotation]);
-      setClickX(params.value[0]);
-    }
+  const handlePlotClick = (e: React.MouseEvent<SVGSVGElement>) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const minX = XRD_SCAN.min;
+    const maxX = XRD_SCAN.max;
+    const twoTheta = minX + ((e.clientX - rect.left) / rect.width) * (maxX - minX);
+    const matched = matchPeakToStandard(twoTheta);
+    if (!matched) return;
+    setAnnotations((prev) => {
+      const existing = prev.some((a) => Math.abs(a.twoTheta - twoTheta) < 0.5);
+      if (existing) return prev;
+      return [
+        ...prev,
+        {
+          twoTheta,
+          hkl: matched.hkl,
+          d: dSpacing(twoTheta),
+          matched: true,
+          deltaDeg: matched.deltaDeg,
+        },
+      ].sort((a, b) => a.twoTheta - b.twoTheta);
+    });
   };
 
-  const markPoints = annotations.map((a) => ({
-    coord: [a.x, a.y],
-    name: a.label,
-    label: { show: true, formatter: a.label, position: "top" as const, fontSize: 10 },
-  }));
-
-  const option: EChartsOption = {
-    title: { text: "Diffraktogram XRD (Data Sampel — FAU Zeolit)", left: "center", textStyle: { fontSize: 13 } },
-    tooltip: { trigger: "axis", formatter: (params: any) => `2θ = ${params[0].value[0].toFixed(2)}°<br/>Intensitas = ${params[0].value[1].toFixed(1)}` },
-    legend: { bottom: 0 },
-    grid: { left: 70, right: 20, top: 50, bottom: 50 },
-    xAxis: { type: "value", name: "2θ (°)", min: 5, max: 40 },
-    yAxis: { type: "value", name: "Intensitas (a.u.)" },
-    series: [
-      {
-        name: "Pattern",
-        type: "line",
-        data: sampleData.map((p) => [p.x, p.y]),
-        smooth: false,
-        symbol: "none",
-        lineStyle: { color: "#001f3f", width: 1 },
-        markPoint: { data: markPoints, symbol: "pin", symbolSize: 40 },
-      },
-    ],
-  };
+  const clearAnnotations = () => setAnnotations([]);
 
   return (
     <section className="rounded-xl border border-[var(--border)] bg-white p-4">
-      <h3 className="text-lg font-bold">Workspace Difraktogram Interaktif</h3>
-      <p className="text-sm text-[var(--muted)] mb-3">
-        Data sampel simulasi (mirip pola FAU). Klik puncak untuk anotasi. CSV/SQL export tersedia.
+      <h3 className="text-lg font-bold">Bandingkan Sampel vs Standar Al-Fum</h3>
+      <p className="mt-1 text-sm text-[var(--muted)]">
+        Data sampel disimulasikan sesuai tabel panduan (slide 31–32): posisi
+        puncak bergeser sedikit ke kiri (holder height), tanpa puncak pengotor.
+        Klik puncak sampel untuk mencocokkannya dengan refleksi standar (toleransi ±0,5°).
       </p>
 
-      <div className="mb-2 flex items-center gap-2">
-        <button
-          onClick={() => setAnnotateMode(!annotateMode)}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-            annotateMode ? "bg-[var(--primary)] text-white" : "border border-[var(--border)]"
-          }`}
-        >
-          {annotateMode ? "Mode Anotasi AKTIF — klik puncak" : "Aktifkan Mode Anotasi"}
-        </button>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div>
+          <label htmlFor="m5-sample-select" className="mr-2 text-sm font-medium">Sampel</label>
+          <select
+            id="m5-sample-select"
+            value={sampleId}
+            onChange={(e) => {
+              setSampleId(e.target.value as AlFumSampleId);
+              setAnnotations([]);
+            }}
+            className="rounded-md border border-[var(--border)] p-2 text-sm"
+          >
+            {ALFUM_SAMPLES.map((s) => (
+              <option key={s.id} value={s.id}>{SAMPLE_LABEL[s.id]}</option>
+            ))}
+          </select>
+        </div>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={showStandard} onChange={(e) => setShowStandard(e.target.checked)} />
+          Tampilkan standar
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={normalize} onChange={(e) => setNormalize(e.target.checked)} />
+          Normalisasi (Ymax = 1)
+        </label>
         {annotations.length > 0 && (
           <button
-            onClick={() => setAnnotations([])}
+            onClick={clearAnnotations}
             className="rounded-md border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-[var(--surface-muted)]"
           >
             Hapus Anotasi ({annotations.length})
@@ -261,62 +313,153 @@ function Diffractogram() {
         )}
       </div>
 
-      <ReactEChart
-        option={option}
-        style={{ height: "400px", width: "100%" }}
-        onEvents={{ click: handleChartClick }}
-      />
+      <div className="mt-3 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] p-2">
+        <svg
+          ref={svgRef}
+          viewBox="0 0 600 260"
+          className="w-full touch-none"
+          role="img"
+          aria-label="Difraktogram sampel dan standar Al-Fum"
+          onClick={handlePlotClick}
+        >
+          {showStandard && (
+            <g>
+              <path
+                d={patternPoints(
+                  standardPattern.map((p) => ({ x: p.x, y: p.y / 100 })),
+                  600,
+                  120,
+                  6
+                )}
+                fill="none"
+                stroke={GOLD}
+                strokeWidth={1.3}
+              />
+              <text x={8} y={14} fontSize={9} fill={GOLD} fontWeight={600}>
+                Standar Al-Fum (CCDC 1051975)
+              </text>
+            </g>
+          )}
+          <g transform="translate(0,120)">
+            <path
+              d={patternPoints(
+                normalize
+                  ? samplePattern.map((p) => ({ x: p.x, y: p.y / 100 }))
+                  : samplePattern,
+                600,
+                120,
+                6
+              )}
+              fill="none"
+              stroke={NAVY}
+              strokeWidth={1.5}
+            />
+            <text x={8} y={12} fontSize={9} fill={NAVY} fontWeight={600}>
+              {SAMPLE_LABEL[sampleId]} {normalize ? "(ternormalisasi)" : ""}
+            </text>
+          </g>
 
-      {/* Peak table */}
+          {/* Posisi refleksi standar */}
+          {showStandard &&
+            ALFUM_STANDARD_REFLECTIONS.map((r) => {
+              const sx = 6 + ((r.twoThetaStd - XRD_SCAN.min) / (XRD_SCAN.max - XRD_SCAN.min)) * (600 - 12);
+              return (
+                <g key={r.hkl}>
+                  <line x1={sx} y1={20} x2={sx} y2={240} stroke={GOLD} strokeWidth={0.6} opacity={0.4} strokeDasharray="2,2" />
+                  <text x={sx} y={16} fontSize={8} fill={GOLD} textAnchor="middle">
+                    {r.hkl}
+                  </text>
+                </g>
+              );
+            })}
+        </svg>
+        <p className="mt-1 text-center text-xs text-[var(--muted)]">
+          Posisi puncak standar ditandai garis emas. Klik puncak sampel untuk anotasi.
+        </p>
+      </div>
+
       {annotations.length > 0 && (
-        <div className="mt-3 overflow-x-auto">
+        <div className="mt-3 overflow-x-auto rounded-lg border border-[var(--border)]">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-[var(--border)] text-left">
-                <th className="py-1 pr-3">No.</th>
-                <th className="py-1 pr-3">2θ (°)</th>
-                <th className="py-1 pr-3">Intensitas</th>
-                <th className="py-1 pr-3">d (Å)</th>
-                <th className="py-1 pr-3">(hkl) Kandidat</th>
+              <tr className="border-b border-[var(--border)] bg-[var(--surface-muted)] text-left">
+                <th className="py-1.5 pl-2 pr-3">2θ (°)</th>
+                <th className="py-1.5 pr-3">d (Å)</th>
+                <th className="py-1.5 pr-3">hkl</th>
+                <th className="py-1.5 pr-3">Δ dari standar (°)</th>
+                <th className="py-1.5 pr-2">Status</th>
               </tr>
             </thead>
             <tbody>
-              {annotations.map((a, i) => {
-                const d = (1.5406) / (2 * Math.sin((a.x / 2) * Math.PI / 180));
-                return (
-                  <tr key={i} className="border-b border-[var(--outline-variant)]">
-                    <td className="py-1 pr-3">{i + 1}</td>
-                    <td className="py-1 pr-3 font-mono">{a.x.toFixed(2)}</td>
-                    <td className="py-1 pr-3 font-mono">{a.y.toFixed(1)}</td>
-                    <td className="py-1 pr-3 font-mono">{d.toFixed(4)}</td>
-                    <td className="py-1 pr-3 text-[var(--muted)]">— butuh referensi</td>
-                  </tr>
-                );
-              })}
+              {annotations.map((a, i) => (
+                <tr key={i} className="border-b border-[var(--outline-variant)] last:border-0">
+                  <td className="py-1.5 pl-2 pr-3 font-mono">{a.twoTheta.toFixed(2)}</td>
+                  <td className="py-1.5 pr-3 font-mono">{a.d.toFixed(3)}</td>
+                  <td className="py-1.5 pr-3 font-mono">{a.hkl}</td>
+                  <td className="py-1.5 pr-3 font-mono">{a.deltaDeg >= 0 ? "+" : ""}{a.deltaDeg.toFixed(2)}</td>
+                  <td className="py-1.5 pr-2">
+                    {a.matched ? (
+                      <span className="rounded-full bg-[var(--surface-selected)] px-2 py-0.5 font-medium text-[var(--primary-dark)]">
+                        cocok
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-red-50 px-2 py-0.5 font-medium text-red-700">
+                        tidak teridentifikasi
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       )}
 
-      <p className="mt-2 text-xs text-[var(--muted)]">
-        Data mentah tidak boleh dimodifikasi. Anotasi disimpan sebagai versi turunan (derived).
-      </p>
+      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        <div className="rounded-md bg-[var(--surface-muted)] p-3">
+          <div className="text-xs text-[var(--muted)]">FWHM 011 (panduan)</div>
+          <div className="mt-1 font-mono text-lg font-semibold">{sample.fwhm011Deg.toFixed(3)}°</div>
+        </div>
+        <div className="rounded-md bg-[var(--surface-muted)] p-3">
+          <div className="text-xs text-[var(--muted)]">Kristalinitas relatif (panduan)</div>
+          <div className="mt-1 font-mono text-lg font-semibold">{sample.crystallinityRelPct.toFixed(1)}%</div>
+        </div>
+        <div className="rounded-md bg-[var(--surface-muted)] p-3">
+          <div className="text-xs text-[var(--muted)]">Puncak sampel terdeteksi</div>
+          <div className="mt-1 font-mono text-lg font-semibold">{samplePeaks.length}</div>
+        </div>
+      </div>
     </section>
   );
 }
 
-// Scherrer calculator
+/* ── 3. Kalkulator FWHM / Scherrer ────────────────────────────────────── */
+
 function ScherrerCalculator() {
-  const [lambda] = useState(1.5406);
-  const [twoTheta, setTwoTheta] = useState(28.5);
-  const [fwhm, setFwhm] = useState(0.3); // in degrees
+  const [sampleId, setSampleId] = useState<AlFumSampleId>("1:2");
+  const [fwhm, setFwhm] = useState(0.327);
   const [k, setK] = useState(0.9);
 
+  const sample = ALFUM_SAMPLES.find((s) => s.id === sampleId)!;
+  // θ dari puncak 011 standar yang digeser sesuai sampel
+  const twoTheta = ALFUM_STANDARD_REFLECTIONS[0].twoThetaStd + sample.shift[0];
   const theta = twoTheta / 2;
   const thetaRad = (theta * Math.PI) / 180;
   const fwhmRad = (fwhm * Math.PI) / 180;
-  const d = lambda / (2 * Math.sin(thetaRad));
-  const crystalliteSize = (k * lambda) / (fwhmRad * Math.cos(thetaRad));
+  const d = dSpacing(twoTheta);
+  const crystalliteSize = scherrerD(twoTheta, fwhm, k);
+  const guideD = GUIDE_SCHERRER_D011_NM[sampleId];
+
+  // Semua 6 refleksi dengan FWHM sama → D per hkl + rata-rata 3 teratas
+  const rows = ALFUM_STANDARD_REFLECTIONS.map((r) => {
+    const idx = ALFUM_STANDARD_REFLECTIONS.indexOf(r);
+    const t = r.twoThetaStd + sample.shift[idx];
+    const D = scherrerD(t, fwhm, k);
+    return { hkl: r.hkl, twoTheta: t, fwhmDeg: fwhm, D };
+  });
+  const sorted = [...rows].sort((a, b) => b.D - a.D);
+  const top3Avg = (sorted[0].D + sorted[1].D + sorted[2].D) / 3;
+  const largest = sorted[0];
 
   return (
     <section className="rounded-xl border border-[var(--border)] bg-white p-4">
@@ -324,20 +467,26 @@ function ScherrerCalculator() {
       <Equation
         tex={"D = \\frac{K\\lambda}{\\beta \\cos\\theta}"}
         label="Persamaan Scherrer"
-        description="D = ukuran kristalit (nm), K = faktor bentuk (0.9), λ = panjang gelombang (nm), β = FWHM (radian), θ = sudut Bragg. Catatan: hasil model-dependent."
+        description="D = ukuran kristalit (nm), K = 0,9, λ = 0,154059 nm (Cu Kα1), β = FWHM (radian), θ = sudut Bragg (2θ/2)"
       />
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <div>
-          <label htmlFor="m5-scherrer-two-theta" className="text-sm font-medium">2θ (°)</label>
-          <input
-            id="m5-scherrer-two-theta"
-            type="number"
-            step="0.01"
-            value={twoTheta}
-            onChange={(e) => setTwoTheta(Number(e.target.value))}
+          <label htmlFor="m5-scherrer-sample" className="text-sm font-medium">Sampel</label>
+          <select
+            id="m5-scherrer-sample"
+            value={sampleId}
+            onChange={(e) => {
+              const id = e.target.value as AlFumSampleId;
+              setSampleId(id);
+              setFwhm(ALFUM_SAMPLES.find((s) => s.id === id)!.fwhm011Deg);
+            }}
             className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
-          />
+          >
+            {ALFUM_SAMPLES.map((s) => (
+              <option key={s.id} value={s.id}>{SAMPLE_LABEL[s.id]}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label htmlFor="m5-fwhm" className="text-sm font-medium">FWHM β (°)</label>
@@ -361,41 +510,73 @@ function ScherrerCalculator() {
             className="mt-1 w-full rounded-md border border-[var(--border)] p-2 text-sm"
           />
         </div>
-        <div>
-          <label htmlFor="m5-scherrer-lambda" className="text-sm font-medium">λ (Å)</label>
-          <input
-            id="m5-scherrer-lambda"
-            type="number"
-            step="0.0001"
-            value={lambda}
-            disabled
-            className="mt-1 w-full rounded-md border border-[var(--border)] bg-[var(--surface-muted)] p-2 text-sm"
-          />
-        </div>
       </div>
 
       <div className="mt-4 rounded-lg bg-[var(--primary-light)] p-4">
-        <h4 className="font-semibold text-sm text-[var(--primary-dark)]">Hasil:</h4>
+        <h4 className="font-semibold text-sm text-[var(--primary-dark)]">Hasil puncak 011:</h4>
         <div className="mt-2 space-y-1 text-sm font-mono">
-          <p>θ = {theta.toFixed(4)}° = {thetaRad.toFixed(6)} rad</p>
+          <p>2θ = {twoTheta.toFixed(2)}° → θ = {theta.toFixed(4)}° = {thetaRad.toFixed(6)} rad</p>
           <p>d = {d.toFixed(4)} Å</p>
           <p>β = {fwhm}° = {fwhmRad.toFixed(6)} rad</p>
           <p>cos(θ) = {Math.cos(thetaRad).toFixed(6)}</p>
         </div>
         <div className="mt-2 border-t border-[var(--primary)] pt-2">
           <Equation
-            tex={`D = \\frac{${k} \\times ${lambda}}{${fwhmRad.toFixed(6)} \\times ${Math.cos(thetaRad).toFixed(6)}}`}
+            tex={`D = \\frac{${k} \\times 0{,}154059}{${fwhmRad.toFixed(6)} \\times ${Math.cos(thetaRad).toFixed(6)}}`}
             label="Substitusi"
           />
           <p className="mt-2 text-2xl font-bold text-[var(--primary-dark)]">
-            D = {crystalliteSize.toFixed(2)} Å = {(crystalliteSize / 10).toFixed(2)} nm
+            D = {crystalliteSize.toFixed(2)} nm
+          </p>
+          <p className="mt-1 text-sm text-[var(--primary-dark)]">
+            Panduan (slide 32): D = {guideD} nm untuk {SAMPLE_LABEL[sampleId]}.
           </p>
         </div>
       </div>
 
+      <div className="mt-4 rounded-lg border border-[var(--border)]">
+        <div className="border-b border-[var(--border)] px-3 py-2 text-sm font-semibold">
+          Semua refleksi (FWHM sama, θ dari 2θ masing-masing)
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-[var(--border)] bg-[var(--surface-muted)] text-left">
+                <th className="py-1.5 pl-3 pr-3">hkl</th>
+                <th className="py-1.5 pr-3">2θ (°)</th>
+                <th className="py-1.5 pr-3">D (nm)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.hkl} className="border-b border-[var(--outline-variant)] last:border-0">
+                  <td className="py-1.5 pl-3 pr-3 font-mono">{r.hkl}</td>
+                  <td className="py-1.5 pr-3 font-mono">{r.twoTheta.toFixed(2)}</td>
+                  <td className="py-1.5 pr-3 font-mono">{r.D.toFixed(1)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-md bg-[var(--surface-muted)] p-3">
+          <div className="text-xs text-[var(--muted)]">D terbesar — bidang pertumbuhan dominan</div>
+          <div className="mt-1 text-sm font-semibold">
+            {largest.hkl} @ {largest.D.toFixed(1)} nm
+          </div>
+        </div>
+        <div className="rounded-md bg-[var(--surface-muted)] p-3">
+          <div className="text-xs text-[var(--muted)]">Rata-rata 3 puncak tertinggi</div>
+          <div className="mt-1 text-sm font-semibold">{top3Avg.toFixed(1)} nm</div>
+        </div>
+      </div>
+
       <p className="mt-3 text-xs italic text-[var(--muted)]">
-        Ukuran kristalit ini bersifat model-dependent (asumsi kristalit bulat dan seragam). 
-        Perhitungan menggunakan faktor bentuk Scherrer K = 0.9. Hasil harus disertai asumsi dan batasan.
+        Ukuran kristalit bersifat model-dependent (asumsi kristalit bulat dan
+        seragam, K = 0,9) dan belum dikoreksi pelebaran instrumen — jadi batas
+        bawah. Hasil harus disertai asumsi dan batasan.
       </p>
     </section>
   );

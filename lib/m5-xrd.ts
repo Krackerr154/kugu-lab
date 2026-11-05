@@ -199,6 +199,69 @@ export function diffractogram(
   return points;
 }
 
+export interface DisorderPattern {
+  points: DiffractogramPoint[];
+  /** FWHM (degrees) used for every reflection. */
+  fwhmDeg: number;
+  /** Crystalline fraction in percent, as defined by the guide. */
+  crystallinityPct: number;
+}
+
+/**
+ * Pattern for the kristalin ↔ semikristalin ↔ amorf continuum.
+ *
+ * `disorder` in [0, 1]: 0 = perfect crystal (sharp peaks, no halo), 1 = fully
+ * amorphous (residual broad bumps on a dominant halo). Peak broadening grows
+ * with disorder; peak amplitudes fall; the halo area grows to conserve the
+ * guide's area definition (crystalline area / total area).
+ */
+export function disorderPattern(disorder: number, seed = 20261105): DisorderPattern {
+  const d = Math.min(1, Math.max(0, disorder));
+  const fwhmDeg = 0.15 + 3.3 * d;
+  const crystallinityPct = (1 - d) * 100;
+  const sigmaDeg = fwhmDeg / (2 * Math.sqrt(2 * Math.log(2)));
+  const reflections = ALFUM_STANDARD_REFLECTIONS;
+
+  const fr = crystallinityPct / 100;
+  let haloAmp: number;
+  if (fr >= 0.999) {
+    haloAmp = 0;
+  } else if (fr < 1e-6) {
+    // amorf murni: tak ada puncak tajam, halo dominan (tinggi puncak ~120)
+    haloAmp = 120;
+  } else {
+    const sample = { crystallinityRelPct: crystallinityPct } as AlFumSample;
+    haloAmp = haloAmplitudeFor(sample, reflections, sigmaDeg);
+  }
+  const ampFactor = 1 - 0.85 * d;
+
+  const rnd = seededRandom(seed);
+  const points: DiffractogramPoint[] = [];
+  for (let x = XRD_SCAN.min; x <= XRD_SCAN.max + 1e-9; x += XRD_SCAN.step) {
+    let y = 2 + rnd() * 3;
+    y += haloAmp * Math.exp(-((x - 22) ** 2) / (2 * 14 ** 2));
+    for (const r of reflections) {
+      y += r.relIntensity * ampFactor * Math.exp(-((x - r.twoThetaStd) ** 2) / (2 * sigmaDeg ** 2));
+    }
+    points.push({ x: Math.round(x * 100) / 100, y });
+  }
+  return { points, fwhmDeg, crystallinityPct };
+}
+
+/** Guide's own wording for the continuum (slide 5). */
+export const ORDER_STAGES = [
+  { maxDisorder: 0.25, label: "Kristalin — puncak tajam" },
+  { maxDisorder: 0.7, label: "Semikristalin — puncak tajam di atas gundukan lebar" },
+  { maxDisorder: 1.01, label: "Amorf — hanya gundukan lebar" },
+] as const;
+
+export function orderStageLabel(disorder: number): string {
+  for (const s of ORDER_STAGES) {
+    if (disorder <= s.maxDisorder) return s.label;
+  }
+  return ORDER_STAGES[ORDER_STAGES.length - 1].label;
+}
+
 /** d-spacing in Å from 2θ (degrees) with a given wavelength in Å. */
 export function dSpacing(twoThetaDeg: number, lambdaA = XRD_CONSTANTS.lambdaA): number {
   const thetaRad = ((twoThetaDeg / 2) * Math.PI) / 180;
@@ -212,8 +275,8 @@ export function dSpacing(twoThetaDeg: number, lambdaA = XRD_CONSTANTS.lambdaA): 
 export function scherrerD(
   twoThetaDeg: number,
   fwhmDeg: number,
-  k = XRD_CONSTANTS.K,
-  lambdaNm = XRD_CONSTANTS.lambdaNm
+  k: number = XRD_CONSTANTS.K,
+  lambdaNm: number = XRD_CONSTANTS.lambdaNm
 ): number {
   const thetaRad = ((twoThetaDeg / 2) * Math.PI) / 180;
   const betaRad = (fwhmDeg * Math.PI) / 180;
