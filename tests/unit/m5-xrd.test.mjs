@@ -191,6 +191,11 @@ test("continuum disorder: kristalin → amorf melebar dan menumbuhkan halo", () 
   const haloA = yAt(amorf, 45);
   assert.ok(haloC < haloA, `halo kristalin ${haloC} vs amorf ${haloA}`);
 
+  // tinggi amorf harus rendah (gundukan lebar ~25 a.u., tidak menjulang melebihi kristalin)
+  const maxAmorf = Math.max(...amorf.points.map((p) => p.y));
+  assert.ok(maxAmorf < 35, `gundukan amorf terlalu tinggi: ${maxAmorf}`);
+  assert.ok(maxAmorf > 18, `gundukan amorf terlalu rendah: ${maxAmorf}`);
+
   // deterministik
   assert.deepEqual(disorderPattern(0.5), disorderPattern(0.5));
 });

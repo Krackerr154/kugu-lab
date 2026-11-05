@@ -222,18 +222,11 @@ export function disorderPattern(disorder: number, seed = 20261105): DisorderPatt
   const sigmaDeg = fwhmDeg / (2 * Math.sqrt(2 * Math.log(2)));
   const reflections = ALFUM_STANDARD_REFLECTIONS;
 
-  const fr = crystallinityPct / 100;
-  let haloAmp: number;
-  if (fr >= 0.999) {
-    haloAmp = 0;
-  } else if (fr < 1e-6) {
-    // amorf murni: tak ada puncak tajam, halo dominan (tinggi puncak ~120)
-    haloAmp = 120;
-  } else {
-    const sample = { crystallinityRelPct: crystallinityPct } as AlFumSample;
-    haloAmp = haloAmplitudeFor(sample, reflections, sigmaDeg);
-  }
-  const ampFactor = 1 - 0.85 * d;
+  // Gundukan amorf (halo): murni amorf menghasilkan gundukan lebar yang rendah
+  // (~22 a.u., atau ~20-25% dari puncak tajam kristalin), bukan menjulang tinggi.
+  const haloAmp = 22 * d;
+  // Puncak kristalin meluruh dan melebar seiring bertambahnya disorder
+  const ampFactor = Math.pow(1 - d, 1.4);
 
   const rnd = seededRandom(seed);
   const points: DiffractogramPoint[] = [];
