@@ -642,17 +642,17 @@ export function BraggDiagram() {
 /* ── 3. Anatomi difraktogram ──────────────────────────────────────────── */
 
 export function DiffractogramAnatomy() {
-  const W = 600;
-  const H = 280;
-  const marginLeft = 48;
+  const W = 640;
+  const H = 340;
+  const marginLeft = 52;
   const marginRight = 20;
-  const marginTop = 36;
-  const plotHeight = 180;
-  const baselineY = marginTop + plotHeight; // 216
-  const plotWidth = W - marginLeft - marginRight; // 532
+  const marginTop = 26;
+  const plotHeight = 260;
+  const baselineY = marginTop + plotHeight; // 286
+  const plotWidth = W - marginLeft - marginRight; // 568
   const minX = 5;
   const maxX = 80;
-  const yMax = 125;
+  const yMax = 115;
 
   const sx = (x: number) => marginLeft + ((x - minX) / (maxX - minX)) * plotWidth;
   const sy = (y: number) => baselineY - (Math.min(y, yMax) / yMax) * plotHeight;
@@ -715,12 +715,12 @@ export function DiffractogramAnatomy() {
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Anatomi difraktogram standar Al-Fum">
           <defs>
             <linearGradient id="m5-anatomy-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#001f3f" stopOpacity="0.2" />
+              <stop offset="0%" stopColor="#001f3f" stopOpacity="0.22" />
               <stop offset="100%" stopColor="#001f3f" stopOpacity="0.02" />
             </linearGradient>
             <linearGradient id="m5-halo-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#9333ea" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#9333ea" stopOpacity="0.04" />
+              <stop offset="0%" stopColor="#9333ea" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#9333ea" stopOpacity="0.03" />
             </linearGradient>
             <marker id="arrow-gold" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
               <polygon points="0 0, 6 3, 0 6" fill="#b45309" />
@@ -731,7 +731,9 @@ export function DiffractogramAnatomy() {
           </defs>
 
           {/* Grid lines horizontal */}
+          <line x1={marginLeft} y1={sy(25)} x2={marginLeft + plotWidth} y2={sy(25)} stroke="#e2e8f0" strokeDasharray="3,3" strokeWidth={0.7} />
           <line x1={marginLeft} y1={sy(50)} x2={marginLeft + plotWidth} y2={sy(50)} stroke="#cbd5e1" strokeDasharray="3,3" strokeWidth={0.7} />
+          <line x1={marginLeft} y1={sy(75)} x2={marginLeft + plotWidth} y2={sy(75)} stroke="#e2e8f0" strokeDasharray="3,3" strokeWidth={0.7} />
           <line x1={marginLeft} y1={sy(100)} x2={marginLeft + plotWidth} y2={sy(100)} stroke="#cbd5e1" strokeDasharray="3,3" strokeWidth={0.7} />
 
           {/* Area under curve & main curve line */}
@@ -744,105 +746,101 @@ export function DiffractogramAnatomy() {
           <path d={haloArea} fill="url(#m5-halo-fill)" stroke="#9333ea" strokeWidth={1} strokeDasharray="3,3" />
 
           {/* Main diffractogram trace */}
-          <path d={lineD} fill="none" stroke={NAVY} strokeWidth={1.5} strokeLinejoin="round" />
+          <path d={lineD} fill="none" stroke={NAVY} strokeWidth={1.6} strokeLinejoin="round" />
 
           {/* Sumbu X & Y */}
-          <line x1={marginLeft} y1={marginTop} x2={marginLeft} y2={baselineY} stroke="#64748b" strokeWidth={1} />
-          <line x1={marginLeft} y1={baselineY} x2={marginLeft + plotWidth} y2={baselineY} stroke="#64748b" strokeWidth={1} />
+          <line x1={marginLeft} y1={marginTop} x2={marginLeft} y2={baselineY} stroke="#64748b" strokeWidth={1.2} />
+          <line x1={marginLeft} y1={baselineY} x2={marginLeft + plotWidth} y2={baselineY} stroke="#64748b" strokeWidth={1.2} />
 
           {/* Ticks & Labels X (Equal linear spacing) */}
           {TICKS_X.map((t) => (
             <g key={t}>
               <line x1={sx(t)} y1={baselineY} x2={sx(t)} y2={baselineY + 4} stroke="#64748b" strokeWidth={1} />
-              <text x={sx(t)} y={baselineY + 14} fontSize={8.5} fill="#475569" textAnchor="middle">
+              <text x={sx(t)} y={baselineY + 15} fontSize={9} fill="#475569" textAnchor="middle">
                 {t}°
               </text>
             </g>
           ))}
-          <text x={marginLeft + plotWidth / 2} y={baselineY + 28} fontSize={9} fill="#334155" fontWeight={600} textAnchor="middle">
+          <text x={marginLeft + plotWidth / 2} y={baselineY + 32} fontSize={9.5} fill="#1e293b" fontWeight={700} textAnchor="middle">
             Sudut Difraksi 2θ (°)
           </text>
 
           {/* Ticks & Labels Y */}
-          <text x={marginLeft - 4} y={sy(50) + 3} fontSize={7.5} fill="#64748b" textAnchor="end">50</text>
-          <text x={marginLeft - 4} y={sy(100) + 3} fontSize={7.5} fill="#64748b" textAnchor="end">100</text>
-          <text x={marginLeft - 4} y={marginTop - 4} fontSize={8} fill="#475569" fontWeight={500} textAnchor="start">
+          <text x={marginLeft - 5} y={sy(25) + 3} fontSize={8} fill="#64748b" textAnchor="end">25</text>
+          <text x={marginLeft - 5} y={sy(50) + 3} fontSize={8} fill="#64748b" textAnchor="end">50</text>
+          <text x={marginLeft - 5} y={sy(75) + 3} fontSize={8} fill="#64748b" textAnchor="end">75</text>
+          <text x={marginLeft - 5} y={sy(100) + 3} fontSize={8} fill="#64748b" textAnchor="end">100</text>
+          <text
+            x={-(marginTop + plotHeight / 2)}
+            y={15}
+            transform="rotate(-90)"
+            fontSize={9.5}
+            fill="#334155"
+            fontWeight={600}
+            textAnchor="middle"
+          >
             Intensitas (a.u.)
           </text>
 
           {/* ── ANOTASI ①: Posisi Puncak 2θ (011 @ 10.39°) ── */}
           <g>
             {/* Garis jatuh dari puncak ke sumbu 2θ */}
-            <line x1={sx(10.39)} y1={sy(99)} x2={sx(10.39)} y2={baselineY} stroke="#b45309" strokeWidth={1.2} strokeDasharray="3,3" />
-            <circle cx={sx(10.39)} cy={sy(99)} r={3} fill="#b45309" />
-            {/* Penanda sudut di sumbu */}
-            <polygon points={`${sx(10.39)},${baselineY - 1} ${sx(10.39) - 4},${baselineY - 7} ${sx(10.39) + 4},${baselineY - 7}`} fill="#b45309" />
-            <text x={sx(10.39)} y={baselineY - 9} fontSize={7.5} fill="#92400e" fontWeight={700} textAnchor="middle">10,39°</text>
+            <line x1={sx(10.39)} y1={sy(102)} x2={sx(10.39)} y2={baselineY} stroke="#b45309" strokeWidth={1.2} strokeDasharray="3,3" />
+            <circle cx={sx(10.39)} cy={sy(102)} r={3.5} fill="#b45309" />
+            <circle cx={sx(10.39)} cy={baselineY} r={3} fill="#b45309" />
 
-            {/* Kotak label ① */}
-            <g transform={`translate(${sx(10.39) - 20}, 14)`}>
-              <rect x={0} y={0} width={128} height={26} rx={5} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
-              <text x={6} y={11} fontSize={8} fill="#92400e" fontWeight={700}>
-                ① Posisi Puncak (2θ)
-              </text>
-              <text x={6} y={20} fontSize={7} fill="#b45309">
-                → d = 8,51 Å · Indeks (011)
-              </text>
+            {/* Chip pin ① */}
+            <g transform={`translate(${sx(10.39)}, 32)`}>
+              <rect x={-54} y={-14} width={108} height={20} rx={4} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
+              <circle cx={-40} cy={-4} r={6.5} fill="#b45309" />
+              <text x={-40} y={-1.5} fontSize={8} fill="#ffffff" fontWeight={800} textAnchor="middle">1</text>
+              <text x={-28} y={-0.5} fontSize={8} fill="#92400e" fontWeight={700}>Posisi (2θ = 10,39°)</text>
             </g>
           </g>
 
           {/* ── ANOTASI ②: Lebar Puncak FWHM β (022 @ 20.87°) ── */}
           <g>
             {/* Garis setengah tinggi Imaks/2 */}
-            <line x1={marginLeft} y1={sy(21)} x2={sx(20.87) - 14} y2={sy(21)} stroke="#94a3b8" strokeDasharray="2,2" strokeWidth={0.8} />
+            <line x1={marginLeft} y1={sy(21)} x2={sx(20.87) - 14} y2={sy(21)} stroke="#cbd5e1" strokeDasharray="2,2" strokeWidth={0.8} />
             <text x={marginLeft + 4} y={sy(21) - 3} fontSize={7} fill="#64748b">I_maks / 2</text>
 
             {/* Indikator lebar FWHM */}
-            <line x1={sx(20.87) - 10} y1={sy(21)} x2={sx(20.87) + 10} y2={sy(21)} stroke="#b45309" strokeWidth={2} />
+            <line x1={sx(20.87) - 10} y1={sy(21)} x2={sx(20.87) + 10} y2={sy(21)} stroke="#b45309" strokeWidth={2.5} />
             <polygon points={`${sx(20.87) - 10},${sy(21)} ${sx(20.87) - 6},${sy(21) - 3} ${sx(20.87) - 6},${sy(21) + 3}`} fill="#b45309" />
             <polygon points={`${sx(20.87) + 10},${sy(21)} ${sx(20.87) + 6},${sy(21) - 3} ${sx(20.87) + 6},${sy(21) + 3}`} fill="#b45309" />
 
-            {/* Kotak label ② */}
-            <g transform={`translate(${sx(20.87) - 30}, 72)`}>
-              <rect x={0} y={0} width={138} height={26} rx={5} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
-              <text x={6} y={11} fontSize={8} fill="#92400e" fontWeight={700}>
-                ② Lebar Puncak (FWHM β)
-              </text>
-              <text x={6} y={20} fontSize={7} fill="#b45309">
-                → D = Kλ / (β cosθ) (Scherrer)
-              </text>
+            {/* Chip pin ② */}
+            <g transform={`translate(${sx(20.87)}, 95)`}>
+              <rect x={-45} y={-14} width={90} height={20} rx={4} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
+              <circle cx={-32} cy={-4} r={6.5} fill="#b45309" />
+              <text x={-32} y={-1.5} fontSize={8} fill="#ffffff" fontWeight={800} textAnchor="middle">2</text>
+              <text x={-20} y={-0.5} fontSize={8} fill="#92400e" fontWeight={700}>Lebar FWHM</text>
             </g>
-            <line x1={sx(20.87)} y1={98} x2={sx(20.87)} y2={sy(21) - 3} stroke="#b45309" strokeWidth={1} markerEnd="url(#arrow-gold)" />
+            <line x1={sx(20.87)} y1={108} x2={sx(20.87)} y2={sy(21) - 4} stroke="#b45309" strokeWidth={1} markerEnd="url(#arrow-gold)" />
           </g>
 
           {/* ── ANOTASI ③: Luas di Bawah Puncak (033 @ 31.52°) ── */}
           <g>
-            {/* Kotak label ③ */}
-            <g transform={`translate(${sx(31.52) - 15}, 14)`}>
-              <rect x={0} y={0} width={136} height={26} rx={5} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
-              <text x={6} y={11} fontSize={8} fill="#92400e" fontWeight={700}>
-                ③ Luas Puncak (Area)
-              </text>
-              <text x={6} y={20} fontSize={7} fill="#b45309">
-                → % Kristalinitas = (A_k / A_tot)
-              </text>
+            {/* Chip pin ③ */}
+            <g transform="translate(275, 120)">
+              <rect x={-45} y={-14} width={90} height={20} rx={4} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
+              <circle cx={-32} cy={-4} r={6.5} fill="#b45309" />
+              <text x={-32} y={-1.5} fontSize={8} fill="#ffffff" fontWeight={800} textAnchor="middle">3</text>
+              <text x={-20} y={-0.5} fontSize={8} fill="#92400e" fontWeight={700}>Luas Puncak</text>
             </g>
-            <line x1={sx(31.52)} y1={40} x2={sx(31.52)} y2={sy(20)} stroke="#b45309" strokeWidth={1} markerEnd="url(#arrow-gold)" />
+            <line x1={275} y1={132} x2={sx(31.52)} y2={sy(25)} stroke="#b45309" strokeWidth={1} markerEnd="url(#arrow-gold)" />
           </g>
 
           {/* ── ANOTASI ④: Gundukan Lebar / Halo Amorf (@ 22°) ── */}
           <g>
-            {/* Kotak label ④ */}
-            <g transform="translate(390, 72)">
-              <rect x={0} y={0} width={154} height={26} rx={5} fill="#ffffff" stroke="#9333ea" strokeWidth={1.2} />
-              <text x={6} y={11} fontSize={8} fill="#6b21a8" fontWeight={700}>
-                ④ Gundukan Lebar (Halo Amorf)
-              </text>
-              <text x={6} y={20} fontSize={7} fill="#9333ea">
-                → Hamburan difus (fasa amorf)
-              </text>
+            {/* Chip pin ④ */}
+            <g transform="translate(430, 145)">
+              <rect x={-48} y={-14} width={96} height={20} rx={4} fill="#ffffff" stroke="#9333ea" strokeWidth={1.2} />
+              <circle cx={-35} cy={-4} r={6.5} fill="#9333ea" />
+              <text x={-35} y={-1.5} fontSize={8} fill="#ffffff" fontWeight={800} textAnchor="middle">4</text>
+              <text x={-23} y={-0.5} fontSize={8} fill="#6b21a8" fontWeight={700}>Halo Amorf</text>
             </g>
-            <path d={`M 390 85 C 330 85, 250 120, ${sx(24)} ${sy(18)}`} fill="none" stroke="#9333ea" strokeWidth={1.2} markerEnd="url(#arrow-purple)" />
+            <line x1={400} y1={155} x2={330} y2={sy(12)} stroke="#9333ea" strokeWidth={1} markerEnd="url(#arrow-purple)" />
           </g>
         </svg>
       </div>
