@@ -642,30 +642,75 @@ export function BraggDiagram() {
 /* ── 3. Anatomi difraktogram ──────────────────────────────────────────── */
 
 export function DiffractogramAnatomy() {
-  const pattern = useMemo(() => diffractogram("standard", 99), []);
-  const W = 320;
-  const H = 180;
-  const marginLeft = 34;
-  const marginRight = 12;
-  const marginTop = 20;
-  const plotHeight = 122;
-  const baselineY = marginTop + plotHeight; // 142
-  const plotWidth = W - marginLeft - marginRight; // 274
-  const yMax = 140;
-
+  const W = 600;
+  const H = 280;
+  const marginLeft = 48;
+  const marginRight = 20;
+  const marginTop = 36;
+  const plotHeight = 180;
+  const baselineY = marginTop + plotHeight; // 216
+  const plotWidth = W - marginLeft - marginRight; // 532
   const minX = 5;
   const maxX = 80;
+  const yMax = 125;
+
   const sx = (x: number) => marginLeft + ((x - minX) / (maxX - minX)) * plotWidth;
+  const sy = (y: number) => baselineY - (Math.min(y, yMax) / yMax) * plotHeight;
+
+  const { pattern, peak033Area, haloArea } = useMemo(() => {
+    const fwhmDeg = 0.55;
+    const sigmaDeg = fwhmDeg / (2 * Math.sqrt(2 * Math.log(2)));
+    const haloAmp = 18;
+    const rnd = seededRandom(20261108);
+
+    const pts: { x: number; y: number }[] = [];
+    const peak033Pts: { x: number; y: number }[] = [];
+    const haloPts: { x: number; y: number }[] = [];
+
+    for (let x = 5; x <= 80 + 1e-9; x += 0.05) {
+      let y = 3 + rnd() * 2;
+      const haloVal = haloAmp * Math.exp(-((x - 22) ** 2) / (2 * 12 ** 2));
+      y += haloVal;
+
+      for (const ref of ALFUM_STANDARD_REFLECTIONS) {
+        y += ref.relIntensity * 0.85 * Math.exp(-((x - ref.twoThetaStd) ** 2) / (2 * sigmaDeg ** 2));
+      }
+      const pt = { x: Math.round(x * 100) / 100, y };
+      pts.push(pt);
+
+      if (x >= 29.5 && x <= 33.5) {
+        peak033Pts.push(pt);
+      }
+      if (x >= 8 && x <= 45) {
+        haloPts.push({ x: Math.round(x * 100) / 100, y: 3 + haloVal });
+      }
+    }
+
+    const peak033AreaD =
+      peak033Pts.map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join(" ") +
+      ` L${sx(peak033Pts[peak033Pts.length - 1].x).toFixed(1)},${baselineY} L${sx(peak033Pts[0].x).toFixed(1)},${baselineY} Z`;
+
+    const haloAreaD =
+      haloPts.map((p, i) => `${i === 0 ? "M" : "L"}${sx(p.x).toFixed(1)},${sy(p.y).toFixed(1)}`).join(" ") +
+      ` L${sx(haloPts[haloPts.length - 1].x).toFixed(1)},${baselineY} L${sx(haloPts[0].x).toFixed(1)},${baselineY} Z`;
+
+    return { pattern: pts, peak033Area: peak033AreaD, haloArea: haloAreaD };
+  }, [sx, sy, baselineY]);
 
   const lineD = patternPath(pattern, marginLeft, marginTop, plotWidth, plotHeight, yMax);
   const areaD = patternAreaPath(pattern, marginLeft, marginTop, plotWidth, plotHeight, yMax);
 
+  const TICKS_X = [10, 20, 30, 40, 50, 60, 70, 80];
+
   return (
     <section className="rounded-xl border border-[var(--border)] bg-white p-4 sm:p-5 shadow-xs">
-      <h3 className="text-base font-bold text-[var(--foreground)]">Anatomi Difraktogram</h3>
-      <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-        Empat informasi kunci yang diekstraksi dari difraktogram XRD (panduan slide 6).
-      </p>
+      <div className="border-b border-[var(--border)] pb-3">
+        <h3 className="text-base font-bold text-[var(--foreground)]">Anatomi Difraktogram</h3>
+        <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
+          Empat informasi kunci yang diekstraksi dari difraktogram XRD (panduan praktikum slide 6).
+        </p>
+      </div>
+
       <div className="mt-3 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-muted)] p-1">
         <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Anatomi difraktogram standar Al-Fum">
           <defs>
@@ -673,61 +718,201 @@ export function DiffractogramAnatomy() {
               <stop offset="0%" stopColor="#001f3f" stopOpacity="0.2" />
               <stop offset="100%" stopColor="#001f3f" stopOpacity="0.02" />
             </linearGradient>
+            <linearGradient id="m5-halo-fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#9333ea" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#9333ea" stopOpacity="0.04" />
+            </linearGradient>
+            <marker id="arrow-gold" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <polygon points="0 0, 6 3, 0 6" fill="#b45309" />
+            </marker>
+            <marker id="arrow-purple" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <polygon points="0 0, 6 3, 0 6" fill="#9333ea" />
+            </marker>
           </defs>
 
-          {/* Area & Line */}
+          {/* Grid lines horizontal */}
+          <line x1={marginLeft} y1={sy(50)} x2={marginLeft + plotWidth} y2={sy(50)} stroke="#cbd5e1" strokeDasharray="3,3" strokeWidth={0.7} />
+          <line x1={marginLeft} y1={sy(100)} x2={marginLeft + plotWidth} y2={sy(100)} stroke="#cbd5e1" strokeDasharray="3,3" strokeWidth={0.7} />
+
+          {/* Area under curve & main curve line */}
           <path d={areaD} fill="url(#m5-anatomy-fill)" />
-          <path d={lineD} fill="none" stroke={NAVY} strokeWidth={1.5} />
+
+          {/* ③ Highlighted peak area (033 at 31.52) */}
+          <path d={peak033Area} fill="rgba(217, 119, 6, 0.35)" stroke="#d97706" strokeWidth={1.2} />
+
+          {/* ④ Shaded amorphous halo mound */}
+          <path d={haloArea} fill="url(#m5-halo-fill)" stroke="#9333ea" strokeWidth={1} strokeDasharray="3,3" />
+
+          {/* Main diffractogram trace */}
+          <path d={lineD} fill="none" stroke={NAVY} strokeWidth={1.5} strokeLinejoin="round" />
 
           {/* Sumbu X & Y */}
           <line x1={marginLeft} y1={marginTop} x2={marginLeft} y2={baselineY} stroke="#64748b" strokeWidth={1} />
           <line x1={marginLeft} y1={baselineY} x2={marginLeft + plotWidth} y2={baselineY} stroke="#64748b" strokeWidth={1} />
 
-          {/* Ticks X */}
-          {[10, 20, 40, 60, 80].map((t) => (
+          {/* Ticks & Labels X (Equal linear spacing) */}
+          {TICKS_X.map((t) => (
             <g key={t}>
-              <line x1={sx(t)} y1={baselineY} x2={sx(t)} y2={baselineY + 3.5} stroke="#64748b" strokeWidth={1} />
-              <text x={sx(t)} y={baselineY + 12} fontSize={8} fill="#475569" textAnchor="middle">
+              <line x1={sx(t)} y1={baselineY} x2={sx(t)} y2={baselineY + 4} stroke="#64748b" strokeWidth={1} />
+              <text x={sx(t)} y={baselineY + 14} fontSize={8.5} fill="#475569" textAnchor="middle">
                 {t}°
               </text>
             </g>
           ))}
-          <text x={marginLeft + plotWidth / 2} y={170} fontSize={8.5} fill="#334155" fontWeight={600} textAnchor="middle">
+          <text x={marginLeft + plotWidth / 2} y={baselineY + 28} fontSize={9} fill="#334155" fontWeight={600} textAnchor="middle">
             Sudut Difraksi 2θ (°)
           </text>
 
-          {/* Anotasi 1: posisi → d & hkl */}
-          <line x1={sx(10.39)} y1={28} x2={sx(10.39)} y2={54} stroke={GOLD} strokeWidth={1.2} />
-          <circle cx={sx(10.39)} cy={54} r={2} fill={GOLD} />
-          <text x={sx(10.39) + 4} y={24} fontSize={8} fill="#b45309" fontWeight={700}>
-            ① Posisi (2θ) → d & hkl
+          {/* Ticks & Labels Y */}
+          <text x={marginLeft - 4} y={sy(50) + 3} fontSize={7.5} fill="#64748b" textAnchor="end">50</text>
+          <text x={marginLeft - 4} y={sy(100) + 3} fontSize={7.5} fill="#64748b" textAnchor="end">100</text>
+          <text x={marginLeft - 4} y={marginTop - 4} fontSize={8} fill="#475569" fontWeight={500} textAnchor="start">
+            Intensitas (a.u.)
           </text>
 
-          {/* Anotasi 2: lebar → kristalit */}
-          <line x1={sx(14.65)} y1={72} x2={sx(14.65) + 30} y2={50} stroke={GOLD} strokeWidth={1.2} />
-          <circle cx={sx(14.65)} cy={72} r={2} fill={GOLD} />
-          <text x={sx(14.65) + 34} y={52} fontSize={8} fill="#b45309" fontWeight={700}>
-            ② Lebar (FWHM β) → Ukuran Kristalit
-          </text>
+          {/* ── ANOTASI ①: Posisi Puncak 2θ (011 @ 10.39°) ── */}
+          <g>
+            {/* Garis jatuh dari puncak ke sumbu 2θ */}
+            <line x1={sx(10.39)} y1={sy(99)} x2={sx(10.39)} y2={baselineY} stroke="#b45309" strokeWidth={1.2} strokeDasharray="3,3" />
+            <circle cx={sx(10.39)} cy={sy(99)} r={3} fill="#b45309" />
+            {/* Penanda sudut di sumbu */}
+            <polygon points={`${sx(10.39)},${baselineY - 1} ${sx(10.39) - 4},${baselineY - 7} ${sx(10.39) + 4},${baselineY - 7}`} fill="#b45309" />
+            <text x={sx(10.39)} y={baselineY - 9} fontSize={7.5} fill="#92400e" fontWeight={700} textAnchor="middle">10,39°</text>
 
-          {/* Anotasi 3: luas → kristalinitas */}
-          <line x1={sx(31.52)} y1={105} x2={sx(31.52)} y2={85} stroke={GOLD} strokeWidth={1.2} />
-          <circle cx={sx(31.52)} cy={105} r={2} fill={GOLD} />
-          <text x={sx(31.52) - 10} y={80} fontSize={8} fill="#b45309" fontWeight={700}>
-            ③ Luas Puncak → % Kristalinitas
-          </text>
+            {/* Kotak label ① */}
+            <g transform={`translate(${sx(10.39) - 20}, 14)`}>
+              <rect x={0} y={0} width={128} height={26} rx={5} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
+              <text x={6} y={11} fontSize={8} fill="#92400e" fontWeight={700}>
+                ① Posisi Puncak (2θ)
+              </text>
+              <text x={6} y={20} fontSize={7} fill="#b45309">
+                → d = 8,51 Å · Indeks (011)
+              </text>
+            </g>
+          </g>
 
-          {/* Anotasi 4: gundukan amorf */}
-          <text x={sx(55)} y={120} fontSize={8} fill="#64748b" fontStyle="italic" textAnchor="middle">
-            ④ Gundukan lebar (halo) = Fasa Amorf
-          </text>
+          {/* ── ANOTASI ②: Lebar Puncak FWHM β (022 @ 20.87°) ── */}
+          <g>
+            {/* Garis setengah tinggi Imaks/2 */}
+            <line x1={marginLeft} y1={sy(21)} x2={sx(20.87) - 14} y2={sy(21)} stroke="#94a3b8" strokeDasharray="2,2" strokeWidth={0.8} />
+            <text x={marginLeft + 4} y={sy(21) - 3} fontSize={7} fill="#64748b">I_maks / 2</text>
+
+            {/* Indikator lebar FWHM */}
+            <line x1={sx(20.87) - 10} y1={sy(21)} x2={sx(20.87) + 10} y2={sy(21)} stroke="#b45309" strokeWidth={2} />
+            <polygon points={`${sx(20.87) - 10},${sy(21)} ${sx(20.87) - 6},${sy(21) - 3} ${sx(20.87) - 6},${sy(21) + 3}`} fill="#b45309" />
+            <polygon points={`${sx(20.87) + 10},${sy(21)} ${sx(20.87) + 6},${sy(21) - 3} ${sx(20.87) + 6},${sy(21) + 3}`} fill="#b45309" />
+
+            {/* Kotak label ② */}
+            <g transform={`translate(${sx(20.87) - 30}, 72)`}>
+              <rect x={0} y={0} width={138} height={26} rx={5} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
+              <text x={6} y={11} fontSize={8} fill="#92400e" fontWeight={700}>
+                ② Lebar Puncak (FWHM β)
+              </text>
+              <text x={6} y={20} fontSize={7} fill="#b45309">
+                → D = Kλ / (β cosθ) (Scherrer)
+              </text>
+            </g>
+            <line x1={sx(20.87)} y1={98} x2={sx(20.87)} y2={sy(21) - 3} stroke="#b45309" strokeWidth={1} markerEnd="url(#arrow-gold)" />
+          </g>
+
+          {/* ── ANOTASI ③: Luas di Bawah Puncak (033 @ 31.52°) ── */}
+          <g>
+            {/* Kotak label ③ */}
+            <g transform={`translate(${sx(31.52) - 15}, 14)`}>
+              <rect x={0} y={0} width={136} height={26} rx={5} fill="#ffffff" stroke="#b45309" strokeWidth={1.2} />
+              <text x={6} y={11} fontSize={8} fill="#92400e" fontWeight={700}>
+                ③ Luas Puncak (Area)
+              </text>
+              <text x={6} y={20} fontSize={7} fill="#b45309">
+                → % Kristalinitas = (A_k / A_tot)
+              </text>
+            </g>
+            <line x1={sx(31.52)} y1={40} x2={sx(31.52)} y2={sy(20)} stroke="#b45309" strokeWidth={1} markerEnd="url(#arrow-gold)" />
+          </g>
+
+          {/* ── ANOTASI ④: Gundukan Lebar / Halo Amorf (@ 22°) ── */}
+          <g>
+            {/* Kotak label ④ */}
+            <g transform="translate(390, 72)">
+              <rect x={0} y={0} width={154} height={26} rx={5} fill="#ffffff" stroke="#9333ea" strokeWidth={1.2} />
+              <text x={6} y={11} fontSize={8} fill="#6b21a8" fontWeight={700}>
+                ④ Gundukan Lebar (Halo Amorf)
+              </text>
+              <text x={6} y={20} fontSize={7} fill="#9333ea">
+                → Hamburan difus (fasa amorf)
+              </text>
+            </g>
+            <path d={`M 390 85 C 330 85, 250 120, ${sx(24)} ${sy(18)}`} fill="none" stroke="#9333ea" strokeWidth={1.2} markerEnd="url(#arrow-purple)" />
+          </g>
         </svg>
       </div>
-      <p className="mt-2 text-xs text-[var(--muted)]">
-        Pola standar Al-Fum (CCDC 1051975) dari tabel panduan: 011 @ 10,39°,
-        020/002/-102 @ 14,65°, 022 @ 20,87°, 033 @ 31,52°, 044 @ 42,47°, 055 @
-        53,84°. d-spacing dihitung dari posisi: d = λ/(2 sinθ).
-      </p>
+
+      {/* 4-Card Pedagogical Summary */}
+      <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-3 shadow-xs">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-200 text-[10px] font-bold">1</span>
+            <span>Posisi Puncak (2θ)</span>
+          </div>
+          <div className="mt-1 font-mono text-[11px] font-semibold text-[var(--primary-dark)]">
+            2θ → d = λ / (2 sinθ)
+          </div>
+          <p className="mt-1.5 text-[11px] text-[var(--text-secondary)] leading-relaxed">
+            Sudut pantul menentukan jarak antarbidang kisi atom (d). Dicocokkan dengan basis data kristal (ICDD/CIF) untuk identifikasi fasa dan indeks Miller (hkl).
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-3 shadow-xs">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-200 text-[10px] font-bold">2</span>
+            <span>Lebar Puncak (FWHM β)</span>
+          </div>
+          <div className="mt-1 font-mono text-[11px] font-semibold text-[var(--primary-dark)]">
+            D = Kλ / (β cosθ)
+          </div>
+          <p className="mt-1.5 text-[11px] text-[var(--text-secondary)] leading-relaxed">
+            Lebar puncak pada setengah tinggi maksimum (FWHM) berbanding terbalik dengan ukuran domain kristalit (Persamaan Scherrer). Makin ramping puncak, kristalit makin besar.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-3 shadow-xs">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-200 text-[10px] font-bold">3</span>
+            <span>Luas Puncak (Area)</span>
+          </div>
+          <div className="mt-1 font-mono text-[11px] font-semibold text-[var(--primary-dark)]">
+            % = (Σ A_kristal / A_total) × 100%
+          </div>
+          <p className="mt-1.5 text-[11px] text-[var(--text-secondary)] leading-relaxed">
+            Integral area di bawah puncak kristalin dibandingkan dengan luas total kurva (termasuk latar amorf) dengan baseline y = 0 menentukan derajat kristalinitas.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-3 shadow-xs">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-purple-900">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-200 text-[10px] font-bold">4</span>
+            <span>Gundukan Lebar (Halo)</span>
+          </div>
+          <div className="mt-1 font-mono text-[11px] font-semibold text-[var(--primary-dark)]">
+            Hamburan Difus (Amorf)
+          </div>
+          <p className="mt-1.5 text-[11px] text-[var(--text-secondary)] leading-relaxed">
+            Bukit landai tanpa puncak tajam membuktikan keberadaan fasa amorf atau ketidakteraturan kisi, di mana atom tersusun acak tanpa periode jangka panjang.
+          </p>
+        </div>
+      </div>
+
+      {/* Standard Al-Fum Reference chips */}
+      <div className="mt-3.5 flex flex-wrap items-center gap-2 rounded-lg bg-[var(--surface-muted)] px-3 py-2 text-xs border border-[var(--border)]">
+        <span className="font-semibold text-[var(--foreground)]">Standar Al-Fum (CCDC 1051975):</span>
+        <div className="flex flex-wrap items-center gap-1.5 font-mono text-[11px]">
+          {ALFUM_STANDARD_REFLECTIONS.map((r) => (
+            <span key={r.hkl} className="rounded bg-white px-2 py-0.5 border border-[var(--outline-variant)] text-[var(--primary-dark)]">
+              {r.hkl} @ {r.twoThetaStd.toFixed(2)}°
+            </span>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
