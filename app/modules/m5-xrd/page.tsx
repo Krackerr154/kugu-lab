@@ -5,7 +5,6 @@ import { StudentIdentityGate } from "@/components/shared/StudentIdentityGate";
 import { M4GuidedAccessGate } from "@/components/shared/M4GuidedAccessGate";
 import { M5PresentationHero } from "@/components/presentation/M5PresentationHero";
 
-import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { LabNotebook } from "@/components/shared/LabNotebook";
 import { ReportChecklist } from "@/components/shared/ReportChecklist";
 import { ClaimEvidenceReasoning } from "@/components/shared/ClaimEvidenceReasoning";
@@ -172,16 +171,6 @@ export default function M5Page() {
             Ukuran D belum dikoreksi pelebaran instrumen — jadi batas bawah.
           </p>
         </section>
-      </div>
-
-      <div className="mt-4">
-        <SafetyCallout variant="warning" title="Keselamatan XRD">
-          <p>
-            Interlock XRD tidak boleh dilewati. Hanya personel yang berwenang
-            yang mengoperasikan instrumen. Penanganan bubuk dan integritas data
-            mentah memerlukan otorisasi lokal.
-          </p>
-        </SafetyCallout>
       </div>
 
       <div className="mt-4">
