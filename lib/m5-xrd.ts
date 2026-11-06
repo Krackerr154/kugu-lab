@@ -527,3 +527,29 @@ export function matchPeakToStandard(
   }
   return best;
 }
+
+/** Kesalahan umum dalam analisis data XRD (panduan praktikum). */
+export const M5_COMMON_TRAPS: readonly string[] = [
+  "Lupa mengonversi sudut 2θ dan FWHM (β) dari derajat ke radian sebelum menghitung cos(θ) dan D Scherrer di Excel (=RADIANS()).",
+  "Menggunakan sudut 2θ penuh pada cos(θ) alih-alih sudut difraksi Bragg θ = 2θ / 2.",
+  "Menumpuk kurva (stacking) di OriginPro tanpa normalisasi intensitas maksimum terlebih dahulu, menyebabkan puncak minor tertutup skala.",
+  "Salah memilih garis dasar (baseline) integrasi: luas total memerlukan baseline y=0, sedangkan luas puncak kristalin memerlukan baseline lokal di atas halo amorf.",
+  "Menerapkan persamaan Scherrer pada partikel mikron (>100 nm); Scherrer hanya valid untuk kristalit skala nanometer (1–100 nm).",
+];
+
+/** Kisi-kisi komponen laporan akhir Modul 5 XRD. */
+export const M5_REPORT_GRID: readonly string[] = [
+  "Grafik difraktogram komparatif hasil olahan OriginPro (standar CCDC 1051975 vs sampel 1:2, 1:3, 1:4 tertumpuk rapi dan ternormalisasi).",
+  "Tabel indexing puncak difraksi utama (hkl, 2θ standar VESTA, 2θ eksperimen, nilai d-spacing, dan pergeseran sudut Δ2θ).",
+  "Tabel integrasi luas puncak kristalin, luas total, dan persentase kristalinitas relatif terhadap sampel 1:2.",
+  "Tabel perhitungan ukuran kristalit menggunakan persamaan Scherrer untuk 3 puncak utama (FWHM dalam radian, D dalam nm, dan D rata-rata).",
+  "Pembahasan komparatif mengenai pengaruh variasi rasio molar reaktan terhadap derajat kristalinitas dan morfologi struktur Al-Fum MOF.",
+];
+
+/** Pertanyaan penuntun pembahasan laporan. */
+export const M5_CONCLUSION_QUESTIONS: readonly string[] = [
+  "Apakah fasa kristal yang terbentuk pada ketiga variasi rasio sintesis sesuai dengan struktur standar Al-Fum MOF (CCDC 1051975)?",
+  "Bagaimana pengaruh variasi rasio molar reaktan (1:2, 1:3, 1:4) terhadap derajat kristalinitas sampel?",
+  "Berapa ukuran kristalit rata-rata sampel Al-Fum, dan apakah persamaan Scherrer dapat diterapkan secara mutlak untuk seluruh ukuran partikel?",
+  "Faktor eksperimental apa yang menyebabkan pergeseran kecil posisi sudut 2θ antara sampel sintesis dan pola standar VESTA?",
+];

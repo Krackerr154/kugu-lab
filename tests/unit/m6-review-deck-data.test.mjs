@@ -145,7 +145,7 @@ test("adding the M6 deck left the M4 deck and its ids untouched", () => {
   assert.deepEqual([...REVIEW_SLIDE_IDS], [
     "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10",
   ]);
-  assert.equal(ALL_REVIEW_SLIDE_IDS.length, 48);
+  assert.equal(ALL_REVIEW_SLIDE_IDS.length, 68);
   assert.equal(reviewDeckOfSlide("p5"), "m4");
   assert.equal(reviewDeckOfSlide("q5"), "m6");
   assert.equal(reviewDeckOfSlide("nope"), null);

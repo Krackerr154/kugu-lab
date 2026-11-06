@@ -27,6 +27,13 @@ const M4_REVIEW_SLIDE_CHAPTER = Object.freeze({
   p8: 'prove',
   p9: 'ready', p10: 'ready',
 });
+const M5_REVIEW_SLIDE_CHAPTER = Object.freeze({
+  s1: 'brief', s2: 'brief', s3: 'brief',
+  s4: 'understand', s5: 'understand', s6: 'understand', s7: 'understand', s8: 'understand', s9: 'understand',
+  s10: 'prove', s11: 'prove', s12: 'prove', s13: 'prove', s14: 'prove', s15: 'prove', s16: 'prove', s17: 'prove',
+  s18: 'ready', s19: 'ready', s20: 'ready',
+});
+
 const M6_REVIEW_SLIDE_CHAPTER = Object.freeze({
   q1: 'brief', q2: 'brief',
   q3: 'understand', q4: 'understand', q5: 'understand', q6: 'understand',
@@ -47,13 +54,15 @@ const M7_REVIEW_SLIDE_CHAPTER = Object.freeze({
 // Flat lookup the validator uses. The namespaces are disjoint, so spreading is safe.
 const ALL_REVIEW_SLIDE_CHAPTER = Object.freeze({
   ...M4_REVIEW_SLIDE_CHAPTER,
+  ...M5_REVIEW_SLIDE_CHAPTER,
   ...M6_REVIEW_SLIDE_CHAPTER,
   ...M7_REVIEW_SLIDE_CHAPTER,
 });
 
-export const REVIEW_DECK_IDS = Object.freeze(['m4', 'm6', 'm7']);
+export const REVIEW_DECK_IDS = Object.freeze(['m4', 'm5', 'm6', 'm7']);
 export const REVIEW_SLIDE_CHAPTER_BY_DECK = Object.freeze({
   m4: M4_REVIEW_SLIDE_CHAPTER,
+  m5: M5_REVIEW_SLIDE_CHAPTER,
   m6: M6_REVIEW_SLIDE_CHAPTER,
   m7: M7_REVIEW_SLIDE_CHAPTER,
 });
@@ -64,11 +73,13 @@ export const REVIEW_SLIDE_CHAPTER = M4_REVIEW_SLIDE_CHAPTER;
 export const REVIEW_SLIDE_IDS = Object.freeze(Object.keys(M4_REVIEW_SLIDE_CHAPTER));
 export const REVIEW_SLIDE_IDS_BY_DECK = Object.freeze({
   m4: REVIEW_SLIDE_IDS,
+  m5: Object.freeze(Object.keys(M5_REVIEW_SLIDE_CHAPTER)),
   m6: Object.freeze(Object.keys(M6_REVIEW_SLIDE_CHAPTER)),
   m7: Object.freeze(Object.keys(M7_REVIEW_SLIDE_CHAPTER)),
 });
 export const ALL_REVIEW_SLIDE_IDS = Object.freeze([
   ...REVIEW_SLIDE_IDS,
+  ...REVIEW_SLIDE_IDS_BY_DECK.m5,
   ...REVIEW_SLIDE_IDS_BY_DECK.m6,
   ...REVIEW_SLIDE_IDS_BY_DECK.m7,
 ]);
@@ -77,6 +88,7 @@ export const ALL_REVIEW_SLIDE_IDS = Object.freeze([
 export function reviewDeckOfSlide(slideId) {
   if (typeof slideId !== 'string') return null;
   if (REVIEW_SLIDE_IDS_BY_DECK.m4.includes(slideId)) return 'm4';
+  if (REVIEW_SLIDE_IDS_BY_DECK.m5.includes(slideId)) return 'm5';
   if (REVIEW_SLIDE_IDS_BY_DECK.m6.includes(slideId)) return 'm6';
   if (REVIEW_SLIDE_IDS_BY_DECK.m7.includes(slideId)) return 'm7';
   return null;

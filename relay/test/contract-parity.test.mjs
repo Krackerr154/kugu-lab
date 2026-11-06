@@ -19,6 +19,11 @@ const CASES = [
   { version: 1, stageId: 'understand', slideId: 'p6', simState: { playing: true, time: 4.5, complexed: true, view: 'cell' } },
   { version: 1, stageId: 'prove', slideId: 'p8', phase: 'review', dataSetId: 'abc12345' },
   { version: 1, stageId: 'ready', phase: 'games' },
+  // Module 5 (XRD) deck — s* namespace.
+  { version: 1, stageId: 'brief', slideId: 's1' },
+  { version: 1, stageId: 'understand', slideId: 's6' },
+  { version: 1, stageId: 'prove', slideId: 's14' },
+  { version: 1, stageId: 'ready', slideId: 's20' },
   // Module 6 (FTIR) deck — same waypoint model, its own q* namespace.
   { version: 1, stageId: 'brief', slideId: 'q1' },
   { version: 1, stageId: 'understand', slideId: 'q6' },

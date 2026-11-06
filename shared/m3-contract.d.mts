@@ -4,11 +4,13 @@ export type M3DemoAgentId = 'edta' | 'citrate' | 'peg400';
 export type M3DemoOverlay = { kind: 'complexing-agent'; id: M3DemoAgentId } | null;
 export type ReviewSlideId =
   | 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'p6' | 'p7' | 'p8' | 'p9' | 'p10'
+  | 's1' | 's2' | 's3' | 's4' | 's5' | 's6' | 's7' | 's8' | 's9' | 's10'
+  | 's11' | 's12' | 's13' | 's14' | 's15' | 's16' | 's17' | 's18' | 's19' | 's20'
   | 'q1' | 'q2' | 'q3' | 'q4' | 'q5' | 'q6' | 'q7' | 'q8' | 'q9' | 'q10' | 'q11' | 'q12' | 'q13'
   | 'r1' | 'r2' | 'r3' | 'r4' | 'r5' | 'r6' | 'r7' | 'r8' | 'r9' | 'r10'
   | 'r11' | 'r12' | 'r13' | 'r14' | 'r15' | 'r16' | 'r17' | 'r18' | 'r19' | 'r20'
   | 'r21' | 'r22' | 'r23' | 'r24' | 'r25';
-export type ReviewDeckId = 'm4' | 'm6' | 'm7';
+export type ReviewDeckId = 'm4' | 'm5' | 'm6' | 'm7';
 export type ReviewPhase = 'review' | 'games';
 export interface M3SimState {
   playing: boolean;
