@@ -23,7 +23,17 @@ export function useOptionalM4GuidedAccess() {
   return useContext(Context);
 }
 
-export function M4GuidedAccessGate({ children }: { children: React.ReactNode }) {
+interface M4GuidedAccessGateProps {
+  children: React.ReactNode;
+  moduleTag?: string;
+  moduleTitle?: string;
+}
+
+export function M4GuidedAccessGate({
+  children,
+  moduleTag = "M4 · Sn–Bi electrodeposition",
+  moduleTitle = "Mulai persiapan praktikum",
+}: M4GuidedAccessGateProps) {
   const { identity, ready, storageOk, setNim, continueAsGuest } = useStudentIdentity();
   const [draft, setDraft] = useState("");
   const [nimError, setNimError] = useState<string | null>(null);
@@ -150,8 +160,8 @@ export function M4GuidedAccessGate({ children }: { children: React.ReactNode }) 
               <div className="flex items-start gap-3">
                 <span aria-hidden="true" className="material-symbols-outlined flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-[var(--primary-container)]">badge</span>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--muted)]">M4 · Sn–Bi electrodeposition</p>
-                  <h2 id="m4-guided-nim-title" className="mt-1 text-xl font-bold text-[var(--primary)]" style={{ fontFamily: "Montserrat, sans-serif" }}>Mulai persiapan praktikum</h2>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--muted)]">{moduleTag}</p>
+                  <h2 id="m4-guided-nim-title" className="mt-1 text-xl font-bold text-[var(--primary)]" style={{ fontFamily: "Montserrat, sans-serif" }}>{moduleTitle}</h2>
                 </div>
               </div>
               <p id="m4-guided-nim-description" className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">

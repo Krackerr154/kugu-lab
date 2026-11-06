@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
+import { StudentIdentityProvider } from "@/components/shared/StudentIdentityProvider";
+import { StudentIdentityGate } from "@/components/shared/StudentIdentityGate";
+import { M4GuidedAccessGate } from "@/components/shared/M4GuidedAccessGate";
+import { M5PresentationHero } from "@/components/presentation/M5PresentationHero";
 
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { LabNotebook } from "@/components/shared/LabNotebook";
@@ -25,37 +29,21 @@ export default function M5Page() {
   const sample = ALFUM_SAMPLES[0];
 
   return (
-    <ModuleLayout module={module}>
-      {/* ── Sesi Presentasi & Review Terpandu ──────────────────────────── */}
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--primary)]/30 bg-[var(--primary)]/5 p-4 sm:p-5">
-        <div className="space-y-0.5 min-w-0">
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--primary)]">
-            <span aria-hidden="true" className="material-symbols-outlined text-base">slideshow</span>
-            Sesi Presentasi &amp; Review Terpandu
-          </span>
-          <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
-            Ikuti pemaparan 20 slide interaktif bersama asisten praktikum dengan sinkronisasi langsung via WebSocket.
-          </p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Link
-            href="/modules/m5-xrd/presentation"
-            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-[var(--primary-container)] px-3.5 py-1.5 text-xs font-bold text-[var(--on-primary)] hover:opacity-90 transition-opacity shadow-xs"
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-base">play_arrow</span>
-            <span>Buka Presentasi</span>
-          </Link>
-          <Link
-            href="/modules/m5-xrd/presenter"
-            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--surface-container)] transition-colors"
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-base">co_present</span>
-            <span>Mode Asisten</span>
-          </Link>
-        </div>
-      </div>
+    <StudentIdentityProvider>
+      <M4GuidedAccessGate
+        moduleTag="M5 · Difraksi Sinar-X Serbuk (XRD)"
+        moduleTitle="Mulai persiapan praktikum Modul 5"
+      >
+        <ModuleLayout module={module}>
+          {/* ── Status Identitas Praktikan / Asisten ─────────────────────── */}
+          <div className="mt-4">
+            <StudentIdentityGate hidePrompt />
+          </div>
 
-      <section className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
+          {/* ── Sesi Presentasi & Review Terpandu ──────────────────────────── */}
+          <M5PresentationHero />
+
+          <section className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-control)] p-5">
         <h2 className="text-lg font-bold">Teori Singkat</h2>
         <div className="mt-2 space-y-2 text-sm text-[var(--text-secondary)]">
           <p>
@@ -230,5 +218,7 @@ export default function M5Page() {
         />
       </div>
     </ModuleLayout>
+    </M4GuidedAccessGate>
+    </StudentIdentityProvider>
   );
 }
