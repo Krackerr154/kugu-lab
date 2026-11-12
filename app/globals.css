@@ -1793,3 +1793,198 @@ body:has([data-presenter-console]) .app-shell {
   max-height: none;
   overflow-y: visible;
 }
+
+/* ── M6 (FTIR) deck: projector scale-up ────────────────────────────────────
+   M6 never overflowed the frame — the deck fits even at phones. Its problem
+   on a projector is the opposite of M5's: compact 20px headings, 14px
+   bullets and 128px-tall panels inside a 900px viewport, so the slide uses
+   around 30% of the screen (text-only) to 73% (tallest spectrum slide).
+   This block scales type and cards up on tall desktop screens only; phone
+   and 1280x720 laptop layouts stay byte-for-byte as they are. */
+@media (min-width: 1024px) and (min-height: 800px) {
+  [data-deck="m6"] .m4-deck-heading {
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+  [data-deck="m6"] .m4-deck-chapter {
+    padding-bottom: 0.75rem;
+  }
+  /* Text-only slides (q1-q3, q5): give the bullets the full frame width and
+     larger type so a 6-line slide fills the projector instead of floating. */
+  [data-deck="m6"] .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets {
+    max-width: 62rem;
+  }
+  [data-deck="m6"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets {
+    padding: 1.25rem;
+  }
+  [data-deck="m6"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets li {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  [data-deck="m6"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets ul {
+    gap: 0.9rem;
+    justify-content: flex-start;
+  }
+  [data-deck="m6"] .m4-deck-bullets .m4-deck-bullet-badge {
+    height: 1.375rem;
+    width: 1.375rem;
+    min-width: 1.375rem;
+    max-width: 1.375rem;
+    font-size: 0.75rem;
+  }
+  [data-deck="m6"] .m4-deck-panel p,
+  [data-deck="m6"] .m4-deck-panel li,
+  [data-deck="m6"] .m4-deck-panel td,
+  [data-deck="m6"] .m4-deck-panel th {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+  [data-deck="m6"] .m4-deck-panel .text-\[10px\] {
+    font-size: 0.75rem;
+  }
+  [data-deck="m6"] .m4-deck-panel .text-\[11px\] {
+    font-size: 0.8125rem;
+  }
+  [data-deck="m6"] .m4-deck-panel .text-\[12px\] {
+    font-size: 0.9rem;
+  }
+  [data-deck="m6"] .m4-deck-panel svg {
+    max-height: 500px;
+  }
+  /* Spectrum cards: give the figure the height it was always drawn for
+     (210px + legend + band list ≈ 320px) instead of the squeezed 128px,
+     and let the two-column band list breathe. */
+  [data-deck="m6"] .m4-deck-panel .text-\[10px\].font-semibold {
+    font-size: 0.75rem;
+  }
+}
+
+/* ── M6 (FTIR) deck: desktop two-column split ───────────────────────────────
+   The shared two-column rule is gated on `max-height: 500px` (landscape
+   phones), so on a 1440x900 projector the panel still stacked *under* the
+   bullets: measured bullets 162px + 24px gap + panel 135px inside a 900px
+   body, leaving 345px of dead white space at the bottom of every panel slide
+   and squeezing a 210px-drawn spectrum into 128px. M6 has room to sit side by
+   side, so give the figure its own column and the height it was drawn for. */
+@media (min-width: 1024px) and (min-height: 800px) {
+  [data-deck="m6"] .m4-deck-split:has(.m4-deck-panel):has(.m4-deck-bullets) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+  [data-deck="m6"] .m4-deck-split > .m4-deck-panel,
+  [data-deck="m6"] .m4-deck-split > .m4-deck-bullets {
+    min-height: 0;
+  }
+  /* The panel is a read-only figure the presenter points at; let it take the
+     column's full height instead of collapsing to its 128px content box. */
+  [data-deck="m6"] .m4-deck-split > .m4-deck-panel {
+    height: auto;
+    max-height: none;
+    align-self: stretch;
+  }
+  [data-deck="m6"] .m4-deck-panel figure,
+  [data-deck="m6"] .m4-deck-panel > div {
+    height: auto;
+  }
+  /* Spectrum slides carry a 210px chart + legend + band list. Give the SVG
+     element the height its viewBox was authored for so the drawing scales up
+     with the column instead of sitting at its phone size. */
+  [data-deck="m6"] .m4-deck-panel svg[role="img"] {
+    height: 300px;
+    width: 100%;
+  }
+  [data-deck="m6"] .m4-deck-panel svg[role="img"] text {
+    font-size: 11.5px;
+  }
+  /* Mode gallery: the three cards were 92px wide inside a 896px row. */
+  [data-deck="m6"] .m4-deck-panel figure svg {
+    max-width: 150px;
+  }
+  [data-deck="m6"] .m4-deck-panel figcaption span:first-child {
+    font-size: 0.875rem;
+  }
+  [data-deck="m6"] .m4-deck-panel figcaption span:last-child {
+    font-size: 0.8125rem;
+  }
+}
+
+/* More of the same: the slide still sat in the top ~55% of an 810px body with
+   345px of white below it. Distribute that height instead of scaling glyphs
+   again — the panels grow into the frame and the type stays readable. */
+@media (min-width: 1024px) and (min-height: 800px) {
+  [data-deck="m6"] main.m4-deck-slidebody {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+  }
+  [data-deck="m6"] main.m4-deck-slidebody > [data-slide-direction] {
+    width: 100%;
+  }
+  [data-deck="m6"] .m4-deck-split:has(.m4-deck-panel):has(.m4-deck-bullets) {
+    gap: 1.5rem;
+  }
+  /* A panel whose content is a short list or a small table has nothing to
+     scale; let it centre in its column instead of hugging the top edge. */
+  [data-deck="m6"] .m4-deck-panel > div {
+    height: 100%;
+  }
+}
+
+/* Measured 11.5px effective label size on the spectrum after the first pass
+   (11.5px authored x 1.0 scale). A back row cannot read that. 13px authored on
+   a 300px-tall chart lands ~13px effective, which is the floor this deck uses
+   for body text elsewhere. */
+@media (min-width: 1024px) and (min-height: 800px) {
+  [data-deck="m6"] .m4-deck-panel svg[role="img"] text {
+    font-size: 13px;
+  }
+  [data-deck="m6"] .m4-deck-panel svg[role="img"] {
+    height: 340px;
+  }
+  /* The band list under each spectrum: 11px -> 13px, two columns kept. */
+  [data-deck="m6"] .m4-deck-panel ul.grid li {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+  [data-deck="m6"] .m4-deck-panel ul.grid {
+    gap: 0.35rem 0.75rem;
+  }
+  /* Legend (Asam fumarat / Al-Fum) above the Al-Fum trace. */
+  [data-deck="m6"] .m4-deck-panel > div > div.text-\[10px\].font-semibold {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Last step of the scale-up. At 1440x900 the tallest slide was still using
+   only 68% of the body, so there was room to raise body copy to a true
+   projector size (16px bullets, 15px chart labels) without any slide
+   overflowing. Anything that pushes a slide past the frame is a regression. */
+@media (min-width: 1024px) and (min-height: 800px) {
+  [data-deck="m6"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets li {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+  [data-deck="m6"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets ul {
+    gap: 1rem;
+  }
+  [data-deck="m6"] .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets li {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  [data-deck="m6"] .m4-deck-panel svg[role="img"] text {
+    font-size: 15px;
+  }
+  [data-deck="m6"] .m4-deck-panel ul.grid li,
+  [data-deck="m6"] .m4-deck-panel > div > div.text-\[10px\].font-semibold {
+    font-size: 0.875rem;
+  }
+  [data-deck="m6"] .m4-deck-panel p,
+  [data-deck="m6"] .m4-deck-panel li,
+  [data-deck="m6"] .m4-deck-panel td,
+  [data-deck="m6"] .m4-deck-panel th {
+    font-size: 0.875rem;
+  }
+}
