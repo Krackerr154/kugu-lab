@@ -1988,3 +1988,32 @@ body:has([data-presenter-console]) .app-shell {
     font-size: 0.875rem;
   }
 }
+
+/* ── M6 (FTIR/TGA) deck: body containment on narrow phones ─────────────────
+   Measured at 360x740 and 320x640: the slide body ended at 809px inside a
+   740px viewport, so the last bullet/card of ten slides ran under the fixed
+   footer and was clipped. `main` had `overflow-y: visible` and
+   `min-height: auto`, so a tall slide grew the element instead of scrolling
+   inside it — the same containment bug the M5 deck had. Giving the body a real
+   clip and a zero min-height turns "content under the footer" into "body
+   scrolls", which is what the student expects on a phone.
+
+   Scoped to M6 and to screens too short to show a slide whole; tall desktops
+   keep their centred, non-scrolling layout. */
+@media (max-width: 1023px), (max-height: 799px) {
+  [data-deck="m6"] main.m4-deck-slidebody {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  /* Centre only when the slide actually fits; otherwise start at the top so
+     the heading is visible rather than pushed off by `justify-content: center`. */
+  [data-deck="m6"] main.m4-deck-slidebody {
+    display: block;
+    justify-content: initial;
+  }
+  [data-deck="m6"] main.m4-deck-slidebody > [data-slide-direction] {
+    height: auto;
+    flex: initial;
+  }
+}
