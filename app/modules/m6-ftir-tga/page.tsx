@@ -1,6 +1,10 @@
 import { ModuleLayout } from "@/components/layout/ModuleLayout";
 
 import { Equation } from "@/components/shared/Equation";
+import { StudentIdentityProvider } from "@/components/shared/StudentIdentityProvider";
+import { StudentIdentityGate } from "@/components/shared/StudentIdentityGate";
+import { M4GuidedAccessGate } from "@/components/shared/M4GuidedAccessGate";
+import { M6PresentationHero } from "@/components/presentation/M6PresentationHero";
 import { SafetyCallout } from "@/components/shared/SafetyCallout";
 import { LabNotebook } from "@/components/shared/LabNotebook";
 import { ReportChecklist } from "@/components/shared/ReportChecklist";
@@ -20,7 +24,20 @@ export default function M6Page() {
   const module = getModule("m6-ftir-tga")!;
 
   return (
+    <StudentIdentityProvider>
+      <M4GuidedAccessGate
+        moduleTag="M6 · Karakterisasi FTIR dan TGA"
+        moduleTitle="Mulai persiapan praktikum Modul 6"
+      >
     <ModuleLayout module={module}>
+      {/* ── Status identitas praktikan / asisten ─────────────────────────── */}
+      <div className="mt-4">
+        <StudentIdentityGate hidePrompt />
+      </div>
+
+      {/* ── Pintu masuk slideshow (praktikan & asisten) ───────────────────── */}
+      <M6PresentationHero />
+
       {/* ── FTIR: TEORI ──────────────────────────────────────────────────── */}
       <section
         id="m6-ftir-teori"
@@ -276,5 +293,7 @@ export default function M6Page() {
         />
       </div>
     </ModuleLayout>
+      </M4GuidedAccessGate>
+    </StudentIdentityProvider>
   );
 }
