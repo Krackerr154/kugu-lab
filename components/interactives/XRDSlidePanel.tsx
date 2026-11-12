@@ -40,7 +40,7 @@ function ReflectionsPanel() {
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-[var(--outline-variant)] text-[10px] uppercase tracking-wider text-[var(--muted)]">
-              <th className="py-2 pr-3">Indeks (hkl)</th>
+              <th className="sticky left-0 z-10 bg-[var(--surface)] py-2 pr-3">Indeks (hkl)</th>
               <th className="py-2 px-3 text-right">2θ Acuan (°)</th>
               <th className="py-2 px-3 text-right">d-spacing (Å)</th>
               <th className="py-2 pl-3 text-right">Intensitas Relatif</th>
@@ -49,7 +49,7 @@ function ReflectionsPanel() {
           <tbody className="divide-y divide-[var(--outline-variant)]">
             {ALFUM_STANDARD_REFLECTIONS.map((r) => (
               <tr key={r.hkl} className="hover:bg-[var(--surface-container-highest)]/40 transition-colors">
-                <td className="py-2 pr-3 font-mono font-bold text-[var(--primary)]">({r.hkl})</td>
+                <td className="sticky left-0 z-10 bg-[var(--surface)] py-2 pr-3 font-mono font-bold text-[var(--primary)]">({r.hkl})</td>
                 <td className="py-2 px-3 text-right font-mono">{r.twoThetaStd.toFixed(2)}°</td>
                 <td className="py-2 px-3 text-right font-mono">{dSpacing(r.twoThetaStd).toFixed(2)} Å</td>
                 <td className="py-2 pl-3 text-right">
@@ -70,6 +70,9 @@ function ReflectionsPanel() {
         Panjang gelombang radiasi Cu Kα1: λ = {XRD_CONSTANTS.lambdaA} Å. Jarak antarbidang d dihitung dari Hukum Bragg:
         d = λ / (2 sin θ). Puncak (011) di 10,39° adalah refleksi diagnostik utama.
       </Caption>
+      <p className="mt-1.5 text-[10px] leading-snug text-[var(--muted)] lg:hidden">
+        Geser tabel ke samping untuk melihat semua kolom.
+      </p>
     </PanelShell>
   );
 }
@@ -83,7 +86,7 @@ function SamplesPanel() {
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-[var(--outline-variant)] text-[10px] uppercase tracking-wider text-[var(--muted)]">
-              <th className="py-2 pr-2">Sampel</th>
+              <th className="sticky left-0 z-10 bg-[var(--surface)] py-2 pr-2">Sampel</th>
               <th className="py-2 px-2 text-right">2θ (011)</th>
               <th className="py-2 px-2 text-right">FWHM (°)</th>
               <th className="py-2 px-2 text-right">D (nm)</th>
@@ -96,7 +99,7 @@ function SamplesPanel() {
               const crystalliteD = GUIDE_SCHERRER_D011_NM[s.id];
               return (
                 <tr key={s.id} className="hover:bg-[var(--surface-container-highest)]/40 transition-colors">
-                  <td className="py-2 pr-2 font-semibold text-[var(--foreground)]">Al-Fum {s.id}</td>
+                  <td className="sticky left-0 z-10 bg-[var(--surface)] py-2 pr-2 font-semibold text-[var(--foreground)]">Al-Fum {s.id}</td>
                   <td className="py-2 px-2 text-right font-mono">{peak2Theta.toFixed(2)}°</td>
                   <td className="py-2 px-2 text-right font-mono">{s.fwhm011Deg.toFixed(3)}°</td>
                   <td className="py-2 px-2 text-right font-mono font-bold text-[var(--primary)]">
@@ -123,6 +126,9 @@ function SamplesPanel() {
         Sampel rasio 1:2 memiliki profil paling teratur dengan kristalinitas 100% dan ukuran kristalit 24,4 nm. Rasio
         1:4 mengalami penurunan tajam menjadi 43,5% akibat kelebihan ligan fumarat yang tidak terkoordinasi sempurna.
       </Caption>
+      <p className="mt-1.5 text-[10px] leading-snug text-[var(--muted)] lg:hidden">
+        Geser tabel ke samping untuk melihat semua kolom.
+      </p>
     </PanelShell>
   );
 }

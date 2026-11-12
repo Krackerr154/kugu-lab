@@ -1541,3 +1541,255 @@ body:has([data-presenter-console]) .app-shell {
   animation-iteration-count: infinite !important;
   animation-play-state: running !important;
 }
+
+/* ── M5 (XRD) deck on a landscape phone ───────────────────────────────────────
+   The shared compact split puts bullets and panel side by side, which at
+   844×390 leaves the panel ~190px wide. The XRD charts are drawn at 1 unit =
+   1 CSS px of their frame, so a 190px frame scaled the anatomy chart's axis
+   text to 6px and capped the panel at 46vh — the figure became both tiny and
+   scroll-bound. M5 stacks the split on these viewports instead: the chart gets
+   the full width (labels stay at their declared size) and the slide body
+   scrolls, which is the right trade for a diagram-led deck. */
+@media (orientation: landscape) and (max-height: 500px) {
+  [data-deck="m5"] .m4-deck-split {
+    display: block;
+  }
+  [data-deck="m5"] .m4-deck-split > * + * {
+    margin-top: 0.75rem;
+  }
+  [data-deck="m5"] .m4-deck-heading {
+    font-size: 1.0625rem;
+  }
+}
+
+/* Desktop M5: bullets and figure side by side. The shared split only splits
+   on short landscape, so on a 1440×900 projector the slide stacked a 292px
+   chart under four bullets and overflowed the screen by ~400px. Two columns
+   put both on one screen and give the chart the bigger share, which is what
+   the assistant points at while talking.
+   The chart is the taller column on every diagram slide, so the width it gets
+   decides whether the slide fits: at 1.3fr the anatomy card needed 1016px in
+   an 806px body and pushed three slides into a scroll. 1.35fr makes the panel
+   the height driver at a narrower width, and the 780px cap on its figure
+   keeps the drawing from eating the whole screen on ultrawide. */
+@media (min-width: 1024px) {
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel):has(.m4-deck-bullets) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+  [data-deck="m5"] .m4-deck-panel svg {
+    max-width: 780px;
+    margin-inline: auto;
+  }
+  /* The legend strip and the four key cards live under the chart. In a
+     two-column slide they double the card's height, so the anatomy slide
+     scrolled no matter how wide the panel was. The numbered callouts ①②③④
+     are already drawn on the figure and the bullets on the left name each
+     one, so the strip is redundant here; the key cards read as a second
+     column of bullets and are the part that actually overflows. */
+  [data-deck="m5"] .m4-deck-panel section > div[class*="grid-cols-2"],
+  [data-deck="m5"] .m4-deck-panel section > div[class*="grid-cols-1"] {
+    display: none;
+  }
+  /* One narrow chart column instead of two. The lattice widget stacks its two
+     320-unit charts at 650px, which is 765px of figure inside a 806px slide
+     body — with a header line, a slider row, a caption and a footnote there was
+     no way to fit it. Side by side on desktop the same charts are ~295px each,
+     which is still above the width where the labels stay at their authored
+     size, and the card is 500px rather than 765px. */
+  [data-deck="m5"] .m4-deck-panel div[class~="mt-4"][class~="grid"]:not([class*="sm:grid-cols-3"]):not([class*="grid-cols-2"]):not([class*="grid-cols-4"]) {
+    gap: 0.75rem;
+  }
+  [data-deck="m5"] .m4-deck-panel div[class~="mt-4"][class~="grid"]:not([class*="sm:grid-cols-3"]):not([class*="grid-cols-2"]):not([class*="grid-cols-4"]) > div {
+    padding: 0.5rem;
+  }
+  [data-deck="m5"] .m4-deck-panel div[class~="mt-4"][class~="grid"]:not([class*="sm:grid-cols-3"]):not([class*="grid-cols-2"]):not([class*="grid-cols-4"]) > div > div[class*="mb-1.5"] {
+    font-size: 0.6875rem;
+    margin-bottom: 0.25rem;
+  }
+  /* Bragg card: it lands 17px past the slide body once the chart is drawn at
+     its true width. Reclaiming the outer card padding and the control rows'
+     outer margins covers that without touching the drawing. */
+  [data-deck="m5"] .m4-deck-panel section[class*="p-4"] {
+    padding: 0.75rem;
+  }
+  [data-deck="m5"] .m4-deck-panel section > div[class~="mt-3.5"] {
+    margin-top: 0.5rem;
+  }
+  [data-deck="m5"] .m4-deck-panel section > div[class~="mt-3"] {
+    margin-top: 0.4rem;
+  }
+  /* Full-width text slides: the compact rules size them for a phone held
+     sideways, which leaves a third of a projector empty. */
+  [data-deck="m5"] .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets {
+    padding: 1.5rem 1.75rem;
+  }
+  [data-deck="m5"] .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets ul {
+    gap: 1.1rem;
+    justify-content: flex-start;
+  }
+  [data-deck="m5"] .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets ul > li {
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  [data-deck="m5"] .m4-deck-split:not(:has(.m4-deck-panel)) .m4-deck-bullets ul > li .m4-deck-bullet-key {
+    width: 10rem;
+    font-size: 1.0625rem;
+  }
+}
+
+/* Projector typography. The M5 deck carries `.m4-deck-compact`, and those
+   compact rules are written for a 390px-tall phone: they pin the heading to
+   ~17px and the bullets to ~10.5px, which on a 1440×900 projector is the size
+   of a footnote in the back row. This block restores slide-scale type for the
+   room the deck is actually shown in, and is gated on height as well as width:
+   raising type on a 720px-tall laptop pushes the diagram slides into a scroll,
+   so those screens keep the compact scale. */
+
+/* Short desktop/tablet: the four diagram slides (anatomy, lattice, Bragg) still
+   ran 81–271px past the body at 1366×768, 1280×720 and 820×1180. The chart is
+   the height driver and its height tracks its width, so on these screens the
+   panel trades width back to the bullets: ~535px of chart instead of 650px cuts
+   ~50px of height and keeps the figure readable. */
+@media (min-width: 1024px) and (min-height: 640px) and (max-height: 799px) {
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel):has(.m4-deck-bullets) {
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  }
+  /* 1280×720 budget: 626px of body, and chapter + bullets already spend 325px
+     of it regardless of the figure. Tightening the chapter block and bullet
+     gaps buys back ~45px so the full slide is 129px closer to fitting. */
+  [data-deck="m5"] .m4-deck-chapter {
+    padding-bottom: 0.4rem;
+    row-gap: 0.15rem;
+  }
+  [data-deck="m5"] .m4-deck-slidebody > [data-slide-direction] {
+    row-gap: 0.75rem;
+  }
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets {
+    padding: 0.75rem;
+  }
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets ul {
+    gap: 0.35rem;
+  }
+  /* Short screens: cap the figure column instead of deleting its controls. The
+     panel scrolls inside its own column while the heading, bullets and footer
+     stay put, so the slide body never overflows and content stays whole.
+     Uses the M5 containment rule further down as the cascade reference — that
+     rule unsets the cap unconditionally, so this one has to be specific enough
+     to win: `[data-deck] .m4-deck-panel.m4-deck-panel`. */
+  [data-deck="m5"] .m4-deck-panel.m4-deck-panel {
+    /* What is left after chrome (header 44 + footer 45 + body padding 16) and
+       the heading block (~70): the panel gets the rest, the bullets included,
+       because the bullets sit beside it rather than above it in this layout. */
+    max-height: calc(100dvh - 19rem);
+    overflow-y: auto;
+  }
+  /* On a very short screen a slide where the bullets alone already fill the
+     body would still overflow, because the grid row is as tall as its tallest
+     item. Capping the bullet column too keeps the pair inside the frame; each
+     column scrolls on its own rather than pushing the footer off-screen. */
+  [data-deck="m5"] .m4-deck-split > .m4-deck-bullets {
+    max-height: calc(100dvh - 19rem);
+    overflow-y: auto;
+  }
+  /* A grid item's default `min-height: auto` refuses to shrink below its
+     content, so the cap above was measured but the row still grew to the
+     panel's full height. `minmax(0, …)` rows + `min-height: 0` let the row take
+     the capped height and hand the scroll to the panel itself. */
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel):has(.m4-deck-bullets) {
+    grid-template-rows: minmax(0, auto);
+  }
+  [data-deck="m5"] .m4-deck-split > .m4-deck-panel,
+  [data-deck="m5"] .m4-deck-split > .m4-deck-bullets {
+    min-height: 0;
+  }
+}
+
+/* Portrait tablets and narrow windows (≥768px): the shared 1024px breakpoint
+   never fires, so the M5 diagram slides kept a single stacked column and ran
+   271px past the frame. Same containment as the short-desktop block, with the
+   panel taking what remains under the heading. */
+@media (min-width: 768px) and (max-width: 1023px) and (min-height: 640px) {
+  /* The shared portrait block pins the panel to `max-height: none !important` so
+     the slide body scrolls as one document. That is right for M4 but wrong for
+     M5, where the diagram cards are 950px tall inside a 1100px body and pushed
+     the footer off-screen. M5 scrolls the figure inside its column instead, so
+     these rules have to outrank the shared `!important`. */
+  [data-deck="m5"] .m4-deck-panel {
+    /* Reserve = chrome + heading + split margins + slack for a two-line title.
+       Measured on 1024px-tall tablets: -24rem left 99px over, -26.5rem 59px,
+       -28.5rem 27px, so the requirement is ~30.5rem. */
+    max-height: calc(100dvh - 30.5rem) !important;
+    overflow-y: auto !important;
+  }
+  [data-deck="m5"] .m4-deck-split > .m4-deck-bullets {
+    max-height: calc(100dvh - 30.5rem);
+    overflow-y: auto;
+  }
+  [data-deck="m5"] .m4-deck-split > .m4-deck-panel,
+  [data-deck="m5"] .m4-deck-split > .m4-deck-bullets {
+    min-height: 0;
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 800px) {
+  [data-deck="m5"] .m4-deck-heading {
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+  [data-deck="m5"] .m4-deck-chapter {
+    padding-bottom: 0.75rem;
+  }
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets {
+    padding: 1.25rem;
+  }
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets li {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets ul {
+    gap: 0.9rem;
+    justify-content: flex-start;
+  }
+  [data-deck="m5"] .m4-deck-split:has(.m4-deck-panel) .m4-deck-bullets .m4-deck-bullet-key {
+    width: 8.5rem;
+    display: inline-flex;
+    margin-right: 0;
+  }
+  [data-deck="m5"] .m4-deck-bullets .m4-deck-bullet-badge {
+    height: 1.375rem;
+    width: 1.375rem;
+    min-width: 1.375rem;
+    max-width: 1.375rem;
+    font-size: 0.75rem;
+  }
+  [data-deck="m5"] .m4-deck-panel p {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+}
+
+/* ── M5 (XRD) deck frame containment ─────────────────────────────────────────
+   The slide body is a flex child of the fixed `m4-deck-fit` frame. Its default
+   `min-height: auto` lets a tall diagram card grow the body instead of scrolling
+   inside it: measured on 1280×720 the panel was 994px, main grew to 720px (the
+   whole frame), the header was pushed to 0px tall, and the footer overlapped the
+   slide. `min-height: 0` plus a real clip restores the intended shape — header,
+   scrolling body, footer — and keeps the overflow measurement honest. */
+[data-deck="m5"] main.m4-deck-slidebody {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* The M5 deck scrolls as one document: body first, then the figure. A capped
+   panel would add a second scrollbar inside the first, and because the panel is
+   `overflow-y: auto` a scrollbar that appears on desktop narrows the chart by
+   ~10px — enough to make the measured width wrong and shrink every label a few
+   percent. Removing the cap keeps one scroll axis and one true width. */
+[data-deck="m5"] .m4-deck-panel {
+  max-height: none;
+  overflow-y: visible;
+}

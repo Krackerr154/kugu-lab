@@ -17,6 +17,7 @@
  */
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useMeasuredWidth } from "@/components/shared/useMeasuredWidth";
 
 import {
   ALFUM_STANDARD_REFLECTIONS,
@@ -120,6 +121,7 @@ export function CrystalOrderContinuum() {
   const [playing, setPlaying] = useState(false);
   const reduced = useReducedMotion();
   const describedBy = useId();
+  const { ref: dualRef, width: dualW } = useMeasuredWidth(720);
 
   const disorderRef = useRef(disorder);
   disorderRef.current = disorder;
@@ -362,8 +364,18 @@ export function CrystalOrderContinuum() {
         </div>
       </div>
 
-      {/* Dual visual panels */}
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      {/* Dual visual panels.
+          Side by side only when each panel can hold the 320-unit chart at its
+          natural size. At a landscape phone the panel column is ~478px, so a
+          two-column split gave each chart ~211px and scaled every label to 6px;
+          stacking keeps the drawing at 1:1 (or larger) and the reader scrolls a
+          little instead of squinting. 440 is the floor: below it each chart would
+          fall under ~205px and the axis labels under 8px, so a phone stacks. */}
+      <div
+        ref={dualRef}
+        className="mt-4 grid gap-3"
+        style={{ gridTemplateColumns: dualW >= 440 ? "1fr 1fr" : "1fr" }}
+      >
         {/* Panel 1: Lattice */}
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-lowest)] p-3 shadow-xs">
           <div className="mb-1.5 flex items-center justify-between text-xs">
@@ -405,9 +417,9 @@ export function CrystalOrderContinuum() {
               {/* Legend kecil di pojok */}
               <g transform="translate(10, 162)">
                 <circle cx={4} cy={-2} r={3.2} fill="#001f3f" />
-                <text x={10} y={1} fontSize={7.5} fill="var(--text-secondary)">Kation Al</text>
+                <text x={10} y={1} fontSize={9} fill="var(--text-secondary)">Kation Al</text>
                 <circle cx={62} cy={-2} r={2.8} fill="#d97706" />
-                <text x={68} y={1} fontSize={7.5} fill="var(--text-secondary)">Linker Fumarat</text>
+                <text x={68} y={1} fontSize={9} fill="var(--text-secondary)">Linker Fumarat</text>
               </g>
             </svg>
           </div>
@@ -446,21 +458,21 @@ export function CrystalOrderContinuum() {
               {TICKS_X.map((t) => (
                 <g key={t}>
                   <line x1={sx(t)} y1={baselineY} x2={sx(t)} y2={baselineY + 3.5} stroke="#64748b" strokeWidth={1} />
-                  <text x={sx(t)} y={baselineY + 13} fontSize={8.5} fill="#475569" textAnchor="middle">
+                  <text x={sx(t)} y={baselineY + 13} fontSize={9.5} fill="#475569" textAnchor="middle">
                     {t}°
                   </text>
                 </g>
               ))}
 
               {/* Ticks Y */}
-              <text x={marginLeft - 4} y={sy(50) + 3} fontSize={7.5} fill="#64748b" textAnchor="end">50</text>
-              <text x={marginLeft - 4} y={sy(100) + 3} fontSize={7.5} fill="#64748b" textAnchor="end">100</text>
-              <text x={marginLeft - 4} y={marginTop - 3} fontSize={8} fill="#475569" fontWeight={500} textAnchor="start">
+              <text x={marginLeft - 4} y={sy(50) + 3} fontSize={8.5} fill="#64748b" textAnchor="end">50</text>
+              <text x={marginLeft - 4} y={sy(100) + 3} fontSize={8.5} fill="#64748b" textAnchor="end">100</text>
+              <text x={marginLeft - 4} y={marginTop - 3} fontSize={9} fill="#475569" fontWeight={500} textAnchor="start">
                 Intensitas (a.u.)
               </text>
 
               {/* Judul Sumbu X */}
-              <text x={marginLeft + plotWidth / 2} y={170} fontSize={8.5} fill="#334155" fontWeight={600} textAnchor="middle">
+              <text x={marginLeft + plotWidth / 2} y={170} fontSize={9.5} fill="#334155" fontWeight={600} textAnchor="middle">
                 Sudut Difraksi 2θ (°)
               </text>
             </svg>
@@ -545,16 +557,34 @@ export function BraggDiagram() {
     }
   };
 
-  // Dimensions
-  const W = 600;
-  const H = 260;
+  // Dimensions — drawn at 1 unit = 1 CSS pixel of the measured frame.
+  //
+  // The design was authored on a 600-unit grid (reflection point at x=280,
+  // detector at x=495, 220-unit rays). Rendering that viewBox into a 330px
+  // panel scaled every label by 0.55, which put the θ labels and the ΔL badge
+  // at 4.7px — the geometry was there but unreadable. Below 520px the anchors
+  // are recomputed as fractions of the real width instead, so the drawing
+  // compresses rather than shrinks.
+  const { ref: measureRef, width } = useMeasuredWidth(560);
+  // Measured on the frame itself, so this is already the SVG's CSS width: the
+  // drawing keeps 1 unit = 1 px at every size instead of being shrunk by a
+  // viewBox scale (which is what made the θ labels 4.7px on a phone).
+  const W = Math.max(300, Math.round(width) || 560);
+  // 620, not 520: a two-column slide gives this card ~600px, and at that width
+  // the tall variant (260 units) pushed the slide 45px past the slide body. The
+  // compact layout is 28 units shorter and sets its type 15% larger, so it is
+  // the better read at 600px too — the full layout only earns its extra height
+  // on a wide solo card.
+  const compact = W < 620;
+  const H = compact ? 232 : 260;
+  const fs = (n: number) => (compact ? Math.round(n * 1.15 * 10) / 10 : n);
 
   // Lattice geometry
-  const y1 = 110;
-  const gap = Math.max(48, Math.min(84, d * 8.5));
+  const y1 = compact ? 96 : 110;
+  const gap = Math.max(compact ? 34 : 48, Math.min(84, d * 8.5));
   const y2 = y1 + gap;
   const y3 = Math.min(H - 20, y2 + gap * 0.7);
-  const x0 = 280;
+  const x0 = Math.round(W * (compact ? 0.46 : 0.467)); // 280 at 600
 
   // Visual angle clamped between 8 and 22 degrees for clean ray and detector alignment
   const visualTheta = Math.max(8, Math.min(22, theta));
@@ -562,13 +592,14 @@ export function BraggDiagram() {
   const cosT = Math.cos(vRad);
   const sinT = Math.sin(vRad);
   const tanT = Math.tan(vRad);
-  const L = 220;
+  const L = compact ? Math.round(W * 0.34) : 220;
 
   // Detector position and dimensions
-  const det_x = 495;
+  const detW = compact ? 58 : 75;
+  const det_x = compact ? W - detW - 4 : 495;
   const dx = det_x - x0;
   const dy = dx * tanT;
-  const det_h = gap + 34;
+  const det_h = gap + (compact ? 26 : 34);
   const det_center = ((y1 - dy) + (y2 - dy)) / 2;
   const det_top = Math.max(12, Math.min(130, det_center - det_h / 2));
 
@@ -583,8 +614,13 @@ export function BraggDiagram() {
   const p1 = { x: x0 - gap * sinT * cosT, y: y2 - gap * sinT * sinT };
   const p2 = { x: x0 + gap * sinT * cosT, y: y2 - gap * sinT * sinT };
 
-  // Atoms per row
-  const ATOM_XS = [100, 160, 220, 280, 340, 400, 460];
+  // Atoms per row: seven evenly spaced columns that stop short of the detector
+  // housing, so the last atom never hides behind it on a narrow canvas.
+  const atomLo = Math.round(W * 0.1);
+  const atomHi = Math.max(atomLo + 6, det_x - (compact ? 26 : 35));
+  const ATOM_XS = Array.from({ length: 7 }, (_, i) =>
+    Math.round(atomLo + ((atomHi - atomLo) * i) / 6)
+  );
 
   return (
     <section className="rounded-xl border border-[var(--border)] bg-white p-4 sm:p-5 shadow-xs">
@@ -725,8 +761,8 @@ export function BraggDiagram() {
       </div>
 
       {/* Diagram SVG */}
-      <div className="mt-3.5 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-muted)] p-1">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Geometri dan interferensi Hukum Bragg">
+      <div ref={measureRef} className="mt-3.5 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-muted)] p-1">
+        <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="Geometri dan interferensi Hukum Bragg">
           <defs>
             <marker id="bragg-red" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
               <polygon points="0 0, 6 3, 0 6" fill="#ef4444" />
@@ -749,14 +785,14 @@ export function BraggDiagram() {
           {y3 < H && <line x1={30} y1={y3} x2={570} y2={y3} stroke="#cbd5e1" strokeDasharray="4,4" strokeWidth={0.8} opacity={0.6} />}
 
           {/* Label bidang */}
-          <text x={34} y={y1 - 6} fontSize={8} fill="#64748b" fontWeight={600}>Bidang 1</text>
-          <text x={34} y={y2 - 6} fontSize={8} fill="#64748b" fontWeight={600}>Bidang 2</text>
+          <text x={34} y={y1 - 6} fontSize={fs(8)} fill="#64748b" fontWeight={600}>Bidang 1</text>
+          <text x={34} y={y2 - 6} fontSize={fs(8)} fill="#64748b" fontWeight={600}>Bidang 2</text>
 
           {/* Jarak antarbidang d (dimensi vertikal kiri) */}
           <line x1={55} y1={y1} x2={55} y2={y2} stroke="#2563eb" strokeWidth={1.5} />
           <line x1={50} y1={y1} x2={60} y2={y1} stroke="#2563eb" strokeWidth={1.5} />
           <line x1={50} y1={y2} x2={60} y2={y2} stroke="#2563eb" strokeWidth={1.5} />
-          <text x={64} y={(y1 + y2) / 2 + 3} fontSize={8.5} fill="#1d4ed8" fontWeight={700}>
+          <text x={64} y={(y1 + y2) / 2 + 3} fontSize={fs(8.5)} fill="#1d4ed8" fontWeight={700}>
             d = {d.toFixed(2)} Å
           </text>
 
@@ -814,7 +850,7 @@ export function BraggDiagram() {
           {/* Badge Beda Lintasan ΔL = 2d sinθ di bawah bidang 2 */}
           <g transform={`translate(${x0}, ${y2 + 22})`}>
             <rect x={-52} y={-10} width={104} height={20} rx={4} fill="#ffffff" stroke="#d97706" strokeWidth={1.2} />
-            <text x={0} y={3.5} fontSize={8.5} fill="#b45309" fontWeight={700} textAnchor="middle">
+            <text x={0} y={3.5} fontSize={fs(8.5)} fill="#b45309" fontWeight={700} textAnchor="middle">
               ΔL = 2d sinθ
             </text>
           </g>
@@ -823,11 +859,11 @@ export function BraggDiagram() {
 
           {/* Sudut serang θ di Atom 1 */}
           <path d={`M ${x0 - 24} ${y1} A 24 24 0 0 0 ${x0 - 24 * cosT} ${y1 - 24 * sinT}`} fill="none" stroke="#ef4444" strokeWidth={1.2} />
-          <text x={x0 - 34} y={y1 - 6} fontSize={8.5} fill="#dc2626" fontWeight={700}>θ</text>
+          <text x={x0 - 34} y={y1 - 6} fontSize={fs(8.5)} fill="#dc2626" fontWeight={700}>θ</text>
 
           {/* Sudut pantul θ di Atom 1 */}
           <path d={`M ${x0 + 24} ${y1} A 24 24 0 0 1 ${x0 + 24 * cosT} ${y1 - 24 * sinT}`} fill="none" stroke={constructive ? "#f59e0b" : "#64748b"} strokeWidth={1.2} />
-          <text x={x0 + 28} y={y1 - 6} fontSize={8.5} fill={constructive ? "#d97706" : "#64748b"} fontWeight={700}>θ</text>
+          <text x={x0 + 28} y={y1 - 6} fontSize={fs(8.5)} fill={constructive ? "#d97706" : "#64748b"} fontWeight={700}>θ</text>
 
           {/* Atom 1 & Atom 2 active centers */}
           <circle cx={x0} cy={y1} r={6.5} fill="#001f3f" stroke="#fff" strokeWidth={1.5} />
@@ -841,22 +877,22 @@ export function BraggDiagram() {
 
           {/* Detektor X-ray di kanan — berotasi tegak lurus langsung menyambut berkas pantul */}
           <g transform={`translate(${det_x}, ${det_center}) rotate(${-visualTheta}) translate(0, ${-det_h / 2})`}>
-            <rect x={0} y={0} width={75} height={det_h} rx={6} fill="#0f172a" stroke="#334155" strokeWidth={1.5} />
+            <rect x={0} y={0} width={detW} height={det_h} rx={6} fill="#0f172a" stroke="#334155" strokeWidth={1.5} />
             {/* Sensor aperture slit */}
             <line x1={0} y1={14} x2={0} y2={det_h - 14} stroke={constructive ? "#22c55e" : "#475569"} strokeWidth={2.5} />
-            <text x={37} y={15} fontSize={7.5} fill="#94a3b8" fontWeight={700} textAnchor="middle">DETEKTOR</text>
-            <rect x={12} y={23} width={51} height={24} rx={3} fill="#020617" />
+            <text x={detW / 2} y={15} fontSize={fs(7.5)} fill="#94a3b8" fontWeight={700} textAnchor="middle">DETEKTOR</text>
+            <rect x={(detW - detW * 0.68) / 2} y={23} width={detW * 0.68} height={24} rx={3} fill="#020617" />
             <text
-              x={37}
+              x={detW / 2}
               y={39}
-              fontSize={9}
+              fontSize={fs(9)}
               fontWeight={800}
               fill={constructive ? "#22c55e" : "#64748b"}
               textAnchor="middle"
             >
               {constructive ? "100%" : "0%"}
             </text>
-            <text x={37} y={58} fontSize={7.5} fontWeight={700} fill={constructive ? "#4ade80" : "#64748b"} textAnchor="middle">
+            <text x={detW / 2} y={58} fontSize={fs(7.5)} fontWeight={700} fill={constructive ? "#4ade80" : "#64748b"} textAnchor="middle">
               {constructive ? "PUNCAK" : "PADAM"}
             </text>
           </g>
@@ -911,20 +947,36 @@ export function BraggDiagram() {
 
 export function DiffractogramAnatomy() {
   // ── Canvas ───────────────────────────────────────────────────────────────
-  // The plot fills the card: a slim top gutter only for the axis title, a
-  // narrow left gutter for tick numbers. No floating badges inside the data
-  // area — the four keys live in a legend row beneath the chart.
-  const W = 900;
-  const H = 420;
-  const marginLeft = 46;
-  const marginRight = 16;
-  const marginTop = 14;
-  const plotHeight = 336;
-  const baselineY = marginTop + plotHeight; // 350
-  const plotWidth = W - marginLeft - marginRight; // 838
+  // Drawn at 1 SVG unit = 1 CSS pixel of the measured container, not through a
+  // fixed 900-unit viewBox. On a 390px phone the fixed viewBox scaled every
+  // label by 0.37, which rendered the 9px ticks at 3.3px — legible on desktop,
+  // invisible on the phone the students actually carry. Measuring keeps type
+  // and the axis gutters at their real size at every width; below 560px the
+  // layout switches to a compact variant (shorter plot, no magnifier inset,
+  // slimmer gutters) because there is no longer room for the inset to sit in
+  // empty space beside the curve.
+  const { ref: measureRef, width } = useMeasuredWidth(860);
+  // The measured element is the chart frame itself (not the card around it), so
+  // `width` is the SVG's own CSS width. Drawing the viewBox at exactly that
+  // width makes 1 SVG unit = 1 CSS pixel and keeps the authored font sizes.
+  const W = Math.max(300, Math.round(width) || 860);
+  const compact = W < 620;
+  const H = compact ? 292 : 420;
+  const marginLeft = compact ? 34 : 46;
+  const marginRight = compact ? 8 : 16;
+  const marginTop = compact ? 10 : 14;
+  const plotHeight = compact ? H - marginTop - 48 : H - marginTop - 70;
+  const baselineY = marginTop + plotHeight;
+  const plotWidth = W - marginLeft - marginRight;
   const minX = 5;
   const maxX = 80;
   const yMax = 112;
+  // The magnifier only earns its space when there is empty plot beside the
+  // curve to park it in; below that width it would cover reflections.
+  const showInset = W >= 700;
+  // Compact needs slightly larger type because the same 9px that reads fine in
+  // a 900-unit figure sits next to far less ink in a 330-unit one.
+  const fs = (n: number) => (compact ? Math.round(n * 1.25 * 10) / 10 : n);
 
   const sx = (x: number) => marginLeft + ((x - minX) / (maxX - minX)) * plotWidth;
   const sy = (y: number) => baselineY - (Math.min(y, yMax) / yMax) * plotHeight;
@@ -1044,7 +1096,7 @@ export function DiffractogramAnatomy() {
         </p>
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-muted)]">
+      <div ref={measureRef} className="mt-3 overflow-hidden rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-muted)]">
         <svg viewBox={`0 0 ${W} ${H}`} className="block w-full" role="img" aria-label="Anatomi difraktogram standar Al-Fum">
           <defs>
             <linearGradient id="m5-anatomy-fill" x1="0" y1="0" x2="0" y2="1">
@@ -1098,17 +1150,17 @@ export function DiffractogramAnatomy() {
           {TICKS_X.map((t) => (
             <g key={t}>
               <line x1={sx(t)} y1={baselineY} x2={sx(t)} y2={baselineY + 4} stroke="#64748b" strokeWidth={1} />
-              <text x={sx(t)} y={baselineY + 15} fontSize={9} fill="#475569" textAnchor="middle">
+              <text x={sx(t)} y={baselineY + 15} fontSize={fs(9)} fill="#475569" textAnchor="middle">
                 {t}°
               </text>
             </g>
           ))}
-          <text x={marginLeft + plotWidth / 2} y={baselineY + 31} fontSize={9.5} fill="#334155" fontWeight={700} textAnchor="middle">
+          <text x={marginLeft + plotWidth / 2} y={baselineY + 31} fontSize={fs(9.5)} fill="#334155" fontWeight={700} textAnchor="middle">
             Sudut Difraksi 2θ (°)
           </text>
 
           {Y_TICKS.map((v) => (
-            <text key={v} x={marginLeft - 6} y={sy(v) + 3} fontSize={8} fill="#64748b" textAnchor="end">
+            <text key={v} x={marginLeft - 6} y={sy(v) + 3} fontSize={fs(8)} fill="#64748b" textAnchor="end">
               {v}
             </text>
           ))}
@@ -1116,7 +1168,7 @@ export function DiffractogramAnatomy() {
             x={-(marginTop + plotHeight / 2)}
             y={11}
             transform="rotate(-90)"
-            fontSize={9.5}
+            fontSize={fs(9.5)}
             fill="#334155"
             fontWeight={600}
             textAnchor="middle"
@@ -1142,7 +1194,7 @@ export function DiffractogramAnatomy() {
           <text
             x={sx(fwhmPeak.apexTwoTheta)}
             y={sy(fwhmPeak.apexY) - 8}
-            fontSize={8.5}
+            fontSize={fs(8.5)}
             fill="#92400e"
             fontWeight={800}
             textAnchor="middle"
@@ -1164,13 +1216,13 @@ export function DiffractogramAnatomy() {
           <text
             x={sx(areaPeak.apexTwoTheta)}
             y={sy(areaPeak.apexY) - 40}
-            fontSize={8.5}
+            fontSize={fs(8.5)}
             fill="#92400e"
             fontWeight={800}
             textAnchor="middle"
           >
             luas puncak
-            <tspan x={sx(areaPeak.apexTwoTheta)} dy={9} fontSize={7} fontWeight={700}>
+            <tspan x={sx(areaPeak.apexTwoTheta)} dy={10} fontSize={fs(8.5)} fontWeight={700}>
               A = {anatomyAreaValue.toFixed(1)} a.u.·°
             </tspan>
           </text>
@@ -1185,16 +1237,15 @@ export function DiffractogramAnatomy() {
             strokeWidth={1.3}
             markerEnd="url(#arrow-purple)"
           />
-          <text x={sx(40)} y={sy(38) - 5} fontSize={8.5} fill="#6b21a8" fontWeight={800}>
+          <text x={sx(40)} y={sy(38) - 5} fontSize={fs(8.5)} fill="#6b21a8" fontWeight={800}>
             halo
           </text>
 
           {/* ══ ② Lebar puncak β — magnifier ═══════════════════════════════
               β is 0,55° ≈ 6 px on the main axis, so it is measured in a zoom
               window. The window sits over the empty 56–79° stretch. */}
+          {showInset && (
           <g>
-            {/* Zoom lines from the real peak into the box corners (classic
-                magnifier convention, avoids any floating leader crossing data). */}
             <line
               x1={sx(fwhmPeak.apexTwoTheta) - 6}
               y1={sy(fwhmPeak.halfMaxY)}
@@ -1217,7 +1268,7 @@ export function DiffractogramAnatomy() {
             />
 
             <rect x={IN.x} y={IN.y} width={IN.w} height={IN.h} rx={5} fill="#ffffff" stroke="#b45309" strokeWidth={1.3} />
-            <text x={IN.x + 7} y={IN.y + 13} fontSize={8} fill="#92400e" fontWeight={800}>
+            <text x={IN.x + 7} y={IN.y + 13} fontSize={fs(10)} fill="#92400e" fontWeight={800}>
               LEBIH DEKAT · β
             </text>
 
@@ -1240,7 +1291,7 @@ export function DiffractogramAnatomy() {
               strokeDasharray="4,3"
               strokeWidth={1}
             />
-            <text x={IN.x + 5} y={iy(fwhmPeak.halfMaxY) - 2} fontSize={6.5} fill="#b45309" fontWeight={700}>
+            <text x={IN.x + 5} y={iy(fwhmPeak.halfMaxY) - 2} fontSize={fs(9)} fill="#b45309" fontWeight={700}>
               ½I
             </text>
 
@@ -1274,7 +1325,7 @@ export function DiffractogramAnatomy() {
             <text
               x={(ix(fwhmPeak.leftTwoTheta) + ix(fwhmPeak.rightTwoTheta)) / 2}
               y={iy(fwhmPeak.halfMaxY) + 14}
-              fontSize={9}
+              fontSize={fs(9)}
               fill="#92400e"
               fontWeight={800}
               textAnchor="middle"
@@ -1297,7 +1348,7 @@ export function DiffractogramAnatomy() {
             <text
               x={IN.x + IN.w / 2}
               y={IN.y + IN.h - 5}
-              fontSize={7.5}
+              fontSize={fs(9.5)}
               fill="#92400e"
               fontWeight={700}
               textAnchor="middle"
@@ -1305,6 +1356,7 @@ export function DiffractogramAnatomy() {
               β = {fwhmPeak.fwhmDeg.toFixed(2)}° (2θ)
             </text>
           </g>
+          )}
         </svg>
       </div>
 

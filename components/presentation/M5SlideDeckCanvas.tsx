@@ -187,31 +187,32 @@ export function M5SlideDeckCanvas({
     <div
       data-deck-canvas
       data-deck="m5"
-      className="m4-deck-viewport min-h-screen flex flex-col bg-[var(--surface-container-lowest)] text-[var(--foreground)]"
+      className="m4-deck-fit m4-deck-compact bg-[var(--surface-container-lowest)] text-[var(--foreground)] flex flex-col justify-between"
     >
       <OrientationNudge />
 
       {/* ── HEADER BAR ─────────────────────────────────────────────────── */}
-      <header className="m4-deck-header shrink-0 border-b border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 sm:px-4 py-2 min-w-0 shadow-xs">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 min-w-0">
+      {/* Only session identity and chrome controls live here. The chapter tag
+          and slide counter moved into the slide body: on a 390px phone the
+          header cannot hold brand + chapter + counter + two buttons without
+          squeezing the title off the row. */}
+      <header className="m4-deck-topbar sticky top-0 z-30 border-b border-[var(--outline-variant)] bg-[var(--surface)]/95 backdrop-blur-md px-3 py-2 min-w-0">
+        <div className="mx-auto flex max-w-4xl lg:max-w-6xl items-center justify-between gap-2 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="rounded bg-[var(--primary-container)]/10 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-[var(--primary-container)] shrink-0">
-              {currentSlide.chapterLabel}
-            </span>
-            <span className="text-xs font-semibold text-[var(--muted)] tabular-nums shrink-0">
-              Slide {viewingIdx + 1}/{TOTAL_M5_REVIEW_DECK_SLIDES}
+            <span className="m4-deck-brand truncate text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">
+              Modul 5 · XRD
             </span>
             {isDrifted && (
               <button
                 type="button"
                 onClick={snapToPresenter}
-                className="hidden sm:inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20"
+                className="inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/20"
                 title="Lompat ke slide yang sedang diterangkan asisten"
               >
                 <span aria-hidden="true" className="material-symbols-outlined text-xs">
                   sync
                 </span>
-                <span>Kembali ke Asisten</span>
+                <span className="hidden sm:inline">Kembali ke Asisten</span>
               </button>
             )}
           </div>
@@ -253,33 +254,37 @@ export function M5SlideDeckCanvas({
         </div>
       </header>
 
-      {/* ── MAIN SLIDE BODY ────────────────────────────────────────────── */}
-      <main className="m4-deck-main flex-1 flex flex-col justify-center px-3 sm:px-6 py-4 sm:py-8 min-w-0">
-        <div ref={slideBodyRef} className="m4-deck-body-inner mx-auto w-full max-w-5xl space-y-4 sm:space-y-6">
-          <div className="space-y-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--primary-container)]">
-              {currentSlide.label}
-            </span>
-            <h1
-              className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-[var(--foreground)]"
-              style={{ fontFamily: "Montserrat, sans-serif" }}
-            >
+      {/* ── MAIN SLIDE CANVAS ──────────────────────────────────────────── */}
+      {/* `m4-deck-slidebody` is the scroll container inside the fixed
+          `m4-deck-fit` frame, so the footer rail stays thumb-reachable while a
+          tall slide scrolls under it. */}
+      <main className="m4-deck-slidebody flex-1 px-3 py-2 sm:px-4 min-w-0 overflow-y-auto">
+        <div
+          ref={slideBodyRef}
+          className="mx-auto max-w-4xl lg:max-w-6xl space-y-4 sm:space-y-6 min-w-0"
+          data-slide-direction={swapDirection}
+        >
+          {/* Slide header: chapter tag, counter, title */}
+          <div className="m4-deck-chapter space-y-1 sm:space-y-1.5 border-b border-[var(--outline-variant)] pb-2 sm:pb-4 min-w-0">
+            <div className="flex flex-wrap items-center gap-2 min-w-0">
+              <span className="rounded bg-[var(--primary-container)]/10 px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--primary-container)]">
+                {currentSlide.chapterLabel}
+              </span>
+              <span className="m4-deck-counter text-xs font-semibold tabular-nums text-[var(--muted)]">
+                Slide {viewingIdx + 1} dari {TOTAL_M5_REVIEW_DECK_SLIDES}
+              </span>
+            </div>
+            <h2 className="m4-deck-heading text-lg sm:text-xl font-bold tracking-tight text-[var(--foreground)] min-w-0">
               <ChemText>{currentSlide.title}</ChemText>
-            </h1>
+            </h2>
           </div>
 
-          <div
-            className={`grid gap-4 sm:gap-6 items-start ${
-              currentSlide.embeddedComponent ? "grid-cols-1 lg:grid-cols-12" : "grid-cols-1"
-            }`}
-          >
+          <div className="m4-deck-split space-y-5 sm:space-y-6 min-w-0">
             <section
               aria-label="Poin utama materi"
-              className={`m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 bg-[var(--surface)] shadow-xs min-w-0 ${
-                currentSlide.embeddedComponent ? "lg:col-span-5" : "w-full"
-              }`}
+              className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 bg-[var(--surface)] shadow-xs min-w-0"
             >
-              <ul className="space-y-2.5 sm:space-y-3">
+              <ul className="space-y-2 sm:space-y-2.5">
                 {currentSlide.bullets.map((bullet, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm leading-relaxed min-w-0">
                     <span
@@ -295,7 +300,7 @@ export function M5SlideDeckCanvas({
             </section>
 
             {currentSlide.embeddedComponent && (
-              <div className="m4-deck-panel min-w-0 h-full lg:col-span-7">
+              <div className="m4-deck-panel min-w-0">
                 <XRDSlidePanel variant={currentSlide.embeddedComponent} />
               </div>
             )}
