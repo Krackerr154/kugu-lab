@@ -20,7 +20,12 @@ export type M6EmbeddedComponentType =
   | "ftir-excel"
   | "ftir-traps"
   | "ftir-conclusions"
-  | "ftir-report-grid";
+  | "ftir-report-grid"
+  | "tga-what-it-measures"
+  | "tga-steps"
+  | "tga-dtg"
+  | "tga-alfum"
+  | "tga-traps";
 
 export interface DeckRubric {
   code: string;
@@ -283,6 +288,101 @@ export const M6_REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
       "Latih mahasiswa menulis simpulan berpola klaim–bukti. Simpulan tanpa rujukan pita akan kehilangan poin f.2 dan f.4.",
     rubric: { code: "h", label: "Kesimpulan", points: 10 },
     embeddedComponent: "ftir-conclusions",
+  },
+  // ── BAB 5: TGA ────────────────────────────────────────────────────────────
+  {
+    id: "q14",
+    chapter: "ready",
+    chapterLabel: "TGA",
+    label: "Apa yang diukur TGA",
+    title: "Termogravimetri: Menimbang Sambil Memanaskan",
+    kind: "content",
+    bullets: [
+      "TGA menaikkan suhu secara teratur sambil terus menimbang sampel, sehingga setiap kehilangan massa tercatat sebagai fungsi suhu.",
+      "Kurva TG menunjukkan sisa massa (%); kurva DTG adalah turunannya dan memberi tahu pada suhu berapa kehilangan massa paling cepat.",
+      "Atmosfer menentukan hasil: N₂ untuk dekomposisi inert, udara untuk pembakaran residu organik.",
+      "Yang dibaca dari termogram: jumlah tahap, suhu onset tiap tahap, dan besar kehilangan massa tiap tahap.",
+    ],
+    script:
+      "Sekarang TGA. Bedanya dengan FTIR: FTIR memberi tahu gugus fungsi apa yang ada, TGA memberi tahu pada suhu berapa material itu mulai berubah dan berapa banyak yang hilang. Sampel ditimbang terus-menerus sementara suhu naik. Kurva TG itu sisa massa, DTG itu turunannya — puncak DTG adalah suhu di mana reaksi berjalan paling cepat. Yang kita baca bukan hanya 'berapa persen hilang', tapi berapa tahap, onset-nya di mana, dan besar tiap tahap.",
+    pedagogicalNotes:
+      "Tekankan bahwa TGA tidak mengidentifikasi gugus fungsi. Siswa sering menjawab 'TGA membuktikan ada C=O' — itu FTIR.",
+    rubric: { code: "g.1", label: "Prinsip TGA", points: 15 },
+    embeddedComponent: "tga-what-it-measures",
+  },
+  {
+    id: "q15",
+    chapter: "ready",
+    chapterLabel: "TGA",
+    label: "Membaca tahap",
+    title: "Membaca Tahap pada Kurva TG",
+    kind: "data",
+    bullets: [
+      "Setiap tahap punya onset (mulai hilang massa), puncak DTG (laju maksimum), dan endset (tahap selesai).",
+      "Kehilangan massa tiap tahap dihitung dari selisih sisa massa sebelum dan sesudah tahap, bukan dari tinggi kurva pada satu titik.",
+      "Tahap di bawah 150 °C biasanya air fisis; tahap di atas 300 °C menandakan perubahan kerangka.",
+      "Sebutkan ketiganya saat melaporkan: onset, puncak, dan Δm — bukan hanya 'terjadi kehilangan massa'.",
+    ],
+    script:
+      "Cara membaca tahap. Tiap tahap punya tiga angka: onset, puncak DTG, dan endset. Δm dihitung dari selisih sisa massa sebelum dan sesudah tahap — bukan dari tinggi kurva di satu titik, karena tinggi itu relatif terhadap sumbu. Tahap di bawah 150 derajat hampir selalu air fisis. Di atas 300 derajat, kerangka mulai berubah.",
+    rubric: { code: "g.2", label: "Membaca tahap", points: 20 },
+    embeddedComponent: "tga-steps",
+  },
+  {
+    id: "q16",
+    chapter: "ready",
+    chapterLabel: "TGA",
+    label: "DTG",
+    title: "DTG: Turunan yang Mempertajam",
+    kind: "data",
+    bullets: [
+      "DTG adalah turunan pertama kurva TG terhadap suhu; puncaknya menunjuk suhu laju kehilangan massa tertinggi.",
+      "Dua tahap yang bertumpuk pada kurva TG sering terpisah jelas di kurva DTG.",
+      "Puncak DTG dipakai sebagai suhu karakteristik saat membandingkan sampel dengan literatur.",
+      "DTG tidak menambah informasi baru — ia hanya menyajikan kurva TG dengan cara yang lebih mudah dibaca.",
+    ],
+    script:
+      "DTG itu turunan dari kurva TG. Gunanya: kalau dua tahap bertumpuk di kurva TG, di DTG sering terpisah jadi dua puncak. Jadi DTG bukan data tambahan — ia cuma cara membaca kurva TG yang sama dengan lebih tajam. Saat membandingkan dengan literatur, sebut suhu puncak DTG, bukan sekadar 'ada dua tahap'.",
+    rubric: { code: "g.3", label: "DTG", points: 15 },
+    embeddedComponent: "tga-dtg",
+  },
+  {
+    id: "q17",
+    chapter: "ready",
+    chapterLabel: "TGA",
+    label: "Al-Fum",
+    title: "Termogram Al-Fum: Tiga Tahap",
+    kind: "data",
+    bullets: [
+      "Tahap 1 di bawah 160 °C: air fisis dan air pori — Al-Fum bersifat hidrofilik karena gugus µ-OH.",
+      "Tahap 2 sekitar 250–390 °C: dehidroksilasi gugus µ-OH jembatan Al–OH–Al.",
+      "Tahap 3 di atas 400 °C: dekomposisi ligan fumarat dan kolapsnya kerangka — kehilangan massa terbesar.",
+      "Sampel yang dikeringkan 100 °C vakum kehilangan tahap air, sehingga kurvanya langsung menuju dehidroksilasi.",
+    ],
+    script:
+      "Untuk Al-Fum ada tiga tahap. Pertama air fisis di bawah 160 derajat — Al-Fum ini hidrofilik, justru karena gugus hidroksil jembatan. Kedua dehidroksilasi di sekitar 300 derajat. Ketiga dekomposisi fumarat di atas 400 derajat, dan ini yang terbesar. Kalau kalian mengeringkan sampel 100 derajat vakum, tahap air hampir hilang dan kurvanya langsung ke tahap kedua. Itu bukti bahwa tahap pertama memang air, bukan bagian kerangka.",
+    pedagogicalNotes:
+      "Suhu bergeser dengan laju pemanasan. Nilai di slide adalah model dari literatur Al-fumarat, bukan data terukur — minta siswa membaca kurva mereka sendiri.",
+    rubric: { code: "g.4", label: "Interpretasi termogram", points: 25 },
+    embeddedComponent: "tga-alfum",
+  },
+  {
+    id: "q18",
+    chapter: "ready",
+    chapterLabel: "Simpulan & Laporan",
+    label: "Jebakan TGA",
+    title: "Dua Hal yang Sering Salah di TGA",
+    kind: "closing",
+    bullets: [
+      "Kurva referensi bukan kurva kalian: laju pemanasan, gas purging, dan kadar air menggeser suhu setiap tahap.",
+      "Massa sisa pada 900 °C adalah residu oksida, bukan produk — jangan menghitung rendemen dari TGA.",
+      "Untuk laporan: sebutkan laju pemanasan, atmosfer, dan rentang suhu, karena tanpa itu angka tahap tidak bisa dibandingkan.",
+      "Hubungkan dengan FTIR: FTIR menunjukkan fumarat masih ada, TGA menunjukkan sampai suhu berapa kerangka bertahan.",
+    ],
+    script:
+      "Dua jebakan. Pertama, membandingkan kurva kalian dengan kurva literatur lalu menyimpulkan 'tahapnya bergeser berarti sampel saya berbeda'. Suhu tahap bergeser karena laju pemanasan dan kadar air. Yang dibandingkan adalah pola tahapnya, bukan angka mentahnya. Kedua, massa sisa di 900 derajat itu oksida, bukan produk — jangan dipakai menghitung rendemen. Di laporan, selalu tulis laju pemanasan dan atmosfer.",
+    rubric: { code: "g.5", label: "Evaluasi TGA", points: 15 },
+    embeddedComponent: "tga-traps",
   },
   {
     id: "q13",

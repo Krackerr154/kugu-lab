@@ -39,7 +39,9 @@ const M6_REVIEW_SLIDE_CHAPTER = Object.freeze({
   q3: 'understand', q4: 'understand', q5: 'understand', q6: 'understand',
   q7: 'understand', q8: 'understand',
   q9: 'prove', q10: 'prove', q11: 'prove',
-  q12: 'ready', q13: 'ready',
+  q12: 'ready',
+  q14: 'ready', q15: 'ready', q16: 'ready', q17: 'ready',
+  q13: 'ready', q18: 'ready',
 });
 
 const M7_REVIEW_SLIDE_CHAPTER = Object.freeze({

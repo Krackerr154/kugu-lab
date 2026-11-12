@@ -9,6 +9,7 @@ import {
   type ReviewDeckSlide,
 } from "@/lib/m6-review-deck-data";
 import { FTIRSlidePanel } from "@/components/interactives/FTIRSlidePanel";
+import { TGASlidePanel, TGA_SLIDE_PANEL_VARIANTS } from "@/components/interactives/TGASlidePanel";
 import { useOptionalM3Presentation } from "@/components/shared/M3PresentationProvider";
 import { OrientationNudge } from "@/components/shared/OrientationNudge";
 import { DeckActionDial } from "@/components/presentation/DeckActionDial";
@@ -22,6 +23,10 @@ interface M6SlideDeckCanvasProps {
   initialSlideId?: ReviewSlideId;
   exitHref?: string;
   onExit?: () => void;
+}
+
+function isTgaPanel(variant: string): variant is (typeof TGA_SLIDE_PANEL_VARIANTS)[number] {
+  return (TGA_SLIDE_PANEL_VARIANTS as readonly string[]).includes(variant);
 }
 
 function formatBulletText(text: string) {
@@ -388,7 +393,11 @@ export function M6SlideDeckCanvas({
 
             {currentSlide.embeddedComponent && (
               <div className="m4-deck-panel min-w-0 h-full">
-                <FTIRSlidePanel variant={currentSlide.embeddedComponent} />
+                {isTgaPanel(currentSlide.embeddedComponent) ? (
+                  <TGASlidePanel variant={currentSlide.embeddedComponent} />
+                ) : (
+                  <FTIRSlidePanel variant={currentSlide.embeddedComponent} />
+                )}
               </div>
             )}
           </div>

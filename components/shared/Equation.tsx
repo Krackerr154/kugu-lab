@@ -42,7 +42,14 @@ export function Equation({ tex, label, description, compact = false }: EquationP
         </p>
       )}
       <div className="overflow-x-auto py-0.5">
-        <div ref={containerRef} aria-label={tex} />
+        {/* The rendered maths is inside this element, so an aria-label here
+            would be announced *in addition* to KaTeX's own MathML/HTML output —
+            a screen reader read the equation twice, the second time as raw TeX
+            ("CaCO3(s)→CaO(s)+CO2(g)\\text{CaCO}_3(s)..."). The purpose of the
+            label was to give the formula an accessible name, and KaTeX already
+            does that, so the attribute is gone. `role="img"` keeps the formula
+            as a single stop in the accessibility tree. */}
+        <div ref={containerRef} role="img" />
       </div>
       {description && !compact && (
         <p className="mt-2 text-xs text-[var(--muted)]" aria-label="Penjelasan persamaan">
