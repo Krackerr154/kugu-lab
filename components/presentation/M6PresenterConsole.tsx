@@ -11,9 +11,19 @@ import {
 } from "@/lib/m6-review-deck-data";
 import { M6_REVIEW_CHAPTERS } from "@/lib/m6-review-slides";
 import { FTIRSlidePanel } from "@/components/interactives/FTIRSlidePanel";
+import { TGASlidePanel, TGA_SLIDE_PANEL_VARIANTS } from "@/components/interactives/TGASlidePanel";
 import { useM3Presentation } from "@/components/shared/M3PresentationProvider";
 import { ChemText } from "@/components/shared/ChemText";
 import type { ReviewSlideId } from "@/lib/m3-presentation";
+
+/**
+ * The console used to hand every embedded panel to FTIRSlidePanel, so all six
+ * TGA slides rendered nothing here: the presenter saw a title and bullets while
+ * the projector showed a chart. Route on the variant exactly like the deck does.
+ */
+function isTgaPanel(variant: string): variant is (typeof TGA_SLIDE_PANEL_VARIANTS)[number] {
+  return (TGA_SLIDE_PANEL_VARIANTS as readonly string[]).includes(variant);
+}
 
 function formatTimer(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -202,7 +212,11 @@ export function M6PresenterConsole() {
 
             {currentSlide.embeddedComponent && (
               <div className="rounded-xl border border-[var(--outline-variant)] bg-[var(--surface)] p-3">
-                <FTIRSlidePanel variant={currentSlide.embeddedComponent} />
+                {isTgaPanel(currentSlide.embeddedComponent) ? (
+                  <TGASlidePanel variant={currentSlide.embeddedComponent} />
+                ) : (
+                  <FTIRSlidePanel variant={currentSlide.embeddedComponent} />
+                )}
               </div>
             )}
           </div>
