@@ -35,8 +35,8 @@ function formatBulletText(text: string) {
     const prefix = text.slice(0, colonIdx).trim();
     const rest = text.slice(colonIdx + 1).trim();
     return (
-      <div className="flex items-start gap-1.5 sm:gap-2 min-w-0 flex-1">
-        <span className="m4-deck-bullet-key inline-flex items-baseline justify-between w-32 sm:w-40 shrink-0 font-semibold text-[var(--foreground)]">
+      <div className="m4-deck-bullet-row min-w-0 flex-1 items-start gap-1.5 sm:gap-2">
+        <span className="m4-deck-bullet-key inline-flex items-baseline justify-between shrink-0 font-semibold text-[var(--foreground)] md:w-32 lg:w-40">
           <span>{prefix}</span>
           <span className="text-[var(--muted)]">:</span>
         </span>
@@ -376,7 +376,7 @@ export function M6SlideDeckCanvas({
               aria-label="Poin utama materi"
               className="m4-deck-bullets surface-panel rounded-xl p-3.5 sm:p-5 bg-[var(--surface)] shadow-xs min-w-0"
             >
-              <ul className="space-y-2">
+              <ul className="m4-deck-bullet-list space-y-2">
                 {currentSlide.bullets.map((bullet, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm leading-relaxed min-w-0">
                     <span

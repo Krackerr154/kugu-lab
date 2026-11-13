@@ -2017,3 +2017,216 @@ body:has([data-presenter-console]) .app-shell {
     flex: initial;
   }
 }
+
+/* ── M6 deck: landscape phones ───────────────────────────────────────────────
+   Measured on a 568x320 and 740x360 landscape phone, 15 of 19 slides pushed
+   content past the body, slide 13 by 966px. The cause was not font size: the
+   bullet key (`m4-deck-bullet-key`) is authored as a block that takes the full
+   line width, so inside the two-column bullets flex row it ate 159px of a
+   172px column and left 3px for the prose. The prose then wrapped one character
+   per line and grew to 881px tall, dragging the whole slide with it.
+
+   The shared rules only un-block the key for slides with a panel or exactly
+   five bullets; the M6 deck also has text-only slides with three or four.
+   Un-block the key everywhere in the compact layout so it flows inline with its
+   own line instead of claiming the row. */
+@media (orientation: landscape) and (max-height: 500px) {
+@layer utilities {
+  /* Stack the key above its prose: in a ~170px column there is no width to
+     share, and side-by-side forced one character per line. */
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullet-row {
+    display: block;
+  }
+  /* Above the landscape breakpoint restore the side-by-side key. */
+  @media (min-width: 1024px) {
+    [data-deck="m6"] .m4-deck-compact .m4-deck-bullet-row {
+      display: flex;
+    }
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets .m4-deck-bullet-key,
+[data-deck="m6"].m4-deck-compact .m4-deck-bullets .m4-deck-bullet-key {
+    /* Tailwind ships `w-32 sm:w-40 shrink-0` (160px at >=640px), which is wider
+       than the whole bullets column once the panel takes its share. */
+    width: auto !important;
+    max-width: 100% !important;
+    display: inline !important;
+    flex: 0 1 auto !important;
+    margin-right: 0.25rem;
+  }
+  /* The key wraps its own colon on a narrow column; that is fine, but it must
+     not reserve a fixed line box. */
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets .m4-deck-bullet-key > span:first-child,
+  [data-deck="m6"].m4-deck-compact .m4-deck-bullets .m4-deck-bullet-key > span:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  /* The prose is the flex child that must be allowed to shrink. */
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets ul > li > div > span.min-w-0,
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets li > span.min-w-0 {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+  }
+  /* Keep the figure from forcing a taller row than the frame can show. */
+  [data-deck="m6"] .m4-deck-compact .m4-deck-panel svg,
+  [data-deck="m6"] .m4-deck-compact .m4-deck-panel svg[role="img"] {
+    max-height: 100%;
+    height: auto;
+  }
+}
+}
+
+/* ── M6 deck: landscape phones, second pass ─────────────────────────────────
+   After stacking the bullet key, the remaining overflow is the vertical rhythm
+   (chapter block + heading + gap + card padding), tens of px rather than
+   hundreds. Tighten only the chrome — not the type — so the text stays at
+   >= 11px and the slide lands inside one frame. */
+@media (orientation: landscape) and (max-height: 500px) {
+  [data-deck="m6"] .m4-deck-slidebody {
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+  }
+  [data-deck="m6"] .m4-deck-slidebody > [data-slide-direction] {
+    row-gap: 0 !important;
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-chapter {
+    padding-bottom: 0.125rem;
+    margin-bottom: 0.125rem;
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-chapter > div:first-child {
+    display: none; /* chapter tag + slide counter: the footer already shows X/19 */
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-heading {
+    font-size: clamp(0.9375rem, 4.2vh, 1.125rem);
+    line-height: 1.2;
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets {
+    padding: clamp(0.35rem, 1.1vh, 0.55rem);
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets ul {
+    gap: clamp(0.15rem, 0.9vh, 0.4rem);
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets li {
+    font-size: clamp(0.6875rem, 3.1vh, 0.8125rem);
+    line-height: 1.32;
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-panel {
+    padding: clamp(0.35rem, 1.1vh, 0.55rem);
+  }
+}
+
+/* The bullets <ul> is a column flex with `justify-content: space-between` and
+   `flex: 1`, so in a stretched grid cell it inflates its own gaps to fill the
+   height (measured: 4 items totalling 120px inside a 265px list). On a short
+   landscape phone there is no spare height to distribute — let the list size to
+   its content and start at the top. */
+@media (orientation: landscape) and (max-height: 500px) {
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets ul {
+    flex: 0 0 auto;
+    justify-content: flex-start;
+    height: auto;
+  }
+  [data-deck="m6"] .m4-deck-compact .m4-deck-bullets,
+  [data-deck="m6"] .m4-deck-compact .m4-deck-split > .m4-deck-bullets {
+    height: auto;
+    max-height: 100%;
+    overflow: visible;
+  }
+}
+
+/* `ul.m4-deck-bullet-list` is targeted directly rather than through the
+   `.m4-deck-bullets ul` descendant chain, which several earlier rules compete
+   for and which was losing the cascade on short landscape screens. */
+@media (orientation: landscape) and (max-height: 500px) {
+  [data-deck="m6"] ul.m4-deck-bullet-list {
+    flex: none;
+    justify-content: flex-start;
+    height: auto;
+    min-height: 0;
+  }
+}
+
+/* Landscape phone: the embedded FTIR/TGA figure is drawn at a fixed 180px, and
+   with its band list (91px) it forces the whole grid row to 279px inside a
+   246px frame. Cap the figure to the height that is actually left and let the
+   SVG scale by viewBox rather than cropping it. */
+@media (orientation: landscape) and (max-height: 500px) {
+  [data-deck="m6"] .m4-deck-panel svg[role="img"],
+  [data-deck="m6"] .m4-deck-panel svg {
+    height: auto !important;
+    max-height: 128px;
+    width: 100%;
+  }
+  [data-deck="m6"] .m4-deck-panel > div {
+    height: auto;
+    gap: 0.25rem;
+  }
+  [data-deck="m6"] .m4-deck-panel ul.grid {
+    gap: 0.0625rem;
+    font-size: 0.6875rem;
+    max-height: 84px;
+    overflow: hidden;
+  }
+}
+
+/* Final 30-40px on the shortest landscape frames: the chapter block is the
+   cheapest thing to reclaim, since the footer already states the slide number. */
+@media (orientation: landscape) and (max-height: 380px) {
+  [data-deck="m6"] .m4-deck-heading {
+    font-size: 0.875rem;
+    line-height: 1.15;
+  }
+  [data-deck="m6"] .m4-deck-bullets li {
+    font-size: 0.6875rem;
+    line-height: 1.28;
+  }
+  [data-deck="m6"] .m4-deck-bullets {
+    padding: 0.3rem;
+  }
+  [data-deck="m6"] .m4-deck-panel svg,
+  [data-deck="m6"] .m4-deck-panel svg[role="img"] {
+    max-height: 104px;
+  }
+  [data-deck="m6"] .m4-deck-panel ul.grid {
+    max-height: 70px;
+    font-size: 0.625rem;
+  }
+  [data-deck="m6"] .m4-deck-slidebody {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+/* Text-heavy landscape slides (8 bullets across two cards) cannot fit a ~286px
+   frame at a readable size stacked vertically. On a landscape phone the width
+   is the abundant dimension, so let the two bullet cards sit side by side. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 600px) {
+  [data-deck="m6"] .m4-deck-split:not(:has(.m4-deck-panel)) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.5rem;
+    align-items: start;
+  }
+  [data-deck="m6"] .m4-deck-split:not(:has(.m4-deck-panel)) > .m4-deck-bullets {
+    height: auto;
+    max-height: 100%;
+  }
+}
+
+/* On the side-by-side text layout the figure column is ~355px wide and its
+   natural SVG height (180px) plus band list still exceeds the frame. Cap the
+   figure relative to the frame instead of a fixed px value. */
+@media (orientation: landscape) and (max-height: 500px) {
+  [data-deck="m6"] .m4-deck-panel svg[role="img"] {
+    height: auto !important;
+    max-height: min(128px, 32vh);
+    width: 100%;
+  }
+  [data-deck="m6"] .m4-deck-panel figure {
+    margin: 0;
+  }
+  [data-deck="m6"] .m4-deck-panel > div,
+  [data-deck="m6"] .m4-deck-panel figure > div {
+    gap: 0.15rem;
+  }
+}
