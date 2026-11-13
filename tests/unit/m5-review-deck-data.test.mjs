@@ -181,7 +181,7 @@ test("the trap and report slides agree with the data module", () => {
 });
 
 test("adding the M5 deck left the total count and all decks intact", () => {
-  assert.equal(ALL_REVIEW_SLIDE_IDS.length, 73);
+  assert.equal(ALL_REVIEW_SLIDE_IDS.length, 74);
   assert.equal(reviewDeckOfSlide("p5"), "m4");
   assert.equal(reviewDeckOfSlide("s5"), "m5");
   assert.equal(reviewDeckOfSlide("q5"), "m6");

@@ -24,6 +24,7 @@ export type M6EmbeddedComponentType =
   | "tga-what-it-measures"
   | "tga-steps"
   | "tga-dtg"
+  | "tga-tangent"
   | "tga-alfum"
   | "tga-traps";
 
@@ -345,6 +346,26 @@ export const M6_REVIEW_DECK_SLIDES: readonly ReviewDeckSlide[] = [
       "DTG itu turunan dari kurva TG. Gunanya: kalau dua tahap bertumpuk di kurva TG, di DTG sering terpisah jadi dua puncak. Jadi DTG bukan data tambahan — ia cuma cara membaca kurva TG yang sama dengan lebih tajam. Saat membandingkan dengan literatur, sebut suhu puncak DTG, bukan sekadar 'ada dua tahap'.",
     rubric: { code: "g.3", label: "DTG", points: 15 },
     embeddedComponent: "tga-dtg",
+  },
+  {
+    id: "q19",
+    chapter: "ready",
+    chapterLabel: "TGA",
+    label: "Onset",
+    title: "Membaca Onset dan Endset: Metode Garis Singgung",
+    kind: "data",
+    bullets: [
+      "Garis singgung ditarik pada titik dengan slope paling curam — praktisnya, puncak DTG.",
+      "Onset = perpotongan garis singgung dengan garis dasar sebelum tahap; endset = perpotongan dengan garis dasar sesudahnya.",
+      "Cara ini menghasilkan angka yang sama setiap kali dibaca, berbeda dengan menaksir 'di mana kurva mulai membengkok'.",
+      "Perhatikan konvensinya: aturan 2%/98% dari Δm memberi onset lebih awal dan endset lebih akhir daripada metode garis singgung.",
+    ],
+    script:
+      "Untuk onset dan endset, jangan menaksir dari mata. Tarik garis singgung di titik paling curam tiap tahap — itu titik puncak DTG. Perpanjang sampai memotong garis dasar datar sebelum tahap: itu onset. Perpanjang lagi sampai memotong garis dasar sesudahnya: itu endset. Kenapa begitu? Karena kalau kalian menaksir dari mata, dua orang akan memberi dua angka berbeda. Metode garis singgung ini yang dipakai perangkat lunak instrumen, dan bisa diulang siapa pun dengan hasil sama. Tapi ada peringatan: angka onset dari metode ini akan berbeda dua puluh sampai tiga puluh derajat dari aturan dua persen yang biasa dipakai di laporan — jadi selalu sebutkan konvensinya.",
+    pedagogicalNotes:
+      "Turunan kedua tidak dipakai untuk onset: onset adalah perpotongan geometris, bukan titik nol turunan. Turunan kedua hanya membantu memastikan puncak DTG.",
+    rubric: { code: "g.5", label: "Onset dan endset", points: 20 },
+    embeddedComponent: "tga-tangent",
   },
   {
     id: "q17",

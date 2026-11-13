@@ -244,10 +244,100 @@ export function tgaDtgDomain(points: readonly TgaPoint[]): { min: number; max: n
 }
 
 /**
+ * One step's tangent construction, in plot coordinates.
+ *
+ * The tangent method is what instrument software reports as "onset": draw the
+ * tangent to the TG curve at the point of maximum slope (the DTG minimum),
+ * extend it until it crosses the pre-step baseline (onset) and the post-step
+ * baseline (endset). Because it is built from the derivative it is
+ * reproducible, which eyeballing the shoulder is not.
+ */
+export interface TgaTangent {
+  id: string;
+  label: string;
+  /** Temperature of maximum slope — where the tangent touches the curve. */
+  inflectionT: number;
+  /** Mass at the inflection point. */
+  inflectionMass: number;
+  /** Slope of the tangent, mass % per °C (negative). */
+  slope: number;
+  /** Pre-step plateau mass. */
+  baselineBefore: number;
+  /** Post-step plateau mass. */
+  baselineAfter: number;
+  /** Onset: where the tangent meets the pre-step baseline. */
+  onsetT: number;
+  /** Endset: where the tangent meets the post-step baseline. */
+  endsetT: number;
+  /** Δm between the two baselines — the step's step height. */
+  lossPct: number;
+}
+
+/**
+ * Build the tangent construction for every step.
+ *
+ * The slope is taken from the DTG at the step's steepest point rather than from
+ * a two-point secant: the DTG is already the numerical derivative of the drawn
+ * curve, so the tangent is guaranteed to be tangent to what is on screen.
+ * The baselines are the model's plateau masses, which is what a student would
+ * read off the flat parts of their own curve.
+ */
+export function computeTgaTangents(
+  model: TgaModel,
+  points: readonly TgaPoint[]
+): TgaTangent[] {
+  let plateau = model.start;
+
+  return model.steps.map((step) => {
+    const baselineBefore = plateau;
+    plateau -= step.loss;
+    const baselineAfter = plateau;
+
+    // Steepest point of this step: the most negative DTG inside a window around
+    // the step centre. Using a window (not the global minimum) keeps the
+    // shallow water step from being assigned the fumarate step's slope.
+    const halfWindow = Math.max(step.width * 2.5, 40);
+    const inWindow = points.filter((p) => Math.abs(p.t - step.center) <= halfWindow);
+    const steepest = inWindow.reduce(
+      (best, p) => (p.dtg < best.dtg ? p : best),
+      inWindow[0] ?? points[0]
+    );
+
+    const slope = steepest.dtg; // mass %/°C, negative
+    // A near-zero slope would make the intersection run to infinity.
+    const safeSlope = Math.abs(slope) < 1e-6 ? -1e-6 : slope;
+
+    // Line: mass(t) = inflectionMass + slope * (t - inflectionT)
+    // Solve for the temperature where that line reaches a baseline.
+    const onsetT = steepest.t + (baselineBefore - steepest.mass) / safeSlope;
+    const endsetT = steepest.t + (baselineAfter - steepest.mass) / safeSlope;
+
+    return {
+      id: step.id,
+      label: step.label,
+      inflectionT: steepest.t,
+      inflectionMass: steepest.mass,
+      slope,
+      baselineBefore,
+      baselineAfter,
+      onsetT,
+      endsetT,
+      lossPct: step.loss,
+    };
+  });
+}
+
+/**
  * Onset / peak / endset per step, read off the curve rather than restated from
  * the model constants. Onset and endset are the temperatures where 2% and 98%
  * of the step's loss have happened — the same cumulative-mass convention a
  * student can apply by hand with a ruler on their own printout.
+ *
+ * This is NOT the tangent method: the cumulative convention is reproducible
+ * without drawing anything and degrades gracefully when steps overlap, but it
+ * reports onsets later than an instrument's tangent construction. Both are
+ * exposed (`readTgaSteps` here, `computeTgaTangents` above) and the deck
+ * labels which one it is showing.
  */
 export function readTgaSteps(model: TgaModel, points: readonly TgaPoint[]): TgaStepReadout[] {
   const cumulative: number[] = [];

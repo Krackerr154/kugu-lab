@@ -41,7 +41,7 @@ const M6_REVIEW_SLIDE_CHAPTER = Object.freeze({
   q9: 'prove', q10: 'prove', q11: 'prove',
   q12: 'ready',
   q14: 'ready', q15: 'ready', q16: 'ready', q17: 'ready',
-  q13: 'ready', q18: 'ready',
+  q13: 'ready', q18: 'ready', q19: 'ready',
 });
 
 const M7_REVIEW_SLIDE_CHAPTER = Object.freeze({

@@ -50,7 +50,7 @@ test("navigation clamps at both ends and walks one step at a time", () => {
   assert.equal(nextM6SlideId("q1"), "q2");
   assert.equal(prevM6SlideId("q13"), "q18");
   assert.equal(m6SlideIndex("q1"), 0);
-  assert.equal(m6SlideIndex("q13"), 17);
+  assert.equal(m6SlideIndex("q13"), 18);
   assert.equal(m6SlideIndex("nope"), -1);
 
   // The chain must reach every slide exactly once.

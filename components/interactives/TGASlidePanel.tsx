@@ -6,6 +6,7 @@ import {
   TGA_T_MAX,
   TGA_T_MIN,
   buildTgaCurve,
+  computeTgaTangents,
   readTgaSteps,
   tgaDtgDomain,
 } from "@/lib/m6-tga-model";
@@ -26,11 +27,15 @@ export type TgaPanelVariant =
   | "tga-what-it-measures"
   | "tga-steps"
   | "tga-dtg"
+  | "tga-tangent"
   | "tga-alfum"
   | "tga-traps";
 
 const TG_COLOR = "var(--chart-red)";
 const DTG_COLOR = "var(--chart-navy)";
+/** Tangent construction. Deliberately a third colour so the student can tell
+ *  the guide lines from the data: teal reads clearly against red TG and navy DTG. */
+const TANGENT_COLOR = "var(--chart-teal, #0f766e)";
 const GRID = "var(--surface-container-high)";
 const TEXT = "var(--text-secondary)";
 
@@ -88,10 +93,11 @@ function WhatItMeasuresPanel() {
 
 /* ── Variant: TG + DTG curve ──────────────────────────────────────────────── */
 
-function CurvePanel({ mode }: { mode: "steps" | "dtg" }) {
+function CurvePanel({ mode }: { mode: "steps" | "dtg" | "tangent" }) {
   const model = TGA_MODELS["al-fum-hydrated"];
   const points = useMemo(() => buildTgaCurve({ modelId: "al-fum-hydrated", step: 2 }), []);
   const steps = useMemo(() => readTgaSteps(model, points), [model, points]);
+  const tangents = useMemo(() => computeTgaTangents(model, points), [model, points]);
   const dtg = useMemo(() => tgaDtgDomain(points), [points]);
 
   const H = mode === "dtg" ? 300 : 260;
@@ -115,6 +121,29 @@ function CurvePanel({ mode }: { mode: "steps" | "dtg" }) {
     .map((p, i) => `${i === 0 ? "M" : "L"}${xOf(p.t).toFixed(1)} ${yDtg(p.dtg).toFixed(1)}`)
     .join(" ");
 
+  // Tangent construction: one line through the inflection, clipped to the plot
+  // area, plus a hairline plateau at each baseline so the intersection the
+  // student is asked to read is drawn rather than imagined.
+  const showTangents = mode === "tangent";
+  const tangentTmin = box.pad.top + innerH;
+  const tangentSegments = showTangents
+    ? tangents.map((t) => {
+        const lineAt = (temp: number) => t.inflectionMass + t.slope * (temp - t.inflectionT);
+        // Extend past both intersections so the crossing is visibly inside the
+        // plot; clamp to the y-range so the line cannot draw outside the frame.
+        const tStart = Math.min(t.onsetT, t.inflectionT) - 45;
+        const tEnd = Math.max(t.endsetT, t.inflectionT) + 45;
+        const clampT = (temp: number) => Math.max(TGA_T_MIN, Math.min(TGA_T_MAX, temp));
+        return {
+          ...t,
+          x1: xOf(clampT(tStart)),
+          y1: yMass(lineAt(clampT(tStart))),
+          x2: xOf(clampT(tEnd)),
+          y2: yMass(lineAt(clampT(tEnd))),
+        };
+      })
+    : [];
+
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
@@ -122,7 +151,9 @@ function CurvePanel({ mode }: { mode: "steps" | "dtg" }) {
       aria-label={
         mode === "dtg"
           ? "Termogram Al-Fum: kurva TG merah dan kurva DTG biru dengan tiga puncak."
-          : "Termogram Al-Fum tiga tahap: air fisis, dehidroksilasi, dekomposisi fumarat."
+          : mode === "tangent"
+            ? "Termogram Al-Fum dengan garis singgung pada setiap tahap; perpotongan dengan garis dasar menandai onset dan endset."
+            : "Termogram Al-Fum tiga tahap: air fisis, dehidroksilasi, dekomposisi fumarat."
       }
       className="block w-full select-none"
     >
@@ -180,6 +211,67 @@ function CurvePanel({ mode }: { mode: "steps" | "dtg" }) {
         TG
       </text>
 
+      {/* Tangent construction (mode === "tangent") */}
+      {tangentSegments.map((t) => (
+        <g key={`tan-${t.id}`}>
+          {/* Pre- and post-step baselines the tangent is intersected with. */}
+          <line
+            x1={box.pad.left}
+            y1={yMass(t.baselineBefore)}
+            x2={box.pad.left + innerW}
+            y2={yMass(t.baselineBefore)}
+            stroke={TANGENT_COLOR}
+            strokeWidth="0.7"
+            strokeDasharray="6 4"
+            opacity="0.55"
+          />
+          <line
+            x1={box.pad.left}
+            y1={yMass(t.baselineAfter)}
+            x2={box.pad.left + innerW}
+            y2={yMass(t.baselineAfter)}
+            stroke={TANGENT_COLOR}
+            strokeWidth="0.7"
+            strokeDasharray="6 4"
+            opacity="0.55"
+          />
+          {/* The tangent itself. */}
+          <line
+            x1={t.x1}
+            y1={t.y1}
+            x2={t.x2}
+            y2={t.y2}
+            stroke={TANGENT_COLOR}
+            strokeWidth="1.2"
+          />
+          {/* Inflection point where the tangent touches the curve. */}
+          <circle cx={xOf(t.inflectionT)} cy={yMass(t.inflectionMass)} r="2.6" fill={TANGENT_COLOR} />
+          {/* Onset / endset intersections with the baselines. */}
+          <circle cx={xOf(t.onsetT)} cy={yMass(t.baselineBefore)} r="2.6" fill="var(--surface-container-lowest)" stroke={TANGENT_COLOR} strokeWidth="1.4" />
+          <circle cx={xOf(t.endsetT)} cy={yMass(t.baselineAfter)} r="2.6" fill="var(--surface-container-lowest)" stroke={TANGENT_COLOR} strokeWidth="1.4" />
+          <text
+            x={xOf(t.onsetT)}
+            y={yMass(t.baselineBefore) - 5}
+            textAnchor="middle"
+            fontSize="9.5"
+            fontWeight="700"
+            fill={TANGENT_COLOR}
+          >
+            {Math.round(t.onsetT)}
+          </text>
+          <text
+            x={xOf(t.endsetT)}
+            y={yMass(t.baselineAfter) + 11}
+            textAnchor="middle"
+            fontSize="9.5"
+            fontWeight="700"
+            fill={TANGENT_COLOR}
+          >
+            {Math.round(t.endsetT)}
+          </text>
+        </g>
+      ))}
+
       {/* Step markers */}
       {steps.map((s) => (
         <g key={s.id}>
@@ -207,6 +299,47 @@ function CurvePanel({ mode }: { mode: "steps" | "dtg" }) {
         </g>
       ))}
     </svg>
+  );
+}
+
+/* ── Variant: tangent construction for onset / endset ─────────────────────── */
+
+function TangentPanel() {
+  const model = TGA_MODELS["al-fum-hydrated"];
+  const points = useMemo(() => buildTgaCurve({ modelId: "al-fum-hydrated", step: 2 }), []);
+  const tangents = useMemo(() => computeTgaTangents(model, points), [model, points]);
+
+  return (
+    <div className="flex h-full flex-col justify-center gap-2">
+      <CurvePanel mode="tangent" />
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[var(--text-secondary)]">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="h-0.5 w-4 rounded-full" style={{ background: TANGENT_COLOR }} aria-hidden="true" />
+          garis singgung (slope maksimum)
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            className="h-2 w-2 rounded-full border-2 bg-transparent"
+            style={{ borderColor: TANGENT_COLOR }}
+            aria-hidden="true"
+          />
+          perpotongan = onset / endset
+        </span>
+      </div>
+      <div className="grid grid-cols-3 gap-1.5">
+        {tangents.map((t) => (
+          <div
+            key={t.id}
+            className="rounded-md border border-[var(--outline-variant)] bg-[var(--surface-container-low)] px-2 py-1"
+          >
+            <p className="truncate font-semibold text-[var(--foreground)]">{t.label}</p>
+            <p className="tabular-nums text-[var(--text-secondary)]">
+              {Math.round(t.onsetT)}–{Math.round(t.endsetT)} °C
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -278,6 +411,8 @@ export function TGASlidePanel({ variant }: { variant: TgaPanelVariant }) {
       return <CurvePanel mode="steps" />;
     case "tga-dtg":
       return <CurvePanel mode="dtg" />;
+    case "tga-tangent":
+      return <TangentPanel />;
     case "tga-alfum":
       return <AlFumPanel />;
     case "tga-traps":
@@ -291,6 +426,7 @@ export const TGA_SLIDE_PANEL_VARIANTS = [
   "tga-what-it-measures",
   "tga-steps",
   "tga-dtg",
+  "tga-tangent",
   "tga-alfum",
   "tga-traps",
 ] as const;

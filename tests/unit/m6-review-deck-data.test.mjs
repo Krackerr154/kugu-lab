@@ -16,19 +16,19 @@ import {
   coercePresentationState,
 } from "../../shared/m3-contract.mjs";
 
-test("the M6 deck has eighteen slides in order, with unique ids", () => {
-  assert.equal(TOTAL_M6_REVIEW_DECK_SLIDES, 18);
-  assert.equal(M6_REVIEW_DECK_SLIDES.length, 18);
+test("the M6 deck has nineteen slides in order, with unique ids", () => {
+  assert.equal(TOTAL_M6_REVIEW_DECK_SLIDES, 19);
+  assert.equal(M6_REVIEW_DECK_SLIDES.length, 19);
 
   const ids = M6_REVIEW_DECK_SLIDES.map((s) => s.id);
   assert.equal(new Set(ids).size, ids.length, "slide ids must be unique");
-  // The five TGA slides (q14-q18) sit after the FTIR body slides and before
-  // the closing FTIR slate, so FTIR is read first and TGA follows it.
+  // The six TGA slides (q14-q18, q19) sit after the FTIR body slides and
+  // before the closing FTIR slate, so FTIR is read first and TGA follows it.
   assert.deepEqual(
     ids,
     [
       "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "q10", "q11", "q12",
-      "q14", "q15", "q16", "q17", "q18", "q13",
+      "q14", "q15", "q16", "q19", "q17", "q18", "q13",
     ]
   );
 });
@@ -103,6 +103,7 @@ test("embedded panels are only the variants the panel component renders", () => 
     "tga-what-it-measures",
     "tga-steps",
     "tga-dtg",
+    "tga-tangent",
     "tga-alfum",
     "tga-traps",
   ]);
@@ -155,7 +156,7 @@ test("adding the M6 deck left the M4 deck and its ids untouched", () => {
   assert.deepEqual([...REVIEW_SLIDE_IDS], [
     "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10",
   ]);
-  assert.equal(ALL_REVIEW_SLIDE_IDS.length, 73);
+  assert.equal(ALL_REVIEW_SLIDE_IDS.length, 74);
   assert.equal(reviewDeckOfSlide("p5"), "m4");
   assert.equal(reviewDeckOfSlide("q5"), "m6");
   assert.equal(reviewDeckOfSlide("nope"), null);
